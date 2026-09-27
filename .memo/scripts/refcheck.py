@@ -1408,7 +1408,8 @@ def main():
                 # si cerca quindi anche nella radice di ogni clone dei progetti.
                 if not (any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent))
                         or (clone is not None and coda and (clone / coda).exists())
-                        or any((r / p).exists() for r in PROGETTI.values())):
+                        or any((r / p).exists() for r in PROGETTI.values())
+                        or (AIV.exists() and (AIV / p).exists())):
                     # ⚠️ Un percorso che vive nel repo di un progetto NON clonato è non
                     # verificabile, non rotto (difetto trovato il 2026-09-27 da una sessione su
                     # AIV, senza `arda` né `earthsea`: sette percorsi giusti come `worker/` e
@@ -1417,7 +1418,9 @@ def main():
                     # testa al percorso, o da una prima cartella che l'hub e `tools` non hanno.
                     # Il prezzo, dichiarato come per AIV: in una sessione senza quei repo un
                     # percorso davvero sbagliato con una cartella inventata non si vede.
-                    progetto_assente = any(not r.exists() for r in PROGETTI.values()) and bool(coda) and (
+                    # Vale anche per AIV, i cui percorsi il brief scrive senza il prefisso
+                    # `AIV/` (`tools/feedback-check.py`, visto il 2026-09-27).
+                    progetto_assente = (aiv_missing or any(not r.exists() for r in PROGETTI.values())) and bool(coda) and (
                         cita_progetto_assente(righe, n - 1, intorno=2)
                         or (clone is not None and not clone.exists())
                         or not any((d / testa).exists() for d in (base, SITO, TOOLS)))

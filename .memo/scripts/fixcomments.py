@@ -18,8 +18,8 @@ non lo tocca: lo **elenca**, perché una stringa che porta un accento sbagliato 
 vero, ma è un difetto che va guardato in faccia prima di correggerlo.
 
 Uso:
-    python3 .memo/scripts/fixcom.py FILE [ALTRO]        corregge e stampa il resoconto
-    python3 .memo/scripts/fixcom.py --dry FILE          dice soltanto che cosa farebbe
+    python3 .memo/scripts/fixcomments.py FILE [ALTRO]        corregge e stampa il resoconto
+    python3 .memo/scripts/fixcomments.py --dry FILE          dice soltanto che cosa farebbe
 """
 import re
 import sys

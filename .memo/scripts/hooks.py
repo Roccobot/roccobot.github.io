@@ -17,12 +17,14 @@ repo dei siti. Claude Code toglie i doppioni fra comandi identici, quindi ogni c
 una volta sola; e il comando cerca questo file in più percorsi, così vale da qualunque radice.
 
 MODI (primo argomento; l'evento arriva in JSON su stdin):
-  avvio     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti
-  turno     UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot)
-  modifica  PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
+  start     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti
+  prompt    UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot)
+  edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: i controlli prima di un `git commit`, che possono bloccarlo
-  testo     PreToolUse su PR, commenti, domande e artefatti: i caratteri del testo composto
-  compatta  PreCompact: il promemoria del brief
+  text      PreToolUse su PR, commenti, domande e artefatti: i caratteri del testo composto
+  compact   PreCompact: il promemoria del brief
+  (Fino al 2026-09-27 si chiamavano avvio, turno, modifica, testo e compatta: quei nomi
+  restano accettati, vedi in fondo.)
 
 ⚠️ Un hook che blocca esce con 2 e scrive il perché su stderr: è quello che Claude legge.
 ⚠️ Nessun controllo deve rompere il lavoro per un suo guasto: un errore imprevisto qui dentro
@@ -112,7 +114,7 @@ def leggi_evento():
 
 # ── avvio ─────────────────────────────────────────────────────────────────────
 
-def modo_avvio(_ev):
+def mode_start(_ev):
     def uno(repo):
         ramo = ramo_principale(repo)
         if not aggiorna(repo, ramo):
@@ -157,12 +159,12 @@ def modo_avvio(_ev):
                      'non girano. La riga del passo 0 del CLAUDE.md di root li installa, e nello script '
                      'di setup dell\'ambiente li porta dalla sessione successiva.')
     for r in righe:
-        print(f'[avvio] {r}')
+        print(f'[start] {r}')
 
 
 # ── turno ─────────────────────────────────────────────────────────────────────
 
-def modo_turno(_ev):
+def mode_prompt(_ev):
     def uno(repo):
         ramo = ramo_principale(repo)
         if not aggiorna(repo, ramo):
@@ -182,12 +184,12 @@ def modo_turno(_ev):
     with ThreadPoolExecutor(8) as ex:
         for r in ex.map(uno, repos()):
             if r:
-                print(f'[turno] {r}')
+                print(f'[prompt] {r}')
 
 
 # ── modifica ──────────────────────────────────────────────────────────────────
 
-def modo_modifica(ev):
+def mode_edit(ev):
     f = (ev.get('tool_input') or {}).get('file_path') or ''
     repo = radice(f) if f else None
     if not repo:
@@ -293,7 +295,7 @@ def blocca(msg):
     sys.exit(2)
 
 
-def modo_bash(ev):
+def mode_bash(ev):
     comando = (ev.get('tool_input') or {}).get('command') or ''
     if 'git' not in comando or 'commit' not in comando:
         return
@@ -363,7 +365,7 @@ def raccogli(x, fuori):
             raccogli(v, fuori)
 
 
-def modo_testo(ev):
+def mode_text(ev):
     nome = ev.get('tool_name') or ''
     ti = ev.get('tool_input') or {}
     if nome == 'Artifact':
@@ -386,7 +388,7 @@ def modo_testo(ev):
 
 # ── compatta ──────────────────────────────────────────────────────────────────
 
-def modo_compatta(_ev):
+def mode_compact(_ev):
     print("[PreCompact] Il riassunto può accorciare, NON può perdere voci aperte: riporta per intero "
           "le cose ancora da fare, le domande senza risposta e le richieste dell'utente non ancora evase.")
     print('[PreCompact] Dopo la compattazione il TESTO delle regole non è più in scena: i divieti su '
@@ -404,8 +406,13 @@ def modo_compatta(_ev):
               'Esegui la skill handoff in modo scrittura PRIMA di compattare.')
 
 
-MODI = {'avvio': modo_avvio, 'turno': modo_turno, 'modifica': modo_modifica,
-        'bash': modo_bash, 'testo': modo_testo, 'compatta': modo_compatta}
+MODI = {'start': mode_start, 'prompt': mode_prompt, 'edit': mode_edit,
+        'bash': mode_bash, 'text': mode_text, 'compact': mode_compact}
+# I nomi italiani di prima (fino al 2026-09-27) restano accettati: una sessione aperta con la
+# riga di setup vecchia continua ad avere gli hook, invece di vederli spegnersi in silenzio
+# finché la riga nuova non entra nello script di setup. Si tolgono quando non servono più.
+MODI.update({'avvio': mode_start, 'turno': mode_prompt, 'modifica': mode_edit,
+             'testo': mode_text, 'compatta': mode_compact})
 
 if __name__ == '__main__':
     modo = sys.argv[1] if len(sys.argv) > 1 else ''

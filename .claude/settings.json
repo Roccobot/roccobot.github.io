@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" avvio",
+            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" start",
             "timeout": 60
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" turno",
+            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" prompt",
             "timeout": 40
           }
         ]
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" modifica",
+            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" edit",
             "timeout": 30
           }
         ]
@@ -72,7 +72,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" testo",
+            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" text",
             "timeout": 30
           }
         ]
@@ -84,7 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" compatta",
+            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" compact",
             "timeout": 20
           }
         ]
