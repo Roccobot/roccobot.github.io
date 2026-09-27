@@ -135,8 +135,6 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
   - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
     primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
     lingua nel suo `CLAUDE.md`.)
-  - **Footer di 'I Grandi di Arda'**: quello del sito è il suo, non la nota fissa
-    'vibes ✦ ...'. (Anche qui RoccobotOS ha la sua deroga, dichiarata nel suo file.)
   - Ⓘ Due deroghe storiche sono **decadute il 2026-08-01** diventando il default: lo schema
     di versione `x.xx` è ora **SlimVer**, la regola universale, e il gate W3C 'alle minor,
     se disponibile, senza bloccare' è scritto in `Roccobot.md` § 'Test e verifiche'.
