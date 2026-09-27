@@ -38,12 +38,17 @@ jobs:
         with:
           repository: Roccobot/roccobot.github.io
           path: roccobot.github.io
+      # tools is private, and the token of another repo cannot read it: there the clone fails,
+      # and refcheck.py counts the references to the universal rules as unverifiable instead of
+      # broken. Characters, links, titles, added lines and messages are checked all the same,
+      # and the full check runs in tools itself and in every Claude session.
       - name: tools
         if: github.event.repository.name != 'tools'
-        uses: actions/checkout@v5
-        with:
-          repository: Roccobot/tools
-          path: tools
+        env:
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          git clone -q --depth 1 https://github.com/Roccobot/tools.git tools 2>/dev/null \
+            || echo "tools è privato e non si clona da qui: i rimandi alle regole universali restano non verificabili"
       - name: Controllo delle regole
         working-directory: ${{ github.event.repository.name }}
         env:
