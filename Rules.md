@@ -620,6 +620,13 @@ poi divergerebbe.
     sul ramo principale e a ogni PR clona accanto hub e `tools` e rifà i controlli su tutti i
     commit arrivati. Non può bloccare un push diretto, ma il controllo rosso si vede sul commit e
     GitHub ne avvisa il proprietario.
+    - ⚠️ **`tools` è privato**, e il token automatico di un altro repo non lo legge: là il clone
+      fallisce e i rimandi alle regole universali restano non verificabili, mentre caratteri,
+      link, titoli, righe aggiunte e messaggi si controllano lo stesso. Il controllo completo gira
+      in `tools` stesso e in ogni sessione Claude. Misurato il 2026-09-27 alla prima run
+      (`Not Found` sul clone). ⚠️ Una prova di visibilità fatta da una sessione remota **non
+      vale**: le sue richieste passano da un proxy che si autentica, e l'API rispondeva 200 anche
+      su `tools`. La visibilità vera la dice la ricerca di GitHub con `is:private`.
   - **Che cosa controllano**: quello che `hooks.py` controlla sul commit, meno le due cose che
     vogliono la rete o i siti (il ritardo sul remoto, il badge contro `datiVersion`). Cioè i
     trattini lunghi nelle righe aggiunte, `refcheck.py` sulle righe aggiunte e sul messaggio, e
