@@ -254,7 +254,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   `.memo/scripts/` si lanciano come comando singolo col percorso assoluto, e la loro uscita non
   passa da una pipe se dopo c'è un `&&`. `checkjs.py` lascia un file accanto a quello che
   controlla: si cancella prima del commit.
-- **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`,
+- **Gli hook di git e l'Action `rules-check` fanno i controlli per tutti gli agenti**: la logica
+  vive in `.memo/scripts/githook.py`, ogni repo ha `.githooks/` e richiama il workflow riusabile
+  di questo repo (`Rules.md` § '🌿 Branch, allineamento e push').
+- **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
   `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
   `skills-update.sh`); quelli di un sito solo vivono nel suo repo.
 - **Le regole universali si leggono dal Worker `rules-proxy`** quando `tools` non è clonato: i raw

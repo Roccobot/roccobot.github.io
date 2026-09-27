@@ -132,6 +132,13 @@ def mode_start(_ev):
 
     with ThreadPoolExecutor(8) as ex:
         righe = [r for r in ex.map(uno, repos()) if r]
+    # The git hooks of `.githooks/` (githook.py) work only once a clone points git at them, and
+    # a fresh container clones everything anew: done here, it never depends on remembering it.
+    for repo in repos():
+        if (repo / '.githooks' / 'pre-commit').is_file() and \
+                git(repo, 'config', '--get', 'core.hooksPath', timeout=5)[1] != '.githooks':
+            git(repo, 'config', 'core.hooksPath', '.githooks', timeout=5)
+            righe.append(f'{repo.name}: hook di git attivati (.githooks)')
     for repo in repos():
         v = versioni(repo)
         if v and v[0] != v[1]:

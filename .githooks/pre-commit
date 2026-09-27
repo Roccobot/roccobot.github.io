@@ -1,0 +1,15 @@
+#!/bin/sh
+# Rules checks at commit time, for every agent that commits from a terminal.
+# The checks live in the hub, roccobot.github.io/.memo/scripts/githook.py: this file only
+# finds the hub (this repo, or a clone next to it) and hands over, under its own name.
+# Enabled once per clone with: git config core.hooksPath .githooks
+# The same file is both .githooks/pre-commit and .githooks/commit-msg.
+top=$(git rev-parse --show-toplevel) || exit 0
+for d in "$top" "$top"/../*; do
+  name=$(basename "$d" | tr '[:upper:]' '[:lower:]')
+  if { [ "$d" = "$top" ] || [ "$name" = roccobot.github.io ]; } && [ -f "$d/.memo/scripts/githook.py" ]; then
+    exec python3 "$d/.memo/scripts/githook.py" "$(basename "$0")" "$@"
+  fi
+done
+echo "githook: roccobot.github.io non è clonato accanto a questo repo, quindi i controlli locali non girano. Li rifà su GitHub l'Action rules-check." >&2
+exit 0
