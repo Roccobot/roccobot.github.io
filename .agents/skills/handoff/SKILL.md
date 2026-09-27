@@ -436,7 +436,7 @@ sparisce con lui. Il comando è **idempotente**, sovrascrive quello che trova e 
 come comando **singolo**:
 
 ```
-python3 -c "import shutil,os;s='<radice del sito>/.claude/skills';d=os.path.expanduser('~/.claude/skills');os.makedirs(d,exist_ok=True);shutil.copytree(s,d,dirs_exist_ok=True)"
+python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expanduser('~/.claude/skills');os.makedirs(d,exist_ok=True);shutil.copytree(s,d,dirs_exist_ok=True)"
 ```
 
 - ⚠️⚠️ **CHE COSA COPRE DAVVERO, E VA SAPUTO PER NON CREDERLO PIÙ DI QUANTO È**: una skill

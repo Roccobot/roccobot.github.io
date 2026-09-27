@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Riscarica le skill di terzi che vivono in .claude/skills/ e le ricopia come file veri.
+# Riscarica le skill di terzi che vivono in .agents/skills/ e le ricopia come file veri.
 #
 # Perché esiste: quelle skill sono file committati, quindi restano alla versione del giorno in
 # cui sono entrate. Le aggiorna la Routine mensile 'Aggiornamento skill di terzi', che lancia
@@ -7,10 +7,11 @@
 # dell'agente, e un aggiornamento si accetta guardando il diff (istruzione dell'utente,
 # 2026-09-25: una volta al mese, e il commit entra solo col suo via libera).
 #
-# Perché non `skills update`: nel repo non ci sono `skills-lock.json` né `.agents/`, perché i
-# file sono copiati veri e non come collegamenti simbolici. Quindi ogni pacchetto si reinstalla
-# da capo in una cartella di lavoro, UNO PER VOLTA: con più argomenti insieme il comando tiene
-# solo l'ultimo (misurato il 2026-09-23).
+# Perché non `skills update`: nel repo non c'è `skills-lock.json`, perché i file sono copiati
+# veri e non come collegamenti simbolici. (`.agents/skills/` c'è dal 2026-09-27, ma è la cartella
+# vera delle skill, con `.claude/skills` che la collega: non è lo stato che `skills` tiene.)
+# Quindi ogni pacchetto si reinstalla da capo in una cartella di lavoro, UNO PER VOLTA: con più
+# argomenti insieme il comando tiene solo l'ultimo (misurato il 2026-09-23).
 #
 # Ogni skill si sostituisce per intero, così un file tolto a monte esce anche da qui. Le skill di
 # casa non si toccano, e quelle che nessun pacchetto porta più si segnalano senza cancellarle: a
@@ -18,7 +19,7 @@
 set -euo pipefail
 
 RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
-DEST="$RADICE/.claude/skills"
+DEST="$RADICE/.agents/skills"
 CASA=(handoff)
 # 'VoltAgent/awesome-design-md' non c'è di proposito: non porta nessun SKILL.md, quindi non è
 # una skill ma una raccolta di documenti.
