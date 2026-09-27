@@ -10,11 +10,12 @@
 // pointerdown, e quel metodo rifiuta un pointerId che il browser non conosce,
 // quindi il gestore andrebbe in errore prima di fare qualunque cosa.
 //
-// USO, dalla cartella del progetto:
+// USO, dalla radice del repo del sito (`Roccobot/arda` o `Roccobot/earthsea`): il banco vive
+// nel repo dell'hub perché serve tutti e due, e una copia per repo divergerebbe.
 //   python3 -m http.server 8765 --bind 127.0.0.1 &
-//   NODE_PATH=/opt/node22/lib/node_modules node .memo/scripts/prova-gesto-zoom.js
-// Su 'I Grandi di Arda' (che serve la sua cartella):
-//   PROVA_IMG='pwa/app-512.png' node .memo/scripts/prova-gesto-zoom.js
+//   NODE_PATH=/opt/node22/lib/node_modules node ../roccobot.github.io/.memo/scripts/prova-gesto-zoom.js
+// Su 'I Grandi di Arda' si indica l'immagine:
+//   PROVA_IMG='pwa/app-512.png' NODE_PATH=/opt/node22/lib/node_modules node ../roccobot.github.io/.memo/scripts/prova-gesto-zoom.js
 const { chromium } = require('playwright');
 
 const URL = process.env.PROVA_URL || 'http://127.0.0.1:8765/index.html';

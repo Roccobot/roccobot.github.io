@@ -58,10 +58,10 @@ e interazioni', e questi sono i tre momenti:
 lettera-numero, aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
 riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso al resto.
 
-⚠️ **Un hook `PreCompact`** (in `.claude/settings.json` dei due repo) scatta a ogni
-compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
-e non va creduto tale**: non gira quando la sessione monta i due repo affiancati, e là resta
-solo la regola.
+⚠️ **Un gancio `PreCompact`** (il dispatcher `.memo/scripts/ganci.py`, modo `compatta`) scatta a
+ogni compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
+e non va creduto tale**: gira solo dove gli hook sono installati (le impostazioni utente, con la
+riga del passo 0 del `CLAUDE.md` di root), e altrove resta solo la regola.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
@@ -504,10 +504,11 @@ sessione nuova quei file non esistono e vanno riscritti. Nell'handoff elenca sol
 che servono al lavoro in sospeso, dicendo a che cosa servono, così chi arriva li rifà
 mirati invece di scoprirlo a metà strada.
 
-⚠️ **L'aggancio dei font reali NON è più fra questi**: vive in `.memo/scripts/realfont.js`,
-committato, e senza di esso ogni misura di larghezza, a-capo o allineamento ottico sarebbe
+⚠️ **L'aggancio dei font reali NON è più fra questi**: vive in `.memo/scripts/realfont.js`
+dell'hub, committato e comune ai due siti, e senza di esso ogni misura di larghezza, a-capo o allineamento ottico sarebbe
 di un altro font. Se una voce lo dà per perduto, è vecchia. Lo stesso vale per qualunque
-altro script: se serve più di una volta, la risposta non è elencarlo qui, è committarlo.
+altro script: se serve più di una volta, la risposta non è elencarlo qui, è committarlo (nel
+repo del progetto se serve a lui solo, qui se serve a più progetti).
 
 ---
 

@@ -9,9 +9,10 @@
 // vive su pointerdown con pointerType 'touch', e un evento sintetico non lo
 // sveglia.
 //
-// USO, dalla cartella del progetto:
+// USO, dalla radice del repo del sito (`Roccobot/arda` o `Roccobot/earthsea`): il banco vive
+// nel repo dell'hub perché serve tutti e due, e una copia per repo divergerebbe.
 //   python3 -m http.server 8765 --bind 127.0.0.1 &
-//   NODE_PATH=/opt/node22/lib/node_modules node .memo/scripts/prova-ricerca-sito.js
+//   NODE_PATH=/opt/node22/lib/node_modules node ../roccobot.github.io/.memo/scripts/prova-ricerca-sito.js
 const { chromium } = require('playwright');
 
 const URL = process.env.PROVA_URL || 'http://127.0.0.1:8765/index.html';
@@ -32,6 +33,14 @@ function prova(nome, ok, dettaglio) {
   page.on('pageerror', (e) => errori.push(String(e)));
   await page.goto(URL, { waitUntil: 'load' });
   await page.waitForSelector('#rank-list .rank-item');
+  // ⚠️ Su Terramare dalla `2.47` i senza nome nascono VISIBILI, quindi nessuna voce è nascosta
+  // finché la loro casella resta accesa: il banco la spegne come farebbe un visitatore. Su Arda
+  // la casella non esiste, e la riga non fa niente. Prima di questa riga il banco falliva su
+  // Terramare con 'righe marcate: 0', per un difetto suo e non del sito.
+  await page.evaluate(() => {
+    const c = document.querySelector('#ctrl-senzanome');
+    if (c && c.checked) { c.checked = false; c.dispatchEvent(new Event('change')); }
+  });
 
   const cdp = await ctx.newCDPSession(page);
   const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', {
@@ -67,7 +76,7 @@ function prova(nome, ok, dettaglio) {
   // ⚠️ Il nome si prende dal DATASET e non si scrive qui: i due siti nascondono
   // voci diverse, e un nome fisso renderebbe il banco valido su uno solo.
   const nascosta = await page.evaluate(() => {
-    const i = dati.findIndex((v) => v.senzanome || (v.apocrifo && !window.showApocrifi));
+    const i = dati.findIndex((v) => (v.senzanome && !window.mostraSenzaNome) || (v.apocrifo && !window.showApocrifi));
     return i < 0 ? null : { i, nome: dati[i].nome || dati[i].nome_en || dati[i].vero_nome };
   });
   if (!nascosta) { prova('c e una voce nascosta da cercare', false, 'nessuna nel dataset'); }
@@ -93,7 +102,11 @@ function prova(nome, ok, dettaglio) {
     `attesa ${idxAtteso}, segnate ${JSON.stringify(segnate)}`);
 
   // E. il tocco BREVE sul FAB continua ad aprire il Pannello.
-  await page.waitForTimeout(300);
+  // ⚠️ Dalla `2.00` di Terramare (e dalla gemella di Arda) il FAB, a pagina scorsa, diventa il
+  // chevron del salto, e un tocco breve porta in cima invece di aprire il Pannello. Svelare la
+  // card ha scorso la pagina, quindi si torna in cima e si aspetta che il glifo torni il logo.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(1500);
   await touch('touchStart', fx, fy); await touch('touchEnd', fx, fy);
   await page.waitForTimeout(250);
   prova('il tocco breve apre ancora il Pannello', await page.locator('#ctrl-panel.open').count() === 1);
