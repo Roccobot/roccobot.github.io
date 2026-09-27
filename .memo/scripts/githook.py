@@ -105,11 +105,17 @@ def main(argv):
         if not base.strip('0') or not git('rev-parse', '--verify', '-q', f'{base}^{{commit}}'):
             base = f'{head}~1' if git('rev-parse', '--verify', '-q', f'{head}~1') else ''
         span = f'{base}..{head}' if base else head
-        problems = check_diff(git('diff', '-M', base, head) if base else
-                              git('show', '-M', '--format=', head))
-        for sha in git('rev-list', '--no-merges', span).split():
+        diff = git('diff', '-M', base, head) if base else git('show', '-M', '--format=', head)
+        problems = check_diff(diff)
+        commits = git('rev-list', '--no-merges', span).split()
+        for sha in commits:
             for p in check_message(git('log', '-1', '--format=%B', sha)):
                 problems.append(f'commit {sha[:7]}: {p}')
+        # A green run says what it looked at: an empty range would pass too, and only this
+        # line tells the two apart in the log.
+        added = sum(1 for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++'))
+        print(f'controllo delle regole su {span}: {len(commits)} commit, {added} righe aggiunte, '
+              f'{len(problems)} problemi')
         return report(problems, 'controllo delle regole')
     print(__doc__.split('\n\n')[1], file=sys.stderr)
     return 1
