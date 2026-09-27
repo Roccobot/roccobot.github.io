@@ -320,7 +320,13 @@ def modo_bash(ev):
             blocca(f'Commit bloccato in {repo.name}: trattino lungo (em-dash o en-dash) nelle righe '
                    'aggiunte. Tolleranza zero per entrambi: trattino breve negli intervalli (1954-55), '
                    'altrimenti virgola, due punti o parentesi.')
-        if not regole_viste:
+        # Il controllo completo dei file di regole gira solo se il commit ne tocca uno: su un
+        # commit che non li cambia non ha niente da dire, e bloccarlo per un difetto di un altro
+        # repo fermerebbe il lavoro (è successo il 2026-09-27 a una sessione su AIV).
+        toccati = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
+        di_regole = any(t.endswith(('CLAUDE.md', 'SKILL.md')) or t.startswith(('rules/', 'snippets/', '.memo/'))
+                        for t in toccati)
+        if di_regole and not regole_viste:
             regole_viste = True
             rc, out = refcheck()
             if rc:

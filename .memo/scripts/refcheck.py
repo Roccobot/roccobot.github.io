@@ -1409,7 +1409,20 @@ def main():
                 if not (any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent))
                         or (clone is not None and coda and (clone / coda).exists())
                         or any((r / p).exists() for r in PROGETTI.values())):
-                    dove = non_verif if aiv_missing and p.startswith("AIV/") else bad_paths
+                    # ⚠️ Un percorso che vive nel repo di un progetto NON clonato è non
+                    # verificabile, non rotto (difetto trovato il 2026-09-27 da una sessione su
+                    # AIV, senza `arda` né `earthsea`: sette percorsi giusti come `worker/` e
+                    # `scripts/` davano 'inesistente' e l'hook bloccava ogni commit). Lo si
+                    # riconosce dal repo nominato nelle righe intorno, dal nome del progetto in
+                    # testa al percorso, o da una prima cartella che l'hub e `tools` non hanno.
+                    # Il prezzo, dichiarato come per AIV: in una sessione senza quei repo un
+                    # percorso davvero sbagliato con una cartella inventata non si vede.
+                    progetto_assente = any(not r.exists() for r in PROGETTI.values()) and bool(coda) and (
+                        cita_progetto_assente(righe, n - 1, intorno=2)
+                        or (clone is not None and not clone.exists())
+                        or not any((d / testa).exists() for d in (base, SITO, TOOLS)))
+                    dove = (non_verif if (aiv_missing and p.startswith("AIV/")) or progetto_assente
+                            else bad_paths)
                     dove.append((f, n, p))
             for s in sect_refs(righe, n - 1):
                 if s in SKIP_SECTS:
