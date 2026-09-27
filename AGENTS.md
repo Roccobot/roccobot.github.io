@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.03
+> **Versione**: 1.04
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -167,6 +167,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   cui si parte; chi non committa da sé usa la parola d'ordine che scrive soltanto il brief, e manda
   il file intero con la sua voce aggiunta (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - Le regole durevoli non vivono nel brief: vivono nei file di regole.
+- **Il brief porta il timbro `Last turn`** (lo genera `catchup.py --stamp`), e all'avvio
+  `catchup.py` dell'hub dice che cosa è arrivato dopo. Ogni commit porta la riga `Agent:
+  <piattaforma>`, e una versione nuova di un file di `rules/` porta la sua riga in
+  `rules/Changelog.md` (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
 
 ## 🧪 Verifiche e controlli
 
