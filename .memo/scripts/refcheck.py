@@ -50,7 +50,8 @@ MIHON = SITO.parent / "mihon-aniyomi-ext"
 # dal giorno dopo il brief ne citava una sezione, che il verificatore segnalava come
 # inesistente proprio perché il file era fuori copertura. È il sintomo rovesciato già visto
 # con `Earthsea.md`, e la lezione è la stessa: un file di regole nuovo deve entrare da sé.
-AIV = SITO.parent / "AIV"
+# Il clone si trova con `_clone`, qui sotto: fino al 2026-09-27 era cercato col nome esatto,
+# e in queste sessioni la cartella è `aiv`, quindi `AIV/CLAUDE.md` non era mai controllato.
 # ⚠️ Dal 2026-09-26 i progetti vivono ciascuno nel SUO repo, clonato accanto a questo, e i loro
 # `CLAUDE.md` sono file di regole come quello di AIV: fuori dall'indice, un rimando corretto a
 # una loro sezione risultava 'inesistente', che è il sintomo rovesciato già visto due volte.
@@ -66,6 +67,7 @@ def _clone(nome):
     return SITO.parent / nome
 
 
+AIV = _clone("AIV")
 PROGETTI = {nome: _clone(nome) for nome in (
     "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
     "cheparolae")}
@@ -1409,7 +1411,11 @@ def main():
                 if not (any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent))
                         or (clone is not None and coda and (clone / coda).exists())
                         or any((r / p).exists() for r in PROGETTI.values())
-                        or (AIV.exists() and (AIV / p).exists())):
+                        or (AIV.exists() and (AIV / p).exists())
+                        # `AIV/CLAUDE.md` vuol dire la radice del repo di AIV: il prefisso è il
+                        # nome del repo, come `Roccobot/earthsea` per i progetti, e dal
+                        # 2026-09-27 nell'hub non c'è più una cartella con quel nome.
+                        or (testa.lower() == "aiv" and coda and (AIV / coda).exists())):
                     # ⚠️ Un percorso che vive nel repo di un progetto NON clonato è non
                     # verificabile, non rotto (difetto trovato il 2026-09-27 da una sessione su
                     # AIV, senza `arda` né `earthsea`: sette percorsi giusti come `worker/` e

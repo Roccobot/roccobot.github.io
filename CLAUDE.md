@@ -19,40 +19,28 @@
 | **RatioLab**, la paginetta dei rapporti fra due numeri (nata il 2026-09-21; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ratiolab` | il `CLAUDE.md` di quel repo |
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | il `CLAUDE.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | il `CLAUDE.md` di quella cartella |
+| **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | il `CLAUDE.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
 il lavoro corretto in ogni caso.
 
-⚠️⚠️ **`AIV/` non è un progetto di questo repo e non si tocca a mano: è una cartella
-GENERATA.** La riempie una GitHub Action del repo **`Roccobot/AIV`** (l'app Android
-'Astonishing Image Viewer'), che a ogni tag vi scrive l'APK firmato e la sua paginetta di
-download, e **sovrascrive** quello che trova. Quindi non ha un `CLAUDE.md` proprio e non
-compare nella tabella qui sopra: chi vuole cambiare quella pagina cambia il **modello**, che
-vive in AIV e non qui
-(<https://github.com/Roccobot/AIV/blob/main/publish/index.html>).
-- ⚠️ **C'è un APK solo, il più recente**, e i precedenti sono fra le release di AIV: la
-  paginetta offre **un** download, e una cartella che si riempie di build vecchi la
-  costringerebbe a elencarli e a ordinarli. ⚠️ **La ragione NON è il peso**, e conviene
-  saperlo per non 'correggere' la scelta con un argomento sbagliato: l'APK di release
-  minificato pesa **pochi megabyte** (7.510.348 byte nella `2.39`, misurati sul file
-  servito), contro i 64 MB del build di debug da cui nasceva quel timore.
-  - ⚠️ **La cifra esatta invecchia a ogni rilascio, e per questo porta la sua versione**:
-    quello che regge l'argomento è l'**ordine di grandezza**, cioè pochi megabyte contro
-    sessantaquattro, e quello non cambia. Fino al 2026-08-30 qui c'era il numero della
-    `0.12`, **1.634.026 byte**, che nel frattempo era diventato la metà del vero: un numero
-    senza versione accanto si legge come attuale per sempre. ⚠️ **E il numero della `0.68` era
-    sceso allo stesso modo**, cioè a meno della metà, in una settantina di versioni: quello di
-    oggi lo sostituisce, e l'ordine di grandezza è ancora quello.
-  - ⚠️⚠️ **Il peso di un APK si misura sul file SERVITO, non sull'artefatto della run**, e la
-    differenza è grossa: lo stesso APK compare **circa dimezzato** fra gli artefatti (misurato
-    sulla `0.12`: 787.248 byte contro 1.634.026), perché quelli sono uno **zip** e un APK
-    contiene voci non compresse (`resources.arsc` in testa) che lo zip esterno stringe. Chi
-    prende quel numero per il peso dell'app lo dimezza senza accorgersene, ed è già successo
-    qui.
-- ⚠️ **Un commit su `master` che arriva da `github-actions[bot]` e tocca `AIV/` è quello**, non
-  un salvataggio admin: è l'unica sorgente di commit esterni di questo repo, e conta per la
-  regola dell'allineamento al remoto. (Gli editor admin di Arda e di Terramare erano le altre
-  due fino al 2026-09-26: da allora committano nei repo `Roccobot/arda` e `Roccobot/earthsea`.)
+⚠️⚠️ **LA CARTELLA `AIV/` NON C'È PIÙ DAL 2026-09-27, E NON VA RICREATA.** La riempiva una
+GitHub Action del repo `Roccobot/AIV` (l'app Android 'Astonishing Image Viewer'), che a ogni tag
+vi scriveva l'APK firmato e la paginetta di download con un token che poteva scrivere qui. Da
+quel giorno la paginetta la pubblica il repo di AIV sul **suo** Pages, allo stesso indirizzo
+(`roccobot.github.io/AIV/`: un repo di progetto vince sulla cartella omonima, misurato su
+RatioLab), e le sue regole vivono nel suo `CLAUDE.md`, § '🚀 Che cosa produce un rilascio'.
+- ⚠️ **Su quel sito l'APK non c'è**: il pulsante di download punta all'asset dell'ultima
+  release, quindi un rilascio non cambia il sito. La copia dell'APK che viveva qui la leggeva
+  solo la sonda che controllava se era arrivata.
+- ⚠️⚠️ **Il peso di un APK si misura sul file vero, non sull'artefatto della run**: lo stesso
+  APK compare **circa dimezzato** fra gli artefatti (misurato sulla `0.12`: 787.248 byte contro
+  1.634.026), perché quelli sono uno **zip** e un APK contiene voci non compresse
+  (`resources.arsc` in testa) che lo zip esterno stringe. È già successo di dimezzarlo così.
+- ⚠️ **Da quel giorno questo repo non riceve più commit esterni**: il bot di AIV era l'ultima
+  sorgente, dopo gli editor admin di Arda e di Terramare, che dal 2026-09-26 committano nei repo
+  `Roccobot/arda` e `Roccobot/earthsea`. Restano le altre sessioni, che bastano a rendere
+  necessario l'allineamento al remoto.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni portano i **soli**
@@ -764,8 +752,8 @@ poi divergerebbe.
   ('Workflow git e versioni') ed è **non derogabile**, col confronto dei ref come comando.
   Qui si aggiungeva che **questo repo era il caso peggiore**, perché l'editor admin di 'I Grandi
   di Arda' committava via API: dal 2026-09-26 lo fa nel repo `Roccobot/arda`, e là vale la
-  stessa cautela. Qui `master` si muove ancora da solo coi commit del bot di AIV, e più sessioni
-  possono lavorarci in parallelo.
+  stessa cautela. Qui `master` non riceve più commit esterni dal 2026-09-27 (il bot di AIV era
+  l'ultimo), ma più sessioni possono lavorarci in parallelo.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
     'I Grandi di Arda' vive nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
@@ -795,8 +783,8 @@ poi divergerebbe.
     installazione li usa più.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
-    recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, il **bot
-    di AIV** qui, le altre sessioni in `tools`) se il ramo è pulito e senza commit propri,
+    recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, le altre
+    sessioni negli altri repo) se il ramo è pulito e senza commit propri,
     altrimenti avvisa; prima di toccare un file allinea il suo repo; **prima di un `git commit`
     blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
     trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nel messaggio o nelle
@@ -866,6 +854,11 @@ poi divergerebbe.
       cioè lo stesso sintomo rovesciato. Adesso entra anche lui (`AIV/CLAUDE.md` e
       `AIV/*/CLAUDE.md`), e il suo indice ha aggiunto **nove** titoli citabili senza rivelare
       difetti.
+      - ⚠️⚠️ **MA FINO AL 2026-09-27 NON ENTRAVA DAVVERO**: il clone si cercava col nome esatto
+        `AIV`, e in queste sessioni la cartella si chiama `aiv`, quindi il file restava fuori e i
+        suoi rimandi passavano per non verificabili. Adesso lo trova la stessa ricerca senza
+        maiuscole dei progetti, e un percorso con in testa `AIV/` si cerca nella radice del suo
+        repo, perché nell'hub quella cartella non c'è più.
     - ⚠️ **Lo stesso vale per i repo dei progetti** (dal 2026-09-27): un percorso che vive in un
       repo non clonato (`worker/`, `scripts/` dei siti) è non verificabile. Prima una sessione
       senza `arda` ed `earthsea` si vedeva dare per rotti sette percorsi giusti.
