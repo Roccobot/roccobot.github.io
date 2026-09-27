@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.01
+> **Versione**: 1.02
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -35,6 +35,8 @@
   per Terramare. Parlano di mondi diversi e non competono fra loro.
 - **Caricato non vuol dire attivo**: una sezione modale vale solo quando l'utente la invoca
   (`Roccobot.md` § '🗃️ File di regole collegati').
+- Le **skill** di ogni repo vivono in `.agents/skills/`, e `.claude/skills` è un collegamento a
+  quella cartella (`Roccobot.md` § '🧩 Dove vivono le skill').
 
 ## ⚖️ Priorità
 
