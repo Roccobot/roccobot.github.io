@@ -77,6 +77,7 @@ RULEFILES = [
     SITO / ".agents/skills/handoff/SKILL.md",
     TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
+    TOOLS / "Platforms.md",
     TOOLS / ".agents/skills/desc/SKILL.md",
 # ⚠️ I `CLAUDE.md` di progetto e i file di `rules/` si prendono a GLOB e non a elenco, dal
 # 2026-08-21, per la stessa ragione degli snippet qui sotto: erano un elenco scritto a mano, e
