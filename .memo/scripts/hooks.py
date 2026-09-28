@@ -121,7 +121,7 @@ def leggi_evento():
 # the session rereads these, and only these (the user's choice B2, 2026-09-28; the whole file
 # costs 75.000-90.000 tokens).
 RILEGGERE = ('## 💬 Stile di comunicazione', '### Grammatica', '### 🙂 Formule da non usare',
-             '### Caratteri')
+             '### Caratteri', "## ⌨️ Comandi da terminale (richieste all'utente)")
 
 
 def intervalli_rilettura(testo):
