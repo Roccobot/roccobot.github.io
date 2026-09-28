@@ -244,8 +244,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   e ogni campo di una chiamata a uno strumento (`Rules.md` § '🗣️ Lingua di risposta').
 - **Registro**: fuori `niente da fare` e ogni formula di resa, fuori le metafore al posto del
   meccanismo (una regola CSS non 'muore', non si applica più), fuori i nomi inventati per il codice
-  se non li si definisce, e un'implicita non cambia soggetto (`Rules.md` § '🗣️ Registro: italiano
-  corretto, non formale').
+  se non li si definisce, un'implicita non cambia soggetto, e 'portare' non vuol dire 'contiene' né
+  'cita' (`Rules.md` § '🗣️ Registro: italiano corretto, non formale').
 - **Trattini lunghi mai**, e le eccezioni cadute non si reintroducono (`Rules.md` § '✒️ Caratteri
   vietati').
 - **I pixel che l'utente fornisce sono device px**: si dividono per il DPR, si rimisurano sul DOM e

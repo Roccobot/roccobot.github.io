@@ -390,6 +390,17 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   perché il difetto vive nel legame fra due proposizioni e non in una parola: il presidio è la
   rilettura, e il posto in cui serve è la chat.
 
+- ⚠️⚠️ **E 'PORTARE' NON VUOL DIRE 'CONTIENE' NÉ 'CITA'** (sue correzioni, 2026-09-28, tre nello
+  stesso giorno, l'ultima su *che versione porta?*: *il verbo 'portare' usato a caso è
+  improponibile*). Un file, una versione, una riga, un commit non 'portano' niente: un file
+  **contiene** o **riporta** un dato, una versione **introduce** le sue modifiche, un testo
+  **cita** o **fa riferimento a** qualcosa, e a una domanda si chiede la cosa (*qual è il suo
+  numero di versione?*). Il verbo resta giusto quando qualcosa si sposta o si causa. La regola
+  completa vive in `Roccobot.md` § '🙂 Formule da non usare'.
+  - ⚠️ **È qui perché là non è bastata**: scritta alle 18 in `Roccobot.md`, la terza ricaduta è
+    arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
+    stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
+
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
