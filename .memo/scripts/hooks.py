@@ -23,8 +23,8 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
   bash      PreToolUse Bash: i controlli prima di un `git commit`, che possono bloccarlo
   text      PreToolUse su PR, commenti, domande e artefatti: i caratteri del testo composto
   compact   PreCompact: il promemoria del brief
-  (Fino al 2026-09-27 si chiamavano avvio, turno, modifica, testo e compatta: quei nomi
-  restano accettati, vedi in fondo.)
+  (Fino al 2026-09-27 si chiamavano avvio, turno, modifica, testo e compatta; dal 2026-09-28
+  quei nomi non sono più accettati, perché nessuna installazione li usa.)
 
 ⚠️ Un hook che blocca esce con 2 e scrive il perché su stderr: è quello che Claude legge.
 ⚠️ Nessun controllo deve rompere il lavoro per un suo guasto: un errore imprevisto qui dentro
@@ -429,11 +429,6 @@ def mode_compact(_ev):
 
 MODI = {'start': mode_start, 'prompt': mode_prompt, 'edit': mode_edit,
         'bash': mode_bash, 'text': mode_text, 'compact': mode_compact}
-# I nomi italiani di prima (fino al 2026-09-27) restano accettati: una sessione aperta con la
-# riga di setup vecchia continua ad avere gli hook, invece di vederli spegnersi in silenzio
-# finché la riga nuova non entra nello script di setup. Si tolgono quando non servono più.
-MODI.update({'avvio': mode_start, 'turno': mode_prompt, 'modifica': mode_edit,
-             'testo': mode_text, 'compatta': mode_compact})
 
 if __name__ == '__main__':
     modo = sys.argv[1] if len(sys.argv) > 1 else ''

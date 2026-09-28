@@ -582,9 +582,11 @@ poi divergerebbe.
   - ⚠️ **E i suoi modi si chiamano in inglese dallo stesso giorno** (`start`, `prompt`, `edit`,
     `bash`, `text`, `compact`; prima `avvio`, `turno`, `modifica`, `testo`, `compatta`), per la
     regola sui nomi (`Roccobot.md`, § '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
-    ⚠️ **I nomi vecchi restano accettati** dal dispatcher, così una sessione
-    aperta con la riga di setup precedente non perde gli hook; si tolgono quando nessuna
-    installazione li usa più.
+    ⚠️ **Dal 2026-09-28 i nomi vecchi non sono più accettati**: le impostazioni utente e i
+    quattro `.claude/settings.json` usavano già tutti i nomi inglesi. Un nome sconosciuto non
+    blocca niente: il dispatcher stampa l'uso ed esce 0, quindi una riga di setup rimasta vecchia
+    spegne gli hook in silenzio, e il sintomo è l'assenza delle righe `[start]` a inizio
+    sessione.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, le altre
