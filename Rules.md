@@ -598,6 +598,11 @@ poi divergerebbe.
     blocca niente: il dispatcher stampa l'uso ed esce 0, quindi una riga di setup rimasta vecchia
     spegne gli hook in silenzio, e il sintomo è l'assenza delle righe `[start]` a inizio
     sessione.
+  - ⚠️ **Il gancio di avvio scatta anche dopo una compattazione** (dal 2026-09-28, matcher
+    `startup|resume|compact` in tutti e cinque i posti): allora non riallinea niente e stampa le
+    righe di `rules/Roccobot.md` da rileggere, cioè le sezioni sul linguaggio (passo 5 del
+    protocollo di avvio nel `CLAUDE.md`). Le righe le calcola dai titoli, quindi reggono ai
+    ritocchi del file; un titolo rinominato lo dice, e si aggiorna `RILEGGERE` in `hooks.py`.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, le altre
