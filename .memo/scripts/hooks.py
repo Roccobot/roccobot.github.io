@@ -151,9 +151,13 @@ def rilettura():
     fatti = intervalli_rilettura(regole.read_text(encoding='utf-8'))
     trovati = {n for _, _, nomi in fatti for n in nomi}
     mancanti = [t.lstrip('#').strip() for t in RILEGGERE if t.lstrip('#').strip() not in trovati]
+    # One read returns at most about 25.000 tokens, and 547-1355 alone went over it on
+    # 2026-09-28: pieces of 400 lines each fit in one read.
     parti = [f"righe {a}-{b} ({', '.join(repr(n) for n in nomi)})" for a, b, nomi in fatti]
+    pezzi = [f'{i}-{min(i + 399, b)}' for a, b, _ in fatti for i in range(a, b + 1, 400)]
     print(f'[start] Dopo la compattazione il testo di Roccobot.md non è più in scena: rileggi ORA, per '
-          f"intero e prima di rispondere, {regole}: {'; '.join(parti)}.")
+          f"intero e prima di rispondere, {regole}: {'; '.join(parti)}. Una lettura per pezzo: "
+          f"{', '.join(pezzi)}.")
     if mancanti:
         print(f"[start] ATTENZIONE: titoli non trovati in Roccobot.md ({', '.join(mancanti)}): aggiorna "
               'RILEGGERE in hooks.py, e intanto rileggi quelle sezioni cercandole a mano.')
