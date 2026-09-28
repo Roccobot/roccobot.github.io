@@ -153,7 +153,8 @@ sessione:
      `Rules.md` li ricarica il sistema, ma `Roccobot.md` entra come risultato di una lettura, e
      il riassunto lo accorcia a poche righe: la terza ricaduta su 'portare' dello stesso giorno è
      arrivata così, con la regola scritta da ore. Le sezioni sono '💬 Stile di comunicazione' fino
-     a '🙂 Formule da non usare' compresa, e 'Caratteri'; le righe esatte le dice il gancio di
+     a '🙂 Formule da non usare' compresa, 'Caratteri', e '⌨️ Comandi da terminale', che dice
+     come si chiede all'utente di fare qualcosa sul suo computer; le righe esatte le dice il gancio di
      avvio di `hooks.py`, che dopo una compattazione stampa solo quelle. Si rileggono **per
      intero e prima di rispondere**. Rileggere tutto il file costerebbe 75.000-90.000 token a
      ogni compattazione.
