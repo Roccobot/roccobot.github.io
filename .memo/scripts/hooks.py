@@ -17,7 +17,8 @@ repo dei siti. Claude Code toglie i doppioni fra comandi identici, quindi ogni c
 una volta sola; e il comando cerca questo file in più percorsi, così vale da qualunque radice.
 
 MODI (primo argomento; l'evento arriva in JSON su stdin):
-  start     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti
+  start     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti;
+            dopo una compattazione indica invece le sezioni sul linguaggio da rileggere
   prompt    UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot)
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: i controlli prima di un `git commit`, che possono bloccarlo
@@ -114,7 +115,54 @@ def leggi_evento():
 
 # ── avvio ─────────────────────────────────────────────────────────────────────
 
-def mode_start(_ev):
+# The sections of rules/Roccobot.md about language, which fail in chat. After a compaction the
+# text of that file is gone from the conversation (it enters as the result of a read, and the
+# summary shortens it), while CLAUDE.md, AGENTS.md and Rules.md are reloaded by the system: so
+# the session rereads these, and only these (the user's choice B2, 2026-09-28; the whole file
+# costs 75.000-90.000 tokens).
+RILEGGERE = ('## 💬 Stile di comunicazione', '### Grammatica', '### 🙂 Formule da non usare',
+             '### Caratteri')
+
+
+def intervalli_rilettura(testo):
+    # Each section runs to the next heading of level 3 or higher, so the `##` one keeps only its
+    # introduction and a `###` one keeps its `####` subsections. Contiguous ranges are merged.
+    righe = testo.splitlines()
+    titoli = [(i, l) for i, l in enumerate(righe, 1) if re.match(r'#{2,3} ', l)]
+    fatti = []
+    for n, (i, l) in enumerate(titoli):
+        if l.strip() in RILEGGERE:
+            fine = titoli[n + 1][0] - 1 if n + 1 < len(titoli) else len(righe)
+            nome = l.lstrip('#').strip()
+            if fatti and fatti[-1][1] == i - 1:
+                fatti[-1] = (fatti[-1][0], fine, fatti[-1][2] + [nome])
+            else:
+                fatti.append((i, fine, [nome]))
+    return fatti
+
+
+def rilettura():
+    regole = BASE / 'tools' / 'rules' / 'Roccobot.md'
+    if not regole.is_file():
+        print('[start] Dopo la compattazione il testo di Roccobot.md non è più in scena, e Roccobot/tools '
+              'non è clonato: rileggi ORA dal Worker rules-proxy le sezioni ' +
+              ', '.join(f"'{t.lstrip('#').strip()}'" for t in RILEGGERE) + '.')
+        return
+    fatti = intervalli_rilettura(regole.read_text(encoding='utf-8'))
+    trovati = {n for _, _, nomi in fatti for n in nomi}
+    mancanti = [t.lstrip('#').strip() for t in RILEGGERE if t.lstrip('#').strip() not in trovati]
+    parti = [f"righe {a}-{b} ({', '.join(repr(n) for n in nomi)})" for a, b, nomi in fatti]
+    print(f'[start] Dopo la compattazione il testo di Roccobot.md non è più in scena: rileggi ORA, per '
+          f"intero e prima di rispondere, {regole}: {'; '.join(parti)}.")
+    if mancanti:
+        print(f"[start] ATTENZIONE: titoli non trovati in Roccobot.md ({', '.join(mancanti)}): aggiorna "
+              'RILEGGERE in hooks.py, e intanto rileggi quelle sezioni cercandole a mano.')
+
+
+def mode_start(ev):
+    if ev.get('source') == 'compact':
+        rilettura()
+        return
     def uno(repo):
         ramo = ramo_principale(repo)
         if not aggiorna(repo, ramo):
@@ -412,8 +460,9 @@ def mode_text(ev):
 def mode_compact(_ev):
     print("[PreCompact] Il riassunto può accorciare, NON può perdere voci aperte: riporta per intero "
           "le cose ancora da fare, le domande senza risposta e le richieste dell'utente non ancora evase.")
-    print('[PreCompact] Dopo la compattazione il TESTO delle regole non è più in scena: i divieti su '
-          'caratteri e lessico reggono perché li verificano gli hook (questo file) e refcheck.py.')
+    print('[PreCompact] Dopo la compattazione il TESTO di Roccobot.md non è più in scena: gli hook e '
+          'refcheck.py controllano file, commit e chiamate, ma non la chat. Per questo, a compattazione '
+          'finita, il gancio di avvio dice quali sezioni sul linguaggio rileggere.')
     brief = BASE / 'tools' / '.memo' / 'LATEST.md'
     if not brief.is_file():
         print('[PreCompact] ATTENZIONE: brief non trovato. Se Roccobot/tools non è agganciato, '
