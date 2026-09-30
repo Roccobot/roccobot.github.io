@@ -54,7 +54,7 @@ e interazioni', e questi sono i tre momenti:
    aperte**: se una cosa da fare esiste solo nel riassunto, è già a rischio.
 3. **Alla chiusura della sessione**, che è il caso per cui questa skill è nata.
 
-⚠️ In tutti e tre i casi il brief porta anche l'elenco dei **riferimenti**, cioè le sigle
+⚠️ In tutti e tre i casi il brief include anche l'elenco dei **riferimenti**, cioè le sigle
 lettera-numero, aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
 riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso al resto.
 
@@ -254,7 +254,7 @@ commit di ogni repo ripartire, ed è da lì che il suo `catchup.py` conta le nov
 
 ### 3b. Porta con te i FILE che servono al lavoro in sospeso
 
-⚠️⚠️ **Il brief porta anche gli ALLEGATI, e non solo il testo** (istruzione dell'utente,
+⚠️⚠️ **Il brief include anche gli ALLEGATI, e non solo il testo** (istruzione dell'utente,
 2026-08-26: *vorrei che l'automazione di fine/inizio sessione si portasse dietro anche file
 copiandoli insieme al brief, riprendendoli da lì e cancellandoli una volta che non servono
 più; mi sembra l'unica cosa ragionevole per ovviare a una mia eventuale dimenticanza*).
@@ -271,7 +271,7 @@ che vale oltre la prossima sessione va nel repo che lo riguarda. Qui sta solo ci
 **Che cosa ci va, e che cosa no.**
 
 - ✅ Il **lavoro non pubblicabile** di un repo che la sessione non può pushare: si consegna
-  come `git bundle`, che porta la storia e non solo i file (vedi sotto).
+  come `git bundle`, che contiene la storia e non solo i file (vedi sotto).
 - ✅ Un **campione** o un file di prova che l'utente ha fornito e che serve a una voce aperta.
 - ✅ Un **artefatto intermedio costoso da rifare** (un corpus ripulito, una misura lunga),
   quando rifarlo costerebbe più che tenerlo.
@@ -457,7 +457,7 @@ python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expa
   prescindere da dove la sessione è ancorata.
 - ⚠️ **Il limite è quello di ogni file scritto DENTRO la sessione**: quello che si copia adesso
   può non entrare in vigore in questa sessione, perché le skill si leggono all'avvio. Si
-  dichiara invece di prometterlo risolto, ed è la stessa nota che il `CLAUDE.md` di root porta
+  dichiara invece di prometterlo risolto, ed è la stessa nota che il `CLAUDE.md` di root contiene
   sulle tre vie del permesso `Artifact`.
 - **Da dove vengono**: l'elenco delle quindici e il modo di installarne altre vivono nel brief
   finché quel lavoro è aperto; quelle già entrate sono file committati come gli altri.
@@ -524,7 +524,7 @@ repo del progetto se serve a lui solo, qui se serve a più progetti).
 
 ## Il riquadro fisso del brief (sorgente unica)
 
-Questo è il testo che `.memo/LATEST.md` porta in testa, e questa ne è la **sorgente**: si
+Questo è il testo che `.memo/LATEST.md` contiene in testa, e questa ne è la **sorgente**: si
 modifica qui, si ricopia là. Il blocco fra i marcatori si copia **per intero**, marcatori
 compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 
@@ -553,7 +553,7 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 > 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nel
 >    `CLAUDE.md` del repo o nelle regole universali, **non qui**; qui resta solo l'aperto. E una
 >    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla.
-> 6. **Il brief porta anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
+> 6. **Il brief include anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
 >    `.memo/files/`, accanto a questo file, e la sezione 'Allegati' dice a quale voce serve
 >    ognuno e come si riapre. Valgono le stesse tre sorti delle voci: evasa la voce, il file si
 >    **cancella dal repo**. Mai segreti là dentro, e mai file che si rifanno con un comando.

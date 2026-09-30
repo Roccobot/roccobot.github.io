@@ -55,3 +55,6 @@ jobs:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../roccobot.github.io/.memo/scripts/githook.py ci "$BASE" "$HEAD"
+
+      - name: Regressioni del verificatore dei caporali
+        run: python3 roccobot.github.io/.memo/scripts/test_refcheck.py

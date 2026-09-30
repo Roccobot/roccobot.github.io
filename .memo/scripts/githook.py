@@ -55,7 +55,7 @@ def check_diff(diff):
     if diff.strip():
         rc, out = refcheck('--diff', stdin=diff)
         if rc:
-            problems.append('accento reso con apostrofo, o formula fuori regola, nelle righe '
+            problems.append('accento reso con apostrofo, caporale vietato o formula fuori regola, nelle righe '
                             f'aggiunte (vale in ogni file, commenti compresi).\n{out}')
     touched = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
     # A new version of a file of rules/ goes with a line in rules/Changelog.md, the short log

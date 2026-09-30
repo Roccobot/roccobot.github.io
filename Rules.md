@@ -49,13 +49,13 @@ RatioLab), e le sue regole vivono nel suo `CLAUDE.md`, § '🚀 Che cosa produce
   necessario l'allineamento al remoto.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
-vivevano ancora in cartelle di questo repo. All'avvio le istruzioni portano i **soli**
+vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**
 `CLAUDE.md` alla radice dei repo montati; uno che vive più in basso (come `worker/CLAUDE.md`
 nei repo di Arda e di Terramare) compare nel momento in cui si legge un file di quella
 cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
 - **Perciò la lettura esplicita non è ridondanza**: chi lavora su un progetto senza montarne
   il repo o senza aprire nessuno dei suoi file (una discussione in chat, un file creato da zero) non ha le sue regole
-  in scena, ed è la lettura a portarle.
+  in scena, ed è la lettura a renderle disponibili.
 - **Conseguenza prudenziale invariata**: una regola che serve **sempre** non può vivere là. Se
   è di portata generale è qui, se è universale vive in `rules/Roccobot.md`. Nel dubbio, questo
   file.
@@ -525,7 +525,7 @@ poi divergerebbe.
     `https://roccobot.github.io/earthsea/dati.js`), per le liste AdBlock
     l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS la
     costante `VERSIONE` di `https://roccobot.github.io/RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
-    l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
+    l'intestazione di quel file: dal 2026-07-31 il commento non riporta il numero, e un
     `head -c 30` non mostrerebbe nulla facendo credere a un deploy mancato.
   - ⚠️⚠️ **L'HTML PUÒ RESTARE IN CACHE QUANDO LA SONDA È GIÀ AGGIORNATA, e si legge come un
     deploy a metà**: misurato il 2026-09-15 su Terramare, `dati.js` rispondeva già `2.26`
@@ -671,7 +671,7 @@ poi divergerebbe.
       nomi nell'ordine** fra il proprio file e `origin/main`, e deve tornare identico.
       Un `git diff` non basta: mostrerebbe comunque le proprie righe cambiate.
     - ⚠️ **Anche il NUMERO DI VERSIONE è suo**: l'editor admin bumpa da sé (là era la
-      `1.83`), quindi il bump della sessione riparte da quello che il remoto porta, o due
+      `1.83`), quindi il bump della sessione riparte da quello che il remoto dichiara, o due
       commit diversi dichiarano la stessa versione.
 - **I controlli pre-commit**, che bloccano il commit **solo quando gli hook sono installati**
   (vedi la trappola in fondo a questa voce; `hooks.py`, modo `bash`): badge contro
@@ -764,7 +764,7 @@ poi divergerebbe.
     - ✅ **Il rimedio strutturale c'è dal 2026-09-27**: gli hook nelle impostazioni **utente**, che
       si leggono da qualunque radice, col dispatcher `hooks.py` che capisce da sé il repo (voce
       sugli hook, più sopra). ⚠️ **Scritti dentro la sessione valgono dalla sessione dopo**, e il
-      file muore col container: quello che li porta davvero è la riga del passo 0 nello **script
+      file muore col container: quello che li installa davvero è la riga del passo 0 nello **script
       di setup dell'ambiente**. Se il gancio di avvio dice che gli hook NON sono nelle
       impostazioni utente, vale il rimedio manuale più sotto.
     - ⚠️⚠️ **Che il file non sia letto è provato anche dal TESTO di un prompt**, che è la prova
@@ -832,6 +832,6 @@ poi divergerebbe.
           non lo sta ascoltando.
     - ⚠️ **Come si verifica se un domani tornassero a girare**: solo da una **sessione nuova**
       (la configurazione si legge all'avvio), con un `git commit --allow-empty` il cui messaggio
-      porti l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando
+      contenga l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando
       e con una variabile di shell il carattere non lo vedrebbero, dando un falso negativo. Deve
       uscire **2**; poi il commit vuoto si scarta con un `reset`.

@@ -32,6 +32,7 @@ hanno la loro spiegazione accanto al codice, che è dove serve leggerla.
 """
 import html as htmllib
 import os
+import json
 import re
 import sys
 import unicodedata
@@ -334,6 +335,8 @@ def dentro_stringa(riga, col):
 
 
 VIETATI = {
+    "\u00ab": "caporali vietati: usa l'apice dritto, salvo citazioni autorizzate",
+    "\u00bb": "caporali vietati: usa l'apice dritto, salvo citazioni autorizzate",
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
     "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
     "\u2026": "ellissi unicode: usa tre punti",
@@ -909,7 +912,33 @@ def formula_defects(text, path=None):
     return blocca, avvisa
 
 
-def char_defects(text):
+def approved_quote_positions(text, path):
+    """Return only delimiter positions belonging to explicitly registered source quotes.
+
+    Paths and quote text are both required. Whitespace reflow is harmless, but changing
+    even one word creates a new, unapproved quote. Other punctuation rules still apply.
+    """
+    if path is None:
+        return set()
+    path = Path(path).resolve()
+    manifest = Path(__file__).with_name("char-exceptions.json")
+    entries = json.loads(manifest.read_text(encoding="utf-8"))["quotes"]
+    allowed = set()
+    for entry in entries:
+        repo = _clone(entry["repository"])
+        if repo is not None and path == (repo / entry["path"]).resolve():
+            allowed.add(" ".join(entry["quote"].split()))
+    positions = set()
+    for match in re.finditer(r"\u00ab[^\u00ab\u00bb]*\u00bb", text):
+        if " ".join(match.group().split()) in allowed:
+            for offset in (match.start(), match.end() - 1):
+                line = text.count("\n", 0, offset) + 1
+                col = offset - text.rfind("\n", 0, offset)
+                positions.add((line, col))
+    return positions
+
+
+def char_defects(text, path=None):
     """Difetti di carattere in un testo: [(riga, colonna, carattere, motivo)].
 
     Traccia il contesto 'codice' (fence ``` e backtick inline) perché i due divieti hanno
@@ -918,6 +947,7 @@ def char_defects(text):
     intervalli, perché em-dash ed ellissi cadono dentro un blocco per il resto ammesso.
     """
     out = []
+    approved = approved_quote_positions(text, path)
     in_fence = False
     for n, line in enumerate(text.splitlines(), 1):
         if line.lstrip().startswith("```"):
@@ -963,7 +993,7 @@ def char_defects(text):
                 continue
             nome = unicodedata.name(ch, "?")
             if ch in VIETATI:
-                if not in_code:
+                if not in_code and not (ch in "\u00ab\u00bb" and (n, col) in approved):
                     out.append((n, col, ch, VIETATI[ch]))
                 continue
             if any(a <= cp <= b for a, b in SIMBOLI_OK):
@@ -1277,6 +1307,19 @@ def main_fix():
     return 0
 
 
+
+def diff_quote_defects(text, path, added_lines):
+    """Check delimiters also when an added line changes the body of an existing quote."""
+    touched = set(added_lines)
+    for match in re.finditer(r"\u00ab[^\u00ab\u00bb]*\u00bb", text):
+        first = text.count("\n", 0, match.start()) + 1
+        last = text.count("\n", 0, match.end() - 1) + 1
+        if any(first <= line <= last for line in added_lines):
+            touched.update((first, last))
+    return [(n, col, ch, reason) for n, col, ch, reason in char_defects(text, path)
+            if n in touched and "caporali" in reason]
+
+
 def main_diff():
     """Modo `--diff`: legge un `git diff` da stdin e controlla le RIGHE AGGIUNTE, in OGNI file.
 
@@ -1289,13 +1332,32 @@ def main_diff():
     del repo e il preesistente non blocca un commit che non lo tocca. La bonifica del
     preesistente è un lavoro a sé, che questo presidio non deve mescolare.
     """
-    corrente, aggiunte = None, {}
+    corrente, aggiunte, contexts = None, {}, {}
+    current_hunk, new_line = None, 0
     for riga in sys.stdin.read().splitlines():
         if riga.startswith("+++ b/"):
             corrente = riga[6:]
             aggiunte.setdefault(corrente, [])
+            contexts.setdefault(corrente, [])
+            current_hunk = None
+        elif riga.startswith("@@ ") and corrente:
+            match = re.match(r"@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@", riga)
+            if match:
+                new_line = int(match.group(1))
+                current_hunk = []
+                contexts[corrente].append(current_hunk)
         elif riga.startswith("+") and not riga.startswith("+++") and corrente:
             aggiunte[corrente].append(riga[1:])
+            if current_hunk is None:
+                current_hunk = []
+                contexts[corrente].append(current_hunk)
+            current_hunk.append((new_line, riga[1:], True))
+            new_line += 1
+        elif riga.startswith(" ") and current_hunk is not None:
+            current_hunk.append((new_line, riga[1:], False))
+            new_line += 1
+        elif riga.startswith("diff --git "):
+            corrente, current_hunk = None, None
     blocca, avvisi = [], []
     for f, righe in aggiunte.items():
         testo = "\n".join(righe)
@@ -1303,6 +1365,28 @@ def main_diff():
         # qualunque quello segnalerebbe simboli e lettere non latine legittime (una regex, un
         # nome proprio), e un presidio rumoroso viene disattivato. I trattini lunghi hanno
         # già il loro hook sul diff.
+        # Check caporali separately with complete file/hunk context. Accent checks below
+        # retain their existing source-language and string-literal filtering.
+        path = Path.cwd() / f
+        hunks = contexts[f]
+        source = path.read_text(encoding="utf-8").splitlines() if path.is_file() else []
+        added = [(number, line) for hunk in hunks for number, line, yes in hunk if yes]
+        matches_file = all(0 < number <= len(source) and source[number - 1] == line
+                           for number, line in added)
+        if source and matches_file:
+            added_numbers = {number for number, _ in added}
+            caporali = [(source[n - 1], ch, motivo)
+                        for n, col, ch, motivo in diff_quote_defects("\n".join(source), path,
+                                                                 added_numbers)]
+        else:
+            caporali = []
+            for hunk in hunks:
+                context_text = "\n".join(line for number, line, yes in hunk)
+                added_numbers = {i for i, entry in enumerate(hunk, 1) if entry[2]}
+                for n, col, ch, motivo in diff_quote_defects(context_text, path, added_numbers):
+                    caporali.append((hunk[n - 1][1], ch, motivo))
+        for line, ch, motivo in caporali:
+            blocca.append((f, line.strip()[:100], etichetta(ch), motivo))
         for n, col, ch, motivo in char_defects(testo):
             # ⚠️ Due uscite, e stanno QUI e non in `char_defects` per la stessa ragione: il
             # modo a file intero gira sui soli file di REGOLE, che sono prosa italiana, e là
@@ -1339,10 +1423,10 @@ def main_diff():
         for f, riga, tok, motivo in avvisi:
             print(f"   {f}: {tok}\n      {riga}\n      {motivo}")
     if not blocca:
-        print(f"diffcheck: nessun accento e nessuna formula fuori regola nelle righe aggiunte "
+        print(f"diffcheck: nessun accento, caporale o formula fuori regola nelle righe aggiunte "
               f"({sum(len(v) for v in aggiunte.values())} righe in {len(aggiunte)} file)")
         return 0
-    print(f"\n!! accenti o formule fuori regola nelle righe aggiunte: {len(blocca)}")
+    print(f"\n!! accenti, caporali o formule fuori regola nelle righe aggiunte: {len(blocca)}")
     for f, riga, tok, motivo in blocca:
         print(f"   {f}: {tok} -> {motivo}\n      {riga}")
     return 1
@@ -1390,7 +1474,7 @@ def main():
         base = f.parent
         # I documenti degli altri repo si fermano qui: caratteri e link, non i rimandi.
         solo_testo = f in testi
-        for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8")):
+        for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8"), f):
             bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
         # ⚠️ Il lessico sui file di REGOLE per intero, non solo sulle righe aggiunte: sono
         # prosa italiana e sono il posto da cui la forma sbagliata si propaga a tutto il

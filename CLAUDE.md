@@ -4,7 +4,7 @@
 @Rules.md
 
 > **Cos'è questo file.** Il punto da cui parte ogni sessione di Claude: è il solo file che si
-> carica da sé, e con le due righe qui sopra porta con sé `AGENTS.md` (il nucleo universale e il
+> carica da sé, e con le due righe qui sopra importa `AGENTS.md` (il nucleo universale e il
 > nucleo dell'hub, per tutti gli agenti) e `Rules.md` (il testo completo delle regole dell'hub).
 > Qui restano solo le cose di Claude: il protocollo di avvio, il modello e gli artefatti.
 > ⚠️ **Fino al 2026-09-27 tutto questo era un file solo**: le sezioni per tutti gli agenti sono
@@ -33,7 +33,7 @@ sessione:
    script di setup. Il perché la regola non
    basti scritta altrove, e le altre due vie che la coprono, vivono in § '🖼️ Artefatti'.
    - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e dal 2026-09-25 il
-     comando li porta**: gli strumenti **MCP** sono uno dei due soli punti in cui si vede
+     comando li installa**: gli strumenti **MCP** sono uno dei due soli punti in cui si vede
      l'assenza delle impostazioni di progetto (l'altro è la modifica della configurazione: vedi
      la trappola in fondo a `Rules.md`), quindi nelle sessioni coi repo affiancati un tool MCP
      che non è in quella lista chiede il consenso **e non offre 'Consenti sempre'**. È una
@@ -63,7 +63,7 @@ sessione:
        che la sessione dopo non chiederà**: senza lo script, chiederà.
      - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
        affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
-       `send_later` senza avere l'opzione durevole. Fino al 2026-09-25 il comando portava il solo
+       `send_later` senza avere l'opzione durevole. Fino al 2026-09-25 il comando configurava il solo
        `Artifact`, e i tool MCP si aggiungevano a mano man mano che chiedevano.
    - ⚠️⚠️ **E NELLO STESSO PASSO SI CONTROLLA CLAUDE DESIGN, che dalla richiesta dell'utente
      del 2026-09-02 va agganciato SEMPRE** (*aggiorna le routine delle nuove sessioni in modo

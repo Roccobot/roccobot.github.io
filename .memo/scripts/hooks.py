@@ -355,11 +355,11 @@ def diff_da_controllare(repo, aggiunge):
     return '\n'.join(parti)
 
 
-def refcheck(*args, stdin=None):
+def refcheck(*args, stdin=None, cwd=None):
     if not REFCHECK.is_file():
         return 0, ''
     r = subprocess.run([sys.executable, str(REFCHECK), *args], input=stdin, capture_output=True,
-                       text=True, timeout=60)
+                       text=True, timeout=60, cwd=cwd)
     return r.returncode, (r.stdout + r.stderr).strip()
 
 
@@ -413,9 +413,9 @@ def mode_bash(ev):
                 blocca(f'Commit bloccato in {repo.name}: caratteri o formule fuori regola nel MESSAGGIO '
                        f'di commit.\n{out}')
         if diff.strip():
-            rc, out = refcheck('--diff', stdin=diff)
+            rc, out = refcheck('--diff', stdin=diff, cwd=repo)
             if rc:
-                blocca(f'Commit bloccato in {repo.name}: accento reso con apostrofo, o formula fuori '
+                blocca(f'Commit bloccato in {repo.name}: accento reso con apostrofo, caporale vietato o formula fuori '
                        f'regola, nelle righe aggiunte (vale in ogni file, commenti compresi).\n{out}')
             if out:
                 print(out)
