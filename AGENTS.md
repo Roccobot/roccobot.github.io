@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.06
+> **Versione**: 1.07
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -158,6 +158,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - Il brief di consegna è **uno solo per tutti i repo**: `.memo/LATEST.md` di `Roccobot/tools`.
   Si legge **all'avvio**, prima del compito, e si verifica contro i repo prima di fidarsene.
+- **Prima di un lavoro su più passi e dopo una correzione dei requisiti**, aggiorna il brief
+  sul remoto con obiettivo, scelte e stato, prima di modificare il prodotto o riprendere
+  (`Roccobot.md` § '🚨 Non perdere niente').
 - **Si scrive in tre momenti**: quando una richiesta nasce e non si esegue subito (anche se
   arriva a turno in corso), prima di ogni compattazione, e alla chiusura (`Roccobot.md`
   § '🚨 Non perdere niente').
