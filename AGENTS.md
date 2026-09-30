@@ -10,14 +10,14 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.07
+> **Versione**: 1.17
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
 > Roccobot. Una regola per riga, col rimando alla sezione che ne dà il perché: il testo completo
 > vive in `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva
 > copiato dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 14.000 byte**, perché ogni `AGENTS.md` porta anche le regole del suo repo e
+> ⚠️ Resta **sotto i 14.000 byte**, perché ogni `AGENTS.md` include anche le regole del suo repo e
 > Antigravity tronca un file oltre i 24.000.
 
 ## 🧭 Come si legge il resto
@@ -30,7 +30,7 @@
   (<https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md> e
   <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>), con uno User-Agent da browser.
 - Un file di regole si legge **per intero e in grezzo**, mai con uno strumento che riassume, e si
-  controlla che porti la riga `> **Versione**:` (`Roccobot.md` § '🔌 Worker `rules-proxy`').
+  controlla che contenga la riga `> **Versione**:` (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - I canoni si leggono quando il tema li tocca: `rules/JRRT.md` per Tolkien, `rules/Earthsea.md`
   per Terramare. Parlano di mondi diversi e non competono fra loro.
 - **Caricato non vuol dire attivo**: una sezione modale vale solo quando l'utente la invoca
@@ -92,9 +92,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **Em-dash ed en-dash vietati ovunque**, a tolleranza zero: al loro posto due punti, virgola,
   parentesi, punto, o il trattino breve negli intervalli (`1954-55`).
-- **Apice dritto** `'` sempre, mai curvi, mai doppi, mai `«»`; **tre punti** e non l'ellissi
-  unica; **accenti veri** (`è`, `più`, `perché`), mai l'apostrofo al loro posto, maiuscole
-  comprese (`Roccobot.md` § 'Caratteri').
+- **Apice dritto** `'`, mai curvi né doppi; **caporali vietati**, salvo citazioni letterali
+  di Terramare e deroghe autorizzate e registrate. **Tre punti**, mai l'ellissi unica; **accenti veri**, anche
+  maiuscoli, mai apostrofi al loro posto (`Roccobot.md` § 'Caratteri').
 - Nomi di file, codice, chiavi ed etichette di UI citati fra **backtick**.
 - Numeri all'italiana (`0,05`, `27.918`) quando se ne parla, col punto quando si cita codice;
   sistema metrico; ore nel **fuso di Roma**, e con l'etichetta `Z` accanto a un dato tecnico
@@ -172,9 +172,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   cui si parte; chi non committa da sé usa la parola d'ordine che scrive soltanto il brief, e manda
   il file intero con la sua voce aggiunta (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - Le regole durevoli non vivono nel brief: vivono nei file di regole.
-- **Il brief porta il timbro `Last turn`** (lo genera `catchup.py --stamp`), e all'avvio
-  `catchup.py` dell'hub dice che cosa è arrivato dopo. Ogni commit porta la riga `Agent:
-  <piattaforma>`, e una versione nuova di un file di `rules/` porta la sua riga in
+- **Il brief contiene il timbro `Last turn`** (lo genera `catchup.py --stamp`), e all'avvio
+  `catchup.py` dell'hub dice che cosa è arrivato dopo. Ogni commit include la riga `Agent:
+  <piattaforma>`, e una versione nuova di un file di `rules/` aggiunge la sua riga in
   `rules/Changelog.md` (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
 
 ## 🧪 Verifiche e controlli
