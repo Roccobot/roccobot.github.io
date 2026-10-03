@@ -1,23 +1,31 @@
 ---
 name: handoff
-description: "Passaggio di consegne fra sessioni di lavoro su Roccobot/roccobot.github.io e Roccobot/tools: il brief è unico e copre entrambi i repo, con una sezione di stato per ciascuno. Invocala nella sessione che sta finendo per scriverlo, oppure in una sessione nuova (`/handoff leggi`) per il giro completo di verifica ed evasione. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
+description: "Passaggio di consegne fra sessioni di lavoro sui repo di Roccobot (l'hub roccobot.github.io, tools e un repo per progetto), per qualunque agente: il brief è unico e copre tutti i repo, con una sezione di stato per ciascuno toccato. Invocala nella sessione che sta finendo per scriverlo, oppure in una sessione nuova (`/handoff leggi`) per il giro completo di verifica ed evasione. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
 ---
 
 # Passaggio di consegne fra sessioni
 
 Le sessioni di questo repo sono **effimere**: il container si ricicla, lo scratchpad
 sparisce e la chat non passa alla sessione dopo. Una sessione nuova ha in automatico
-solo il `CLAUDE.md` del repo (le regole universali vivono in un altro repo e vanno
-lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa
-skill copre esattamente quel salto, e nient'altro.
+solo le regole del repo in cui parte (`AGENTS.md`, che ogni agente legge e Claude Code importa
+dal `CLAUDE.md` insieme a `Rules.md`; le regole universali vivono in `Roccobot/tools` e vanno
+lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa skill copre
+esattamente quel salto, e nient'altro.
 
-⚠️ **Il brief è TRANS-REPO** (richiesta dell'utente, 2026-07-30): il lavoro tocca di
-continuo **due** repo, `Roccobot/roccobot.github.io` e `Roccobot/tools`, dove vivono le
-regole universali. Quindi il brief è **uno solo** e copre entrambi, con una sezione di stato
-per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo è stato
-**scartato**: spezzerebbe il lavoro che li attraversa, che è la norma e non l'eccezione.
-- **Dove vive**: in `Roccobot/tools`, `.memo/LATEST.md`, che è il repo **trans-progetto**.
-  Entrambi i `CLAUDE.md` lo referenziano.
+⚠️ **Vale per tutti gli agenti** (dal 2026-10-03, con la ristrutturazione multipiattaforma):
+Claude Code, Codex, Cursor, Antigravity e Grok Bot scrivono e leggono lo stesso brief. Come ogni
+piattaforma arriva a questa skill lo dice `Platforms.md` di `Roccobot/tools`; dove una
+piattaforma non la carica, il riquadro fisso in testa al brief ne è il minimo operativo.
+
+⚠️ **Il brief è TRANS-REPO** (richiesta dell'utente, 2026-07-30): il lavoro attraversa di
+continuo più repo, l'hub `Roccobot/roccobot.github.io`, `Roccobot/tools` (dove vivono le regole
+universali) e dal 2026-09-26 un repo per progetto. Quindi il brief è **uno solo** e li copre
+tutti, con una sezione di stato per ogni repo toccato e ogni voce che dichiara di quale repo
+parla. Un brief per repo è stato **scartato**: spezzerebbe il lavoro che li attraversa, che è la
+norma e non l'eccezione.
+- **Dove vive**: in `Roccobot/tools`, `.memo/LATEST.md`, che è il repo **trans-progetto**. Lo
+  nomina il nucleo universale, cioè l'`AGENTS.md` di ogni repo (§ '🧾 Il brief e il non perdere
+  niente').
 - ⚠️ **E si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
   `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>. È
   la via per le sessioni che non hanno quel repo agganciato o hanno meno permessi (scelta
@@ -25,8 +33,8 @@ per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo è 
   `Roccobot.md`. ⚠️ **Un GET che risponde 404 sotto un percorso ammesso significa 'file
   assente'; un 404 su un percorso NON ammesso significa 'fuori whitelist'**: sono due cose
   diverse e si distinguono guardando il prefisso.
-- ⚠️ **Questa skill invece vive nel repo del sito**, quindi una sessione che monta solo
-  `tools` non l'ha: il brief lo legge comunque (dal file o dal Worker), ma la procedura di
+- ⚠️ **Questa skill invece vive nel repo dell'hub** (`.agents/skills/handoff/`), quindi una
+  sessione che monta solo `tools`, o solo il repo di un progetto, non l'ha: il brief lo legge comunque (dal file o dal Worker), ma la procedura di
   evasione non è in scena, e allora si dichiara che le voci non sono state verificate.
 
 **Due modi.**
@@ -37,7 +45,8 @@ per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo è 
 | `/handoff leggi` | in una sessione **nuova** | il giro completo: verifica il brief contro il repo, **evade** le voci provate, propone il primo passo |
 
 ⚠️ **Il modo lettura NON è l'interruttore che fa TROVARE il brief** (dal 2026-07-30): il brief
-si legge **sempre** all'avvio, perché è un passo del protocollo nel `CLAUDE.md` di root. Quindi
+si legge **sempre** all'avvio, perché è un passo dell'ordine di lettura del nucleo (e, per Claude,
+del protocollo di avvio in `Rules.md` dell'hub, § '🚀 Protocollo di avvio'). Quindi
 `/handoff leggi` non serve a scoprire che esiste: serve a chiedere il **giro completo** di
 verifica ed evasione descritto qui sotto, che la sola lettura non fa.
 
@@ -61,18 +70,20 @@ riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso
 ⚠️ **Un gancio `PreCompact`** (il dispatcher `.memo/scripts/hooks.py`, modo `compact`) scatta a
 ogni compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
 e non va creduto tale**: gira solo dove gli hook sono installati (le impostazioni utente, con la
-riga del passo 0 del `CLAUDE.md` di root), e altrove resta solo la regola.
+riga del passo 0 del protocollo di avvio), e altrove resta solo la regola. Gli altri agenti non
+hanno questo gancio: per loro la regola è il nucleo.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
-Tutto ciò che vale **oltre** la prossima sessione va in `CLAUDE.md` (o, se la portata
-è universale, nel file di regole che `CLAUDE.md` indica) **prima** di scrivere
-l'handoff.
+Tutto ciò che vale **oltre** la prossima sessione va nelle regole del repo che riguarda
+(`Rules.md`, e una riga in `AGENTS.md` se serve sempre) o, se la portata è universale, in
+`rules/Roccobot.md` di `Roccobot/tools` (e in `rules/Core.md` se serve sempre), **prima** di
+scrivere l'handoff.
 Nell'handoff resta solo lo **stato volatile**: cosa è in corso, dove ci si è fermati, cosa
 non è ancora verificato.
 
 Un handoff che diventa un archivio parallelo invecchia e mente. Se una cosa è
-nell'handoff ma non in `CLAUDE.md`, o è volatile (e va bene) o è un travaso mancato da
+nell'handoff ma non nelle regole, o è volatile (e va bene) o è un travaso mancato da
 sanare subito.
 
 ## ⚠️ Regola n. 2: il brief si scrive per una sessione VERGINE
@@ -85,7 +96,7 @@ di regole copre il *criterio*, non i dati operativi.
 **Prova di sufficienza.** Per ogni voce in sospeso, controlla che ci sia tutto questo:
 
 1. **L'obiettivo**, non il racconto di come ci si è arrivati.
-2. **Il criterio o la decisione che lo governa**, col puntatore esatto (`CLAUDE.md § ...`).
+2. **Il criterio o la decisione che lo governa**, col puntatore esatto (`Rules.md § ...`).
    Se il criterio è stato dettato dall'utente e conta la formulazione, si riporta.
 3. **I numeri già misurati**, con la versione o la data a cui si riferiscono: sono lavoro
    già fatto, e senza di essi chi arriva lo rifà.
@@ -117,7 +128,7 @@ Ogni voce ha **tre soli esiti** possibili, e nessuna può restare com'era:
 - **ancora aperta** → si **riscrive alla data di oggi**, non si lascia la formulazione
   vecchia (le voci che invecchiano peggio sono quelle su fatti volatili: ref, PR aperta o
   mergiata, versione live);
-- **diventata durevole** → si travasa in `CLAUDE.md` (regola n. 1) e si cancella da qui.
+- **diventata durevole** → si travasa nel file di regole giusto (regola n. 1) e si cancella da qui.
 
 **La cancellazione richiede una prova diretta, non un'affermazione.** Si cancella solo con
 un dato letto **adesso**: un commit sul branch di destinazione, un file che esiste, un
@@ -141,7 +152,7 @@ lasciare la voce.
 
 ⚠️ **Della voce evasa può restare un residuo vivo**, e allora resta **solo il residuo**:
 una domanda aperta all'utente, un controllo da fare alla prossima sessione. Non la cronaca
-di come è stata evasa, non i numeri che ormai vivono nel codice o in `CLAUDE.md`.
+di come è stata evasa, non i numeri che ormai vivono nel codice o nelle regole.
 
 **Vale per tutte le sezioni, non solo per `In sospeso`.** Recuperata la verifica arretrata,
 la voce sparisce e la sezione torna a `Niente`; committato lo script effimero, sparisce da
@@ -165,7 +176,8 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `Roccobot/roccobot.github.io` (branch `master`), che non ospita più progetti ma l'hub delle
   regole trasversali, gli script di `.memo/scripts/` e questa skill, e `Roccobot/tools`
   (branch `main`), che ospita le regole **universali** (`rules/`), il Worker `rules-proxy` e
-  il brief. Ognuno ha il suo `CLAUDE.md`; il brief copre tutti.
+  il brief. Ognuno ha le sue regole (`AGENTS.md`, `Rules.md` e un `CLAUDE.md` corto che li
+  importa); il brief copre tutti.
 - **Progetto** = di norma **un repo suo** (fino al 2026-09-26 era una cartella di
   `roccobot.github.io`). Nel repo dell'hub restano soltanto i file dell'hub: la cartella `AIV/`
   generata è uscita il 2026-09-27, quando la paginetta è passata al Pages del repo di AIV. **'I Grandi di Arda'** (il
@@ -174,18 +186,19 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
   `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`, `Roccobot/ratiolab`), serviti da Pages; Arda e
   Terramare all'indirizzo senza `top`, ciascuno col suo Worker di amministrazione in `worker/`.
-  ⚠️ Ogni progetto ha convenzioni proprie: solo 'I Grandi di Arda' ha un numero di
-  versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
-  `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
-  installazione da ripetere dopo ogni go-live; RoccobotOS ha una versione **interna**, nel
-  commento in testa a `RoccobotOS.js` (repo `Roccobot/RoccobotOS`), che non compare in pagina e non va messa nel badge
-  di nessuno.
+  **AIV**, l'app Android, vive in `Roccobot/AIV`, col suo documento di feedback sul Worker
+  `aiv-feedback`.
+  ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: di serie SlimVer (`x.xx`),
+  con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di `RoccobotOS.js`
+  per RoccobotOS e in `versionName` per AIV, che si pubblica come release e non come deploy;
+  le liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer
+  e il link di installazione da ripetere dopo ogni go-live.
 - **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
   è quello che l'handoff serve a superare.
 
 Conseguenza pratica: **il brief dice sempre di quale progetto parla.** 'Versione
 14.79' senza dire 'I Grandi di Arda' è ambiguo, e una sessione nuova non può indovinare
-quale delle cinque convenzioni applicare.
+quale convenzione applicare.
 
 ---
 
@@ -193,18 +206,21 @@ quale delle cinque convenzioni applicare.
 
 ### 1. Misura lo stato, non ricordarlo
 
-In questo progetto la memoria della chat non basta: l'editor admin committa `dati.js`
-da fuori e GitHub Pages pubblica in ritardo. Quindi si guardano i fatti:
+La memoria della chat non basta: altre sessioni e altri agenti committano in parallelo, gli
+editor admin di Arda e di Terramare committano `dati.js` da fuori, e GitHub Pages pubblica in
+ritardo. Quindi si guardano i fatti, **in ogni repo toccato** (`main` dappertutto, `master`
+nell'hub):
 
 ```bash
-git fetch origin master && git rev-list --left-right --count origin/master...HEAD
+git fetch origin <principale> && git rev-list --left-right --count origin/<principale>...HEAD
 git log --oneline -6 && git status --short
-grep -oE 'datiVersion = "[0-9.]+' ../arda/dati.js                  # dal clone di Roccobot/arda
-curl -sS "https://roccobot.github.io/arda/dati.js" | head -1       # versione LIVE
+grep -oE 'datiVersion = "[0-9.]+' ../arda/dati.js                  # un sito: dal suo clone
+curl -sS "https://roccobot.github.io/arda/dati.js" | head -1       # e la sua versione LIVE
 ```
 
-Il primo numero di `rev-list` è quanti commit si è dietro: se è >0 sono arrivati
-salvataggi admin. Se la versione live è più bassa di quella locale, il deploy Pages non
+Il primo numero di `rev-list` è quanti commit si è dietro: se è >0 è arrivato lavoro da fuori
+(un'altra sessione, un altro agente, un salvataggio admin). La sonda di pubblicazione dipende
+dal progetto, e la dicono le sue regole (per AIV la release col suo tag). Se la versione live è più bassa di quella locale, il deploy Pages non
 è ancora arrivato (o è inceppato): va scritto nell'handoff, non dato per fatto. Se la
 sessione ha toccato il Worker, riporta anche la spia `rev` (un `GET` al Worker).
 
@@ -216,7 +232,7 @@ a chi arriva è **se il suo clone è allineato al remoto e di quanti commit**, c
 col comando qui sopra e non invecchia. L'hash può restare **accanto**, dichiarato per quello
 che è: un riferimento, non lo stato.
 
-### 2. Travasa il durevole in `CLAUDE.md` PRIMA di scrivere
+### 2. Travasa il durevole nelle regole PRIMA di scrivere
 
 Ripassa la sessione e chiediti, per ogni cosa: *serve anche fra un mese?* In questo
 progetto contano come durevoli:
@@ -234,8 +250,9 @@ Quello che travasi va con il **numero di versione** a cui risale. Fatto questo,
 l'handoff può restare corto.
 
 ⚠️ **Se il travaso sposta, riscrive o elimina una sezione, verifica anche che
-nessun altro punto la referenzi ancora come se stesse dov'era prima**: in questo
-`CLAUDE.md`, in un altro `CLAUDE.md` di progetto, in `Roccobot.md` o in `JRRT.md`.
+nessun altro punto la nomini ancora come se fosse dov'era prima**: nelle regole dell'hub,
+in quelle di un altro repo (`AGENTS.md`, `Rules.md`, `CLAUDE.md`), in `Roccobot.md`, in
+`Core.md` o in un canone.
 È la regola universale in `Roccobot.md`, sezione '📥 Protocollo Aggiungi alle
 regole': un riferimento rimasto stantio è un errore silenzioso quanto un dato non
 travasato, perché chi lo segue non trova nulla o trova la cosa sbagliata.
@@ -308,9 +325,11 @@ conserva comunque. ⚠️ La prova vale come per le voci: si cancella con un dat
 
 ### 4. Pubblica
 
-Commit e push come da regole del repo (branch `claude/*` → PR → squash merge →
-riallineo del branch). ⚠️ **Nessun bump di `datiVersion` e nessun tocco al badge**: il
-sito non cambia. Messaggio: `handoff: <AAAA-MM-GG> <una riga>`.
+Commit e push come da regole di `tools` (ramo `main`; una sessione vincolata a un branch apre
+la PR, la mergia subito con squash e riallinea il branch). ⚠️ **Nessun bump di versione**:
+nessun prodotto cambia. Messaggio: `handoff: <AAAA-MM-GG> <una riga>`, con la riga `Agent:
+<piattaforma>` che il nucleo chiede a ogni commit. Chi non committa da sé scrive via Worker,
+col `baseSha` e la parola d'ordine che scrive soltanto il brief.
 
 Se la sessione sta già pubblicando altro, **infila il file in quel push** invece di
 farne uno a sé.
@@ -382,7 +401,7 @@ Una riga per versione: `v14.77 - hover istantaneo nel Pannello, selezione spenta
 visitatori`. Serve a dare il contesto recente, non a documentare.
 
 ## Decisioni dell'utente                      [max 8 righe]
-Solo quelle di questa sessione, ognuna con dove è registrata (`CLAUDE.md §...`) oppure
+Solo quelle di questa sessione, ognuna con dove è registrata (`Rules.md §...`) oppure
 con 'DA REGISTRARE' se il travaso non è stato possibile.
 
 ## Verifiche arretrate                        [max 5 righe]
@@ -423,12 +442,14 @@ cos'è, **a quale voce serve** e il comando con cui si riapre. Evasa la voce, il
 Questo modo **è** l'avvio di sessione: non si riprende un lavoro in corso senza avere
 in testa le regole, altrimenti si ricomincia dagli errori già fatti.
 
-### 0. Esegui il protocollo di avvio del `CLAUDE.md`
+### 0. Esegui il protocollo di avvio
 
-`CLAUDE.md` si carica da sé ed è l'**hub**: la sua 'Regola n. 1' dice quali file di
-regole caricare, in che ordine, come leggerli e cosa chiedere all'utente. Si segue
-quello, senza che questa skill ripeta l'elenco: sarebbe una seconda fonte di verità,
-cioè esattamente ciò che la regola n. 1 di questa skill vieta.
+**Per Claude** è in `Rules.md` dell'hub, § '🚀 Protocollo di avvio' (fino al 2026-10-03 nel
+`CLAUDE.md` dell'hub, che oggi lo carica importando quel file): permessi e hook, quali file di
+regole caricare, che cosa chiedere all'utente. **Per gli altri agenti** è l'ordine di lettura
+del nucleo, in `AGENTS.md` § '🧭 Come si legge il resto'. Si segue quello, senza che questa
+skill ripeta l'elenco: sarebbe una seconda fonte di verità, cioè esattamente ciò che la regola
+n. 1 di questa skill vieta.
 
 Quindi: prima il protocollo di avvio (comprese le domande all'utente e la lettura del
 brief, che è già un suo passo), poi il resto di questo modo, che è la parte che il
@@ -437,13 +458,13 @@ protocollo **non** copre: verifica ed evasione.
 ### 0b. Ricopia le skill nelle impostazioni utente
 
 ⚠️⚠️ **A OGNI AVVIO, E SENZA CHIEDERE NIENTE** (istruzione dell'utente, 2026-09-23). Le
-skill di terzi installate nel repo del sito si ricopiano in `~/.claude/skills/`, che nel
+skill di terzi installate nel repo dell'hub si ricopiano in `~/.claude/skills/`, che nel
 contenitore di una sessione nuova è **vuoto**, perché quel contenitore è effimero e il file
 sparisce con lui. Il comando è **idempotente**, sovrascrive quello che trova e va lanciato
 come comando **singolo**:
 
 ```
-python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expanduser('~/.claude/skills');os.makedirs(d,exist_ok=True);shutil.copytree(s,d,dirs_exist_ok=True)"
+python3 -c "import shutil,os;s='<radice dell'hub>/.agents/skills';d=os.path.expanduser('~/.claude/skills');os.makedirs(d,exist_ok=True);shutil.copytree(s,d,dirs_exist_ok=True)"
 ```
 
 - ⚠️⚠️ **CHE COSA COPRE DAVVERO, E VA SAPUTO PER NON CREDERLO PIÙ DI QUANTO È**: una skill
@@ -451,14 +472,14 @@ python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expa
   cartella che contiene i repo affiancati. È misurato il 2026-09-23: `council` e `desc` vivono
   **solo** in `tools/.claude/skills/` e comparivano nell'elenco all'avvio, mentre
   `~/.claude/skills/` non esisteva affatto. Quindi la copia serve alle sessioni che **non**
-  montano il repo del sito, e nelle altre costa un comando e non fa danno.
+  montano il repo dell'hub, e nelle altre costa un comando e non fa danno.
 - ⚠️ **La destinazione è la sola casa che sopravvive alla radice di progetto**, come per il
   permesso `Artifact` del passo 0 del protocollo di avvio: le impostazioni utente si leggono a
   prescindere da dove la sessione è ancorata.
 - ⚠️ **Il limite è quello di ogni file scritto DENTRO la sessione**: quello che si copia adesso
   può non entrare in vigore in questa sessione, perché le skill si leggono all'avvio. Si
-  dichiara invece di prometterlo risolto, ed è la stessa nota che il `CLAUDE.md` di root contiene
-  sulle tre vie del permesso `Artifact`.
+  dichiara invece di prometterlo risolto, ed è la stessa nota che `Rules.md` dell'hub contiene
+  sulle tre vie del permesso `Artifact` (§ '🖼️ Artefatti').
 - **Da dove vengono**: l'elenco delle quindici e il modo di installarne altre vivono nel brief
   finché quel lavoro è aperto; quelle già entrate sono file committati come gli altri.
 
@@ -470,8 +491,9 @@ python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expa
    modo più rapido di sapere che cosa hanno fatto gli altri agenti e gli editor admin.
 2. ⚠️ **Verificalo contro la realtà prima di fidarti.** Il file è una fotografia e può
    essere vecchio di giorni: rifai i comandi del passo 1 del modo scrittura e confronta.
-   Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
-   (salvataggi admin) e **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello).
+   Possono essere cambiati **la versione live** (deploy o release arrivati dopo), **i ref**
+   (altre sessioni, altri agenti, salvataggi admin) e, nei due siti, **`siteFlags` in
+   `dati.js`** (l'utente ha usato il Pannello).
    Dove il file e la realtà divergono vince la realtà: dillo e correggi il file.
    ⚠️ Vale anche per i **riferimenti incrociati fra file di regole**: se un puntatore
    citato dal brief (o incontrato lavorando) rimanda a una sezione che una modifica
@@ -488,10 +510,10 @@ python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expa
    meglio una domanda ora che un errore dopo).
 5. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
 6. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
-   la misura vive in `CLAUDE.md`.
+   la misura vive nelle regole del progetto.
 
 ⚠️ **Nelle richieste di consenso agli strumenti offri sempre l'opzione 'Consenti
-sempre'** quando è disponibile: l'utente lavora a lungo su questo repo e non vuole
+sempre'** quando è disponibile: l'utente lavora a lungo su questi repo e non vuole
 autorizzare lo stesso comando a ogni chiamata.
 
 ---
@@ -499,7 +521,7 @@ autorizzare lo stesso comando a ogni chiamata.
 ## Cosa NON mettere nell'handoff
 
 - La cronaca della sessione, i tentativi intermedi, i dialoghi.
-- Regole, misure e decisioni durevoli: vivono in `CLAUDE.md` (passo 2). Qui al massimo
+- Regole, misure e decisioni durevoli: vivono nei file di regole (passo 2). Qui al massimo
   il puntatore.
 - Quello che una sessione nuova scopre da sé con un comando: l'elenco dei file, la
   versione nel badge, quali effetti sono accesi.
@@ -531,7 +553,7 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 <!-- brief-intro:inizio -->
 > **Che cos'è questo file, e che cosa devi farne.** È lo **stato volatile** lasciato dalla
 > sessione precedente: cosa era in corso e dove si è fermato. È **unico e trans-repo**, copre
-> `Roccobot/roccobot.github.io` e `Roccobot/tools`, e vive in `Roccobot/tools`, `.memo/LATEST.md`
+> tutti i repo di Roccobot e tutti gli agenti, e vive in `Roccobot/tools`, `.memo/LATEST.md`
 > (leggibile e scrivibile anche via Worker:
 > <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>).
 >
@@ -550,17 +572,17 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 >    stai verificando), il ricordo, l'asserzione di un'altra sessione, una PR **aperta** invece
 >    che mergiata, e **nemmeno la parola dell'utente**. Se la prova non è ottenibile ora, la
 >    voce **non si cancella**: si riscrive dicendo che manca e come si otterrebbe.
-> 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nel
->    `CLAUDE.md` del repo o nelle regole universali, **non qui**; qui resta solo l'aperto. E una
+> 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nelle
+>    regole del repo (`Rules.md`, `AGENTS.md`) o in quelle universali, **non qui**; qui resta solo l'aperto. E una
 >    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla.
 > 6. **Il brief include anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
 >    `.memo/files/`, accanto a questo file, e la sezione 'Allegati' dice a quale voce serve
 >    ognuno e come si riapre. Valgono le stesse tre sorti delle voci: evasa la voce, il file si
 >    **cancella dal repo**. Mai segreti là dentro, e mai file che si rifanno con un comando.
 >
-> ⚠️ **La procedura completa vive nella skill `handoff`**, in `roccobot.github.io/.claude/skills/`,
+> ⚠️ **La procedura completa vive nella skill `handoff`**, in `roccobot.github.io/.agents/skills/`,
 > e questo riquadro ne è il minimo operativo, non un sostituto. **Se la skill non è in scena**
-> (per esempio in una sessione che monta solo `Roccobot/tools`), i sei punti qui sopra bastano
+> (una sessione senza l'hub clonato, o una piattaforma che non la carica), i sei punti qui sopra bastano
 > per lavorare bene: quello che non puoi fare, lo **dichiari** invece di ricostruirlo a memoria.
 > ⚠️ **Questo riquadro fa parte del formato del file**: chi riscrive il brief lo **conserva
 > verbatim, marcatori HTML compresi**. Non è un invito alla diligenza: la sua sorgente unica è
