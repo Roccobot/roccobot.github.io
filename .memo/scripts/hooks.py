@@ -11,7 +11,7 @@ impostazioni UTENTE (`~/.claude/settings.json`), che non sanno in che repo si la
 questo la logica vive qui, e capisce il repo dal comando o dal file che la chiamata tocca.
 
 DOVE SI INSTALLA. Lo stesso comando, identico carattere per carattere, sta in tre posti: le
-impostazioni utente (le scrive la riga del passo 0 del `CLAUDE.md` di root, che è anche la
+impostazioni utente (le scrive la riga del passo 0 del protocollo di avvio, in `Rules.md`, che è anche la
 riga dello script di setup dell'ambiente), il `.claude/settings.json` dell'hub e quelli dei
 repo dei siti. Claude Code toglie i doppioni fra comandi identici, quindi ogni controllo gira
 una volta sola; e il comando cerca questo file in più percorsi, così vale da qualunque radice.
@@ -215,8 +215,8 @@ def mode_start(ev):
             pass
     if not installati:
         righe.append('gli hook NON sono nelle impostazioni utente: nelle sessioni coi repo affiancati '
-                     'non girano. La riga del passo 0 del CLAUDE.md di root li installa, e nello script '
-                     'di setup dell\'ambiente li porta dalla sessione successiva.')
+                     'non girano. La riga del passo 0 del protocollo di avvio (Rules.md dell\'hub) li installa, e '
+                     'messa nello script di setup dell\'ambiente vale dalla sessione successiva.')
     for r in righe:
         print(f'[start] {r}')
     # What the other agents did since the last turn: catchup.py reads the stamp of the brief.
