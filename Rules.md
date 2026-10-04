@@ -80,6 +80,17 @@ non è vero per nessun progetto.
   promozione dello schema a default. Le note che lo dicono 'interno' o 'a tre cifre' sono
   superate.
 
+## 🌐 I file della radice del dominio
+
+- **Questo repo è la radice di `roccobot.github.io`**, quindi i file che valgono per tutto il dominio
+  vivono qui (dal 2026-10-04, blocco G del lavoro sui siti gemelli): `robots.txt`, `sitemap.xml` e
+  `llms.txt`, l'indice dei progetti per gli agenti, che rimanda al `llms.txt` di ciascun sito.
+- ⚠️ **La mappa elenca i soli progetti pubblici con una pagina** (Arda, Terramare, AIV, CleanSVG,
+  RatioLab): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
+  altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
+- ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
+  Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
+
 ## 📜 Regola n. 1: le regole universali e come si caricano
 
 Il `CLAUDE.md` di questo repo è l'**hub** per Claude: è il solo file che si carica da sé a

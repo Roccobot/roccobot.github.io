@@ -1,0 +1,11 @@
+# roccobot.github.io
+
+> Projects by Rocco Casadei (Roccobot), graphic designer and photographer. Each project lives in its own folder of this domain.
+
+## Sites
+
+- [I Grandi di Arda](https://roccobot.github.io/arda/): a bilingual ranking of the mightiest beings in Tolkien's legendarium. Data guide: [llms.txt](https://roccobot.github.io/arda/llms.txt).
+- [Il mondo di Terramare](https://roccobot.github.io/earthsea/): a bilingual ranking of the characters of Le Guin's Earthsea cycle. Data guide: [llms.txt](https://roccobot.github.io/earthsea/llms.txt).
+- [AIV](https://roccobot.github.io/AIV/): download page of Astonishing Image Viewer, an image viewer and editor for Android.
+- [CleanSVG](https://roccobot.github.io/CleanSVG/): a page that cleans up SVG files.
+- [RatioLab](https://roccobot.github.io/ratiolab/): a page about ratios between two numbers.
