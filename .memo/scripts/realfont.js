@@ -5,6 +5,13 @@
 // ogni misura di larghezza, a-capo o allineamento ottico è di un ALTRO carattere. La
 // pagina si vede benissimo, per questo l'errore passa inosservato.
 //
+// ⚠️⚠️ DA TERRAMARE 2.83 E ARDA 15.73 I DUE SITI NON CHIEDONO PIÙ GOOGLE FONTS: i caratteri
+// vivono in `fonts/` di ciascun repo, e una pagina servita via HTTP li trova da sé. Il
+// dirottamento di `attach` resta per le copie di confronto delle versioni precedenti, che
+// chiedono ancora Google; sulle versioni nuove non intercetta niente, e servire la cartella
+// basta. Le famiglie sono due (Cinzel ed EB Garamond): Cinzel Decorative è uscito con la scelta
+// A2 dell'utente.
+//
 // Vive qui e non nello scratchpad perché lo scratchpad muore con la sessione. ⚠️ Sta nel
 // repo dell'hub e non in quello di un sito perché serve TUTTI E DUE: 'I Grandi di Arda' e
 // 'I Grandi di Terramare' caricano le stesse tre famiglie, e dal 2026-09-27 gli script
@@ -25,7 +32,8 @@
 //
 // ⚠️ `document.fonts.check()` MENTE: risponde true anche senza alcuna webfont. La spia
 // affidabile è `document.fonts.size` (0 = nessuna) o il conto degli `status === 'loaded'`.
-// Atteso su Arda: n 28, loaded >= 9, famiglie Cinzel / Cinzel Decorative / EB Garamond.
+// Atteso dalla 15.73 di Arda e dalla 2.83 di Terramare: n 6, loaded >= 3, famiglie Cinzel /
+// EB Garamond. Sulle versioni precedenti: n 28, loaded >= 9, con anche Cinzel Decorative.
 
 const fs = require('fs');
 const os = require('os');
