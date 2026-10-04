@@ -1,0 +1,9 @@
+# roccobot.github.io: i progetti pubblicati, ognuno nella sua cartella.
+# I file di regole (.md) e il brief (.memo/) sono materiale di lavoro, non pagine: restano
+# raggiungibili, ma non si indicizzano.
+User-agent: *
+Allow: /
+Disallow: /*.md$
+Disallow: /.memo/
+
+Sitemap: https://roccobot.github.io/sitemap.xml
