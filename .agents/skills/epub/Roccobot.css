@@ -1,0 +1,286 @@
+/* READING ROCCOBOT: tema adattivo per EPUB, tipografia sans-serif.
+   Chiaro per impostazione predefinita, scuro se richiesto dal dispositivo.
+   Le preferenze del lettore EPUB possono prevalere sul CSS.
+*/
+
+/* Modalità chiara: fallback per lettori che ignorano prefers-color-scheme. */
+html {
+  background-color: #FCFAF6;
+  color: #1F1A17;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background-color: #FCFAF6;
+  color: #1F1A17;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.125em;
+  max-width: 34em;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0 1.2em;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.012em;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  text-indent: 1em;
+  margin: 0;
+  text-align: justify;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  orphans: 2;
+  widows: 2;
+}
+
+/* Capitoli e sezioni */
+h1, h2, h3 {
+  color: #6b4931;
+  text-indent: 0;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.025em;
+  page-break-after: avoid;
+  break-after: avoid;
+  text-wrap: balance;
+}
+
+h1 {
+  margin: 5em 0 1em 0;
+  font-size: 125%;
+  padding-bottom: 0.55em;
+  border-bottom: 1px solid #d6d0c6;
+}
+
+h1 + p, h2 + p, h3 + p, .titoletto + p {
+  text-indent: 0;
+}
+
+h1.no {
+  margin: 1em 0 0 0;
+}
+
+h1.up {
+  margin: 0 0 5em 0;
+}
+
+h2 {
+  margin: 2em 0 1em 0;
+  font-size: 120%;
+}
+
+h3 {
+  margin: 0 0 1em 0;
+  font-size: 110%;
+  color: #765334;
+}
+
+p + h3 {
+  margin-top: 2em;
+}
+
+/* Spaziature e allineamenti originali */
+.sp {
+  margin-top: 1em;
+}
+
+.sd {
+  margin-bottom: 1em;
+}
+
+.spd {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-indent: 0;
+  text-align: center;
+}
+
+.noindent {
+  text-indent: 0;
+}
+
+.vv {
+  text-indent: -1em;
+  margin-left: 3em;
+}
+
+.side {
+  margin-left: 1.8em;
+  margin-right: 1.8em;
+}
+
+.neg {
+  text-indent: -1em;
+  margin-left: 3em;
+  margin-right: 2em;
+  margin-top: 0.5em;
+}
+
+/* Frontespizio */
+.title {
+  color: #6b4931;
+  text-indent: 0;
+  text-align: center;
+  margin-bottom: 3em;
+  font-family: inherit;
+  font-size: 1.2em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.aut {
+  color: #6b4931;
+  text-indent: 0;
+  font-size: 170%;
+  font-weight: 700;
+}
+
+.aut-sub {
+  color: #555c67;
+  text-indent: 0;
+  font-size: 140%;
+  font-weight: 700;
+  margin-bottom: 1em;
+}
+
+.aut-sub + p {
+  text-indent: 0;
+}
+
+.titoletto {
+  color: #6b4931;
+  text-indent: 0;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.sans {
+  font-family: sans-serif;
+}
+
+div.index p {
+  margin-left: 2em;
+  text-indent: 0;
+}
+
+/* Link riconoscibili ma non abbaglianti */
+a:link, a:visited, a:active {
+  color: #8A5A2B;
+  text-decoration: underline;
+  text-decoration-color: #B48B65;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.16em;
+}
+
+a:hover, a:focus {
+  color: #70451F;
+  text-decoration-color: currentColor;
+}
+
+/* Dettagli editoriali discreti */
+blockquote {
+  color: #4f5660;
+  border-left: 2px solid #b79a78;
+  margin: 1.5em 0;
+  padding: 0.2em 0 0.2em 1em;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #d6d0c6;
+  margin: 2em auto;
+}
+
+::selection {
+  background-color: #4FD9BE;
+  color: #FFFFFF;
+}
+
+/* Immagini e spartiti */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+img.partit {
+  margin: 1em 10%;
+  width: 80%;
+}
+
+/* La copertina si adatta alla pagina: intera, centrata, senza deformarsi. */
+html.cover-page, html.cover-page body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  text-align: center;
+}
+
+html.cover-page img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100vh;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Adattamenti opzionali su dispositivi che rispettano il tema. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Tema scuro: grigio caldo e testo quasi bianco.
+   Valido nei lettori EPUB che supportano prefers-color-scheme. */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #403d3a;
+    color: #f5f5f2;
+  }
+
+  /* Sullo scuro il testo è più spesso, per scelta dell'autore del tema. */
+  body { font-weight: 600; }
+
+  h1, h2, .title, .aut, .titoletto { color: #f0d5b2; }
+  h3 { color: #e4cfb4; }
+  .aut-sub { color: #d2d7df; }
+
+  h1 { border-bottom-color: #50545b; }
+  hr { border-top-color: #50545b; }
+
+  a:link, a:visited, a:active {
+    color: #b6d9f4;
+    text-decoration-color: #91b4cd;
+  }
+  a:hover, a:focus { color: #e0f1ff; }
+  blockquote {
+    color: #e2e5e8;
+    border-left-color: #bba081;
+  }
+  ::selection {
+    background-color: #60768d;
+    color: #ffffff;
+  }
+}
