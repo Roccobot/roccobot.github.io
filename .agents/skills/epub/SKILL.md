@@ -110,6 +110,12 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
     tratta un SVG come immagine solo se il suo **unico** figlio è un `<image>`, e incorpora la
     bitmap solo se l'attributo è `href`. Con un `<title>` accanto, o con `xlink:href`, la
     copertina restava vuota. Per questo l'SVG contiene il solo `<image>`, con `href`.
+  - ⚠️ **In Episteme la copertina non riempie la pagina, ed è una regola dell'app**: nella vista
+    paginata un'immagine è alta al massimo l'86% della pagina, ed è allineata in alto, non al
+    centro (`SharedMeasuredEpubPaginator.kt`, `measureImageSize`, dove il tetto è scritto nel
+    codice). Il libro non può scavalcarlo: provato dall'utente il 2026-10-08, la copertina appare
+    intera e col fondo trasparente, ma più piccola e in alto. Murasaki invece la adatta allo
+    schermo. Non si rincorre con CSS o misure diverse.
   - ⚠️ **Il prezzo**, dichiarato: i lettori molto vecchi (Adobe Digital Editions 2 e simili)
     conoscono solo `xlink:href`. Fra loro e i lettori dell'utente si è scelto quelli dell'utente.
 - **Lo spine contiene due voci**, copertina e testo. L'indice (`nav.xhtml`) elenca la copertina,
