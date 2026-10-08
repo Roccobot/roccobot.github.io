@@ -1,31 +1,34 @@
 ---
 name: epub
-description: Costruisce un EPUB 3.3 standard, di solito da tre file (una copertina, un testo HTML, un foglio di stile) e da un insieme diverso deducendone la struttura o chiedendo, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
+description: Costruisce un EPUB 3.3 standard, di solito da due file (una copertina e un testo HTML) e da un insieme diverso deducendone la struttura o chiedendo, con il foglio di stile della casa, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
 ---
 
-# `/epub`: un EPUB standard da copertina, testo e stile
+# `/epub`: un EPUB standard da copertina e testo
 
 > **Autore**: Rocco Casadei, a.k.a. Roccobot. Nata il 2026-10-08 da un prompt dell'utente,
 > che resta la specifica: le scelte qui sotto lo applicano, e dove lo interpretano lo dicono.
 
 ## 📥 Che cosa serve
 
-Tre file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac dell'utente:
+Due file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac dell'utente:
 
 | file | che cosa diventa |
 |---|---|
 | `Cover.jpg` | la copertina, da sola, come primo capitolo |
 | `Text.html` | il testo, secondo e ultimo capitolo |
-| `Style.css` | il foglio di stile interno del libro |
 
 Il nome conta poco: una copertina in PNG, GIF o WebP va bene lo stesso.
 
+🎨 **Il foglio di stile non si chiede più: è sempre `Roccobot.css`**, accanto a questo file
+(decisione dell'utente, 2026-10-08). Un CSS che arriva con i file non lo sostituisce; le regole
+che il testo porta in un `<style>` si accodano in fondo, come prima.
+
 ⚠️ **È la struttura più comune, non l'unica** (precisazione dell'utente, 2026-10-08). Se arriva
-un insieme diverso (più file HTML, nessun CSS, due fogli di stile, immagini dentro il testo,
-la copertina mancante) la struttura si **deduce** dai file quando è univoca: per esempio più
+un insieme diverso (più file HTML, immagini dentro il testo, la copertina mancante, un CSS
+allegato che sembra voluto al posto di quello della casa) la struttura si **deduce** dai file quando è univoca: per esempio più
 HTML coi nomi numerati sono capitoli in quell'ordine. Quando non è univoca, si **chiede**
 all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
-- Lo script copre il caso dei tre file. Per un insieme diverso lo si adatta (o si estende, se il
+- Lo script copre il caso dei due file. Per un insieme diverso lo si adatta (o si estende, se il
   caso si ripresenta) tenendo le stesse scelte di questa skill: pulizia dell'XHTML, ancoraggi,
   copertina, metadati e validazione.
 
@@ -37,7 +40,7 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    il testo attesta: un dato che non c'è resta fuori, e nel resoconto si dice che manca.
 2. **Lancia lo script**, che vive accanto a questo file:
    ```
-   python3 -I <skill>/build_epub.py --cover Cover.jpg --text Text.html --css Style.css --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
+   python3 -I <skill>/build_epub.py --cover Cover.jpg --text Text.html --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
    ```
    Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
    `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
@@ -70,6 +73,22 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
   e normalizza gli spazi tenendo gli spazi unificatori, che sono contenuto.
 - Mantiene il `lang` di un passo in un'altra lingua dentro il testo: è un'informazione per la
   sintesi vocale, non un residuo.
+
+## 🎨 Il foglio di stile `Roccobot.css`
+
+Tema sans-serif chiaro, scuro quando il dispositivo lo chiede (`prefers-color-scheme`). È
+l'utente a sceglierne i valori, e le revisioni passano da lui. Le scelte del 2026-10-08, dopo una
+revisione con lui:
+- **peso 400 nel chiaro, 600 nello scuro**, dove vuole un carattere molto spesso;
+- **selezione `#4FD9BE` nel chiaro** (era un rosa acceso), `#60768d` nello scuro;
+- il frontespizio (`.title`) senza `margin-top: 25%`, che si calcolava sulla larghezza;
+- la regola `html.cover-page` adatta l'immagine alla pagina invece di allargarla al 100%. La
+  copertina dei libri della skill non la usa, perché ha il suo `cover.css`.
+- ⚠️ **Restano per sua scelta, anche se segnalati nella revisione**: sfondo e colore forzati su
+  `html` e `body`, che in un'app che segue il proprio tema invece di quello del sistema possono
+  scontrarsi con lui; `max-width: 34em` e `font-size: 1.125em` sul `body`; le regole senza
+  effetto (`.sans`, `prefers-reduced-motion`, `:hover`); i link marroni nel chiaro e azzurri
+  nello scuro; i filetti a basso contrasto. Non si correggono di iniziativa.
 
 ## ⚓ Gli ancoraggi
 

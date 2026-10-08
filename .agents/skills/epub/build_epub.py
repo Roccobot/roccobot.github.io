@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Build a standard EPUB 3.3 book from three files: a cover image, an HTML text and a CSS file.
+Build a standard EPUB 3.3 book from a cover image and an HTML text, styled with the house
+stylesheet `Roccobot.css` that lives beside this script.
 
 The book has two spine items and nothing else: the cover, which is a page holding only the
 image, and the text. The HTML is rebuilt as clean XHTML: DOCTYPE, `lang`, `<meta charset>`,
@@ -13,7 +14,7 @@ publisher) is passed on the command line: the skill that drives this script read
 and decides. Everything the script decided on its own is printed in the final report.
 
 Usage:
-    build_epub.py --cover Cover.jpg --text Text.html --css Style.css --out Book.epub
+    build_epub.py --cover Cover.jpg --text Text.html --out Book.epub
                   [--title T] [--author A] [--author-file-as "Surname, Name"]
                   [--lang it] [--identifier urn:isbn:...] [--publisher P] [--date YYYY]
                   [--description D] [--subject S ...] [--no-guide]
@@ -72,6 +73,8 @@ STOPWORDS = {
     'de': 'der die das und ist nicht zu den mit von ein eine sich auf dem des ich es im',
     'pt': 'o a os as de e que em um uma não para com por se do da no na mais',
 }
+
+STYLESHEET = Path(__file__).with_name('Roccobot.css')
 
 XHTML_NS = 'http://www.w3.org/1999/xhtml'
 EPUB_NS = 'http://www.idpf.org/2007/ops'
@@ -450,7 +453,8 @@ def xhtml_page(title, lang, body_xml, css_href=None, extra_head=''):
 def build(args):
     cover = Path(args.cover).read_bytes()
     source = Path(args.text).read_bytes().decode('utf-8', errors='replace')
-    css = Path(args.css).read_text(encoding='utf-8')
+    # The house stylesheet lives beside this script and is the only one a book gets.
+    css = STYLESHEET.read_text(encoding='utf-8')
     body, lang, title, found, moved, toc, report = clean(source, args.lang)
     labels = LABELS.get(lang, LABELS['en'])
     title = args.title or found.get('dc.title') or title or 'Senza titolo'
@@ -584,7 +588,6 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     p.add_argument('--cover', required=True)
     p.add_argument('--text', required=True)
-    p.add_argument('--css', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--title')
     p.add_argument('--author')
