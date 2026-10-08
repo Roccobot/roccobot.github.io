@@ -95,10 +95,23 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
   lettura la scala per intero, centrata, senza deformarla né ritagliarla. Il foglio
   `cover.css` contiene solo la geometria (pagina e SVG al 100%, margini a zero) e nessun
   colore, quindi intorno all'immagine si vede lo sfondo del lettore, bianco, nero o seppia.
-  Niente didascalia: il nome `Copertina` è nel `<title>` dell'SVG, per l'accessibilità.
+  Niente didascalia: il nome `Copertina` è nell'`aria-label` dell'SVG, per l'accessibilità.
   - ⚠️ **La prima versione aveva un `<img>` senza CSS**, come chiedeva il prompt alla lettera:
     in alcune app l'immagine compariva alla sua misura reale invece di adattarsi. L'SVG è il
     metodo più compatibile, ed è quello che usano Calibre e Sigil.
+- **I lettori di riferimento dell'utente sono Murasaki su macOS ed Episteme su Android**
+  (sua indicazione, 2026-10-08), e una scelta di compatibilità si misura prima su quei due.
+  - **Murasaki** (di Masaaki Mizumoto, Giappone; a pagamento una tantum sul Mac App Store) è
+    chiuso, e la sua scheda dice che scorre il libro come una pagina web. Il motore non è
+    dichiarato: che sia quello di Safari è un'ipotesi, da confermare aprendo un libro di prova.
+  - **Episteme** (open source, licenza AGPL, su F-Droid e Google Play) nella vista paginata
+    **non** usa un browser: smonta l'HTML in blocchi suoi. Letto nel suo sorgente
+    (`HtmlParser.kt` e `SharedEpubSemanticBlocks.kt`, repository `Aryan-Raj3112/episteme`):
+    tratta un SVG come immagine solo se il suo **unico** figlio è un `<image>`, e incorpora la
+    bitmap solo se l'attributo è `href`. Con un `<title>` accanto, o con `xlink:href`, la
+    copertina restava vuota. Per questo l'SVG contiene il solo `<image>`, con `href`.
+  - ⚠️ **Il prezzo**, dichiarato: i lettori molto vecchi (Adobe Digital Editions 2 e simili)
+    conoscono solo `xlink:href`. Fra loro e i lettori dell'utente si è scelto quelli dell'utente.
 - **Lo spine contiene due voci**, copertina e testo. L'indice (`nav.xhtml`) elenca la copertina,
   il testo e i suoi titoli.
 - **L'indice c'è sempre, perché è obbligatorio**: la specifica vuole un documento di

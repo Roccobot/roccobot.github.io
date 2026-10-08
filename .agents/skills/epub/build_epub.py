@@ -471,13 +471,16 @@ def build(args):
     # The cover is an SVG holding the image: the viewBox is the image's own size, so every
     # reading system scales it to the page without cropping or stretching it, and with no
     # background anywhere the reader's own page colour (white, black, sepia) shows around it.
+    # The <image> is the SVG's only child and uses the plain SVG 2 `href`: Episteme (Android)
+    # treats an SVG as a picture only when it wraps a single <image>, and embeds the bitmap only
+    # through `href`; with a <title> beside it, or `xlink:href`, its paginated view stays blank.
+    # The accessible name lives in `aria-label` for the same reason.
     width, height = image_size(cover)
     cover_body = (f'<body epub:type="cover">\n'
-                  f'  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"'
-                  f' version="1.1" width="100%" height="100%" viewBox="0 0 {width} {height}"'
-                  f' preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc_attr(labels["cover_alt"])}">\n'
-                  f'    <title>{esc_text(labels["cover_alt"])}</title>\n'
-                  f'    <image width="{width}" height="{height}" xlink:href="../Images/{cover_name}"/>\n'
+                  f'  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"'
+                  f' viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"'
+                  f' role="img" aria-label="{esc_attr(labels["cover_alt"])}">\n'
+                  f'    <image width="{width}" height="{height}" href="../Images/{cover_name}"/>\n'
                   f'  </svg>\n</body>')
     cover_page = xhtml_page(labels['cover'], lang, cover_body, '../Styles/cover.css')
     # Only geometry: the page fills the screen and the SVG fills the page. No colour at all.
