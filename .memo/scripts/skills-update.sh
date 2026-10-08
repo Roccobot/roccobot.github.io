@@ -20,7 +20,7 @@ set -euo pipefail
 
 RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
 DEST="$RADICE/.agents/skills"
-CASA=(handoff)
+CASA=(handoff epub)
 # 'VoltAgent/awesome-design-md' non c'è di proposito: non porta nessun SKILL.md, quindi non è
 # una skill ma una raccolta di documenti.
 PACCHETTI=(
