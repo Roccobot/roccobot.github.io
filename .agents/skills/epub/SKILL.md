@@ -80,7 +80,7 @@ Tema sans-serif chiaro, scuro quando il dispositivo lo chiede (`prefers-color-sc
 l'utente a sceglierne i valori, e le revisioni passano da lui. Le scelte del 2026-10-08, dopo una
 revisione con lui:
 - **peso 400 nel chiaro, 600 nello scuro**, dove vuole un carattere molto spesso;
-- **selezione `#4FD9BE` nel chiaro** (era un rosa acceso), `#60768d` nello scuro;
+- **selezione `#43B59E` nel chiaro** (era un rosa acceso, poi `#4FD9BE`), `#60768d` nello scuro;
 - il frontespizio (`.title`) senza `margin-top: 25%`, che si calcolava sulla larghezza;
 - la regola `html.cover-page` adatta l'immagine alla pagina invece di allargarla al 100%. La
   copertina dei libri della skill non la usa, perché ha il suo `cover.css`.
