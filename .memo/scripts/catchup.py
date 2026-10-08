@@ -6,7 +6,7 @@ Usage:
                                with the ones that touch rules, skills or configuration marked,
                                and the lines of rules/Changelog.md written after it
     catchup.py --stamp AGENT   the stamp line to write at the top of the brief, for AGENT
-                               (Claude Code, Codex, Cursor, Antigravity, Grok Bot...)
+                               (Claude Code, Codex, Grok Bot)
     catchup.py --no-fetch      same, without updating the remote branches first
 
 The brief (tools/.memo/LATEST.md) carries on its second line the stamp of the last agent

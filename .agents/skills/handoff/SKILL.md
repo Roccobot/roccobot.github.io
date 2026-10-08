@@ -13,7 +13,7 @@ lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Qu
 esattamente quel salto, e nient'altro.
 
 ⚠️ **Vale per tutti gli agenti** (dal 2026-10-03, con la ristrutturazione multipiattaforma):
-Claude Code, Codex, Cursor, Antigravity e Grok Bot scrivono e leggono lo stesso brief. Come ogni
+Claude Code, Codex e Grok Bot, la squadra dal 2026-10-08, scrivono e leggono lo stesso brief. Come ogni
 piattaforma arriva a questa skill lo dice `Platforms.md` di `Roccobot/tools`; dove una
 piattaforma non la carica, il riquadro fisso in testa al brief ne è il minimo operativo.
 
