@@ -802,8 +802,8 @@ poi divergerebbe.
       come **comandi singoli** e con percorso assoluto: `python3 <radice>/.memo/scripts/refcheck.py`
       per i file di regole,
       `git diff --cached | python3 <radice>/.memo/scripts/refcheck.py --diff` per le righe
-      aggiunte, e `printf '%s' '<testo>' | python3 <radice>/.memo/scripts/refcheck.py --text`
-      per il messaggio di commit **completo** e per il corpo della PR. Gli altri restano
+      aggiunte, e `python3 <radice>/.memo/scripts/refcheck.py --text FILE` per il messaggio di
+      commit **completo** e per il corpo della PR, scritti in un file. Gli altri restano
       scoperti, quindi versione e allineamento si guardano a occhio.
       - ⚠️⚠️ **IL CORPO DELLA PR SI SCRIVE PRIMA IN UN FILE, e questa riga esiste perché senza
         di lei quel controllo non gira mai.** Il messaggio di commit passa da un file per
@@ -824,10 +824,19 @@ poi divergerebbe.
           stato controllato. Quella prova dice che il difetto non è la disattenzione ma la
           superficie, ed è la ragione per cui l'elenco qui sopra si legge come un criterio e
           non come una lista da spuntare.
-      - ⚠️ **Il modo `--diff` legge il diff che gli arriva IN INGRESSO, e da solo mente**:
-        lanciato senza la pipe stampa `0 righe in 0 file`, che si legge come 'nessun difetto'
-        mentre è 'nessun dato'. Va sempre incanalato come sopra. È il falso negativo peggiore,
-        lo stesso di un grep col pattern invecchiato.
+      - ⚠️⚠️ **`--text` e `--diff` senza niente da leggere escono 2, dal 2026-10-08, e prima
+        mentivano.** Leggevano solo stdin: lanciati senza la pipe, o col percorso come argomento
+        (`refcheck.py --text FILE`, il caso di quel giorno, con il percorso ignorato in
+        silenzio), controllavano un testo vuoto e rispondevano 'nessun difetto' con esito 0
+        (`--diff` stampava `0 righe in 0 file`); con uno stdin che non si chiude restavano in
+        attesa finché qualcuno non li fermava. Adesso un file si passa come argomento, e uno
+        stdin vuoto, da terminale o muto per qualche secondo (`ATTESA_INGRESSO`) dà
+        `nessun testo in ingresso`; lo stesso esito danno `--html` e `--fix` su un file che non
+        c'è.
+        - ⚠️ **La lezione resta, ed è il motivo per cui la voce non sparisce**: un verde che non
+          dice che cosa ha guardato è il falso negativo peggiore, lo stesso di un grep col
+          pattern invecchiato. Le prove sono in `.memo/scripts/test_refcheck.py`, e girano
+          nell'Action `rules-check`.
       - ⚠️⚠️ **L'uscita del verificatore NON si incanala in `tail` o `head` se poi c'è un
         `&&`**, e questo difetto vanifica l'intero rimedio manuale. In una pipeline il codice
         d'uscita è quello dell'**ultimo** comando, quindi
