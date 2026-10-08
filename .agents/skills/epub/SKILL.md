@@ -1,6 +1,6 @@
 ---
 name: epub
-description: Costruisce un EPUB 3.3 standard da tre file (una copertina, un testo HTML, un foglio di stile), ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
+description: Costruisce un EPUB 3.3 standard, di solito da tre file (una copertina, un testo HTML, un foglio di stile) e da un insieme diverso deducendone la struttura o chiedendo, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
 ---
 
 # `/epub`: un EPUB standard da copertina, testo e stile
@@ -18,8 +18,16 @@ Tre file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac d
 | `Text.html` | il testo, secondo e ultimo capitolo |
 | `Style.css` | il foglio di stile interno del libro |
 
-Il nome conta poco: una copertina in PNG o WebP va bene lo stesso. Se manca uno dei tre file,
-si chiede all'utente prima di cominciare.
+Il nome conta poco: una copertina in PNG, GIF o WebP va bene lo stesso.
+
+⚠️ **È la struttura più comune, non l'unica** (precisazione dell'utente, 2026-10-08). Se arriva
+un insieme diverso (più file HTML, nessun CSS, due fogli di stile, immagini dentro il testo,
+la copertina mancante) la struttura si **deduce** dai file quando è univoca: per esempio più
+HTML coi nomi numerati sono capitoli in quell'ordine. Quando non è univoca, si **chiede**
+all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
+- Lo script copre il caso dei tre file. Per un insieme diverso lo si adatta (o si estende, se il
+  caso si ripresenta) tenendo le stesse scelte di questa skill: pulizia dell'XHTML, ancoraggi,
+  copertina, metadati e validazione.
 
 ## 🧭 La procedura
 
@@ -79,14 +87,24 @@ si chiede all'utente prima di cominciare.
 
 - **EPUB 3.3**, la raccomandazione W3C in vigore (il pacchetto dichiara `version="3.0"`, come
   la specifica prescrive). Il file `mimetype` è il primo ed è salvato senza compressione.
-- **La copertina entra byte per byte**, salvata senza compressione nell'archivio, e la sua
-  pagina contiene la sola immagine: niente CSS, niente sfondo, niente didascalia, con il testo
-  alternativo `Copertina` che l'accessibilità richiede. Il manifesto la marca `cover-image`, e
-  c'è anche il `<meta name="cover">` per i lettori EPUB 2.
+- **La copertina entra byte per byte**, salvata senza compressione nell'archivio. Il manifesto
+  la marca `cover-image`, e c'è anche il `<meta name="cover">` per i lettori EPUB 2.
+- **La sua pagina contiene la sola immagine, adattata allo schermo e su fondo trasparente**
+  (richiesta dell'utente, 2026-10-08). L'immagine è dentro un SVG che ha per `viewBox` le sue
+  dimensioni in pixel (lette dal file) e `preserveAspectRatio="xMidYMid meet"`: ogni app di
+  lettura la scala per intero, centrata, senza deformarla né ritagliarla. Il foglio
+  `cover.css` contiene solo la geometria (pagina e SVG al 100%, margini a zero) e nessun
+  colore, quindi intorno all'immagine si vede lo sfondo del lettore, bianco, nero o seppia.
+  Niente didascalia: il nome `Copertina` è nel `<title>` dell'SVG, per l'accessibilità.
+  - ⚠️ **La prima versione aveva un `<img>` senza CSS**, come chiedeva il prompt alla lettera:
+    in alcune app l'immagine compariva alla sua misura reale invece di adattarsi. L'SVG è il
+    metodo più compatibile, ed è quello che usano Calibre e Sigil.
 - **Lo spine contiene due voci**, copertina e testo. L'indice (`nav.xhtml`) elenca la copertina,
   il testo e i suoi titoli.
-- **I landmark** sono due, `cover` e `bodymatter`. ⚠️ Il landmark dell'indice non c'è perché
-  l'indice non è nello spine, ed epubcheck rifiuta un rimando a un file che non ci sia.
+- **L'indice c'è sempre, perché è obbligatorio**: la specifica vuole un documento di
+  navigazione con esattamente un `nav` di tipo `toc`. I **landmark** invece sono facoltativi, e
+  qui sono due, `cover` e `bodymatter`. ⚠️ Il landmark che punta all'indice non c'è: l'indice
+  non è nello spine, ed epubcheck rifiuta un landmark verso un file che non ci sia.
 - **Il `<guide>` c'è**, con le stesse due voci, per i lettori che conoscono solo EPUB 2; si
   toglie con `--no-guide`.
 - **I metadati**: identificatore, titolo, lingua, `dcterms:modified`, l'autore con
