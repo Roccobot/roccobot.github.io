@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.19
+> **Versione**: 1.20
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -206,13 +206,13 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🏗️ Sviluppo
 
 - **I testi di interfaccia si scrivono da copywriter** (sintesi, astrazione, eleganza,
-  semplicità, precisione), ed entrano con la proposta per essere validati nel collaudo
-  (`Roccobot.md` § '✍️ I testi di interfaccia si scrivono da copywriter').
+  semplicità, precisione); ogni testo nuovo o cambiato, anche scelto dall'utente, si valida
+  nel collaudo (`Roccobot.md` § '✍️ I testi nuovi entrano con la proposta, e si validano nel
+  collaudo').
 - **Qualità**: un modo solo per ogni cosa, un valore in un posto solo, le note che dicono il
   perché, niente codice morto (`Roccobot.md` § '🏅 Codice di altissima qualità').
-- Commenti al codice in **inglese**, con le stesse regole di carattere; nomi dei file nuovi in
-  inglese; firma dell'autore **Rocco Casadei, a.k.a. Roccobot** (`Roccobot.md` § '🧑‍💻 Codice e
-  artefatti generati').
+- Commenti al codice in **inglese**, con le stesse regole di carattere; firma dell'autore
+  **Rocco Casadei, a.k.a. Roccobot** (`Roccobot.md` § '🧑‍💻 Codice e artefatti generati').
 - I **nomi dei file** sono in inglese, e un nome che esiste già non si cambia mai; il
   **contenuto** è in inglese se si comincia da zero, altrimenti resta nella lingua che c'è già
   (`Roccobot.md` § '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
