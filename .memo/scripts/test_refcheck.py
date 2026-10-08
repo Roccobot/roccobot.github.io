@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Regression checks for punctuation and the narrowly approved source quotations.
+"""Regression checks for punctuation, the narrowly approved source quotations, and the input
+of the --text and --diff modes.
 
 Author: Rocco Casadei, a.k.a. Roccobot
 """
 import importlib.util
+import os
+import pty
 import subprocess
 import sys
 import shutil
@@ -111,6 +114,84 @@ class CaporaliTests(unittest.TestCase):
         text = '\u00abTutte le cose hanno un nome\u00bb e \u00abun commento\u00bb'
         defects = refcheck.char_defects(text, refcheck.TOOLS / 'rules/Earthsea.md')
         self.assertEqual([d[2] for d in defects], ['\u00ab', '\u00bb'])
+
+
+class InputTests(unittest.TestCase):
+    """A mode that reads text must say so when it read nothing.
+
+    On 2026-10-08 a session ran `refcheck.py --text FILE`: the path was ignored, the empty stdin
+    of the shell was checked instead, and the text was declared clean with exit 0. With a stdin
+    that never closes the same command waited until it was killed.
+    """
+
+    def run_script(self, *args, stdin=subprocess.DEVNULL, input=None):
+        kwargs = {'input': input} if input is not None else {'stdin': stdin}
+        return subprocess.run([sys.executable, str(SCRIPT), *args], text=True,
+                              capture_output=True, timeout=refcheck.ATTESA_INGRESSO + 30,
+                              **kwargs)
+
+    def write(self, text):
+        handle = tempfile.NamedTemporaryFile('w', suffix='.txt', delete=False, encoding='utf-8')
+        with handle:
+            handle.write(text)
+        self.addCleanup(os.unlink, handle.name)
+        return handle.name
+
+    def test_empty_input_is_an_error(self):
+        for mode in ('--text', '--diff'):
+            for text in ('', '\n\n'):
+                with self.subTest(mode=mode, text=text):
+                    result = self.run_script(mode, input=text)
+                    self.assertEqual(result.returncode, 2, result.stdout)
+                    self.assertIn('nessun testo in ingresso', result.stdout)
+
+    def test_text_reads_the_named_file(self):
+        result = self.run_script('--text', self.write('Un apice curvo: l\u2019errore.\n'))
+        self.assertEqual(result.returncode, 1, result.stdout)
+        result = self.run_script('--text', self.write('Un testo in regola.\n'))
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_diff_reads_the_named_file(self):
+        diff = ('diff --git a/Rules.md b/Rules.md\n--- a/Rules.md\n+++ b/Rules.md\n'
+                '@@ -1 +1 @@\n-Testo\n+Testo \u00abnon ammesso\u00bb.\n')
+        with tempfile.TemporaryDirectory() as empty:
+            result = subprocess.run([sys.executable, str(SCRIPT), '--diff', self.write(diff)],
+                                    text=True, capture_output=True, cwd=empty,
+                                    stdin=subprocess.DEVNULL, timeout=30)
+        self.assertEqual(result.returncode, 1, result.stdout)
+
+    def test_missing_or_empty_file_is_an_error(self):
+        cases = [(mode, path) for mode in ('--text', '--diff')
+                 for path in ('/nessun/file/qui.txt', self.write(''))]
+        # --html and --fix already refused a run without a file; a missing one answered 1 and 0.
+        cases += [(mode, '/nessun/file/qui.html') for mode in ('--html', '--fix')]
+        for mode, path in cases:
+            with self.subTest(mode=mode, path=path):
+                result = self.run_script(mode, path)
+                self.assertEqual(result.returncode, 2, result.stdout)
+
+    def test_silent_stdin_does_not_hang(self):
+        # A pipe whose writer stays open and silent, as in the remote Bash tool of that session.
+        process = subprocess.Popen([sys.executable, str(SCRIPT), '--text'], text=True,
+                                   stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        try:
+            code = process.wait(timeout=refcheck.ATTESA_INGRESSO + 30)
+        finally:
+            process.kill()
+            process.stdin.close()
+            out = process.stdout.read()
+            process.stdout.close()
+        self.assertEqual(code, 2, out)
+        self.assertIn('nessun testo in ingresso', out)
+
+    def test_terminal_stdin_is_an_error(self):
+        master, slave = pty.openpty()
+        try:
+            result = self.run_script('--text', stdin=slave)
+        finally:
+            os.close(slave)
+            os.close(master)
+        self.assertEqual(result.returncode, 2, result.stdout)
 
 
 if __name__ == '__main__':

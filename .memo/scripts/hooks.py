@@ -414,7 +414,9 @@ def mode_bash(ev):
             if rc:
                 blocca('Commit bloccato: riferimenti incrociati rotti nei file di regole, o caratteri '
                        f'fuori regola in quei file.\n{out}')
-        if messaggio is not None:
+        # Un messaggio vuoto non si passa: `--text` senza testo esce 2, e il blocco direbbe
+        # 'caratteri fuori regola' dove non c'è niente (un messaggio vuoto lo rifiuta git).
+        if messaggio is not None and messaggio.strip():
             rc, out = refcheck('--text', stdin=messaggio)
             if rc:
                 blocca(f'Commit bloccato in {repo.name}: caratteri o formule fuori regola nel MESSAGGIO '
@@ -458,7 +460,8 @@ def mode_text(ev):
         return
     testi = []
     raccogli(ti, testi)
-    if not testi:
+    # Campi tutti vuoti: niente da controllare, e `--text` senza testo esce 2.
+    if not any(t.strip() for t in testi):
         return
     rc, out = refcheck('--text', stdin='\n\n'.join(testi))
     if rc:

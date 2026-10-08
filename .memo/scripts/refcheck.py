@@ -7,12 +7,15 @@ rilegge tutto da capo. Un elenco scritto a mano sarebbe una seconda fonte di
 verità che invecchia: qui i rimandi si CALCOLANO.
 
 Uso: python3 .memo/scripts/refcheck.py [-v]
-     python3 .memo/scripts/refcheck.py --text < testo   (solo i caratteri, da stdin)
+     python3 .memo/scripts/refcheck.py --text FILE   (solo i caratteri; senza FILE, da stdin)
      python3 .memo/scripts/refcheck.py --html PAGINA.html   (i caratteri del testo visibile)
      python3 .memo/scripts/refcheck.py --fix FILE   (corregge gli accenti a lista chiusa)
-     git diff --cached | python3 .memo/scripts/refcheck.py --diff   (accenti, righe aggiunte)
-Esce 1 se trova difetti, 0 se è tutto in ordine. Gli hook PreToolUse sui commit
-lo lanciano da sé: vedi .claude/settings.json nei due repo.
+     git diff --cached | python3 .memo/scripts/refcheck.py --diff   (accenti, righe aggiunte;
+                                                    anche --diff FILE)
+Esce 1 se trova difetti, 0 se è tutto in ordine, 2 se non ha niente da controllare (nessun
+file, file assente o vuoto, stdin vuoto, terminale o muto): un controllo senza ingresso non è
+un verde. Gli hook PreToolUse sui commit lo lanciano da sé: vedi .claude/settings.json nei
+due repo.
 
 Sei controlli:
   1. link markdown relativi       -> il file bersaglio esiste?
@@ -34,6 +37,7 @@ import html as htmllib
 import os
 import json
 import re
+import select
 import sys
 import unicodedata
 from pathlib import Path
@@ -1101,35 +1105,86 @@ def check_intro():
                               "una delle due è stata troncata")], None)
 
 
+# Quanti secondi uno stdin aperto può tacere prima che l'ingresso valga come assente.
+ATTESA_INGRESSO = 5
+
+
+def leggi_ingresso(modo):
+    """Il testo dei modi `--text` e `--diff`: i file nominati dopo il modo, altrimenti stdin.
+
+    Restituisce `[(nome, testo)]`, con `nome` a `None` per stdin, oppure `None` quando non c'è
+    niente da leggere: allora il modo esce 2, e non dichiara pulito un testo che non ha visto.
+    ⚠️⚠️ NASCE DA UN FALSO VERDE, il 2026-10-08: una sessione ha lanciato `--text FILE`, il modo
+    leggeva solo stdin e il percorso è stato ignorato. Con lo stdin vuoto della shell il controllo
+    ha guardato zero caratteri e ha risposto 'nessun carattere fuori regola', esito 0; con uno
+    stdin che non si chiude restava in attesa finché qualcuno non lo fermava. È la trappola che
+    `Rules.md` dell'hub registrava già per `--diff` lanciato senza la pipe.
+    ⚠️ Senza un file, i casi senza ingresso sono tre e si dichiarano allo stesso modo: un
+    terminale (chi ha lanciato il comando non ha dato né un file né una pipe), uno stdin vuoto, e
+    uno stdin aperto che tace per `ATTESA_INGRESSO` secondi. L'ultimo è una stima e non una
+    certezza, quindi sbaglia solo nel verso sicuro: un produttore così lento dà un errore, mai un
+    verde. I chiamanti (`hooks.py`, `githook.py`) passano il testo come ingresso e non chiamano
+    il verificatore quando il testo è vuoto.
+    """
+    percorsi = [a for a in sys.argv[1:] if not a.startswith("-")]
+    if percorsi:
+        fonti = []
+        for p in percorsi:
+            f = Path(p)
+            testo = f.read_text(encoding="utf-8") if f.is_file() else ""
+            if not testo.strip():
+                stato = "è vuoto" if f.is_file() else "non esiste"
+                print(f"!! refcheck {modo}: nessun testo in ingresso, il file {p} {stato}")
+                return None
+            fonti.append((p, testo))
+        return fonti
+    testo = ""
+    if (sys.stdin is not None and not sys.stdin.isatty()
+            and select.select([sys.stdin], [], [], ATTESA_INGRESSO)[0]):
+        testo = sys.stdin.read()
+    if not testo.strip():
+        print(f"!! refcheck {modo}: nessun testo in ingresso. Il testo si passa come file "
+              f"(refcheck.py {modo} FILE) oppure su stdin (refcheck.py {modo} < FILE).")
+        return None
+    return [(None, testo)]
+
+
 def main_text():
-    """Modo `--text`: controlla i CARATTERI di un testo su stdin e nient'altro.
+    """Modo `--text`: controlla i CARATTERI di un testo, da file o da stdin, e nient'altro.
 
     Serve all'hook che guarda i messaggi di commit, che nessun altro controllo vede: l'hook
     em-dash legge il diff, non il messaggio. Vive qui e non in una riga di shell a sé perché
     l'insieme dei caratteri ammessi deve avere UNA fonte: due liste divergerebbero.
     """
-    testo = sys.stdin.read()
-    bad = char_defects(testo)
-    # ⚠️ Il lessico si controlla ANCHE qui, e questo modo è il più importante dei tre: un
-    # messaggio di commit e il corpo di una PR non passano da nessun altro controllo, e sono
-    # esattamente i posti in cui le formule bandite sono ricomparse il 2026-09-03.
-    lex, avvisi = formula_defects(testo)
-    if avvisi:
-        print(f"\n~~ registro da guardare, NON blocca: {len(avvisi)}")
-        for n, col, forma, motivo in avvisi:
-            print(f"   riga {n}: {forma!r} -> {motivo}")
-    if not bad and not lex:
-        print("charcheck: nessun carattere e nessuna formula fuori regola")
-        return 0
-    if bad:
-        print(f"\n!! caratteri fuori regola nel testo: {len(bad)}")
-        for n, col, ch, motivo in bad:
-            print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
-    if lex:
-        print(f"\n!! formule fuori regola nel testo: {len(lex)}")
-        for n, col, forma, motivo in lex:
-            print(f"   riga {n} colonna {col}: {forma!r} -> {motivo}")
-    return 1
+    fonti = leggi_ingresso("--text")
+    if fonti is None:
+        return 2
+    esito = 0
+    for nome, testo in fonti:
+        di = f" di {nome}" if nome else ""
+        bad = char_defects(testo)
+        # ⚠️ Il lessico si controlla ANCHE qui, e questo modo è il più importante dei tre: un
+        # messaggio di commit e il corpo di una PR non passano da nessun altro controllo, e sono
+        # esattamente i posti in cui le formule bandite sono ricomparse il 2026-09-03.
+        lex, avvisi = formula_defects(testo)
+        if avvisi:
+            print(f"\n~~ registro da guardare{di}, NON blocca: {len(avvisi)}")
+            for n, col, forma, motivo in avvisi:
+                print(f"   riga {n}: {forma!r} -> {motivo}")
+        if not bad and not lex:
+            print(f"charcheck: {nome + ', ' if nome else ''}"
+                  "nessun carattere e nessuna formula fuori regola")
+            continue
+        if bad:
+            print(f"\n!! caratteri fuori regola nel testo{di}: {len(bad)}")
+            for n, col, ch, motivo in bad:
+                print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
+        if lex:
+            print(f"\n!! formule fuori regola nel testo{di}: {len(lex)}")
+            for n, col, forma, motivo in lex:
+                print(f"   riga {n} colonna {col}: {forma!r} -> {motivo}")
+        esito = 1
+    return esito
 
 
 RE_SORGENTE = re.compile(r"<(\w+)([^>]*\bid=[\"']sorgente[\"'][^>]*)>", re.I)
@@ -1224,8 +1279,10 @@ def main_html():
     for p in percorsi:
         f = Path(p)
         if not f.exists():
+            # 2 e non 1, come i modi che leggono un testo: un file che non c'è non è un difetto
+            # trovato, è un controllo che non ha avuto niente da guardare.
             print(f"!! file assente: {p}")
-            esito = 1
+            esito = 2
             continue
         sorgente = f.read_text(encoding="utf-8")
         sorgente = re.sub(r"<(style|script)\b[^>]*>.*?</\1>", " ", sorgente,
@@ -1246,7 +1303,7 @@ def main_html():
         print(f"\n!! caratteri fuori regola nel testo visibile di {f.name}: {len(bad)}")
         for n, col, ch, motivo in bad:
             print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
-        esito = 1
+        esito = max(esito, 1)
     return esito
 
 
@@ -1265,10 +1322,12 @@ def main_fix():
     if not percorsi:
         print("uso: refcheck.py --fix FILE [ALTRO]")
         return 2
+    esito = 0
     for p in percorsi:
         f = Path(p)
         if not f.exists():
             print(f"!! file assente: {p}")
+            esito = 2
             continue
         testo = f.read_text(encoding="utf-8")
         tot = 0
@@ -1304,7 +1363,7 @@ def main_fix():
                 tot += n
         f.write_text(testo, encoding="utf-8")
         print(f"fix: {f.name}, {tot} accenti corretti")
-    return 0
+    return esito
 
 
 
@@ -1321,7 +1380,7 @@ def diff_quote_defects(text, path, added_lines):
 
 
 def main_diff():
-    """Modo `--diff`: legge un `git diff` da stdin e controlla le RIGHE AGGIUNTE, in OGNI file.
+    """Modo `--diff`: controlla le RIGHE AGGIUNTE di un `git diff` (file o stdin), in OGNI file.
 
     ⚠️ Esiste perché i tre presidi che c'erano guardavano altro, e il censimento del
     2026-08-17 l'ha misurato: `RULEFILES` contiene dodici file di REGOLE e nessun sorgente,
@@ -1332,9 +1391,12 @@ def main_diff():
     del repo e il preesistente non blocca un commit che non lo tocca. La bonifica del
     preesistente è un lavoro a sé, che questo presidio non deve mescolare.
     """
+    fonti = leggi_ingresso("--diff")
+    if fonti is None:
+        return 2
     corrente, aggiunte, contexts = None, {}, {}
     current_hunk, new_line = None, 0
-    for riga in sys.stdin.read().splitlines():
+    for riga in "\n".join(testo for _, testo in fonti).splitlines():
         if riga.startswith("+++ b/"):
             corrente = riga[6:]
             aggiunte.setdefault(corrente, [])
