@@ -700,6 +700,36 @@ def cita_aiv(righe, i, intorno=2):
     return any("AIV" in r for r in vicine)
 
 
+def stato_in_repo(p):
+    """Lo stato di un percorso scritto col nome del repo davanti, `Roccobot/<repo>/<file>`:
+    `None` se `p` non ha quella forma o il repo non è dei nostri, altrimenti 'ok', 'rotto' o
+    'assente' (il clone di quel repo non c'è, quindi il percorso è non verificabile).
+
+    ⚠️ Fino al 2026-10-08 un percorso così si cercava come se `Roccobot/` fosse una cartella
+    dell'hub, e passava solo perché, con un progetto non clonato, finiva fra i non
+    verificabili. Con tutti i repo montati `Roccobot/tools/.memo/LATEST.md`, scritto giusto
+    nelle regole di AIV, risultava inesistente e bloccava ogni commit su un file di regole.
+    """
+    testa, _, coda = p.partition("/")
+    repo, _, resto = coda.partition("/")
+    if testa != "Roccobot" or not resto:
+        return None
+    nome = repo.lower()
+    if nome == "tools":
+        radice = TOOLS
+    elif nome == "roccobot.github.io":
+        radice = SITO
+    elif nome == "aiv":
+        radice = AIV
+    else:
+        radice = next((r for k, r in PROGETTI.items() if k.lower() == nome), None)
+    if radice is None:
+        return None
+    if not radice.exists():
+        return "assente"
+    return "ok" if (radice / resto).exists() else "rotto"
+
+
 def cita_progetto_assente(righe, i, intorno=1):
     """Vero se il rimando che parte dalla riga `i` nomina il repo di un progetto che questa
     sessione non monta (`Roccobot/earthsea`, e gli altri di `PROGETTI`). Stesso criterio di
@@ -1560,6 +1590,11 @@ def main():
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
                 seen["path"] += 1
+                stato = stato_in_repo(p)
+                if stato is not None:
+                    if stato != "ok":
+                        (non_verif if stato == "assente" else bad_paths).append((f, n, p))
+                    continue
                 testa, _, coda = p.partition("/")
                 clone = next((r for n, r in PROGETTI.items() if n.lower() == testa.lower()), None)
                 # Un percorso scritto nel CLAUDE.md di un progetto è relativo alla radice del

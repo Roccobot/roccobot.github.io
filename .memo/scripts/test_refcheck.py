@@ -194,5 +194,41 @@ class InputTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout)
 
 
+
+class RepoPathTests(unittest.TestCase):
+    """A path written with the repository in front, `Roccobot/tools/.memo/LATEST.md`, lives in
+    that repository's clone.
+
+    On 2026-10-08, with every project repository mounted, three correct paths in the rules of
+    AIV were reported as missing and blocked every commit on a rule file: the check looked for
+    a `Roccobot/` folder inside the hub, and the paths had passed only as unverifiable while
+    some project was not cloned.
+    """
+
+    def setUp(self):
+        fixture = tempfile.TemporaryDirectory()
+        self.addCleanup(fixture.cleanup)
+        tools = Path(fixture.name) / 'tools'
+        (tools / '.memo').mkdir(parents=True)
+        (tools / '.memo/LATEST.md').write_text('brief', encoding='utf-8')
+        original = refcheck.TOOLS
+        refcheck.TOOLS = tools
+        self.addCleanup(setattr, refcheck, 'TOOLS', original)
+
+    def test_existing_file_in_the_named_repo_is_found(self):
+        self.assertEqual(refcheck.stato_in_repo('Roccobot/tools/.memo/LATEST.md'), 'ok')
+
+    def test_missing_file_in_the_named_repo_is_broken(self):
+        self.assertEqual(refcheck.stato_in_repo('Roccobot/tools/.memo/OLD.md'), 'rotto')
+
+    def test_repo_without_a_clone_is_unverifiable(self):
+        refcheck.TOOLS = refcheck.TOOLS.parent / 'absent'
+        self.assertEqual(refcheck.stato_in_repo('Roccobot/tools/.memo/LATEST.md'), 'assente')
+
+    def test_other_paths_are_left_to_the_usual_check(self):
+        for path in ('rules/Roccobot.md', 'Roccobot/tools', 'Roccobot/nobody/file.md'):
+            with self.subTest(path=path):
+                self.assertIsNone(refcheck.stato_in_repo(path))
+
 if __name__ == '__main__':
     unittest.main()

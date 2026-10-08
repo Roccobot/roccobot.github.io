@@ -8,7 +8,7 @@ Usage:
 
 The Claude hooks (hooks.py) run only on Claude Code, and not even there when the session
 mounts several repos side by side without the user-level settings. These checks run for
-whoever commits from a terminal (Codex, Cursor, Antigravity, a person) through the files in
+whoever commits from a terminal (Codex, a person) through the files in
 `.githooks/` of each repo, and for everyone else on GitHub through the Action: a commit made
 from a web page or by an agent that skips hooks shows up there as a red check.
 
@@ -116,7 +116,7 @@ def main(argv):
             # A warning, not a block: the line says who made the commit (catchup.py shows it),
             # and a commit without it is still a good commit.
             print('githook: manca la riga "Agent: <piattaforma>" in coda al messaggio '
-                  '(Claude Code, Codex, Cursor, Antigravity...).', file=sys.stderr)
+                  '(Claude Code, Codex, Grok Bot).', file=sys.stderr)
         return report(check_message(text), 'commit bloccato')
     if mode == 'ci' and len(argv) == 3:
         base, head = argv[1], argv[2]

@@ -1,7 +1,7 @@
 # AGENTS.md: le regole di `Roccobot/roccobot.github.io`
 
-> **Cos'è questo file.** Quello che ogni agente legge all'avvio in questo repo: Codex, Cursor e
-> Antigravity lo leggono da sé, Claude Code lo importa da `CLAUDE.md`. Contiene due blocchi: il
+> **Cos'è questo file.** Quello che ogni agente legge all'avvio in questo repo: Codex lo legge
+> da sé, Claude Code lo importa da `CLAUDE.md`. Contiene due blocchi: il
 > **nucleo universale**, copiato da `rules/Core.md` di `Roccobot/tools` e da modificare solo là,
 > e il **nucleo dell'hub**, cioè le sue regole in una riga col rimando a `Rules.md`, che ne dà il
 > testo completo e il perché.
