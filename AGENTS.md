@@ -10,15 +10,15 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.30
+> **Versione**: 1.31
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
 > regola per riga, col rimando alla sezione che ne dà il perché: il testo completo vive in
 > `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva copiato
 > dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 14.000 byte**, perché ogni `AGENTS.md` include anche le regole del suo repo
-> e `core-sync` non lo scrive oltre i 30.000.
+> ⚠️ Resta **sotto i 15.000 byte**: ogni `AGENTS.md` include anche le regole del suo repo, e
+> `core-sync` non lo scrive oltre i 30.000, contati con l'`AGENTS.md` annidato (il più pieno è Terramare).
 
 ## 🧭 Come si legge il resto
 
@@ -111,9 +111,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   ordine, con il modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
   voci, intera UI): si **concorda prima di farla**, da qualunque agente; nel dubbio lo è.
-- **Un agente solo per sessione**, con la sua squadra se serve (fissa in Grok Bot); **la squadra
-  salva il lavoro man mano** in `.memo/files/` (`Roccobot.md` § '💾 Il lavoro di una squadra si
-  salva man mano').
+- **Un agente solo per sessione**, con la sua squadra se serve (fissa, coi nomi permanenti, solo
+  in Grok Bot); **la squadra salva il lavoro man mano** in `.memo/files/` (`Roccobot.md` § '💾 Il
+  lavoro di una squadra si salva man mano').
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
 - **Le priorità le decide l'agente, e le dichiara nel turno in cui le decide**; un messaggio che
