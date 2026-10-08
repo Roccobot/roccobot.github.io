@@ -1,0 +1,94 @@
+---
+name: epub
+description: Costruisce un EPUB 3.3 standard da tre file (una copertina, un testo HTML, un foglio di stile), ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
+---
+
+# `/epub`: un EPUB standard da copertina, testo e stile
+
+> **Autore**: Rocco Casadei, a.k.a. Roccobot. Nata il 2026-10-08 da un prompt dell'utente,
+> che resta la specifica: le scelte qui sotto lo applicano, e dove lo interpretano lo dicono.
+
+## 📥 Che cosa serve
+
+Tre file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac dell'utente:
+
+| file | che cosa diventa |
+|---|---|
+| `Cover.jpg` | la copertina, da sola, come primo capitolo |
+| `Text.html` | il testo, secondo e ultimo capitolo |
+| `Style.css` | il foglio di stile interno del libro |
+
+Il nome conta poco: una copertina in PNG o WebP va bene lo stesso. Se manca uno dei tre file,
+si chiede all'utente prima di cominciare.
+
+## 🧭 La procedura
+
+1. **Leggi il testo per intero** e deduci quello che lo script non può decidere da solo: il
+   titolo, l'autore (con la forma `Cognome, Nome`), la lingua se il testo ne mescola due,
+   l'editore, la data, una descrizione di una o due frasi, gli argomenti. Si scrive solo ciò che
+   il testo attesta: un dato che non c'è resta fuori, e nel resoconto si dice che manca.
+2. **Lancia lo script**, che vive accanto a questo file:
+   ```
+   python3 -I <skill>/build_epub.py --cover Cover.jpg --text Text.html --css Style.css --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
+   ```
+   Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
+   `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
+3. **Leggi il resoconto** che lo script stampa. Le righe con ⚠️ chiedono una decisione:
+   - **lingua incerta**: si guarda il testo e si ripassa `--lang`;
+   - **attributi `style` rimasti**: ognuno si sposta a mano in una classe del CSS, o si toglie
+     se è un residuo dell'editor (`mso-*`, `tab-interval`);
+   - **immagini nel testo**: il libro contiene solo la copertina, quindi si chiede all'utente
+     se vanno incluse, e lo script per ora non lo fa;
+   - **titolo dedotto, autore non trovato**: si ripassano con `--title` e `--author`.
+4. **Valida con epubcheck**, il validatore ufficiale del W3C (open source, sviluppato dal W3C e
+   dal consorzio DAISY), che gira su Java:
+   ```
+   curl -sSL -o ec.zip https://github.com/w3c/epubcheck/releases/download/v5.2.1/epubcheck-5.2.1.zip && unzip -q ec.zip && java -jar epubcheck-5.2.1/epubcheck.jar "<Titolo>.epub"
+   ```
+   Si consegna solo con `0 errors / 0 warnings`. Se Java manca, lo si dice nel resoconto
+   invece di dare il libro per valido.
+5. **Consegna** il file all'utente, con il resoconto in breve: i metadati scritti, quelli
+   mancanti, quello che è stato tolto o spostato.
+
+## 🧹 Che cosa fa lo script al testo
+
+- Scrive XHTML ben formato con DOCTYPE, `xml:lang` e `lang` sull'elemento radice e
+  `<meta charset="UTF-8"/>`.
+- Toglie i metadati dell'editor d'origine (`generator`, `ProgId`, i `<link>` di Word), i
+  `<script>`, gli elementi con prefisso (`o:p`) e gli attributi di presentazione (`align`,
+  `bgcolor`, `width` fuori da immagini e tabelle).
+- Sposta ogni `<style>` in fondo al CSS, una regola per riga, con un commento che lo dichiara.
+- Chiude i paragrafi lasciati aperti, toglie gli `<span>` senza attributi, scioglie i `<font>`,
+  e normalizza gli spazi tenendo gli spazi unificatori, che sono contenuto.
+- Mantiene il `lang` di un passo in un'altra lingua dentro il testo: è un'informazione per la
+  sintesi vocale, non un residuo.
+
+## ⚓ Gli ancoraggi
+
+- **I titoli prendono un id che dice la struttura**: `cap03` è il terzo capitolo, `cap03par05`
+  il quinto paragrafo del terzo capitolo, poi `sez`, `sub`. In inglese `ch`, `sec`, `sub`. Il
+  livello più alto presente nel testo è il capitolo, qualunque sia il suo tag.
+- **Il titolo del libro non è un capitolo**: un titolo di livello più alto che apre il testo e
+  non ricompare prende l'id `titolo` (`title` in inglese), e i capitoli si contano dal livello
+  sotto.
+- **Gli altri id restano solo se qualcosa li usa**: uno che nessun link cita si toglie, uno
+  casuale citato da un link diventa `rif001`, `rif002`. I link interni seguono i nuovi nomi, e
+  un `<a name>` dentro un titolo confluisce nel titolo.
+
+## 📚 Com'è fatto il libro
+
+- **EPUB 3.3**, la raccomandazione W3C in vigore (il pacchetto dichiara `version="3.0"`, come
+  la specifica prescrive). Il file `mimetype` è il primo ed è salvato senza compressione.
+- **La copertina entra byte per byte**, salvata senza compressione nell'archivio, e la sua
+  pagina contiene la sola immagine: niente CSS, niente sfondo, niente didascalia, con il testo
+  alternativo `Copertina` che l'accessibilità richiede. Il manifesto la marca `cover-image`, e
+  c'è anche il `<meta name="cover">` per i lettori EPUB 2.
+- **Lo spine contiene due voci**, copertina e testo. L'indice (`nav.xhtml`) elenca la copertina,
+  il testo e i suoi titoli.
+- **I landmark** sono due, `cover` e `bodymatter`. ⚠️ Il landmark dell'indice non c'è perché
+  l'indice non è nello spine, ed epubcheck rifiuta un rimando a un file che non ci sia.
+- **Il `<guide>` c'è**, con le stesse due voci, per i lettori che conoscono solo EPUB 2; si
+  toglie con `--no-guide`.
+- **I metadati**: identificatore, titolo, lingua, `dcterms:modified`, l'autore con
+  `<meta refines="#creator" property="role" scheme="marc:relators">aut</meta>` e la forma
+  `file-as`, e i metadati di accessibilità che la specifica raccomanda.

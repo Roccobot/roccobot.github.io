@@ -12,5 +12,5 @@
   § '🤖 Modello da usare' e § '🖼️ Artefatti': si caricano con quel file, a ogni sessione.
 - ⚠️ **Fino al 2026-10-03 quelle tre sezioni erano scritte qui**: una nota che nomina il passo 0
   o il protocollo di avvio 'del `CLAUDE.md` di root' parla di quelle sezioni.
-- Le skill di questo repo vivono in `.agents/skills/` (fra cui `handoff`), e `.claude/skills` è un
+- Le skill di questo repo vivono in `.agents/skills/` (fra cui `handoff` ed `epub`), e `.claude/skills` è un
   collegamento che punta lì (`rules/Roccobot.md` § '🧩 Dove vivono le skill').
