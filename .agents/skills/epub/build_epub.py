@@ -25,6 +25,7 @@ import argparse
 import datetime
 import html
 import io
+import struct
 import re
 import sys
 import uuid
@@ -402,6 +403,40 @@ def clean(source, lang_override=None):
     return body, lang, title, found, moved_css, toc, report
 
 
+def image_size(data):
+    """Pixel width and height of a JPEG, PNG, GIF or WebP, read from its header."""
+    if data[:8] == b'\x89PNG\r\n\x1a\n':
+        return struct.unpack('>II', data[16:24])
+    if data[:6] in (b'GIF87a', b'GIF89a'):
+        return struct.unpack('<HH', data[6:10])
+    if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
+        kind = data[12:16]
+        if kind == b'VP8 ':
+            w, h = struct.unpack('<HH', data[26:30])
+            return w & 0x3FFF, h & 0x3FFF
+        if kind == b'VP8L':
+            b = int.from_bytes(data[21:25], 'little')
+            return (b & 0x3FFF) + 1, ((b >> 14) & 0x3FFF) + 1
+        if kind == b'VP8X':
+            return int.from_bytes(data[24:27], 'little') + 1, int.from_bytes(data[27:30], 'little') + 1
+    if data[:2] == b'\xff\xd8':
+        i = 2
+        while i < len(data) - 9:
+            if data[i] != 0xFF:
+                i += 1
+                continue
+            marker = data[i + 1]
+            # SOF0-SOF15 carry the frame size; DHT (C4), JPG (C8) and DAC (CC) share the range.
+            if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                h, w = struct.unpack('>HH', data[i + 5:i + 9])
+                return w, h
+            if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:
+                i += 2
+                continue
+            i += 2 + struct.unpack('>H', data[i + 2:i + 4])[0]
+    raise SystemExit('copertina: formato non riconosciuto, servono JPEG, PNG, GIF o WebP')
+
+
 def xhtml_page(title, lang, body_xml, css_href=None, extra_head=''):
     css = f'\n    <link rel="stylesheet" type="text/css" href="{css_href}"/>' if css_href else ''
     return (f'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n'
@@ -433,10 +468,22 @@ def build(args):
     ident = args.identifier or f'urn:uuid:{uuid.uuid4()}'
     modified = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    cover_body = (f'<body epub:type="cover">\n  <section epub:type="cover">\n'
-                  f'    <img src="../Images/{cover_name}" alt="{esc_attr(labels["cover_alt"])}" role="doc-cover"/>\n'
-                  f'  </section>\n</body>')
-    cover_page = xhtml_page(labels['cover'], lang, cover_body)
+    # The cover is an SVG holding the image: the viewBox is the image's own size, so every
+    # reading system scales it to the page without cropping or stretching it, and with no
+    # background anywhere the reader's own page colour (white, black, sepia) shows around it.
+    width, height = image_size(cover)
+    cover_body = (f'<body epub:type="cover">\n'
+                  f'  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"'
+                  f' version="1.1" width="100%" height="100%" viewBox="0 0 {width} {height}"'
+                  f' preserveAspectRatio="xMidYMid meet" role="img" aria-label="{esc_attr(labels["cover_alt"])}">\n'
+                  f'    <title>{esc_text(labels["cover_alt"])}</title>\n'
+                  f'    <image width="{width}" height="{height}" xlink:href="../Images/{cover_name}"/>\n'
+                  f'  </svg>\n</body>')
+    cover_page = xhtml_page(labels['cover'], lang, cover_body, '../Styles/cover.css')
+    # Only geometry: the page fills the screen and the SVG fills the page. No colour at all.
+    cover_css = ('/* Cover page: full-screen geometry only, no background, so the reader shows its own. */\n'
+                 'html, body { margin: 0; padding: 0; width: 100%; height: 100%; }\n'
+                 'svg { display: block; width: 100%; height: 100%; }\n')
     text_page = xhtml_page(title, lang, serialise(body), '../Styles/style.css')
 
     def toc_list(items, start=0, depth=0):
@@ -500,9 +547,10 @@ def build(args):
            f'  <manifest>\n'
            f'    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>\n'
            f'    <item id="cover-image" href="Images/{cover_name}" media-type="{media}" properties="cover-image"/>\n'
-           f'    <item id="cover" href="Text/cover.xhtml" media-type="application/xhtml+xml"/>\n'
+           f'    <item id="cover" href="Text/cover.xhtml" media-type="application/xhtml+xml" properties="svg"/>\n'
            f'    <item id="text" href="Text/text.xhtml" media-type="application/xhtml+xml"/>\n'
            f'    <item id="css" href="Styles/style.css" media-type="text/css"/>\n'
+           f'    <item id="cover-css" href="Styles/cover.css" media-type="text/css"/>\n'
            f'  </manifest>\n'
            f'  <spine>\n    <itemref idref="cover"/>\n    <itemref idref="text"/>\n  </spine>{guide}\n</package>\n')
     container = ('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -522,6 +570,7 @@ def build(args):
         z.writestr('EPUB/Text/cover.xhtml', cover_page, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Text/text.xhtml', text_page, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Styles/style.css', css, compress_type=zipfile.ZIP_DEFLATED)
+        z.writestr('EPUB/Styles/cover.css', cover_css, compress_type=zipfile.ZIP_DEFLATED)
 
     report += [f'titolo: {title}', f'autore: {author or "(nessuno)"}', f'identificatore: {ident}',
                f'voci d\'indice: {len(toc)}', f'scritto: {out}']
