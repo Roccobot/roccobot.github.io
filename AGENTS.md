@@ -10,15 +10,15 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.18
+> **Versione**: 1.19
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
-> piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
-> Roccobot. Una regola per riga, col rimando alla sezione che ne dà il perché: il testo completo
-> vive in `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva
-> copiato dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 14.000 byte**, perché ogni `AGENTS.md` include anche le regole del suo repo e
-> Antigravity tronca un file oltre i 24.000.
+> piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
+> regola per riga, col rimando alla sezione che ne dà il perché: il testo completo vive in
+> `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva copiato
+> dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
+> ⚠️ Resta **sotto i 14.000 byte**, perché ogni `AGENTS.md` include anche le regole del suo repo
+> e `core-sync` non lo scrive oltre i 30.000.
 
 ## 🧭 Come si legge il resto
 
