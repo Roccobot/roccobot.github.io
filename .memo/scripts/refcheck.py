@@ -65,17 +65,26 @@ MIHON = SITO.parent / "mihon-aniyomi-ext"
 # La cartella si cerca SENZA badare alle maiuscole: il clone prende il nome che gli dà chi lo
 # fa, e in queste sessioni `Roccobot/ABP` finisce in `abp`. Col nome esatto il repo risultava
 # assente pur essendo lì, e i suoi rimandi passavano per non verificabili.
+# ⚠️ Dal 2026-10-09 vince il nome esatto, poi un clone git: sul box di Grok Bot accanto ad `AIV`
+# (il clone) vive anche `aiv`, una cartella di lavoro senza le regole, e l'ordine della cartella
+# faceva prendere quella. Quattro rimandi giusti del brief alle sezioni di `AIV/Rules.md`
+# risultavano così 'inesistenti'.
 def _clone(nome):
-    for d in SITO.parent.iterdir() if SITO.parent.is_dir() else ():
-        if d.is_dir() and d.name.lower() == nome.lower():
+    simili = sorted(d for d in (SITO.parent.iterdir() if SITO.parent.is_dir() else ())
+                    if d.is_dir() and d.name.lower() == nome.lower())
+    for d in simili:
+        if d.name == nome:
             return d
-    return SITO.parent / nome
+    for d in simili:
+        if (d / ".git").exists():
+            return d
+    return simili[0] if simili else SITO.parent / nome
 
 
 AIV = _clone("AIV")
 PROGETTI = {nome: _clone(nome) for nome in (
     "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
-    "cheparolae")}
+    "cheparolae", "Aomidori")}
 
 RULEFILES = [
     SITO / "CLAUDE.md",

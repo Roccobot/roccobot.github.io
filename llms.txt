@@ -9,3 +9,4 @@
 - [AIV](https://roccobot.github.io/AIV/): download page of Astonishing Image Viewer, an image viewer and editor for Android.
 - [CleanSVG](https://roccobot.github.io/CleanSVG/): a page that cleans up SVG files.
 - [RatioLab](https://roccobot.github.io/ratiolab/): a page about ratios between two numbers.
+- [Aomidori](https://roccobot.github.io/Aomidori/): download page of Aomidori, a minimal EPUB reader for macOS.

@@ -27,6 +27,7 @@
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | il `CLAUDE.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | il `CLAUDE.md` di quella cartella |
 | **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | il `CLAUDE.md` di quel repo |
+| **Aomidori**, il lettore EPUB per macOS (nato il 2026-10-09 in un repo suo; la pagina di download è servita dal suo Pages) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
 il lavoro corretto in ogni caso.
@@ -36,7 +37,7 @@ GitHub Action del repo `Roccobot/AIV` (l'app Android 'Astonishing Image Viewer')
 vi scriveva l'APK firmato e la paginetta di download con un token che poteva scrivere qui. Da
 quel giorno la paginetta la pubblica il repo di AIV sul **suo** Pages, allo stesso indirizzo
 (`roccobot.github.io/AIV/`: un repo di progetto vince sulla cartella omonima, misurato su
-RatioLab), e le sue regole vivono nel suo `CLAUDE.md`, § '🚀 Che cosa produce un rilascio'.
+RatioLab), e le sue regole vivono nel suo `Rules.md`, § '🚀 Che cosa produce un rilascio'.
 - ⚠️ **Su quel sito l'APK non c'è**: il pulsante di download punta all'asset dell'ultima
   release, quindi un rilascio non cambia il sito. La copia dell'APK che viveva qui la leggeva
   solo la sonda che controllava se era arrivata.
@@ -86,7 +87,7 @@ non è vero per nessun progetto.
   vivono qui (dal 2026-10-04, blocco G del lavoro sui siti gemelli): `robots.txt`, `sitemap.xml` e
   `llms.txt`, l'indice dei progetti per gli agenti, che rimanda al `llms.txt` di ciascun sito.
 - ⚠️ **La mappa elenca i soli progetti pubblici con una pagina** (Arda, Terramare, AIV, CleanSVG,
-  RatioLab): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
+  RatioLab, Aomidori): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
