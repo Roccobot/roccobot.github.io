@@ -245,12 +245,15 @@ def mode_start(ev):
 # ── turno ─────────────────────────────────────────────────────────────────────
 
 def mode_prompt(ev):
-    # ⚠️ A message that opens with ‼ (U+203C, with or without U+FE0E) is QUEUED, not urgent:
-    # rule in rules/Roccobot.md § "L'operatore ‼︎". The reminder is printed because the rule
-    # alone fell on 2026-10-03, on a message that arrived while a turn was running.
-    if (ev.get('prompt') or '').lstrip().startswith('‼'):
-        print("[prompt] ‼ = IN CODA: finisci il lavoro in corso (merge e verifiche compresi), "
-              "di' in una riga che la voce è accodata, e solo dopo eseguila.")
+    # ⚠️ A message that opens with ‼ (U+203C, with or without U+FE0E) or with two backslashes
+    # is QUEUED, not urgent: rule in rules/Roccobot.md § "L'operatore ‼︎". A single backslash
+    # is another operator, hence the two. The reminder is printed because the rule alone fell
+    # on 2026-10-03, on a message that arrived while a turn was running.
+    testa = (ev.get('prompt') or '').lstrip()
+    if testa.startswith(('‼', '\\\\')):
+        print(f"[prompt] {testa[:1] if testa.startswith('‼') else testa[:2]} = IN CODA: finisci "
+              "il lavoro in corso (merge e verifiche compresi), di' in una riga che la voce è "
+              "accodata, e solo dopo eseguila.")
 
     def uno(repo):
         ramo = ramo_principale(repo)
