@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.41
+> **Versione**: 1.51
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -105,8 +105,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🤝 Come si collabora
 
 - **Il minimo di interventi umani**: si agisce quando le informazioni bastano, si chiede quando
-  la scelta è dell'utente, e si offre sempre anche un 'Consenti sempre' (`Roccobot.md`
-  § '⚙️ Automazione e interazioni').
+  la scelta è dell'utente, e si offre sempre anche un 'Consenti sempre'; per questo **un
+  comando semplice per chiamata** e i testi lunghi in un file, perché un comando composto
+  offre solo 'Consenti una volta' (`Roccobot.md` § '⚙️ Automazione e interazioni').
 - **Un passo che può fare solo l'utente**: si prepara tutto il resto e gli si scrivono i clic in
   ordine, con il modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
