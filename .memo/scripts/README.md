@@ -3,8 +3,8 @@
 > **Cos'è questo file.** L'indice degli script di questa cartella e le istruzioni per i banchi di
 > prova che non vivono qui e vanno ricostruiti quando un lavoro li richiede. Non si carica da solo:
 > si legge quando serve uno script o un banco. Le regole su come si lanciano gli script (comando
-> singolo, percorso assoluto, niente pipe prima di un `&&`) vivono nel `Rules.md` di questo repo,
-> § '🌿 Branch, allineamento e push'.
+> singolo, percorso assoluto, niente pipe prima di un `&&`) vivono in `docs/Workflow.md` di questo repo,
+> § '🧪 I controlli prima del commit, e le loro trappole'.
 > Nato il 2026-10-10 dalla scelta D1 dell'utente: la sezione 'Strumenti da rifare' del brief non
 > era lavoro in sospeso, era documentazione, e qui non si perde quando il brief si accorcia.
 

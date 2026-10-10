@@ -406,7 +406,7 @@ def mode_bash(ev):
         # commit che non li cambia non ha niente da dire, e bloccarlo per un difetto di un altro
         # repo fermerebbe il lavoro (è successo il 2026-09-27 a una sessione su AIV).
         toccati = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
-        di_regole = any(t.endswith(('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')) or t.startswith(('rules/', 'snippets/', '.memo/'))
+        di_regole = any(t.endswith(('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')) or t.startswith(('rules/', 'snippets/', '.memo/', 'docs/'))
                         for t in toccati)
         if di_regole and not regole_viste:
             regole_viste = True
