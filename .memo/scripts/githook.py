@@ -29,7 +29,7 @@ from pathlib import Path
 REFCHECK = Path(__file__).resolve().parent / 'refcheck.py'
 DASHES = (chr(0x2014), chr(0x2013))
 RULE_SUFFIXES = ('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')
-RULE_PREFIXES = ('rules/', 'snippets/', '.memo/')
+RULE_PREFIXES = ('rules/', 'snippets/', '.memo/', 'docs/')
 
 
 def git(*args):

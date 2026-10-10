@@ -273,7 +273,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   controlla: si cancella prima del commit.
 - **Gli hook di git e l'Action `rules-check` fanno i controlli per tutti gli agenti**: la logica
   vive in `.memo/scripts/githook.py`, ogni repo ha `.githooks/` e richiama il workflow riusabile
-  di questo repo (`Rules.md` § '🌿 Branch, allineamento e push').
+  di questo repo (`docs/Workflow.md` § '🛡️ I controlli per chi non è Claude: hook di git e Action
+  rules-check').
 - **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
   `catchup.py`, `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
   `skills-update.sh`); quelli di un sito solo vivono nel suo repo. L'indice, e i banchi di prova da
