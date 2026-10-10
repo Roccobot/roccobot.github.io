@@ -162,6 +162,13 @@ la voce sparisce e la sezione torna a `Niente`; committato lo script effimero, s
 **Quando si cancella**: nel momento in cui la prova esiste, non a fine sessione. Così, se
 la sessione muore prima di chiudere, il file resta comunque vero.
 
+⚠️⚠️ **E vale anche per chi scrive il brief a ogni passo, senza invocare questa skill.** Il
+2026-10-10 il brief era arrivato a 2.479 righe: sessioni lunghe su AIV, che a ogni rilascio
+aggiungevano 'fatta e pubblicata' con un ✅ invece di cancellare la voce, ne avevano fatto la
+cronaca dei rilasci. La regola c'era, e nessuna macchina la guardava: da quel giorno
+`refcheck.py` blocca nel brief il segno ✅ e la formula 'fatta e pubblicata', e avvisa sopra
+le 400 righe.
+
 ⚠️ **Il rovescio della regola: una domanda senza risposta si AGGIUNGE.** Se in sessione si è
 chiesta una conferma o proposta una scelta e l'utente non ha risposto entro un turno di botta
 e risposta, la voce va scritta in `Da decidere` (regola universale in `Roccobot.md`,
