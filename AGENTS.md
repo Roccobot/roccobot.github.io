@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.31
+> **Versione**: 1.41
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -119,7 +119,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Le priorità le decide l'agente, e le dichiara nel turno in cui le decide**; un messaggio che
   comincia con `‼︎` va in coda, anche a turno iniziato (`Roccobot.md` § '🗂️ Le priorità le
   decide la sessione, e le dichiara').
-- **Liste di scelte a blocchi con lettera** (A1, A2, B1...), così l'utente risponde per blocco.
+- **Liste di scelte a blocchi con lettera** (A1, A2, B1...), così l'utente risponde per blocco;
+  una scelta si chiede con lo **strumento a scelta multipla**, dove c'è (`Roccobot.md`
+  § '💬 Stile di comunicazione').
 - **Un'affermazione non è una verifica**, nemmeno se è dell'utente: un fatto si dà per accertato
   solo con un dato letto sul momento (`Roccobot.md` § '🧪 Test e verifiche').
 - **Raccomandazioni di prodotti**: paese d'origine sempre; niente Israele né entità legate;
