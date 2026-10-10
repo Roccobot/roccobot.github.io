@@ -18,19 +18,22 @@
 
 | progetto | cartella | file di regole |
 |---|---|---|
-| **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/arda` | il `CLAUDE.md` di quel repo |
-| **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/earthsea` | il `CLAUDE.md` di quel repo |
-| **Regole AdBlock** ('Roccobot ABP'; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ABP` | il `CLAUDE.md` di quel repo |
-| **Userscript** (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/userscripts` | il `CLAUDE.md` di quel repo |
+| **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/arda` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/earthsea` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **Regole AdBlock** ('Roccobot ABP'; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ABP` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **Userscript** (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/userscripts` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/CleanSVG` | il `CLAUDE.md` di quel repo |
 | **RatioLab**, la paginetta dei rapporti fra due numeri (nata il 2026-09-21; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ratiolab` | il `CLAUDE.md` di quel repo |
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | il `CLAUDE.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | il `CLAUDE.md` di quella cartella |
-| **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | il `CLAUDE.md` di quel repo |
+| **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB per macOS (nato il 2026-10-09 in un repo suo; la pagina di download è servita dal suo Pages) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
-⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
-il lavoro corretto in ogni caso.
+⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
+rende il lavoro corretto in ogni caso. Dal 2026-10-10 (scelta C1 dell'utente) i `CLAUDE.md` dei
+progetti importano il solo `AGENTS.md`, quindi `Rules.md` non è in scena finché non lo si legge;
+prima si caricava in ogni sessione che montava il repo, anche quando il lavoro era altrove. I
+progetti della tabella che hanno ancora il solo `CLAUDE.md` si leggono da quello.
 
 ⚠️⚠️ **LA CARTELLA `AIV/` NON C'È PIÙ DAL 2026-09-27, E NON VA RICREATA.** La riempiva una
 GitHub Action del repo `Roccobot/AIV` (l'app Android 'Astonishing Image Viewer'), che a ogni tag

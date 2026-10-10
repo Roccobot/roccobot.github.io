@@ -230,7 +230,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   stesso indirizzo `/<repo>/`. L'hub tiene le regole trasversali e gli strumenti che le fanno
   rispettare (`.memo/scripts/`); il testo completo delle sue regole vive in `Rules.md`.
 - **Prima di lavorare su un progetto si leggono le regole del suo repo** (`AGENTS.md` e
-  `Rules.md`, o il `CLAUDE.md` finché non ne ha altri). La tabella dei progetti, coi repo, vive in
+  `Rules.md`, o il `CLAUDE.md` finché non ne ha altri): dal 2026-10-10 `Rules.md` non si carica da
+  sé, quindi si legge per intero prima di cominciare. La tabella dei progetti, coi repo, vive in
   `Rules.md` § '🗂️ I progetti e i loro file di regole'.
 - **La cartella `AIV/` non esiste più dal 2026-09-27 e non si ricrea**: la paginetta di AIV la
   pubblica il repo `Roccobot/AIV` sul suo Pages. Da quel giorno questo repo non riceve più commit
