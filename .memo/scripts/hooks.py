@@ -117,9 +117,10 @@ def leggi_evento():
 
 # The sections of rules/Roccobot.md about language, which fail in chat. After a compaction the
 # text of that file is gone from the conversation (it enters as the result of a read, and the
-# summary shortens it), while CLAUDE.md, AGENTS.md and Rules.md are reloaded by the system: so
-# the session rereads these, and only these (the user's choice B2, 2026-09-28; the whole file
-# costs 75.000-90.000 tokens).
+# summary shortens it), while the CLAUDE.md files and what they import are reloaded by the
+# system: so the session rereads these, and only these (the user's choice B2, 2026-09-28; the
+# whole file costs 75.000-90.000 tokens). Since 2026-10-10 the same sections are also the whole
+# startup read of that file (the user's choice C3): the rest is read when the work needs it.
 RILEGGERE = ('## 💬 Stile di comunicazione', '### Grammatica', '### 🙂 Formule da non usare',
              '### Caratteri', "## ⌨️ Comandi da terminale (richieste all'utente)")
 
@@ -141,11 +142,16 @@ def intervalli_rilettura(testo):
     return fatti
 
 
-def rilettura():
+def rilettura(avvio=False):
     regole = BASE / 'tools' / 'rules' / 'Roccobot.md'
+    if avvio:
+        motivo = ("All'avvio di Roccobot.md si leggono solo le sezioni sul linguaggio, e il resto quando "
+                  'il lavoro lo tocca (scelta C3, 2026-10-10)')
+    else:
+        motivo = 'Dopo la compattazione il testo di Roccobot.md non è più in scena'
     if not regole.is_file():
-        print('[start] Dopo la compattazione il testo di Roccobot.md non è più in scena, e Roccobot/tools '
-              'non è clonato: rileggi ORA dal Worker rules-proxy le sezioni ' +
+        print(f'[start] {motivo}, e Roccobot/tools '
+              'non è clonato: leggi ORA dal Worker rules-proxy le sezioni ' +
               ', '.join(f"'{t.lstrip('#').strip()}'" for t in RILEGGERE) + '.')
         return
     fatti = intervalli_rilettura(regole.read_text(encoding='utf-8'))
@@ -155,7 +161,7 @@ def rilettura():
     # 2026-09-28: pieces of 400 lines each fit in one read.
     parti = [f"righe {a}-{b} ({', '.join(repr(n) for n in nomi)})" for a, b, nomi in fatti]
     pezzi = [f'{i}-{min(i + 399, b)}' for a, b, _ in fatti for i in range(a, b + 1, 400)]
-    print(f'[start] Dopo la compattazione il testo di Roccobot.md non è più in scena: rileggi ORA, per '
+    print(f'[start] {motivo}: leggi ORA, per '
           f"intero e prima di rispondere, {regole}: {'; '.join(parti)}. Una lettura per pezzo: "
           f"{', '.join(pezzi)}.")
     if mancanti:
@@ -219,6 +225,7 @@ def mode_start(ev):
                      'messa nello script di setup dell\'ambiente vale dalla sessione successiva.')
     for r in righe:
         print(f'[start] {r}')
+    rilettura(avvio=True)
     # What the other agents did since the last turn: catchup.py reads the stamp of the brief.
     # The remote branches were just fetched above, hence --no-fetch.
     catchup = HUB / '.memo' / 'scripts' / 'catchup.py'
