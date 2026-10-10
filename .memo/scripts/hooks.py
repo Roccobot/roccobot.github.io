@@ -246,9 +246,9 @@ def mode_start(ev):
 
 def mode_prompt(ev):
     # ⚠️ A message that opens with ‼ (U+203C, with or without U+FE0E) or with two backslashes
-    # is QUEUED, not urgent: rule in rules/Roccobot.md § "L'operatore ‼︎". A single backslash
-    # is another operator, hence the two. The reminder is printed because the rule alone fell
-    # on 2026-10-03, on a message that arrived while a turn was running.
+    # is QUEUED, not urgent: rule in rules/Roccobot.md § "L'operatore ‼︎", which holds with
+    # the /desc skill active too. The reminder is printed because the rule alone fell on
+    # 2026-10-03, on a message that arrived while a turn was running.
     testa = (ev.get('prompt') or '').lstrip()
     if testa.startswith(('‼', '\\\\')):
         print(f"[prompt] {testa[:1] if testa.startswith('‼') else testa[:2]} = IN CODA: finisci "
