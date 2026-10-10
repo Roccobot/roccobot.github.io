@@ -1144,6 +1144,33 @@ def check_intro():
                               "una delle due è stata troncata")], None)
 
 
+# ── Il brief non è un archivio: una voce fatta si cancella, non si annota ──
+# La regola n. 3 della skill `handoff` lo diceva in prosa, e il 2026-10-10 il brief era arrivato
+# a 2.479 righe, quasi tutte cronaca di versioni pubblicate: il giorno prima conteneva 126 segni
+# ✅, scritti da sessioni che a ogni rilascio aggiungevano 'fatta e pubblicata' invece di
+# cancellare la voce. Il segno di spunta è la firma di quella cronaca, e una voce aperta non ne
+# ha bisogno; la formula 'fatta e pubblicata' è la stessa cosa scritta a parole.
+EVASA = re.compile(r"✅|\bfatt[aoie] e pubblicat[aoie]\b", re.IGNORECASE)
+# Oltre questa lunghezza il brief non si blocca, ma lo si dice: è il sintomo che arriva prima.
+BRIEF_RIGHE_AVVISO = 400
+
+
+def check_brief_evase(path=None):
+    """Cerca nel brief le voci marcate come fatte, che vanno cancellate.
+
+    Rende (difetti, nota): i difetti bloccano, la nota avvisa di un brief troppo lungo.
+    """
+    path = path or INTRO_COPIA
+    if not path.exists():
+        return ([], None)
+    righe = path.read_text(encoding="utf-8").splitlines()
+    difetti = [(path, n, f"voce marcata come fatta: {r.strip()[:80]}")
+               for n, r in enumerate(righe, 1) if EVASA.search(r)]
+    nota = (f"brief lungo {len(righe)} righe (soglia {BRIEF_RIGHE_AVVISO}): cerca le voci "
+            "evase da cancellare" if len(righe) > BRIEF_RIGHE_AVVISO else None)
+    return (difetti, nota)
+
+
 # Quanti secondi uno stdin aperto può tacere prima che l'ingresso valga come assente.
 ATTESA_INGRESSO = 5
 
@@ -1683,6 +1710,12 @@ def main():
     if nota_intro:
         print(f"\n(avviso) {nota_intro}, non contato come difetto")
 
+    bad_evase, nota_evase = check_brief_evase()
+    report("voci evase rimaste nel brief", bad_evase,
+           "una voce fatta si cancella, non si annota: skill handoff, regola n. 3")
+    if nota_evase:
+        print(f"\n(avviso) {nota_evase}, non contato come difetto")
+
     # ⚠️ Senza il repo sibling, un rimando ai suoi file non è ROTTO: è soltanto
     # NON VERIFICABILE, e i due casi non si confondono (regola universale: un
     # errore che risponde 'non trovato' non prova un'assenza). Trattarli come
@@ -1704,7 +1737,7 @@ def main():
 
     tot = sum(seen.values())
     rotti = (len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
-             + len(bad_chars) + len(bad_intro) + len(bad_lex))
+             + len(bad_chars) + len(bad_intro) + len(bad_lex) + len(bad_evase))
     if missing_repo:
         print(f"\nNota: {TOOLS} non è agganciato a questa sessione, quindi il controllo è "
               "PARZIALE: restano i link interni, i titoli e i caratteri, non i rimandi ai file "

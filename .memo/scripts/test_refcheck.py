@@ -230,5 +230,37 @@ class RepoPathTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIsNone(refcheck.stato_in_repo(path))
 
+class BriefDoneTests(unittest.TestCase):
+    """A brief entry marked as done is an error: it has to be deleted, not annotated.
+
+    On 2026-10-10 the brief had grown to 2,479 lines of release history, with 126 check
+    marks the day before, because sessions logged 'fatta e pubblicata' at each release.
+    """
+
+    def check(self, testo):
+        with tempfile.TemporaryDirectory() as cartella:
+            path = Path(cartella) / 'LATEST.md'
+            path.write_text(testo, encoding='utf-8')
+            return refcheck.check_brief_evase(path)
+
+    def test_check_mark_is_rejected(self):
+        difetti, _ = self.check('# Handoff\n- ✅ **4.97 fatta**: release v4.97\n')
+        self.assertEqual([n for _, n, _ in difetti], [2])
+
+    def test_written_formula_is_rejected(self):
+        difetti, _ = self.check('- **La 4.96 è Fatta e pubblicata** il 2026-10-09\n')
+        self.assertEqual(len(difetti), 1)
+
+    def test_open_entries_pass(self):
+        difetti, nota = self.check('- **Da fare**: la stringa della filigrana\n'
+                                   '- la 0.52 è pubblicata, la 0.60 è in uscita\n')
+        self.assertEqual((difetti, nota), ([], None))
+
+    def test_long_brief_is_only_a_warning(self):
+        difetti, nota = self.check('- voce aperta\n' * (refcheck.BRIEF_RIGHE_AVVISO + 1))
+        self.assertEqual(difetti, [])
+        self.assertIn('brief lungo', nota)
+
+
 if __name__ == '__main__':
     unittest.main()
