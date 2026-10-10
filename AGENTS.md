@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.52
+> **Versione**: 1.62
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -206,6 +206,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Il giro si prende **intero, solo quando lo dice lui**, e il documento non si ripubblica mentre
   lo compila (`Roccobot.md` § '⏸️ Il giro si prende INTERO, e solo quando lo dice lui').
 - Una domanda che è già nel documento non si ripete in chat.
+- **Il lavoro nuovo comincia dopo l'invio del giro precedente**, salvo sua richiesta o proposta
+  autorizzata, e allora il DF è cumulativo (`Roccobot.md` § '🚪 Il lavoro nuovo comincia dopo
+  l'invio del giro precedente').
 
 ## 🏗️ Sviluppo
 
