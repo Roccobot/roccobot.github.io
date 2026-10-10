@@ -627,22 +627,33 @@ sessione:
        progetto **no**, e quello è il buco che ha bloccato la paginetta di download di AIV.
        Il dettaglio completo, coi contenuti di `Roccobot Design`, vive in `Roccobot.md`,
        § '🎨 Grafica' → '🎨 Claude Design, dove vive il design system'.
-1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
-   base universale e non è opzionale.
+1. **Di `rules/Roccobot.md` si leggono subito, e senza chiedere niente, le sole sezioni sul
+   linguaggio**: '💬 Stile di comunicazione' fino a '🙂 Formule da non usare' compresa,
+   'Caratteri' e '⌨️ Comandi da terminale (richieste all'utente)'. Le righe esatte le stampa il
+   gancio di avvio di `hooks.py`; dove non gira, si cercano i titoli. Il resto del file si legge
+   **quando il lavoro tocca una sua sezione**, e allora la sezione si legge per intero: i rimandi
+   del nucleo e dei file di regole dicono quale (scelta C3 dell'utente, 2026-10-10).
+   - ⚠️ **Perché quelle e non altre**: sono le regole che servono a ogni frase, e la lettura su
+     richiesta non scatta quando nessuno sa di averne bisogno. Le altre regole che servono
+     sempre (sicurezza, non derogabili, git, brief) sono già una riga ciascuna nel nucleo di
+     `AGENTS.md`, che il sistema carica da sé.
+   - ⚠️ **Fino al 2026-10-10 il file si leggeva tutto all'avvio**: oltre 300.000 byte in ogni
+     sessione, quasi tutti su argomenti che il lavoro di quella sessione non toccava.
 2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
    **si attende la risposta** prima di iniziare il lavoro: l'utente ha detto
    esplicitamente che il ritardo di un giro non è un problema, perché si paga una
    volta sola.
    - **`Carico anche i canoni?`**, a **scelta multipla**: `rules/JRRT.md` (il canone
      tolkieniano) e `rules/Earthsea.md` (il canone di Terramare). Sono i **soli** file di
-     regole opzionali: tutto il resto vive in `Roccobot.md`, che si carica sempre. Se un
+     regole opzionali: tutto il resto vive in `Roccobot.md`, letto come dice il passo 1. Se un
      domani ne nascono altri, si aggiungono qui come opzioni.
      - ⚠️ **Il secondo è nato il 2026-08-20 con il progetto 'I Grandi di Terramare'** ed è
        **canone vero dal 2026-08-21**: opere, edizioni italiane coi traduttori, sigle
        bilingui, Maestri di Roke, e i link alle fonti scaricabili. Le note che lo dicono un
        guscio sono superate.
-   - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra quelli
-     della tabella in testa a `Rules.md` (richiesta dell'utente, 2026-07-30).
+   - **`Quali regole di progetto leggo subito?`**, a **scelta multipla** fra i progetti
+     della tabella in testa a `Rules.md` (richiesta dell'utente, 2026-07-30): di quelli scelti
+     si legge per intero il `Rules.md`, o il `CLAUDE.md` dove non ce n'è altro.
      Quelli che l'utente non sceglie **non** si leggono all'avvio: si leggono **al
      volo** quando il lavoro entra nella loro cartella, che è esattamente la rete di
      sicurezza già prescritta sopra.
@@ -680,30 +691,34 @@ sessione:
      una cosa da fare esiste solo nel riassunto, è già a rischio. Il gancio `PreCompact` del
      dispatcher (`hooks.py`, modo `compact`) lo ricorda a ogni compattazione e dice se il brief
      è di oggi, ⚠️ ma **solo dove gli hook sono installati** (vedi la trappola in
-     `docs/Workflow.md` § '🧪 I controlli prima del commit, e le loro trappole'): altrove resta solo la regola, ed è la ragione per cui è scritta in tre file invece
-     che in uno.
+     `docs/Workflow.md` § '🧪 I controlli prima del commit, e le loro trappole'): altrove resta
+     solo la regola, ed è la ragione per cui è scritta in tre file invece che in uno.
 5. **Dal momento del caricamento in poi, quei file sono regole consolidate e
    condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
    ri-chiedere e senza rileggerle a ogni turno.
    - ⚠️⚠️ **TRANNE DOPO UNA COMPATTAZIONE, quando si rileggono le sezioni sul linguaggio di
-     `Roccobot.md`** (scelta dell'utente, 2026-09-28, opzione B2). `CLAUDE.md`, `AGENTS.md` e
-     `Rules.md` li ricarica il sistema, ma `Roccobot.md` entra come risultato di una lettura, e
+     `Roccobot.md`** (scelta dell'utente, 2026-09-28, opzione B2), le stesse del passo 1. I
+     `CLAUDE.md` e quello che importano li ricarica il sistema, ma `Roccobot.md` entra come
+     risultato di una lettura, e
      il riassunto lo accorcia a poche righe: la terza ricaduta su 'portare' dello stesso giorno è
      arrivata così, con la regola scritta da ore. Le sezioni sono '💬 Stile di comunicazione' fino
      a '🙂 Formule da non usare' compresa, 'Caratteri', e '⌨️ Comandi da terminale', che dice
-     come si chiede all'utente di fare qualcosa sul suo computer; le righe esatte le dice il gancio di
-     avvio di `hooks.py`, che dopo una compattazione stampa solo quelle. Si rileggono **per
+     come si chiede all'utente di fare qualcosa sul suo computer; le righe esatte le dice il gancio
+     di avvio di `hooks.py`, che le stampa all'avvio e dopo una compattazione. Si rileggono **per
      intero e prima di rispondere**. Rileggere tutto il file costerebbe 75.000-90.000 token a
      ogni compattazione.
 6. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
    token (regola in `Roccobot.md`, sezione Worker `rules-proxy`): niente letture
-   parziali, niente ricostruzioni a memoria.
+   parziali, niente ricostruzioni a memoria. ⚠️ **L'eccezione è `Roccobot.md`, che dal
+   2026-10-10 si legge per sezioni** (passo 1): una sezione si legge comunque intera e in grezzo,
+   mai da un riassunto, e nel dubbio su dove viva una regola si guarda l'indice in testa al file.
 
 - ⚠️ **Sessioni NON interattive** (Routine schedulate, trigger, sessioni svegliate
   da un evento su una PR): non c'è nessuno che possa rispondere, quindi **non si
-  chiede niente**, né del canone né dei `CLAUDE.md` di progetto, e si caricano **solo
-  i due file principali**, in quest'ordine di priorità: **il `CLAUDE.md` dell'hub** (con `AGENTS.md` e questo file, che importa) e
-  **`rules/Roccobot.md`**. Gli altri si leggono solo se il compito li tocca davvero, e
+  chiede niente**, né del canone né delle regole di progetto, e si caricano **solo**, in
+  quest'ordine di priorità, **il `CLAUDE.md` dell'hub** (con `AGENTS.md` e questo file, che
+  importa) e **le sezioni sul linguaggio di `rules/Roccobot.md`** (passo 1). Gli altri file e le
+  altre sezioni si leggono solo se il compito li tocca davvero, e
   il brief solo se il compito riguarda il lavoro lasciato in sospeso.
 - ⚠️ **Caricato non vuol dire attivo**: regola universale, in `Roccobot.md` § '🗃️ File di
   regole collegati'. Qui vale ricordare il caso concreto: **'🎛️ Revisione dei prompt'** di
