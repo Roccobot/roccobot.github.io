@@ -481,8 +481,8 @@ con la deroga ammessa nei casi difficili. Qui non se ne tiene una copia più cor
 poi divergerebbe.
 
 - ⚠️ I **riferimenti em concreti** dipendono dal progetto e dal corpo del testo: quelli di
-  'I Grandi di Arda' vivono nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔬 Misure
-  tipografiche'.
+  'I Grandi di Arda' vivono nel `Rules.md` del repo `Roccobot/arda`, § '🔬 Misure tipografiche:
+  servire i font REALI ai test'.
 
 ## 🌿 Branch, allineamento e push
 
