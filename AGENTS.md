@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.72
+> **Versione**: 1.82
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -209,6 +209,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Il lavoro nuovo comincia dopo l'invio del giro precedente**, salvo sua richiesta o proposta
   autorizzata, e allora il DF è cumulativo (`Roccobot.md` § '🚪 Il lavoro nuovo comincia dopo
   l'invio del giro precedente').
+- **Una modifica a un DF si fa a tutti gli omologhi** nello stesso giro (oggi AIV e Aomidori),
+  salvo il contenuto del giro; una divergenza voluta si dichiara (`Roccobot.md` § '🔁 Il giro
+  del collaudo').
 
 ## 🏗️ Sviluppo
 
