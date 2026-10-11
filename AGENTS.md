@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.62
+> **Versione**: 1.72
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -63,7 +63,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   sotto).
 - **Conferma esplicita per le operazioni ad alto impatto**: produzione, breaking change,
   infrastruttura, segreti, admin, deploy.
-- **Trattini lunghi mai**, apici dritti, `...` e non il carattere unico (sezione Caratteri).
+- **Trattini lunghi mai**, apici dritti, `...` e non il carattere unico fuori dai testi di UI (sezione Caratteri).
 - **Comunicazione con l'utente sempre in italiano.**
 - **Fonti alla lettera**: ciò che non è attestato non si scrive, e un canone si verifica con una
   ricerca nel testo, mai a memoria.
@@ -93,7 +93,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Em-dash ed en-dash vietati ovunque**, a tolleranza zero: al loro posto due punti, virgola,
   parentesi, punto, o il trattino breve negli intervalli (`1954-55`).
 - **Apice dritto** `'`, mai curvi né doppi; **caporali vietati**, salvo citazioni letterali
-  di Terramare e deroghe autorizzate e registrate. **Tre punti**, mai l'ellissi unica; **accenti veri**, anche
+  di Terramare e deroghe autorizzate e registrate. **Tre punti**, mai l'ellissi unica, salvo i testi di UI dove la vuole il sistema; **accenti veri**, anche
   maiuscoli, mai apostrofi al loro posto (`Roccobot.md` § 'Caratteri').
 - Nomi di file, codice, chiavi ed etichette di UI citati fra **backtick**.
 - Numeri all'italiana (`0,05`, `27.918`) quando se ne parla, col punto quando si cita codice;
@@ -152,7 +152,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   versioni').
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
-  riscrivere la storia di un branch altrui.
+  riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
 - **SlimVer** (`x.xx`) sempre: +0,01 ritocco, +0,1 funzionalità, +1,0 release maggiore, a ogni
   commit che tocca il prodotto. Eccezioni per compatibilità: userscript in SemVer, liste AdBlock
   con la data, Worker con `rev`.
