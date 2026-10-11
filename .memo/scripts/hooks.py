@@ -169,6 +169,17 @@ def rilettura(avvio=False):
               'RILEGGERE in hooks.py, e intanto rileggi quelle sezioni cercandole a mano.')
 
 
+def repository_in_home(home):
+    """A git repository in the home folder makes every file of the user a change of that repo
+    (found on 2026-10-10 on Rocco's Mac: `~/.git`, deleted with his choice H1). His answer C1 of
+    2026-10-11 asks for the rule and for this check at the start of every session."""
+    if (home / '.git').exists():
+        return (f'ATTENZIONE: c\'è un repository git nella cartella Inizio ({home / ".git"}): ogni file '
+                'dell\'utente risulta una sua modifica. Non si crea mai; se c\'è, si chiede all\'utente '
+                'se cancellarlo (Roccobot.md § \'🌿 Workflow git e versioni\').')
+    return None
+
+
 def mode_start(ev):
     if ev.get('source') == 'compact':
         rilettura()
@@ -223,6 +234,9 @@ def mode_start(ev):
         righe.append('gli hook NON sono nelle impostazioni utente: nelle sessioni coi repo affiancati '
                      'non girano. La riga del passo 0 del protocollo di avvio (Rules.md dell\'hub) li installa, e '
                      'messa nello script di setup dell\'ambiente vale dalla sessione successiva.')
+    avviso_inizio = repository_in_home(Path.home())
+    if avviso_inizio:
+        righe.insert(0, avviso_inizio)
     for r in righe:
         print(f'[start] {r}')
     rilettura(avvio=True)
