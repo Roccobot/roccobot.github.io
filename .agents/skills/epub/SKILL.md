@@ -118,11 +118,16 @@ revisione con lui:
   - ⚠️ **La prima versione aveva un `<img>` senza CSS**, come chiedeva il prompt alla lettera:
     in alcune app l'immagine compariva alla sua misura reale invece di adattarsi. L'SVG è il
     metodo più compatibile, ed è quello che usano Calibre e Sigil.
-- **I lettori di riferimento dell'utente sono Murasaki su macOS ed Episteme su Android**
-  (sua indicazione, 2026-10-08), e una scelta di compatibilità si misura prima su quei due.
-  - **Murasaki** (di Masaaki Mizumoto, Giappone; a pagamento una tantum sul Mac App Store) è
-    chiuso, e la sua scheda dice che scorre il libro come una pagina web. Il motore non è
-    dichiarato: che sia quello di Safari è un'ipotesi, da confermare aprendo un libro di prova.
+- **I lettori di riferimento dell'utente sono Aomidori su macOS ed Episteme su Android**
+  (sua indicazione, 2026-10-12; fino a quel giorno su macOS era Murasaki, che l'utente considera
+  un progetto semi-abbandonato), e una scelta di compatibilità si misura prima su quei due.
+  - **Aomidori** (<https://roccobot.github.io/Aomidori/>) è il lettore dell'utente, nel repo
+    `Roccobot/Aomidori`: ogni capitolo è una pagina web in un `WKWebView`, il motore di Safari.
+    Riconosce una pagina che contiene una sola immagine, o una marcata `epub:type="cover"`, e
+    stende a tutta la finestra un SVG con `viewBox`, lasciando a `preserveAspectRatio` il
+    margine intorno (`Sources/Aomidori/Reader/ReaderScript.swift`, `markImagePage`): la
+    copertina della skill rientra in quel caso. La copertina del libro la prende dalla proprietà
+    `cover-image`, o dal `<meta name="cover">` di EPUB 2 (`Sources/EPUBKit/EPUBParser.swift`).
   - **Episteme** (open source, licenza AGPL, su F-Droid e Google Play) nella vista paginata
     **non** usa un browser: smonta l'HTML in blocchi suoi. Letto nel suo sorgente
     (`HtmlParser.kt` e `SharedEpubSemanticBlocks.kt`, repository `Aryan-Raj3112/episteme`):
@@ -133,8 +138,8 @@ revisione con lui:
     paginata un'immagine è alta al massimo l'86% della pagina, ed è allineata in alto, non al
     centro (`SharedMeasuredEpubPaginator.kt`, `measureImageSize`, dove il tetto è scritto nel
     codice). Il libro non può scavalcarlo: provato dall'utente il 2026-10-08, la copertina appare
-    intera e col fondo trasparente, ma più piccola e in alto. Murasaki invece la adatta allo
-    schermo. Non si rincorre con CSS o misure diverse.
+    intera e col fondo trasparente, ma più piccola e in alto. Aomidori invece la adatta alla
+    finestra. Non si rincorre con CSS o misure diverse.
   - ⚠️ **Il prezzo**, dichiarato: i lettori molto vecchi (Adobe Digital Editions 2 e simili)
     conoscono solo `xlink:href`. Fra loro e i lettori dell'utente si è scelto quelli dell'utente.
 - **Lo spine contiene due voci**, copertina e testo, perché la pagina della copertina va
