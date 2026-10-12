@@ -4,7 +4,8 @@ Build a standard EPUB 3.3 book from a cover image and an HTML text, styled with 
 stylesheet `Roccobot.css` that lives beside this script.
 
 The book has two spine items and nothing else: the cover, which is a page holding only the
-image, and the text. The HTML is rebuilt as clean XHTML: DOCTYPE, `lang`, `<meta charset>`,
+image, and the text. The cover is a landmark, not a chapter: the table of contents lists the
+text's chapters only. The HTML is rebuilt as clean XHTML: DOCTYPE, `lang`, `<meta charset>`,
 no generator metadata, no `<style>` element (its rules move to the CSS), normalised
 whitespace, and heading anchors renamed after the document structure (`cap03par05`) in
 place of the random ones that editors leave behind. Internal links follow the renamed ids.
@@ -509,10 +510,12 @@ def build(args):
             i += 1
         return '<ol>' + ''.join(out) + '</ol>', i
 
+    # The table of contents lists the chapters only, at its top level: the cover is reached
+    # through its landmark and the guide, and the book's title is not a chapter, so a reader
+    # that counts the entries counts the chapters.
     toc_items = toc_list(toc)[0] if toc else f'<ol><li><a href="Text/text.xhtml">{esc_text(title)}</a></li></ol>'
     nav_body = (f'<body>\n  <nav epub:type="toc" id="toc" role="doc-toc">\n    <h1>{labels["toc"]}</h1>\n'
-                f'    <ol><li><a href="Text/cover.xhtml">{labels["cover"]}</a></li>'
-                f'<li><a href="Text/text.xhtml">{esc_text(title)}</a>{toc_items if toc else ""}</li></ol>\n  </nav>\n'
+                f'    {toc_items}\n  </nav>\n'
                 f'  <nav epub:type="landmarks" id="landmarks" hidden="hidden">\n    <h2>{labels["landmarks"]}</h2>\n'
                 f'    <ol>\n      <li><a epub:type="cover" href="Text/cover.xhtml">{labels["cover"]}</a></li>\n'
                 f'      <li><a epub:type="bodymatter" href="Text/text.xhtml">{labels["text"]}</a></li>\n'
