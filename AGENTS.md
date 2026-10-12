@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.83
+> **Versione**: 1.84
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -56,9 +56,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Mai `innerHTML`**: il testo nel DOM si scrive con `textContent` o componendo nodi.
 - **Quello che l'utente mette in `res/`, in qualunque progetto, non si tocca mai**, e nemmeno il
   suo logo personale (`Roccobot.md` § '🧹 Bonifica e ottimizzazione degli asset').
-- **Icone e immagini così come sono**: niente ritaglio, niente pixel spostati nel canvas; niente
-  quantizzazione a palette; niente compensazioni di margini di segno opposto
-  (`Roccobot.md` § '🎨 Grafica').
+- **Icone e immagini originali e così come sono**: mai la copia ricompressa della chat;
+  niente ritaglio, niente pixel spostati nel canvas; niente quantizzazione a palette; niente
+  compensazioni di margini di segno opposto (`Roccobot.md` § '🎨 Grafica' e § '🧹 Bonifica
+  e ottimizzazione degli asset').
 - **Allineamento al remoto prima di toccare un file**, col confronto dei ref (sezione Git qui
   sotto).
 - **Conferma esplicita per le operazioni ad alto impatto**: produzione, breaking change,
