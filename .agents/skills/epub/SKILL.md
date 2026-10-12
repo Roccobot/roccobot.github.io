@@ -14,10 +14,15 @@ Due file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac d
 
 | file | che cosa diventa |
 |---|---|
-| `Cover.jpg` | la copertina, una pagina sola marcata come copertina, non come capitolo |
-| `Text.html` | il testo, coi suoi capitoli |
+| un'immagine (spesso `Cover.jpg`) | la copertina, una pagina sola marcata come copertina, non come capitolo |
+| un file HTML (spesso `Text.html`) | il testo, coi suoi capitoli |
 
-Il nome conta poco: una copertina in PNG, GIF o WebP va bene lo stesso.
+I nomi e le estensioni non sono fissi (precisazione dell'utente, 2026-10-12): la copertina può
+essere un JPEG, un PNG, un GIF o un WebP, e il testo può chiamarsi in qualunque modo e finire in
+`.html`, `.htm` o `.xhtml`. I due file si riconoscono dal contenuto, non dal nome: lo script li
+riceve con `--cover` e `--text` e legge l'XHTML come l'HTML (provato il 2026-10-12 con un testo in
+`.xhtml`, dichiarazione XML e namespace compresi, e uno in `.htm`: epubcheck a 0 errori e 0
+avvisi in tutti e due i casi).
 
 🎨 **Il foglio di stile non si chiede più: è sempre `Roccobot.css`**, accanto a questo file
 (decisione dell'utente, 2026-10-08). Un CSS che arriva con i file non lo sostituisce; le regole
@@ -40,7 +45,7 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    il testo attesta: un dato che non c'è resta fuori, e nel resoconto si dice che manca.
 2. **Lancia lo script**, che vive accanto a questo file:
    ```
-   python3 -I <skill>/build_epub.py --cover Cover.jpg --text Text.html --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
+   python3 -I <skill>/build_epub.py --cover <copertina> --text <testo> --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
    ```
    Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
    `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
