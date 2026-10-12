@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Build a standard EPUB 3.3 book from a cover image and an HTML text, styled with the house
-stylesheet `Roccobot.css` that lives beside this script.
+stylesheet `Roccobot.css` that lives beside this script. The text file can have any name and
+any of the usual extensions (`.html`, `.htm`, `.xhtml`): it is parsed as HTML either way, so an
+XHTML declaration or namespace does no harm.
 
 The book has two spine items and nothing else: the cover, which is a page holding only the
 image, and the text. The cover is a landmark, not a chapter: the table of contents lists the
