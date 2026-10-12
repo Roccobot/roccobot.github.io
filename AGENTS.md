@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.97
+> **Versione**: 1.98
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -230,6 +230,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - I **nomi dei file** sono in inglese, e un nome che esiste già non si cambia mai; il
   **contenuto** è in inglese se si comincia da zero, altrimenti resta nella lingua che c'è già
   (`Roccobot.md` § '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
+- **Le dipendenze si seguono**: ogni progetto tiene il registro di ciò da cui dipende, e ogni
+  versione nuova si legge per vedere che cosa portare dentro, prima di ogni release
+  (`Roccobot.md` § '🔗 Le dipendenze si seguono: ogni versione nuova si legge').
 - Mobile vuol dire **Android**, desktop vuol dire **macOS**.
 
 <!-- core:end -->
