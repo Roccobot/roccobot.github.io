@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.96
+> **Versione**: 1.97
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -157,8 +157,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
 - **SlimVer** (`x.xx`) sempre: +0,01 ritocco, +0,1 funzionalità, +1,0 release maggiore, a ogni
-  commit che tocca il prodotto. Eccezioni per compatibilità: userscript in SemVer, liste AdBlock
-  con la data, Worker con `rev`.
+  commit che tocca il prodotto. Funzionalità vuol dire una capacità nuova: le note di un giro su
+  funzioni che esistono già valgono +0,01 (`Roccobot.md` § '🌿 Workflow git e versioni').
+  Eccezioni per compatibilità: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
 - **Il numero di versione ha una fonte sola**, ed è visibile nel prodotto.
 
 ## 🧾 Il brief e il non perdere niente
