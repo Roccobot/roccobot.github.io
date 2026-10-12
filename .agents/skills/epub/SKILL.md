@@ -1,6 +1,6 @@
 ---
 name: epub
-description: Costruisce un EPUB 3.3 standard, di solito da due file (una copertina e un testo HTML) e da un insieme diverso deducendone la struttura o chiedendo, con il foglio di stile della casa, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
+description: Costruisce un EPUB 3.3 standard, di solito da due file (una copertina e un testo HTML) e da un insieme diverso deducendone la struttura o chiedendo, col foglio di stile allegato o, senza, con l'ultima versione di Aomidori Flex, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
 ---
 
 # `/epub`: un EPUB standard da copertina e testo
@@ -24,13 +24,11 @@ riceve con `--cover` e `--text` e legge l'XHTML come l'HTML (provato il 2026-10-
 `.xhtml`, dichiarazione XML e namespace compresi, e uno in `.htm`: epubcheck a 0 errori e 0
 avvisi in tutti e due i casi).
 
-🎨 **Il foglio di stile non si chiede più: è sempre `Roccobot.css`**, accanto a questo file
-(decisione dell'utente, 2026-10-08). Un CSS che arriva con i file non lo sostituisce; le regole
-che il testo porta in un `<style>` si accodano in fondo, come prima.
+🎨 **Il foglio di stile: quello allegato, o l'ultima versione di Aomidori Flex** (sezione
+'🎨 Il foglio di stile' qui sotto). Non si chiede.
 
 ⚠️ **È la struttura più comune, non l'unica** (precisazione dell'utente, 2026-10-08). Se arriva
-un insieme diverso (più file HTML, immagini dentro il testo, la copertina mancante, un CSS
-allegato che sembra voluto al posto di quello della casa) la struttura si **deduce** dai file quando è univoca: per esempio più
+un insieme diverso (più file HTML, immagini dentro il testo, la copertina mancante) la struttura si **deduce** dai file quando è univoca: per esempio più
 HTML coi nomi numerati sono capitoli in quell'ordine. Quando non è univoca, si **chiede**
 all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
 - Lo script copre il caso dei due file. Per un insieme diverso lo si adatta (o si estende, se il
@@ -45,7 +43,7 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    il testo attesta: un dato che non c'è resta fuori, e nel resoconto si dice che manca.
 2. **Lancia lo script**, che vive accanto a questo file:
    ```
-   python3 -I <skill>/build_epub.py --cover <copertina> --text <testo> --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
+   python3 -I <skill>/build_epub.py --cover <copertina> --text <testo> --css <foglio di stile> --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
    ```
    Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
    `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
@@ -79,21 +77,35 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
 - Mantiene il `lang` di un passo in un'altra lingua dentro il testo: è un'informazione per la
   sintesi vocale, non un residuo.
 
-## 🎨 Il foglio di stile `Roccobot.css`
+## 🎨 Il foglio di stile
 
-Tema sans-serif chiaro, scuro quando il dispositivo lo chiede (`prefers-color-scheme`). È
-l'utente a sceglierne i valori, e le revisioni passano da lui. Le scelte del 2026-10-08, dopo una
-revisione con lui:
-- **peso 400 nel chiaro, 600 nello scuro**, dove vuole un carattere molto spesso;
-- **selezione nella tinta di `#43B59E`**: nel chiaro fondo `#A0D8CA` (la tinta schiarita a metà verso la pagina) e testo `#19433A` (la stessa tinta scurita), leggibilità 6,91, dopo un rosa acceso, `#4FD9BE` e `#43B59E` col testo bianco; nello scuro tono su tono, fondo `#27685B` (la stessa tinta scurita) e testo `#f5f5f2`, leggibilità 5,98;
-- il frontespizio (`.title`) senza `margin-top: 25%`, che si calcolava sulla larghezza;
-- la regola `html.cover-page` adatta l'immagine alla pagina invece di allargarla al 100%. La
-  copertina dei libri della skill non la usa, perché ha il suo `cover.css`.
-- ⚠️ **Restano per sua scelta, anche se segnalati nella revisione**: sfondo e colore forzati su
-  `html` e `body`, che in un'app che segue il proprio tema invece di quello del sistema possono
-  scontrarsi con lui; `max-width: 34em` e `font-size: 1.125em` sul `body`; le regole senza
-  effetto (`.sans`, `prefers-reduced-motion`, `:hover`); i link marroni nel chiaro e azzurri
-  nello scuro; i filetti a basso contrasto. Non si correggono di iniziativa.
+Regola dell'utente del 2026-10-12, che sostituisce quella del 2026-10-08 (*il foglio di stile è
+sempre `Roccobot.css`*, un file accanto a questa skill, che è stato tolto e resta nella storia git,
+commit `e2af707`):
+
+1. **Se con i file arriva un CSS, il libro usa quello**, copiato così com'è in `Styles/style.css`.
+   Non si corregge e non si fonde con un altro foglio.
+2. **Se non arriva nessun CSS, il libro usa l'ultima versione di Aomidori Flex**, il foglio di
+   stile di Aomidori, il lettore dell'utente. Si cerca in due posti:
+   - **in una sessione sul Mac dell'utente**,
+     `~/Library/Application Support/Aomidori/Styles/AomidoriFlex.css`;
+   - **in ogni sessione**, `styles/AomidoriFlex.css` nel repo `Roccobot/Aomidori`, che un'altra
+     sessione tiene allineato all'ultima versione (annunciato dall'utente il 2026-10-12, quando la
+     cartella non c'era ancora). Senza il repo clonato si legge dal raw di GitHub, che risponde
+     perché il repo è pubblico. Finché `styles/` non c'è, vale la copia che l'app si porta dietro,
+     `Resources/Aomidori Flex.css`.
+
+   ⚠️ **Il nome del file è `AomidoriFlex.css`, senza spazio** (precisazione dell'utente,
+   2026-10-12: *Aomidori Flex* è il nome colloquiale). Il 2026-10-12 il codice di Aomidori
+   installava ancora `Aomidori Flex.css`, con lo spazio (`AppPaths.bundledStyleNames`), quindi il
+   file si riconosce anche dal **commento in testa**, che comincia con `Aomidori Flex` seguito dal
+   numero di versione (`Aomidori Flex 1.2`). Fra le copie trovate vince il numero più alto; a
+   numero uguale vince quella del Mac, che può contenere le sue modifiche. Nel resoconto si dice
+   quale copia è entrata e con quale numero.
+
+In tutti e due i casi lo script lo riceve con `--css` e lo scrive in `Styles/style.css`. Le regole
+che il testo porta in un `<style>` si accodano in fondo, dopo un commento che lo dichiara: il
+foglio sopra resta intatto. La copertina ha il suo `Styles/cover.css`, con la sola geometria.
 
 ## ⚓ Gli ancoraggi
 
