@@ -14,8 +14,8 @@ Due file, allegati alla richiesta o nella cartella `~/Downloads/EPUB/` del Mac d
 
 | file | che cosa diventa |
 |---|---|
-| `Cover.jpg` | la copertina, da sola, come primo capitolo |
-| `Text.html` | il testo, secondo e ultimo capitolo |
+| `Cover.jpg` | la copertina, una pagina sola marcata come copertina, non come capitolo |
+| `Text.html` | il testo, coi suoi capitoli |
 
 Il nome conta poco: una copertina in PNG, GIF o WebP va bene lo stesso.
 
@@ -137,11 +137,17 @@ revisione con lui:
     schermo. Non si rincorre con CSS o misure diverse.
   - ⚠️ **Il prezzo**, dichiarato: i lettori molto vecchi (Adobe Digital Editions 2 e simili)
     conoscono solo `xlink:href`. Fra loro e i lettori dell'utente si è scelto quelli dell'utente.
-- **Lo spine contiene due voci**, copertina e testo. L'indice (`nav.xhtml`) elenca la copertina,
-  il testo e i suoi titoli.
+- **Lo spine contiene due voci**, copertina e testo, perché la pagina della copertina va
+  mostrata. ⚠️⚠️ **La copertina è un landmark, non un capitolo** (richiesta dell'utente,
+  2026-10-12): l'indice (`nav.xhtml`) elenca soltanto i capitoli del testo, al primo livello e
+  coi loro titoli annidati, così un lettore che conta le voci dell'indice conta i capitoli giusti.
+  Alla copertina si arriva dal landmark `cover`, dal `<guide>` e dall'`epub:type="cover"` della
+  sua pagina. Prima l'indice aveva la copertina come prima voce e il titolo del libro come
+  seconda, coi capitoli dentro: un lettore contava due capitoli, o il primo vero come secondo.
+  Un testo senza titoli ha una voce sola, col titolo del libro.
 - **L'indice c'è sempre, perché è obbligatorio**: la specifica vuole un documento di
-  navigazione con esattamente un `nav` di tipo `toc`. I **landmark** invece sono facoltativi, e
-  qui sono due, `cover` e `bodymatter`. ⚠️ Il landmark che punta all'indice non c'è: l'indice
+  navigazione con esattamente un `nav` di tipo `toc`, e non chiede che contenga ogni voce dello
+  spine. I **landmark** invece sono facoltativi, e qui sono due, `cover` e `bodymatter`. ⚠️ Il landmark che punta all'indice non c'è: l'indice
   non è nello spine, ed epubcheck rifiuta un landmark verso un file che non ci sia.
 - **Il `<guide>` c'è**, con le stesse due voci, per i lettori che conoscono solo EPUB 2; si
   toglie con `--no-guide`.
