@@ -10,15 +10,16 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.84
+> **Versione**: 1.94
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
 > regola per riga, col rimando alla sezione che ne dà il perché: il testo completo vive in
 > `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva copiato
 > dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 15.000 byte**: ogni `AGENTS.md` include anche le regole del suo repo, e
-> `core-sync` non lo scrive oltre i 30.000, contati con l'`AGENTS.md` annidato (il più pieno è Terramare).
+> ⚠️ Resta **sotto i 20.000 byte**: ogni `AGENTS.md` include anche le regole del suo repo, e
+> `core-sync` non lo scrive oltre i 30.000, contati con l'`AGENTS.md` annidato. Un repo che col
+> nucleo al tetto li supererebbe ha una riga `TIGHT` nella run: il dettaglio passa nel suo `Rules.md`.
 
 ## 🧭 Come si legge il resto
 
