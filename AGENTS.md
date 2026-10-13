@@ -113,7 +113,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   (`Roccobot.md` § '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio, ogni richiesta di autorizzazione è approvata**, nel
   cloud e in locale; in locale `caffeinate` parte da sé prima del lavoro, e si dice per quanto
-  (`Roccobot.md` § '☕ Le sessioni locali e `caffeinate`'). Restano i divieti di sicurezza.
+  (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
+  § '☕ Le sessioni locali e `caffeinate`'). Restano i divieti di sicurezza.
 - **Un passo che può fare solo l'utente**: si prepara tutto il resto e gli si scrivono i clic in
   ordine, con il modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
