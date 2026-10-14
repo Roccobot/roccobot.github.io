@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomidori Flex: le modifiche</title>
+<meta name="description" content="Tutte le versioni di Aomidori Flex, lo stile predefinito di Aomidori, con le modifiche di ciascuna.">
+<style>
+  :root {
+    --ground: #FCFAF6;
+    --text: #1F1A17;
+    --quiet: #6B625B;
+    --rule: #E6E0D8;
+    --accent: #2F7F6F;
+    --code: #F1ECE4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #403D3A;
+      --text: #F5F5F2;
+      --quiet: #C8C2BC;
+      --rule: #5A5652;
+      --accent: #8FD3C1;
+      --code: #4A4744;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'MiSans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 3rem 1rem 4rem;
+  }
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  .lead {
+    color: var(--quiet);
+    margin: 0 0 2.5rem;
+  }
+  a { color: var(--accent); }
+  section {
+    border-top: 1px solid var(--rule);
+    padding: 1.25rem 0 0.5rem;
+  }
+  h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  h2 time {
+    color: var(--quiet);
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+  ul { margin: 0 0 1rem; padding-left: 1.25rem; }
+  li { margin: 0.25rem 0; }
+  code {
+    background: var(--code);
+    border-radius: 4px;
+    padding: 0.05em 0.3em;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.9em;
+  }
+  footer {
+    border-top: 1px solid var(--rule);
+    color: var(--quiet);
+    font-size: 0.875rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Aomidori Flex</h1>
+  <p class="lead">Lo stile predefinito di <a href="https://roccobot.github.io/Aomidori/">Aomidori</a>: tutte le versioni, dalla più recente, con le modifiche di ciascuna. Il file dell'ultima versione è <a href="AomidoriFlex.css">AomidoriFlex.css</a>.</p>
+
+  <section>
+    <h2>1.34 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Contiene la 1.33.</li>
+      <li>I nomi dei font sono fra apici semplici.</li>
+      <li>In Notte il titoletto pesa 560, 140 più del testo, come in Giorno.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.33 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Ritocco a mano di Rocco: in Notte il testo pesa 420, dove pesava 500, con una spaziatura di 0,02 em.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.32 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Nei titoli <code>&lt;small&gt;</code> prende la misura del titolo: il maiuscoletto fatto a mano, come in <code>P&lt;small&gt;OPOLI E LINGUE&lt;/small&gt;</code>, diventa un maiuscolo tutto uguale.</li>
+      <li>In testa al file, il blocco con <code>#NAME</code>, <code>#VERSION</code>, <code>#NOTE</code> e <code>#COMMENT</code>, che Aomidori legge per il nome e la versione dello stile.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.31 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>I titoli non sono mai in maiuscoletto, qualunque sia il font; i titoli di parte tornano in maiuscolo, con una spaziatura di 0,1 em.</li>
+      <li>Il maiuscoletto resta nei paragrafi.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.30 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Prima il font di sistema (SF su macOS), poi Roboto e MiSans.</li>
+      <li>Il maiuscoletto con <code>font-variant-caps</code>: vero dove il font lo ha, ricostruito dal browser altrove.</li>
+      <li>I titoletti in corsivo.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.24 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Quando una tabella ha la didascalia sopra, gli angoli della riga d'intestazione restano dritti.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.23 <time datetime="2026-10-13">13 ottobre 2026</time></h2>
+    <ul>
+      <li>Nei documenti Markdown tutti i titoli sono a sinistra.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.22 <time datetime="2026-10-12">12 ottobre 2026</time></h2>
+    <ul>
+      <li>Le tabelle come in RoccobotOS, nei colori caldi della Flex: una cornice sottile arrotondata, l'intestazione su un fondo più scuro, le righe alterne ombreggiate, larghe quanto il loro contenuto, in Giorno e in Notte.</li>
+      <li>In Notte il testo pesa 500, come il titoletto, quindi i titoletti passano a 650.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.20 <time datetime="2026-10-12">12 ottobre 2026</time></h2>
+    <ul>
+      <li>Il file si chiama <code>AomidoriFlex.css</code>, senza spazio, e la numerazione segue SlimVer: la 1.2 diventa 1.20.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.2 <time datetime="2026-10-12">12 ottobre 2026</time></h2>
+    <ul>
+      <li>Quattro livelli di titoli: le parti in maiuscolo spaziato, le sezioni al 115%, i titoletti obliqui alla misura del testo.</li>
+      <li>Il grigio dei titoli più scuro, con un contrasto di 5,6 a 1.</li>
+      <li>Nessun rientro e 1,2 em fra i paragrafi; testo a peso 360 e interlinea 1,6; <code>text-wrap: pretty</code>.</li>
+      <li>Le classi <code>.subheading</code> e <code>.small-caps</code>.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>1.1 <time datetime="2026-10-11">11 ottobre 2026</time></h2>
+    <ul>
+      <li>Diventa lo stile predefinito di Aomidori, su conferma di Rocco.</li>
+    </ul>
+  </section>
+
+  <footer>Creato da Rocco 'Roccobot' Casadei. Questa pagina si aggiorna a ogni nuova versione dello stile.</footer>
+</main>
+</body>
+</html>
