@@ -28,13 +28,13 @@ jobs:
       # The three repos side by side, as in a session: refcheck.py finds its neighbours by
       # folder name, so the repo of the push goes in a folder named after it.
       - name: Repo del push
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           path: ${{ github.event.repository.name }}
           fetch-depth: 0
       - name: Hub
         if: github.event.repository.name != 'roccobot.github.io'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: Roccobot/roccobot.github.io
           path: roccobot.github.io
