@@ -425,6 +425,10 @@ FORMULE_BLOCCA = [
     # disattivato.
     (re.compile(r"\bsollev\w*\b[^.;]{0,30}?\b(error\w*|eccezion\w*|exception)\b", re.I),
      "'sollevare' per un errore: va in errore, dà errore, fallisce, lo rifiuta"),
+    # La correzione dell'utente del 2026-10-15 su una nota di Aomidori (l'orientamento EXIF di
+    # una foto): la parola non ha un uso legittimo nel nostro italiano, quindi blocca ovunque.
+    (re.compile(r"\borientazion[ei]\b", re.I),
+     "'orientazione' non si usa: si dice orientamento"),
     # ⚠️⚠️ IL CONNETTIVO NON DECIDE NIENTE, E QUESTA RIGA LO HA IMPARATO A PROPRIE SPESE: la
     # forma vietata era scritta con `invece di`, e il 2026-09-04 è rientrata come `invece che
     # decisa a occhio`, cioè la stessa coda con l'altra congiunzione. Il divieto sta sul MODO
