@@ -121,6 +121,14 @@
     righe aggiunte, o nei file di regole **quando il commit ne tocca uno** (su un commit di AIV
     che non li cambia bloccava per difetti di altri repo, 2026-09-27); **prima di aprire o commentare una PR, di fare una domanda
     a scelta multipla o di pubblicare un artefatto** passa il testo a `refcheck.py`, e blocca.
+  - ⚠️⚠️ **Prima di ogni comando blocca quelli che stampano l'ambiente intero o un segreto** (dal
+    2026-10-15, su richiesta dell'utente): `env` senza un comando da lanciare, `printenv` senza un
+    nome, `export`, `declare -x` e `set` senza argomenti, `/proc/.../environ`, e `printenv`, `echo`
+    o `printf` di una variabile dal nome di segreto (`PASSWORD`, `TOKEN`, `SECRET`, `_KEY`, `_PAT`).
+    Nasce da un `env` lanciato per leggere la codifica del container, che ha scritto
+    `RULES_PASSWORD` nella trascrizione della sessione. Una variabile si legge per nome
+    (`printenv LANG`), e un segreto si usa senza stamparlo (`curl -d "$RULES_PASSWORD"` passa).
+    Le prove sono in `.memo/scripts/test_hooks.py`, e girano anche nell'Action `rules-check`.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
     compresi, e non il diff vuoto dello stage.

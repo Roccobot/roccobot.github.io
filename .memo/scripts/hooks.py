@@ -21,7 +21,8 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
             dopo una compattazione indica invece le sezioni sul linguaggio da rileggere
   prompt    UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot)
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
-  bash      PreToolUse Bash: i controlli prima di un `git commit`, che possono bloccarlo
+  bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
+            controlli prima di un `git commit`, che possono bloccarlo
   text      PreToolUse su PR, commenti, domande e artefatti: i caratteri del testo composto
   compact   PreCompact: il promemoria del brief
   (Fino al 2026-09-27 si chiamavano avvio, turno, modifica, testo e compatta; dal 2026-09-28
@@ -399,8 +400,79 @@ def blocca(msg):
     sys.exit(2)
 
 
+# The session environment holds real secrets (`RULES_PASSWORD`), and a command that prints it
+# whole writes them into the transcript: it happened on 2026-10-15, with an `env` run to read the
+# locale of the container. So a command that prints the whole environment, or a variable named
+# like a secret, is blocked; any other variable is read by name (`printenv LANG`), and a secret
+# is used without printing it (`curl -d "$RULES_PASSWORD"` passes).
+SEGRETO = re.compile(r'(PASSWORD|PASSWD|SECRET|TOKEN|_KEY|_PAT)$', re.I)
+ASSEGNAZIONE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*=.*', re.S)
+
+
+def comandi_semplici(comando):
+    """Like `segmenti`, but split on pipes too: `env | sort` prints the environment like `env`.
+    Leading assignments (`LC_ALL=C.UTF-8 ./gradlew`) are dropped, so the command comes first."""
+    out = []
+    for pezzo in re.split(r'&&|\|\||[;|\n]', comando):
+        try:
+            t = shlex.split(pezzo)
+        except ValueError:
+            t = pezzo.split()
+        while t and ASSEGNAZIONE.fullmatch(t[0]):
+            t = t[1:]
+        if t:
+            out.append(t)
+    return out
+
+
+def stampa_ambiente(t):
+    """Why the simple command `t` prints the whole environment or a secret, or None."""
+    nome, arg = os.path.basename(t[0]), t[1:]
+    if any(re.search(r'/proc/[^/\s]+/environ', a) for a in t):
+        return "legge l'ambiente di un processo da /proc"
+    if nome == 'env':
+        # `env` prints the environment unless it runs a command; `-i` empties it first, and
+        # `-S` is a command written as a string.
+        i = 0
+        while i < len(arg):
+            a = arg[i]
+            if a in ('-i', '--ignore-environment', '-S', '--split-string') or a.startswith('--split-string='):
+                return None
+            if a in ('-u', '--unset', '-C', '--chdir'):
+                i += 2
+                continue
+            if a.startswith('-') or ASSEGNAZIONE.fullmatch(a):
+                i += 1
+                continue
+            return None
+        return "`env` senza un comando da lanciare stampa l'ambiente intero"
+    if nome == 'printenv':
+        nomi = [a for a in arg if not a.startswith('-')]
+        if not nomi:
+            return "`printenv` senza un nome stampa l'ambiente intero"
+        segreti = [n for n in nomi if SEGRETO.search(n)]
+        if segreti:
+            return f"`printenv` stampa un segreto ({', '.join(segreti)})"
+        return None
+    if nome in ('export', 'declare', 'typeset') and all(a.startswith('-') for a in arg):
+        return f'`{nome}` senza un nome stampa le variabili esportate'
+    if nome == 'set' and not arg:
+        return '`set` senza argomenti stampa tutte le variabili'
+    if nome in ('echo', 'printf'):
+        segreti = [m for a in arg for m in re.findall(r'\$\{?([A-Za-z_][A-Za-z0-9_]*)', a) if SEGRETO.search(m)]
+        if segreti:
+            return f"`{nome}` stampa un segreto ({', '.join(segreti)})"
+    return None
+
+
 def mode_bash(ev):
     comando = (ev.get('tool_input') or {}).get('command') or ''
+    for t in comandi_semplici(comando):
+        motivo = stampa_ambiente(t)
+        if motivo:
+            blocca(f'Comando bloccato: {motivo}. Le variabili d\'ambiente della sessione contengono '
+                   'segreti (RULES_PASSWORD), che non si stampano mai: una variabile si legge per nome '
+                   '(`printenv LANG`), e un segreto si usa senza stamparlo.')
     if 'git' not in comando or 'commit' not in comando:
         return
     commit = commit_nel_comando(comando, ev.get('cwd'))

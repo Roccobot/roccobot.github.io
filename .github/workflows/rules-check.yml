@@ -58,3 +58,6 @@ jobs:
 
       - name: Prove anti-regressione del verificatore (caporali e ingresso)
         run: python3 roccobot.github.io/.memo/scripts/test_refcheck.py
+
+      - name: Prove del gancio dei comandi (ambiente e segreti)
+        run: python3 roccobot.github.io/.memo/scripts/test_hooks.py
