@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aomidori - eBook and comic reader for macOS</title>
-<meta name="description" content="Aomidori: a light, snappy EPUB reader for macOS. Each chapter is a page that scrolls, and your CSS has the last word.">
+<title>Aomidori - book, comic and document reader for macOS</title>
+<meta name="description" content="Aomidori: a light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.">
 <meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
 <meta name="color-scheme" content="light dark">
 <!--
@@ -32,8 +32,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Roccobot">
 <meta property="og:url" content="https://roccobot.github.io/Aomidori/">
-<meta property="og:title" content="Aomidori - eBook and comic reader for macOS">
-<meta property="og:description" content="A light, snappy EPUB reader for macOS. Each chapter is a page that scrolls, and your CSS has the last word.">
+<meta property="og:title" content="Aomidori - book, comic and document reader for macOS">
+<meta property="og:description" content="A light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="it_IT">
 <meta property="og:image" content="https://roccobot.github.io/Aomidori/assets/preview.png">
@@ -134,7 +134,7 @@
   h1{font-size:40px; line-height:1.1; letter-spacing:-0.02em; font-weight:600; margin:0}
   .sottotitolo{font-size:18px; color:var(--text-muted); margin:6px 0 0}
   .parole{display:flex; flex-direction:column; gap:20px; max-width:38rem; grid-column:1 / -1}
-  .claim{font-size:18px; line-height:1.55; color:var(--text-muted); margin:0}
+  .claim{font-size:18px; line-height:1.55; color:var(--text-muted); margin:0; text-wrap:pretty}
   .blocco-scarica{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
   .scarica{
     display:inline-flex; align-items:center; gap:10px;
@@ -184,9 +184,10 @@
       max-width:calc(var(--schermata-inizio) + var(--schermata-larghezza));
     }
     .con-schermata .parole{max-width:none}
-    /* The Italian subtitle is about 1.5 px wider than its column: kept on one line, it runs
-       into the empty gap rather than leaving "macOS" alone on a second line. */
-    .con-schermata .sottotitolo{white-space:nowrap}
+    /* The subtitle names books, comics and documents since 2.00 (Rocco's answer F2): wider than
+       its column, it wraps in two balanced lines, which stay within the icon's height, so the
+       column keeps its measure. Up to then it was kept on one line with nowrap. */
+    .con-schermata .sottotitolo{text-wrap:balance}
     .con-schermata .schermata{margin-top:calc(var(--icona) * 100 / 1024)}
   }
 
@@ -206,6 +207,7 @@
   .fatto .titolo{font-size:var(--titolo-corpo); line-height:var(--titolo-interlinea); font-weight:500}
   .fatto .corpo{font-size:14px; line-height:1.5; color:var(--text-muted)}
 
+  footer > nav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 16px;margin-bottom:20px;font-size:15px}
   footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
     border-top:1px solid var(--outline-variant); padding-top:18px;
@@ -248,10 +250,10 @@
     </picture>
     <div>
       <h1>Aomidori</h1>
-      <p class="sottotitolo"><span id="sottotitolo">eBook and comic reader for macOS</span></p>
+      <p class="sottotitolo"><span id="sottotitolo">Book, comic and document reader for macOS</span></p>
     </div>
     <div class="parole">
-      <p class="claim" id="claim">A light, snappy EPUB reader that works like a web page: each chapter scrolls vertically, the arrow keys change chapter, and your CSS always has the last word.</p>
+      <p class="claim" id="claim">A light, snappy reader of books, comics and documents: books scroll like a web page, comics turn page by page, and your CSS always has the last word.</p>
       <div class="blocco-scarica">
         <p class="solo-mac" id="solo-mac" hidden></p>
         <a class="scarica" id="scarica" href="https://github.com/Roccobot/Aomidori-releases/releases/latest">
@@ -280,7 +282,7 @@
     <div class="fatto">
       <!-- A page that scrolls: a sheet with lines and a down arrow. -->
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M8 8h8M8 11.6h8M8 15.2h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
-      <div class="testi"><div class="titolo" data-t="f0">One chapter, one page</div><div class="corpo" data-c="f0">Each chapter scrolls vertically like a web page, and the arrow keys change chapter. No pagination, no modes.</div></div>
+      <div class="testi"><div class="titolo" data-t="f0">One chapter, one page</div><div class="corpo" data-c="f0">Each chapter of a book scrolls vertically like a web page, and the arrow keys change chapter. No pagination.</div></div>
     </div>
     <div class="fatto">
       <!-- Your CSS: braces. -->
@@ -320,12 +322,20 @@
     <div class="fatto">
       <!-- Comics: two stacked panels. -->
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 16L6.6 20.2 12.4 16H16.2A4.4 4.4 0 0 0 20.6 11.6V8.8A4.4 4.4 0 0 0 16.2 4.4H7.8A4.4 4.4 0 0 0 3.4 8.8V11.6A4.4 4.4 0 0 0 7.8 16Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
-      <div class="testi"><div class="titolo" data-t="f8">Comics too</div><div class="corpo" data-c="f8">CBZ and CBR files open like a chapter: the pages one below the other, as wide as the window.</div></div>
+      <div class="testi"><div class="titolo" data-t="f8">Comics, page by page</div><div class="corpo" data-c="f8">CBZ and CBR files read page by page, right to left too like manga, with spreads, filters and the folder's chapters.</div></div>
+    </div>
+    <div class="fatto">
+      <!-- Documents: a sheet with its corner folded and a heading's hash. -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 3.2h7.6l4.8 4.8v12.8H6.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path><path d="M13.6 3.6v4.8h4.8M9.4 13h6M9 16.2h6M11.6 10.6l-.8 7.8M14.4 10.6l-.8 7.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div class="testi"><div class="titolo" data-t="f9">Documents too</div><div class="corpo" data-c="f9">Markdown files open like a book, with formulas, footnotes, tables and a style of their own.</div></div>
     </div>
   </div>
 </main>
 
 <footer>
+  <!-- The privacy policy the Mac App Store asks for (2.00, Rocco's answer F3a), in the place AIV's
+       page gives its own: on the right, above the line. One word, the same in both languages. -->
+  <nav aria-label="Aomidori"><a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a></nav>
   <div class="piede-riga">
     <div class="firma">
       <!-- Roccobot's glyph and signature, as on the AIV page; the signature is not translated. -->
@@ -353,10 +363,10 @@
   var TESTI = {
     it: {
       lang: 'it', loc: 'it-IT',
-      titolo: 'Aomidori - lettore di eBook e fumetti per macOS',
-      descrizione: 'Aomidori: un lettore EPUB per macOS leggero e scattante. Ogni capitolo è una pagina che scorre, e il tuo CSS ha l\'ultima parola.',
-      sottotitolo: 'Lettore di eBook e fumetti per macOS',
-      claim: 'Un lettore EPUB leggero e scattante, come una pagina web: ogni capitolo scorre in verticale, le frecce cambiano capitolo, e il tuo CSS ha sempre l\'ultima parola.',
+      titolo: 'Aomidori - lettore di libri, fumetti e documenti per macOS',
+      descrizione: 'Aomidori: un lettore di libri, fumetti e documenti per macOS, leggero e scattante. I libri scorrono come una pagina web, e il tuo CSS ha l\'ultima parola.',
+      sottotitolo: 'Lettore di libri, fumetti e documenti per macOS',
+      claim: 'Un lettore leggero e scattante di libri, fumetti e documenti: i libri scorrono come una pagina web, i fumetti si sfogliano a pagine, e il tuo CSS ha sempre l\'ultima parola.',
       scarica: 'Scarica Aomidori',
       sistema: 'macOS 27 o successivo, solo Apple Silicon',
       versioni: 'tutte le versioni',
@@ -369,7 +379,7 @@
       ],
       schermata: 'Aomidori con un libro aperto',
       fatti: [
-        ['Un capitolo, una pagina', 'Ogni capitolo scorre in verticale come una pagina web, e le frecce cambiano capitolo. Niente impaginazione, niente modalità.'],
+        ['Un capitolo, una pagina', 'Ogni capitolo di un libro scorre in verticale come una pagina web, e le frecce cambiano capitolo. Niente impaginazione.'],
         ['Il tuo CSS comanda', 'Gli stili si ricaricano appena li salvi, e con un tasto scavalcano tutta la tipografia del libro.'],
         ['Il testo cresce davvero', 'Più e meno vincono su qualunque limite del CSS; le immagini restano come sono.'],
         ['Il tuo font, fino in fondo', 'Qualunque famiglia installata o un file TTF, OTF e WOFF, con peso, stile, assi variabili e opzioni tipografiche.'],
@@ -377,7 +387,8 @@
         ['Nativo e leggero', 'Swift e AppKit per Apple Silicon, Liquid Glass, schede native, temi chiaro e scuro.'],
         ['Trova, e torna', 'Cerca in tutto il libro, tieni i segnalibri, e dopo una nota torna alla riga esatta in cui leggevi.'],
         ['La lettura resta tua', 'Le pagine non caricano mai niente dalla rete: nessun libro può far sapere quando o dove lo leggi.'],
-        ['Anche i fumetti', 'I CBZ e i CBR si aprono come un capitolo: le tavole una sotto l\'altra, larghe quanto la finestra.']
+        ['I fumetti, a pagine', 'I CBZ e i CBR si leggono a pagine, anche da destra a sinistra come i manga, con le pagine affiancate, i filtri e i capitoli della cartella.'],
+        ['Anche i documenti', 'I file Markdown si aprono come un libro, con formule, note, tabelle e uno stile tutto loro.']
       ],
       altra: 'English', titoloAltra: 'Read this page in English',
       temi: { light: 'Tema chiaro', dark: 'Tema scuro' },
@@ -385,10 +396,10 @@
     },
     en: {
       lang: 'en', loc: 'en-GB',
-      titolo: 'Aomidori - eBook and comic reader for macOS',
-      descrizione: 'Aomidori: a light, snappy EPUB reader for macOS. Each chapter is a page that scrolls, and your CSS has the last word.',
-      sottotitolo: 'eBook and comic reader for macOS',
-      claim: 'A light, snappy EPUB reader that works like a web page: each chapter scrolls vertically, the arrow keys change chapter, and your CSS always has the last word.',
+      titolo: 'Aomidori - book, comic and document reader for macOS',
+      descrizione: 'Aomidori: a light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.',
+      sottotitolo: 'Book, comic and document reader for macOS',
+      claim: 'A light, snappy reader of books, comics and documents: books scroll like a web page, comics turn page by page, and your CSS always has the last word.',
       scarica: 'Download Aomidori',
       sistema: 'macOS 27 or later, Apple Silicon only',
       versioni: 'all versions',
@@ -401,7 +412,7 @@
       ],
       schermata: 'Aomidori with a book open',
       fatti: [
-        ['One chapter, one page', 'Each chapter scrolls vertically like a web page, and the arrow keys change chapter. No pagination, no modes.'],
+        ['One chapter, one page', 'Each chapter of a book scrolls vertically like a web page, and the arrow keys change chapter. No pagination.'],
         ['Your CSS rules', 'Styles reload as soon as you save them, and one key lets them override the book\'s whole typography.'],
         ['Text that really grows', 'Plus and minus win over any CSS limit; pictures stay as they are.'],
         ['Your font, all the way', 'Any installed family or a TTF, OTF or WOFF file, with weight, style, variable axes and typographic features.'],
@@ -409,7 +420,8 @@
         ['Native and light', 'Swift and AppKit for Apple Silicon, Liquid Glass, native tabs, light and dark themes.'],
         ['Find it, and come back', 'Search the whole book, keep bookmarks, and after a note go back to the exact line you were reading.'],
         ['Your reading stays yours', 'Pages never load anything from the network: no book can tell anyone when or where you read it.'],
-        ['Comics too', 'CBZ and CBR files open like a chapter: the pages one below the other, as wide as the window.']
+        ['Comics, page by page', 'CBZ and CBR files read page by page, right to left too like manga, with spreads, filters and the folder\'s chapters.'],
+        ['Documents too', 'Markdown files open like a book, with formulas, footnotes, tables and a style of their own.']
       ],
       altra: 'Italiano', titoloAltra: 'Leggi questa pagina in italiano',
       temi: { light: 'Light theme', dark: 'Dark theme' },
@@ -424,6 +436,21 @@
   }
   function el(id) { return document.getElementById(id); }
   function svuota(nodo) { while (nodo.firstChild) nodo.removeChild(nodo.firstChild); }
+
+  // The words the rule on lines wants together (rules/Roccobot.md of Roccobot/tools, 3.89: no
+  // word left alone at either end of a sentence), bound with no-break spaces as each text is
+  // written, in both languages: a word of one or two letters with the next one, a sentence's first
+  // word with the second, a sentence's last word under seven characters with the one before, and
+  // the steps of a path in System Settings. Checked on the real lines in WebKit at 390, 768 and
+  // 1280 px (2.00, Rocco's answer F2).
+  var NB = '\u00A0';
+  function lega(testo) {
+    return testo
+      .replace(/(?<![^\s(])(\p{L}{1,2}) (?=\S)/gu, '$1' + NB)
+      .replace(/([.!?]) (\S+) (?=\S)/g, '$1 $2' + NB)
+      .replace(/ ([\p{L}']{1,6}[.!?])(?=\s|$)/gu, NB + '$1')
+      .replace(/ \u203A /g, NB + '\u203A' + NB);
+  }
 
   // The theme follows the system until the visitor picks one, for this visit only (AIV's rule).
   var stato = { lingua: linguaIniziale(), scelto: null, rel: null };
@@ -457,12 +484,12 @@
     var descrizione = document.querySelector('meta[name="description"]');
     if (descrizione) descrizione.setAttribute('content', T.descrizione);
 
-    el('sottotitolo').textContent = T.sottotitolo;
-    el('claim').textContent = T.claim;
+    el('sottotitolo').textContent = lega(T.sottotitolo);
+    el('claim').textContent = lega(T.claim);
     el('installa-titolo').textContent = T.installaTitolo;
-    for (var p = 0; p < T.passi.length; p++) el('passo-' + (p + 1)).textContent = T.passi[p];
+    for (var p = 0; p < T.passi.length; p++) el('passo-' + (p + 1)).textContent = lega(T.passi[p]);
     var soloMac = el('solo-mac');
-    soloMac.textContent = T.soloMac;
+    soloMac.textContent = lega(T.soloMac);
     soloMac.hidden = suMac;
     mostraSchermata(T);
 
@@ -495,8 +522,8 @@
       var titolo = document.querySelector('[data-t="f' + f + '"]');
       var corpo = document.querySelector('[data-c="f' + f + '"]');
       if (!titolo || !corpo) continue;
-      titolo.textContent = T.fatti[f][0];
-      corpo.textContent = T.fatti[f][1];
+      titolo.textContent = lega(T.fatti[f][0]);
+      corpo.textContent = lega(T.fatti[f][1]);
     }
 
     var tastoLingua = el('lingua');
