@@ -433,6 +433,17 @@ FORMULE_BLOCCA = [
     # parola è tornata in chat, e l'utente l'ha corretta. La regola dice mai, quindi blocca ovunque.
     (re.compile(r"\bcentragg(?:io|i)\b", re.I),
      "'centraggio' non si usa: si dice centratura"),
+    # Lo stesso giorno, la correzione su un documento di feedback pubblicato: nel web si dice
+    # online, e in italiano `in linea` è chi si può raggiungere in chat o in chiamata. Blocca
+    # solo accanto al documento di feedback, dove nel corpus c'era cinque volte su cinque; gli
+    # altri sensi della locuzione (in linea con, codice in linea, sulla stessa riga) sono di
+    # casa, e per il resto c'è l'avviso fra le forme ambigue.
+    # Il punto di una versione (`2.00`) non chiude la frase, e il tratto lo deve attraversare;
+    # un backtick invece lo chiude, perché da lì la forma è citata.
+    (re.compile(r"\b(?:DF|document[oi] di feedback)\b(?:[^.;\n`]|(?<=\d)\.(?=\d)){0,40}?"
+                r"\bin linea\b(?!\s+(?:con|di)\b)", re.I),
+     "un documento pubblicato è online: in italiano 'in linea' è chi si raggiunge in chat "
+     "o in chiamata"),
     # ⚠️⚠️ IL CONNETTIVO NON DECIDE NIENTE, E QUESTA RIGA LO HA IMPARATO A PROPRIE SPESE: la
     # forma vietata era scritta con `invece di`, e il 2026-09-04 è rientrata come `invece che
     # decisa a occhio`, cioè la stessa coda con l'altra congiunzione. Il divieto sta sul MODO
@@ -565,6 +576,12 @@ FORMULE_AVVISA = [
     # legittimo ('già al limite: niente da fare', `DIVRoccobot.user.js`). Dopo un punto la
     # formula non ha nessun uso legittimo e blocca; dopo i due punti si guarda e si decide.
     (re.compile(r":\s+(?:niente|nulla) da fare\b", re.I), MOTIVO_RESA),
+    # ⚠️ `è in linea` avvisa e non blocca: una pagina pubblicata è online, ma due pulsanti
+    # possono essere in linea, cioè sulla stessa riga, e la frase da sola non lo dice.
+    (re.compile(r"\b(?:è|sono|era|erano|sarà|saranno|mess[oaie])\s+in linea\b"
+                r"(?!\s+(?:con|di)\b)", re.I),
+     "se è pubblicato si dice online: in italiano 'in linea' è chi si raggiunge in chat o in "
+     "chiamata (legittimo per due cose sulla stessa riga)"),
     (re.compile(r"\bci st(?:a|anno)\s+bene\b", re.I),
      "'ci sta bene' è colloquiale nel senso di 'è appropriato' (legittimo nel senso "
      "spaziale: il numero ci sta bene nella cella)"),

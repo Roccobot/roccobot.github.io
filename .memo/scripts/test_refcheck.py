@@ -278,6 +278,26 @@ class LexiconTests(unittest.TestCase):
     def test_named_words_pass(self):
         self.assertEqual(refcheck.formula_defects('Si dice centratura, mai `centraggio`.')[0], [])
 
+    def test_feedback_document_in_linea_is_rejected(self):
+        # The same day: a published page is online; in Italian 'in linea' is someone reachable
+        # on a chat or a call.
+        for text in ('Il DF 2.00 è in linea.', '**DF 6.21 in linea** (AIV#615).',
+                     'Il documento di feedback del giro 1.73 è in linea.'):
+            with self.subTest(text=text):
+                self.assertTrue(refcheck.formula_defects(text)[0])
+
+    def test_published_in_linea_is_a_warning(self):
+        blocks, warnings = refcheck.formula_defects('La pagina nuova è in linea da stamattina.')
+        self.assertEqual((len(blocks), len(warnings)), (0, 1))
+
+    def test_other_senses_of_in_linea_pass(self):
+        for text in ('Lo copia come codice in linea.', 'Niente stili in linea nel capitolo.',
+                     'La resa è in linea con le preferenze.', 'Il DF è in linea di principio.',
+                     'Sotto, in linea e allineati a destra, i chip.',
+                     'Blocca accanto al documento di feedback e avvisa su `è in linea`.'):
+            with self.subTest(text=text):
+                self.assertEqual(refcheck.formula_defects(text), ([], []))
+
 
 if __name__ == '__main__':
     unittest.main()
