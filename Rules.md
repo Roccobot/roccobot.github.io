@@ -63,7 +63,8 @@ pagamento: la pagina di download e l'appcast di Sparkle vivono qui, allo stesso 
 cambiare. Il resto del progetto (codice, regole, documento di feedback) resta nel suo repo.
 - **Chi la scrive**: lo `scripts/release.sh` di Aomidori aggiunge la versione a
   `Aomidori/appcast.xml` di questo clone, e la sessione che rilascia committa e pusha qui. La pagina
-  (`Aomidori/index.html`) e le sue immagini si toccano con le regole di Aomidori, § '🌐 Il sito'.
+  (`Aomidori/index.html`) e le sue immagini, e la politica sulla privacy (`Aomidori/privacy.html`,
+  dal 2026-10-15, per il Mac App Store), si toccano con le regole di Aomidori, § '🌐 Il sito'.
 - **Lo ZIP non c'è**: il pulsante e l'appcast puntano alle release di `Roccobot/Aomidori-releases`,
   pubblico, come AIV fa con le sue.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.

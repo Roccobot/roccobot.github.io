@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomidori - Privacy</title>
+<meta name="description" content="Informativa sulla privacy di Aomidori, lettore di libri, fumetti e documenti per macOS: l'app non raccoglie e non condivide dati personali.">
+<meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://roccobot.github.io/Aomidori/privacy.html">
+<!--
+  THE PRIVACY POLICY OF AOMIDORI, since 2.00 (the owner's choice F3a, 2026-10-15): the Mac App
+  Store wants one address for it. The same form as AIV's (Roccobot/AIV, publish/privacy.html,
+  the owner's choices A1 and C1 there): two languages in separate sections, Italian first. It
+  covers both versions, the one downloaded from this site and the Mac App Store's, which differ in
+  one point only: the first asks this site for updates.
+
+  ⚠️ Every sentence here is a claim about the code, and the code is what makes it true: no
+  analytics, ads or crash reporting library (Package.swift of Roccobot/Aomidori); the pages load
+  nothing from the network (PageSchemeHandler); the network is opened only by AniList, once the
+  reader connects an account (AniListService, the token in the Keychain), and by Sparkle in the
+  version from this site. Whoever adds a library or a request that sends something changes this
+  page in the same release, and the App Store's privacy answers with it (docs/AppStore.md there).
+  Paragraphs wrap with text-wrap: pretty, and their lines were checked at 390 px and on desktop
+  (Roccobot.md, the rule on words left alone at either end of a sentence).
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  /* The download page's tokens, light and dark. */
+  :root{--bg:#FCFBF8;--fg:#1A1C1B;--muted:#5B6360;--accent:#0B6B5B;--rule:#DAD9D5}
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#151B1A;--fg:#E4E9E7;--muted:#A9B3B0;--accent:#5FD4BC;--rule:#3C4442}
+  }
+  html{background:var(--bg);color:var(--fg)}
+  body{margin:0 auto;max-width:42rem;padding:2.5rem 1.25rem 4rem;
+    font:1rem/1.6 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  h1{font-size:1.6rem;line-height:1.25;margin:0 0 .25rem;text-wrap:balance}
+  h2{font-size:1.15rem;margin:2rem 0 .5rem}
+  p,li{margin:.5rem 0;text-wrap:pretty}
+  a{color:var(--accent)}
+  .data{color:var(--muted);margin:0 0 1.5rem}
+  .lingue{display:flex;gap:1rem;margin:0 0 2rem}
+  hr{border:0;border-top:1px solid var(--rule);margin:3rem 0}
+</style>
+</head>
+<body>
+<nav class="lingue" aria-label="Lingua / Language"><a href="#it" hreflang="it">Italiano</a> <a href="#en" hreflang="en">English</a></nav>
+
+<section id="it" lang="it">
+  <h1>Aomidori: informativa sulla privacy</h1>
+  <p class="data">Aggiornata il&nbsp;15&nbsp;ottobre 2026</p>
+
+  <p>Aomidori è&nbsp;un&nbsp;lettore di&nbsp;libri, fumetti e&nbsp;documenti per macOS di&nbsp;Rocco Casadei (Roccobot). Si&nbsp;scarica&nbsp;da&nbsp;questo sito, e&nbsp;uscirà sul Mac App Store: questa informativa vale per tutte e&nbsp;due le&nbsp;versioni.</p>
+
+  <h2>In breve</h2>
+  <p>Aomidori non raccoglie, non conserva e&nbsp;non condivide dati personali. Non&nbsp;ha&nbsp;account propri, pubblicità, statistiche d'uso né&nbsp;rapporti sugli errori, e&nbsp;non contiene librerie di&nbsp;terze parti che lo&nbsp;facciano.</p>
+
+  <h2>I tuoi documenti</h2>
+  <p>I&nbsp;libri, i&nbsp;fumetti e&nbsp;i&nbsp;documenti Markdown che apri restano sul tuo Mac: Aomidori non li&nbsp;carica da&nbsp;nessuna&nbsp;parte. Le&nbsp;pagine&nbsp;non caricano niente dalla rete, quindi un&nbsp;libro non può far sapere quando o&nbsp;dove lo&nbsp;leggi.</p>
+
+  <h2>Le impostazioni</h2>
+  <p>Impostazioni, stili, caratteri, segnalibri e&nbsp;punti di&nbsp;lettura restano sul Mac, nella cartella dell'app.</p>
+
+  <h2>AniList</h2>
+  <p>Il&nbsp;collegamento ad&nbsp;AniList è&nbsp;facoltativo, e&nbsp;resta spento finché non lo&nbsp;accendi&nbsp;tu. Se&nbsp;colleghi&nbsp;il&nbsp;tuo account in&nbsp;Impostazioni&nbsp;›&nbsp;Fumetti, Aomidori manda ad&nbsp;AniList, con quell'account, le&nbsp;ricerche delle serie che scrivi per collegarle e&nbsp;il&nbsp;numero dei capitoli che leggi fino all'ultima pagina, per le&nbsp;serie collegate. Il&nbsp;token&nbsp;d'accesso resta nel Portachiavi del&nbsp;Mac. Puoi&nbsp;scollegare l'account quando vuoi, dalla stessa scheda; quello che AniList conserva segue la&nbsp;sua informativa.</p>
+
+  <h2>La rete</h2>
+  <p>Oltre ad&nbsp;AniList, Aomidori si&nbsp;collega a&nbsp;internet solo nella versione scaricata da&nbsp;questo sito, per gli aggiornamenti: se&nbsp;l'aggiornamento automatico è&nbsp;acceso, una volta al&nbsp;giorno chiede a&nbsp;questo sito qual è&nbsp;l'ultima versione, e&nbsp;la&nbsp;scarica da&nbsp;GitHub. Come&nbsp;per ogni sito, quelle richieste fanno vedere l'indirizzo IP&nbsp;del&nbsp;Mac. La&nbsp;versione&nbsp;del Mac App Store non lo&nbsp;fa: gli aggiornamenti li&nbsp;gestisce l'App&nbsp;Store.</p>
+
+  <h2>Modifiche</h2>
+  <p>Se&nbsp;il&nbsp;comportamento di&nbsp;Aomidori cambia, questa pagina cambia nella stessa versione, con la&nbsp;data aggiornata in&nbsp;testa.</p>
+
+  <h2>Contatti</h2>
+  <p>Per domande su&nbsp;questa informativa puoi aprire una segnalazione su <a href="https://github.com/Roccobot/Aomidori-releases/issues">GitHub</a>.</p>
+</section>
+
+<hr>
+
+<section id="en" lang="en">
+  <h1>Aomidori: privacy policy</h1>
+  <p class="data">Updated October 15, 2026</p>
+
+  <p>Aomidori is&nbsp;a&nbsp;reader of&nbsp;books, comics and documents for macOS by&nbsp;Rocco Casadei (Roccobot). It&nbsp;is&nbsp;downloaded&nbsp;from this site, and it&nbsp;is&nbsp;coming to&nbsp;the Mac App Store: this policy covers both versions.</p>
+
+  <h2>In short</h2>
+  <p>Aomidori does not collect, store or&nbsp;share personal&nbsp;data. It&nbsp;has&nbsp;no&nbsp;accounts of&nbsp;its own, ads, usage analytics or&nbsp;crash reports, and it&nbsp;contains no&nbsp;third-party library that&nbsp;does.</p>
+
+  <h2>Your documents</h2>
+  <p>The books, comics and Markdown documents you open stay on&nbsp;your Mac: Aomidori does not upload them anywhere. Pages&nbsp;load nothing from the network, so&nbsp;no&nbsp;book can tell anyone when or&nbsp;where you read&nbsp;it.</p>
+
+  <h2>Settings</h2>
+  <p>Settings, styles, fonts, bookmarks and reading places stay on&nbsp;the Mac, in&nbsp;the app's&nbsp;folder.</p>
+
+  <h2>AniList</h2>
+  <p>The link to&nbsp;AniList is&nbsp;optional, and stays off until you turn it&nbsp;on. If&nbsp;you&nbsp;connect your account in&nbsp;Settings&nbsp;›&nbsp;Comics, Aomidori sends AniList, with that account, the searches for the series you type to&nbsp;link them and the number of&nbsp;the chapters you read to&nbsp;the last page, for the linked&nbsp;series. The&nbsp;access token stays in&nbsp;the Mac's&nbsp;Keychain. You&nbsp;can disconnect the account at&nbsp;any time, from the same tab; what AniList keeps follows its own&nbsp;policy.</p>
+
+  <h2>Network</h2>
+  <p>Besides AniList, Aomidori connects to&nbsp;the internet only in&nbsp;the version downloaded from this site, for updates: when automatic updates are on, it&nbsp;asks this site once a&nbsp;day for the latest version, and downloads it&nbsp;from&nbsp;GitHub. As&nbsp;with&nbsp;any site, those requests show the Mac's&nbsp;IP&nbsp;address. The&nbsp;Mac App Store's&nbsp;version does not: the App Store handles its updates.</p>
+
+  <h2>Changes</h2>
+  <p>If&nbsp;Aomidori's&nbsp;behavior changes, this page changes in&nbsp;the same version, with the date at&nbsp;the top updated.</p>
+
+  <h2>Contact</h2>
+  <p>For questions about this policy you can open an&nbsp;issue on <a href="https://github.com/Roccobot/Aomidori-releases/issues">GitHub</a>.</p>
+</section>
+</body>
+</html>
