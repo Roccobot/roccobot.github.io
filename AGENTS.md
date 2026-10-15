@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.99
+> **Versione**: 2.00
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -178,6 +178,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   § '🚨 Non perdere niente').
 - **'Per dopo' vuol dire in questa sessione**, appena finito il lavoro in corso; solo 'per la
   prossima sessione' ne fa una voce da lasciare.
+- **Un compito che non si esegue subito ha un nome in codice**, di preferenza una parola
+  italiana, unico nel brief: si scrive nel titolo della voce e poi si comunica all'utente
+  (`Roccobot.md` § '🚨 Non perdere niente').
 - Una domanda rimasta senza risposta entro un turno finisce nel brief, con le opzioni e il
   parere; una risposta a scelta si travasa con la **sua chiave** accanto.
 - **Come si scrive**: con un commit, oppure dal Worker dichiarando `baseSha`, cioè la versione da
