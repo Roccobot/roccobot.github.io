@@ -1,0 +1,76 @@
+# The weekly check of a repo's dependencies, for every repo of Roccobot that keeps a register
+# (rules/Roccobot.md of Roccobot/tools, '🔗 Le dipendenze si seguono: ogni versione nuova si
+# legge'). Each repo calls it from its own `.github/workflows/dependencies.yml`, with the cron and
+# the path of its check script; the logic lives here, so a change reaches all of them at once.
+#
+# The script prints one line per dependency, `NEW` for a newer version than the one read, and
+# exits 1 when there is one. Then the issue 'Dipendenze da leggere' is opened, or, when its list
+# changed, updated with a comment, which notifies the owner; when everything is current again,
+# the issue is closed. A script that fails for another reason (a source that does not answer)
+# makes the run red. The versions of GitHub's actions are Dependabot's (`.github/dependabot.yml`
+# in every repo with workflows). Since 2026-10-15 (docs/Workflow.md, '🔗 Il controllo settimanale
+# delle dipendenze').
+#
+# Author: Rocco Casadei, a.k.a. Roccobot
+name: dependencies
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        description: The check script, from the root of the calling repo
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Controllo delle dipendenze
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCRIPT: ${{ inputs.script }}
+        run: |
+          set +e
+          python3 "$SCRIPT" > "$RUNNER_TEMP/report.txt" 2>&1
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/report.txt"
+      - name: Segnalazione
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          STATUS: ${{ steps.check.outputs.status }}
+          TITLE: Dipendenze da leggere
+        run: |
+          report="$RUNNER_TEMP/report.txt"
+          if [ "$STATUS" != 0 ] && ! grep -q '^NEW ' "$report"; then
+            echo "The check failed without a newer version: its output is above." >&2
+            exit 1
+          fi
+          open="$(gh issue list --state open --limit 100 --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)"
+          if [ "$STATUS" = 0 ]; then
+            if [ -n "$open" ]; then
+              gh issue close "$open" --comment "Il controllo del $(date -u +%F) trova tutte le dipendenze alla versione letta."
+            fi
+            exit 0
+          fi
+          body="$RUNNER_TEMP/body.md"
+          {
+            echo "Il controllo settimanale ha trovato versioni più nuove di quelle lette, nelle righe \`NEW\` qui sotto (versione letta, poi l'ultima pubblicata). Ognuna si legge per vedere che cosa portare dentro, poi il registro si porta alla versione letta: lo fa la prossima sessione sul progetto, e la issue si chiude da sé al controllo successivo."
+            echo
+            echo '```'
+            grep '^NEW ' "$report"
+            echo '```'
+          } > "$body"
+          if [ -z "$open" ]; then
+            gh issue create --title "$TITLE" --body-file "$body"
+          elif [ "$(gh issue view "$open" --json body --jq .body)" != "$(cat "$body")" ]; then
+            gh issue edit "$open" --body-file "$body"
+            gh issue comment "$open" --body-file "$body"
+          fi

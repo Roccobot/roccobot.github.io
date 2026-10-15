@@ -1,0 +1,13 @@
+# Dependabot: the versions of GitHub's actions that the workflows use, every Monday, as pull
+# requests (docs/Workflow.md, '🔗 Il controllo settimanale delle dipendenze'). Each one is read
+# before it is merged, like every new version of a dependency.
+# Author: Rocco Casadei, a.k.a. Roccobot
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: Europe/Rome

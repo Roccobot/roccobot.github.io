@@ -297,6 +297,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   vive in `.memo/scripts/githook.py`, ogni repo ha `.githooks/` e richiama il workflow riusabile
   di questo repo (`docs/Workflow.md` § '🛡️ I controlli per chi non è Claude: hook di git e Action
   rules-check').
+- **Il controllo settimanale delle dipendenze** ha la logica qui: il workflow riusabile
+  `.github/workflows/dependencies.yml`, richiamato dai repo con un registro, apre la issue
+  `Dipendenze da leggere`; `dependabot.yml` segue le azioni di GitHub in ogni repo con workflow
+  (`docs/Workflow.md` § '🔗 Il controllo settimanale delle dipendenze').
 - **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
   `catchup.py`, `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
   `skills-update.sh`); quelli di un sito solo vivono nel suo repo. L'indice, e i banchi di prova da
