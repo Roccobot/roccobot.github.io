@@ -182,12 +182,19 @@
     apre una pull request quando un'azione ha una versione nuova (per esempio `actions/checkout`
     dalla `v4` alla `v5`). La pull request si legge, coi changelog che riporta, e si mergia come
     ogni aggiornamento; i richiami ai workflow riusabili di questo repo (`@master`) non li tocca.
-  - **Il registro del progetto**, dove c'è (Aomidori e AIV: `docs/Dependencies.json`, letto dal
-    loro `check-dependencies.py`): il workflow riusabile `.github/workflows/dependencies.yml` di
-    questo repo, che ogni repo richiama dal suo `.github/workflows/dependencies.yml` col cron e il
-    percorso del suo script. Quando lo script trova una versione più nuova apre la issue
-    `Dipendenze da leggere`, la aggiorna con un commento se l'elenco cambia (ed è il commento che
-    avvisa il proprietario) e la chiude quando tutto torna alla versione letta.
+  - **Il registro del progetto**, dove c'è (Aomidori, AIV, Terramare e Arda: `docs/Dependencies.json`):
+    il workflow riusabile `.github/workflows/dependencies.yml` di questo repo, che ogni repo richiama
+    dal suo `.github/workflows/dependencies.yml` col cron. Lancia lo script di questo repo,
+    `.memo/scripts/check-dependencies.py`, sul registro di chi lo richiama. Quando lo script trova
+    una versione più nuova apre la issue `Dipendenze da leggere`, la aggiorna con un commento se
+    l'elenco cambia (ed è il commento che avvisa il proprietario) e la chiude quando tutto torna
+    alla versione letta.
+  - ⚠️ **Lo script è uno solo dal 2026-10-15** (scelta F1a dell'utente): fino a quel giorno
+    Aomidori e AIV ne tenevano una copia ciascuno, con la nota *chi tocca l'uno aggiorna l'altro*,
+    e Terramare e Arda non avevano un registro, quindi `esbuild`, fissato nel comando dei loro
+    workflow di minificazione, non lo seguiva nessuno. Adesso una dipendenza fissata così entra nel
+    registro con `in_use`, cioè il file e il modello che ne leggono la versione. A mano si lancia
+    dalla radice del repo: `python3 ../roccobot.github.io/.memo/scripts/check-dependencies.py`.
   - ⚠️ **Lo script esce 1 anche quando va in errore**, non solo quando trova una versione nuova:
     il workflow distingue i due casi dalle righe `NEW` dell'uscita, e un errore senza quelle righe
     fa rossa la run invece di aprire una issue vuota.

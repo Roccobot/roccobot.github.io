@@ -1,7 +1,9 @@
 # The weekly check of a repo's dependencies, for every repo of Roccobot that keeps a register
 # (rules/Roccobot.md of Roccobot/tools, '🔗 Le dipendenze si seguono: ogni versione nuova si
-# legge'). Each repo calls it from its own `.github/workflows/dependencies.yml`, with the cron and
-# the path of its check script; the logic lives here, so a change reaches all of them at once.
+# legge'). Each repo calls it from its own `.github/workflows/dependencies.yml`, with the cron; the
+# logic lives here, so a change reaches all of them at once, and so does the script, which reads
+# the caller's docs/Dependencies.json: one `.memo/scripts/check-dependencies.py` for every repo
+# since 2026-10-15 (Rocco's answer F1a), where Aomidori and AIV kept a copy each.
 #
 # The script prints one line per dependency, `NEW` for a newer version than the one read, and
 # exits 1 when there is one. Then the issue 'Dipendenze da leggere' is opened, or, when its list
@@ -16,11 +18,6 @@ name: dependencies
 
 on:
   workflow_call:
-    inputs:
-      script:
-        description: The check script, from the root of the calling repo
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -31,14 +28,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # The script, from this repo, beside the caller's files.
+      - uses: actions/checkout@v7
+        with:
+          repository: Roccobot/roccobot.github.io
+          path: .roccobot-hub
+          sparse-checkout: .memo/scripts
       - name: Controllo delle dipendenze
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
-          SCRIPT: ${{ inputs.script }}
         run: |
           set +e
-          python3 "$SCRIPT" > "$RUNNER_TEMP/report.txt" 2>&1
+          python3 .roccobot-hub/.memo/scripts/check-dependencies.py . > "$RUNNER_TEMP/report.txt" 2>&1
           echo "status=$?" >> "$GITHUB_OUTPUT"
           cat "$RUNNER_TEMP/report.txt"
       - name: Segnalazione

@@ -302,12 +302,13 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   di questo repo (`docs/Workflow.md` § '🛡️ I controlli per chi non è Claude: hook di git e Action
   rules-check').
 - **Il controllo settimanale delle dipendenze** ha la logica qui: il workflow riusabile
-  `.github/workflows/dependencies.yml`, richiamato dai repo con un registro, apre la issue
-  `Dipendenze da leggere`; `dependabot.yml` segue le azioni di GitHub in ogni repo con workflow
-  (`docs/Workflow.md` § '🔗 Il controllo settimanale delle dipendenze').
+  `.github/workflows/dependencies.yml`, richiamato dai repo con un registro, lancia lo script unico
+  `.memo/scripts/check-dependencies.py` e apre la issue `Dipendenze da leggere`; `dependabot.yml`
+  segue le azioni di GitHub in ogni repo con workflow (`docs/Workflow.md` § '🔗 Il controllo
+  settimanale delle dipendenze').
 - **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
   `catchup.py`, `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
-  `skills-update.sh`); quelli di un sito solo vivono nel suo repo. L'indice, e i banchi di prova da
+  `skills-update.sh`, `check-dependencies.py`); quelli di un sito solo vivono nel suo repo. L'indice, e i banchi di prova da
   ricostruire quando un lavoro li richiede, vivono in `.memo/scripts/README.md`, che si legge su
   richiesta.
 - **Le regole universali si leggono dal Worker `rules-proxy`** quando `tools` non è clonato: i raw
