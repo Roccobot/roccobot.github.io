@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.00
+> **Versione**: 2.01
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -230,6 +230,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   semplicità, precisione); ogni testo nuovo o cambiato, anche scelto dall'utente, si valida
   nel collaudo (`Roccobot.md` § '✍️ I testi nuovi entrano con la proposta, e si validano nel
   collaudo').
+- **Nei paragrafi di UI nessuna parola resta sola a un capo della frase**: una frase non va a
+  capo dopo una parola sola o meno di 7 caratteri, e non finisce con una parola sotto i 7
+  caratteri andata a capo da sola; si regolano larghezze, spazi, crenatura e corpo, e si prova
+  sulle righe vere (`Roccobot.md` § 'Caratteri').
 - **Qualità**: un modo solo per ogni cosa, un valore in un posto solo, le note che dicono il
   perché, niente codice morto (`Roccobot.md` § '🏅 Codice di altissima qualità').
 - Commenti al codice in **inglese**, con le stesse regole di carattere; firma dell'autore
