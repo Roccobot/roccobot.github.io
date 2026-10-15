@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sparkle appcast of Aomidori, served at https://roccobot.github.io/Aomidori/appcast.xml
+  (SUFeedURL in Resources/Info.plist), from this folder of the site's repository since 2.00, when
+  the app's own repository went private. Items are added by Aomidori's scripts/release.sh, newest
+  first: each points at the ZIP of a release of Roccobot/Aomidori-releases and carries its EdDSA
+  signature (sign_update). It started again from 2.00: the earlier ZIPs were in the private
+  repository, and Sparkle offers only the newest.
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Aomidori</title>
+    <link>https://roccobot.github.io/Aomidori/</link>
+    <description>Updates of Aomidori, a minimal EPUB reader for macOS.</description>
+    <language>en</language>
+    <item>
+      <title>Aomidori 2.00</title>
+      <pubDate>Thu, 15 Oct 2026 17:28:58 GMT</pubDate>
+      <sparkle:version>54</sparkle:version>
+      <sparkle:shortVersionString>2.00</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>27.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/Roccobot/Aomidori-releases/releases/tag/v2.00</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[<p>Aomidori 2.00. <a href="https://github.com/Roccobot/Aomidori-releases/releases/tag/v2.00">Release notes on GitHub</a>.</p>]]></description>
+      <enclosure url="https://github.com/Roccobot/Aomidori-releases/releases/download/v2.00/Aomidori-2.00.zip" length="7307573" type="application/octet-stream" sparkle:edSignature="NvYK6DbvwbpSC/J9RZBej78693+y+aI6UlBtvCUJ4XyGGh2Lq2dhjpjdhYbicAvlVYTLTPndxcJY/MvoL+BuCg=="/>
+    </item>
+  </channel>
+</rss>

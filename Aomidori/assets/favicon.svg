@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="252 270 520 520">
+<!-- The glyph of Graphe's icon (aomidori-v2.svg): the open book with its tategaki columns,
+     on the owner's request in his brand colour #43B59E, the columns cut out. Same paths, no
+     redrawing. Author: Rocco Casadei, a.k.a. Roccobot -->
+<defs><mask id="columns" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+<rect width="1024" height="1024" fill="#fff"/>
+<path d="M676,410 L676,650 M596,410 L596,600 M428,410 L428,646 M348,410 L348,596" fill="none" stroke="#000" stroke-width="46" stroke-linecap="round"/>
+</mask></defs>
+<g fill="#43B59E" stroke="#43B59E" stroke-width="22" stroke-linejoin="round" mask="url(#columns)">
+<path d="M500,372 C430,330 340,322 276,338 L276,690 C340,676 430,684 500,724 Z"/>
+<path d="M524,372 C594,330 684,322 748,338 L748,690 C684,676 594,684 524,724 Z"/>
+</g>
+</svg>

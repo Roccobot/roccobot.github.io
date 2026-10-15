@@ -247,7 +247,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🧭 Il nucleo dell'hub
 
 - **Qui non vivono progetti**: dal 2026-09-26 ognuno ha un repo suo, servito da Pages allo
-  stesso indirizzo `/<repo>/`. L'hub tiene le regole trasversali e gli strumenti che le fanno
+  stesso indirizzo `/<repo>/`. **Eccezione voluta dall'utente**: `Aomidori/`, pagina di download e
+  appcast di un'app il cui repo è privato dal 2026-10-15 (`Rules.md` § '🗂️ I progetti e i loro file
+  di regole'). L'hub tiene le regole trasversali e gli strumenti che le fanno
   rispettare (`.memo/scripts/`); il testo completo delle sue regole vive in `Rules.md`.
 - **Prima di lavorare su un progetto si leggono le regole del suo repo** (`AGENTS.md` e
   `Rules.md`, o il `CLAUDE.md` finché non ne ha altri): dal 2026-10-10 `Rules.md` non si carica da

@@ -28,7 +28,7 @@
 | **'Ma che parola è'**, la pagina delle parole in colonna (dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo `/cheparolae/`; prima nella cartella `Parole/` di questo repo) | repo `Roccobot/cheparolae` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | l'`AGENTS.md` e il `Rules.md` di quella cartella |
 | **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
-| **Aomidori**, il lettore EPUB per macOS (nato il 2026-10-09 in un repo suo; la pagina di download è servita dal suo Pages) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
 rende il lavoro corretto in ogni caso. Dal 2026-10-10 (scelta C1 dell'utente) i `CLAUDE.md` dei
@@ -54,6 +54,19 @@ RatioLab), e le sue regole vivono nel suo `Rules.md`, § '🚀 Che cosa produce 
   sorgente, dopo gli editor admin di Arda e di Terramare, che dal 2026-09-26 committano nei repo
   `Roccobot/arda` e `Roccobot/earthsea`. Restano le altre sessioni, che bastano a rendere
   necessario l'allineamento al remoto.
+
+⚠️⚠️ **LA CARTELLA `Aomidori/` È L'ECCEZIONE A 'QUI NON VIVONO PROGETTI', VOLUTA DALL'UTENTE** (sua
+richiesta del 2026-10-15: *rendi il repo privato, sposta il sito su Pages*, sul piano A1 proposto il
+2026-10-12). Il repo di Aomidori è privato, e un repo privato non ha Pages senza un piano a
+pagamento: la pagina di download e l'appcast di Sparkle vivono qui, allo stesso indirizzo
+`roccobot.github.io/Aomidori/`, che le copie installate leggono (`SUFeedURL`) e che quindi non può
+cambiare. Il resto del progetto (codice, regole, documento di feedback) resta nel suo repo.
+- **Chi la scrive**: lo `scripts/release.sh` di Aomidori aggiunge la versione a
+  `Aomidori/appcast.xml` di questo clone, e la sessione che rilascia committa e pusha qui. La pagina
+  (`Aomidori/index.html`) e le sue immagini si toccano con le regole di Aomidori, § '🌐 Il sito'.
+- **Lo ZIP non c'è**: il pulsante e l'appcast puntano alle release di `Roccobot/Aomidori-releases`,
+  pubblico, come AIV fa con le sue.
+- ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**
