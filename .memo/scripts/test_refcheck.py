@@ -262,5 +262,22 @@ class BriefDoneTests(unittest.TestCase):
         self.assertIn('brief lungo', nota)
 
 
+class LexiconTests(unittest.TestCase):
+    """The user's lexical corrections block a commit, and a word named in code still passes.
+
+    On 2026-10-15 the user corrected two words in chat, centratura and orientamento: the first
+    had been a preference in `Roccobot.md` for months, and nothing checked it.
+    """
+
+    def test_corrected_words_are_rejected(self):
+        for text in ('La prova del centraggio.', 'I centraggi delle pagine.',
+                     "Un'orientazione EXIF nuova."):
+            with self.subTest(text=text):
+                self.assertTrue(refcheck.formula_defects(text)[0])
+
+    def test_named_words_pass(self):
+        self.assertEqual(refcheck.formula_defects('Si dice centratura, mai `centraggio`.')[0], [])
+
+
 if __name__ == '__main__':
     unittest.main()

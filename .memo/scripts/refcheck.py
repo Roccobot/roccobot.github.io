@@ -429,6 +429,10 @@ FORMULE_BLOCCA = [
     # una foto): la parola non ha un uso legittimo nel nostro italiano, quindi blocca ovunque.
     (re.compile(r"\borientazion[ei]\b", re.I),
      "'orientazione' non si usa: si dice orientamento"),
+    # Una preferenza scritta in `Roccobot.md` da mesi e senza un controllo: il 2026-10-15 la
+    # parola è tornata in chat, e l'utente l'ha corretta. La regola dice mai, quindi blocca ovunque.
+    (re.compile(r"\bcentragg(?:io|i)\b", re.I),
+     "'centraggio' non si usa: si dice centratura"),
     # ⚠️⚠️ IL CONNETTIVO NON DECIDE NIENTE, E QUESTA RIGA LO HA IMPARATO A PROPRIE SPESE: la
     # forma vietata era scritta con `invece di`, e il 2026-09-04 è rientrata come `invece che
     # decisa a occhio`, cioè la stessa coda con l'altra congiunzione. Il divieto sta sul MODO
@@ -617,6 +621,8 @@ FORMULE_AVVISA = [
 FORMULE_ESENTI = (
     # Questo file: la tabella qui sopra contiene per forza le forme che vieta.
     ".memo/scripts/refcheck.py",
+    # E le sue prove, che per la stessa ragione le scrivono per vederle respinte.
+    ".memo/scripts/test_refcheck.py",
 )
 # ⚠️⚠️ UN FILE CHE È UNA CITAZIONE DA CIMA A FONDO NON SI CONTROLLA, e l'esenzione qui è per
 # PEZZO di percorso invece che per suffisso, perché questi file portano una data nel nome.
