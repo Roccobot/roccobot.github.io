@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.01
+> **Versione**: 2.02
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -165,6 +165,12 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   funzioni che esistono già valgono +0,01 (`Roccobot.md` § '🌿 Workflow git e versioni').
   Eccezioni per compatibilità: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
 - **Il numero di versione ha una fonte sola**, ed è visibile nel prodotto.
+- **Più sessioni sullo stesso progetto: il numero lo prende chi mergia per primo**, e chi arriva
+  dopo riparte dal ramo principale col numero successivo, senza togliere niente al lavoro
+  dell'altra. Prima di un lavoro che rilascia si guarda se un'altra sessione è sullo stesso
+  progetto (brief, PR, branch, sessioni attive), e le sessioni si accordano fra loro, non
+  attraverso l'utente (`Roccobot.md` § '🤝 Più sessioni sullo stesso progetto: il numero a chi
+  mergia per primo').
 
 ## 🧾 Il brief e il non perdere niente
 
