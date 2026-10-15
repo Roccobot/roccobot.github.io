@@ -16,6 +16,7 @@
 | `test_refcheck.py` | le prove di `refcheck.py`, che girano anche nell'Action `rules-check` |
 | `char-exceptions.json` | il registro delle citazioni autorizzate a contenere caratteri altrimenti vietati |
 | `hooks.py` | il dispatcher degli hook di Claude per tutti i repo clonati accanto all'hub |
+| `test_hooks.py` | le prove del blocco dei comandi che stampano l'ambiente o un segreto, che girano anche nell'Action `rules-check` |
 | `githook.py` | i controlli degli hook di git e dell'Action `rules-check`, per tutti gli agenti |
 | `catchup.py` | che cosa è arrivato dopo il timbro `Last turn` del brief, e il timbro stesso (`--stamp`) |
 | `checkjs.py` | la sintassi dello script finale di un documento generato |
