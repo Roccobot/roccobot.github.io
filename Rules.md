@@ -69,6 +69,13 @@ cambiare. Il resto del progetto (codice, regole, documento di feedback) resta ne
   pubblico, come AIV fa con le sue.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
 
+⚠️ **E LA CARTELLA `styles/` È LA SECONDA ECCEZIONE, LEGATA ALLA PRIMA**: è l'archivio degli stili
+di Aomidori (lo stile predefinito, oggi `AomidoriFlex.css`, col registro
+`aomidori_flex_changelog.html`), pubblicato qui perché il repo dell'app è privato. Lo scrivono le
+sessioni che toccano lo stile, con le regole di Aomidori, e `scripts/release.sh` di Aomidori si
+ferma se la copia di qui è diversa da quella dell'app. Non va spostata né tolta per pulizia.
+Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessun file dell'hub.
+
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**
 `CLAUDE.md` alla radice dei repo montati; uno che vive più in basso (come `worker/CLAUDE.md`
@@ -85,7 +92,7 @@ cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
 **RoccobotOS** seguono **SlimVer**, lo schema `x.xx` che dal 2026-08-01 è il default dei
 progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fonte in
 `datiVersion` e il badge in testata, il secondo col numero visibile in cima e sopra il logo
-(dettagli nel `CLAUDE.md` del repo `Roccobot/RoccobotOS`, § 'Versione del progetto'); le
+(dettagli nel `Rules.md` del repo `Roccobot/RoccobotOS`, § '🔢 Versione del progetto: VISIBILE in pagina'); le
 liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
 il link di installazione da ripetere dopo ogni go-live; 'I Grandi di Terramare' nasce con
 SlimVer e la fonte in `datiVersion`, come il progetto da cui è copiato. ⚠️ 'Senza versione'
@@ -106,15 +113,15 @@ non è vero per nessun progetto.
   vivono qui (dal 2026-10-04, blocco G del lavoro sui siti gemelli): `robots.txt`, `sitemap.xml` e
   `llms.txt`, l'indice dei progetti per gli agenti, che rimanda al `llms.txt` di ciascun sito.
 - ⚠️ **La mappa elenca i soli progetti pubblici con una pagina** (Arda, Terramare, AIV, CleanSVG,
-  RatioLab, Aomidori): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
+  RatioLab, 'Ma che parola è', entrata il 2026-10-16, e Aomidori): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 
 ## 📜 Regola n. 1: le regole universali e come si caricano
 
-Il `CLAUDE.md` di questo repo è l'**hub** per Claude: è il solo file che si carica da sé a
-ogni sessione, quindi è da lì che parte tutto il resto (scelta dell'utente, 2026-07-29). Importa
+Il `CLAUDE.md` di questo repo è l'**hub** per Claude: si carica da sé in ogni sessione che
+monta l'hub, quindi è da lì che parte tutto il resto (scelta dell'utente, 2026-07-29). Importa
 questo file, in fondo al quale vive il protocollo di avvio (§ '🚀 Protocollo di avvio'). Per gli altri agenti l'avvio è
 l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
 
@@ -166,10 +173,10 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
     programma; l'archivio è la storia git.
   - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
     primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
-    lingua nel suo `CLAUDE.md`.)
+    lingua nel suo `Rules.md`.)
   - Ⓘ Due deroghe storiche sono **decadute il 2026-08-01** diventando il default: lo schema
     di versione `x.xx` è ora **SlimVer**, la regola universale, e il gate W3C 'alle minor,
-    se disponibile, senza bloccare' è scritto in `Roccobot.md` § 'Test e verifiche'.
+    se disponibile, senza bloccare' è scritto in `Roccobot.md` § '🧪 Test e verifiche (siti e app web)'.
 
   Resta invece pienamente valido tutto il resto: rigore tecnico, igiene del codice
   (niente codice morto), conferma esplicita per le operazioni ad alto impatto,
@@ -188,7 +195,7 @@ Dalla più forte alla più debole:
 
 1. **Istruzioni esplicite dell'utente nella sessione corrente**: prevalgono su tutto;
    se durature, vanno poi registrate nel file giusto.
-2. **Il `CLAUDE.md` pertinente**: questo file di root per ciò che è **trasversale**
+2. **Le regole del repo pertinente** (`AGENTS.md` e `Rules.md`): questo file di root per ciò che è **trasversale**
    a tutti i progetti, quello del repo del progetto (vedi la tabella in testa a
    questo file) per ciò che è **specifico** di un progetto. Non competono fra
    loro: vince quello che parla nel proprio dominio (vedi 'La specificità vale
@@ -203,7 +210,7 @@ Dalla più forte alla più debole:
      questione di scala.
    - ⚠️ **`Earthsea.md` attesta dal 2026-08-21**: fino a quel giorno era un guscio che
      dichiarava di non essere un'autorità, e le note che lo dicono ancora sono superate.
-   - ⚠️ Ma resta **sotto** il `CLAUDE.md` del repo `Roccobot/arda`, il solo
+   - ⚠️ Ma resta **sotto** le regole del repo `Roccobot/arda`, il solo
      progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
      **scelte editoriali deliberate** che divergono dal canone pubblicato
      (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
@@ -234,18 +241,18 @@ può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 
 | regola | dove vive |
 |---|---|
-| Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
-| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `worker/CLAUDE.md` dei repo `Roccobot/arda` e `Roccobot/earthsea`, e `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
+| Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | `Rules.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
+| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `worker/Rules.md` dei repo `Roccobot/arda` e `Roccobot/earthsea`, e `Rules.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
 | `RULES_PASSWORD` letta a runtime e **mai stampata** né fatta transitare in chat | `Roccobot.md`, Worker `rules-proxy` |
-| Mai `innerHTML` | qui, e la nota di `setVersionBadge` nel `CLAUDE.md` del repo `Roccobot/arda` |
+| Mai `innerHTML` | qui, e la nota di `setVersionBadge` nel `Rules.md` del repo `Roccobot/arda` |
 | **Trattini lunghi mai** (em-dash ed en-dash), in nessun output; apici dritti; `...` e non `…` | qui, '✒️ Caratteri vietati', e `Roccobot.md`, 'Caratteri' |
 | Comunicazione con l'utente **sempre in italiano** | qui, '🗣️ Lingua di risposta' |
-| Quello che l'utente mette in `res/`, in **qualsiasi** progetto: **non si tocca mai** | `Roccobot.md`, 'Bonifica e ottimizzazione degli asset'; `CLAUDE.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' per `favicon.png` |
-| Quantizzazione a palette **vietata** (banding) | `CLAUDE.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' |
+| Quello che l'utente mette in `res/`, in **qualsiasi** progetto: **non si tocca mai** | `Roccobot.md`, 'Bonifica e ottimizzazione degli asset'; `Rules.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' per `favicon.png` |
+| Quantizzazione a palette **vietata** (banding) | `Rules.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' |
 | Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, 'Grafica' |
 | Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
-| Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, 'Test e verifiche' |
+| Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, '🧪 Test e verifiche (siti e app web)' |
 | **Conferma esplicita** per le operazioni ad alto impatto | `Roccobot.md`, 'Automazione e interazioni' + qui, go-live |
 | **Allineamento al remoto prima di toccare un file**, col confronto dei ref: nessun progetto può allentarlo | `Roccobot.md`, 'Workflow git e versioni' |
 
@@ -269,30 +276,30 @@ che delle misure si tiene quella **scartata**. Vale per questo file come per ogn
 
 - L'unica nota che resta locale: gli **elenchi di portatori dei badge** non si scrivono qui,
   perché si ricavano da `dati.js`; il **criterio** e le **esclusioni motivate** sì, e vivono
-  nel `CLAUDE.md` del repo `Roccobot/arda`, § '🏅 Criteri editoriali dei badge'.
+  nel `Rules.md` del repo `Roccobot/arda`, § '🏅 Criteri editoriali dei badge'.
 
 ## 🏷️ Nomi dei progetti (terminologia condivisa)
 
 I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in chat
 **prima** che si apra un file di quel progetto: perciò il minimo indispensabile è qui e
-non nei `CLAUDE.md` dei repo dei progetti, che si caricherebbero troppo tardi o, a repo
+non nelle regole dei repo dei progetti, che si caricherebbero troppo tardi o, a repo
 non montato, per niente.
 
 - **Il sito ha TRE nomi equivalenti** (repo `Roccobot/arda`): **'Arda Top'**, **'I Grandi di Arda'** e
   **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
   tollerati, e l'utente li alterna: nessuno dei tre va corretto. Le sfumature d'uso (nei testi
   pubblicati resta il titolo per esteso, e 'Arda' da solo è ambiguo col mondo di cui il sito
-  parla) vivono nel `CLAUDE.md` del repo `Roccobot/arda`, § 'Come si chiama questo
+  parla) vivono nel `Rules.md` del repo `Roccobot/arda`, § 'Come si chiama questo
   progetto'.
   - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
     branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
 - **Le liste AdBlock sono 'Roccobot ABP'** (repo `Roccobot/ABP`), che l'utente chiama anche 'Regole
   AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
   vivono in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
-  quale comando lo dice il `CLAUDE.md` del repo `Roccobot/ABP`.
+  quale comando lo dice il `Rules.md` del repo `Roccobot/ABP`.
 - Gli altri tre progetti si chiamano col nome della loro cartella o del loro repo: **userscript**,
   **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
-  il `CLAUDE.md` del repo `Roccobot/RoccobotOS`) e i **Worker di amministrazione**, in `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea`.
+  il `Rules.md` del repo `Roccobot/RoccobotOS`) e i **Worker di amministrazione**, in `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea`.
 
 ## 🗣️ Lingua di risposta
 
@@ -489,7 +496,7 @@ perché **questo file ha priorità più alta**.
   occorrenze di `1954-55` nelle fonti di 'I Grandi di Arda', più gli intervalli di `JRRT.md`
   e pochi usi puntuativi. Da allora il presidio automatico li tratta come l'em-dash.
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
-  nomi di creatura, toponimi con o senza articolo) vivono nel `CLAUDE.md` del repo `Roccobot/arda`.
+  nomi di creatura, toponimi con o senza articolo) vivono nel `Rules.md` del repo `Roccobot/arda`.
 
 ## 📐 Misure in pixel → unità relative
 
@@ -545,7 +552,7 @@ poi divergerebbe.
   stessa cautela. Qui `master` non riceve più commit esterni dal 2026-09-27 (il bot di AIV era
   l'ultimo), ma più sessioni possono lavorarci in parallelo.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
-    'I Grandi di Arda' vive nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔢 Versione del
+    'I Grandi di Arda' vive nel `Rules.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
 - **Un salvataggio admin arrivato a lavoro iniziato è la BASE** (repo `Roccobot/arda` e
   `Roccobot/earthsea`): il suo file si prende da `origin/main` nominando il ref, le proprie modifiche
@@ -574,7 +581,7 @@ sessione:
    i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
    altre chiavi di un file già esistente:
    ```
-   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume|compact", "start", 60]], "UserPromptSubmit": [["", "prompt", 40]], "PreToolUse": [["Edit|Write", "edit", 30], ["Bash", "bash", 90], ["T", "text", 30]], "PreCompact": [["manual|auto", "compact", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if not any(k in json.dumps(x) for k in ("ganci.py","/hook.py","/hooks.py"))]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
+   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__claude-code-remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__claude-code-remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__claude-code-remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__claude-code-remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__claude-code-remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__claude-code-remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__claude-code-remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__claude-code-remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__claude-code-remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__claude-code-remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume|compact", "start", 60]], "UserPromptSubmit": [["", "prompt", 40]], "PreToolUse": [["Edit|Write", "edit", 30], ["Bash", "bash", 90], ["T", "text", 30]], "PreCompact": [["manual|auto", "compact", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if not any(k in json.dumps(x) for k in ("ganci.py","/hook.py","/hooks.py"))]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];d.setdefault("model","opus");json.dump(d,open(p,"w"),indent=1)'
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. ⚠️ **Dal 2026-09-27 la riga
@@ -599,6 +606,13 @@ sessione:
        intero** (`mcp__<server>__<tool>`, coi nomi che la sessione mostra). ⚠️ **Mai un jolly
        sul server**: dentro `Claude_Code_Remote` vivono anche `archive_session` e
        `create_session`, che non c'entrano niente con lo scrivere un promemoria.
+       - ⚠️⚠️ **Il server dei promemoria e delle PR ha DUE nomi, e la lista li ha tutti e
+         due dal 2026-10-16**: le sessioni cloud lo mostrano come `claude-code-remote`
+         (`mcp__claude-code-remote__send_later`), mentre la lista nasceva con
+         `Claude_Code_Remote`. Il `Tagliando` ha trovato le dodici voci col solo nome vecchio, che
+         quindi non toglievano nessun prompt: è la causa probabile del `send_later` e delle
+         iscrizioni alle PR che chiedevano ancora il consenso. Non è accertato quale nome usi
+         l'app desktop, quindi restano entrambi.
        - ⚠️ **`fire_trigger` resta fuori, e prima di aggiungerlo si chiede**: avvia subito una
          routine, cioè una sessione, come `create_session`. Gli altri cinque dei trigger sono in
          lista per sua richiesta (2026-09-25: *non puoi aggiungere tu quello che l'altra

@@ -8,7 +8,7 @@ description: "Passaggio di consegne fra sessioni di lavoro sui repo di Roccobot 
 Le sessioni di questo repo sono **effimere**: il container si ricicla, lo scratchpad
 sparisce e la chat non passa alla sessione dopo. Una sessione nuova ha in automatico
 solo le regole del repo in cui parte (`AGENTS.md`, che ogni agente legge e Claude Code importa
-dal `CLAUDE.md` insieme a `Rules.md`; le regole universali vivono in `Roccobot/tools` e vanno
+dal `CLAUDE.md`, nell'hub e in `tools` insieme a `Rules.md`; le regole universali vivono in `Roccobot/tools` e vanno
 lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa skill copre
 esattamente quel salto, e nient'altro.
 
@@ -189,12 +189,15 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `roccobot.github.io`). Nel repo dell'hub restano soltanto i file dell'hub: la cartella `AIV/`
   generata è uscita il 2026-09-27, quando la paginetta è passata al Pages del repo di AIV. **'I Grandi di Arda'** (il
   sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
-  **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
-  (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
-  `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`, `Roccobot/ratiolab`), serviti da Pages; Arda e
-  Terramare all'indirizzo senza `top`, ciascuno col suo Worker di amministrazione in `worker/`.
-  **AIV**, l'app Android, vive in `Roccobot/AIV`, col suo documento di feedback sul Worker
-  `aiv-feedback`.
+  **userscript**, **RoccobotOS**, CleanSVG, RatioLab e **'Ma che parola è'** vivono ciascuno in
+  un repo suo (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
+  `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`, `Roccobot/ratiolab`, `Roccobot/cheparolae`),
+  serviti da Pages; Arda e Terramare all'indirizzo senza `top`, ciascuno col suo Worker di
+  amministrazione in `worker/`. **AIV**, l'app Android, vive in `Roccobot/AIV`, col suo
+  documento di feedback sul Worker `aiv-feedback`. **Aomidori**, il lettore per macOS, vive in
+  `Roccobot/Aomidori`, privato, col documento di feedback sul Worker `aomidori-feedback`; la sua
+  pagina di download, l'appcast e l'archivio degli stili vivono nell'hub (`Aomidori/` e
+  `styles/`), e le release in `Roccobot/Aomidori-releases`.
   ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: di serie SlimVer (`x.xx`),
   con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di `RoccobotOS.js`
   per RoccobotOS e in `versionName` per AIV, che si pubblica come release e non come deploy;
@@ -402,6 +405,17 @@ evase si cancellano (regola n. 3). Ogni voce passa la prova di sufficienza della
 n. 2: obiettivo, criterio col puntatore, numeri già misurati, cosa non va rifatto, primo
 passo concreto, come si verifica. Se le voci hanno un ordine obbligato, **dirlo**. Se non
 c'è niente in sospeso, scrivi 'niente' e non inventare lavoro.
+- **Il titolo ha il nome in codice** della voce, fra backtick, unico nel brief.
+- **Una voce `IN CORSO` dice chi la tiene e quale versione aspetta**: nel titolo il nome della
+  sessione (`🔴 Tools`, `🟢 Aomidori`) o il suo identificativo, e il numero di versione che il
+  lavoro pubblicherà. Una seconda sessione deve sapere a chi scrivere, e col numero a chi
+  mergia per primo (`Roccobot.md` § '🤝 Più sessioni sullo stesso progetto').
+- **Una versione col tag pubblicato lascia solo le voci aperte che ne nascono**: niente digest,
+  byte, SHA, conti delle prove, che vivono nel tag, nel codice o nelle regole. È la causa per cui
+  il brief del 2026-10-16 era arrivato a 514 righe.
+- **Un lavoro a metà fra più turni vive su un branch pushato** (`claude/<nome>`) o in un `git
+  bundle` fra gli allegati, citato nella voce: lo scratchpad muore col container, e il brief
+  protegge la descrizione, non il codice.
 
 ## Andato live in questa sessione             [max 8 righe]
 Una riga per versione: `v14.77 - hover istantaneo nel Pannello, selezione spenta per i
