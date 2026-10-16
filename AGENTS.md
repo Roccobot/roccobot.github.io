@@ -263,9 +263,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🧭 Il nucleo dell'hub
 
 - **Qui non vivono progetti**: dal 2026-09-26 ognuno ha un repo suo, servito da Pages allo
-  stesso indirizzo `/<repo>/`. **Eccezione voluta dall'utente**: `Aomidori/`, pagina di download e
-  appcast di un'app il cui repo è privato dal 2026-10-15 (`Rules.md` § '🗂️ I progetti e i loro file
-  di regole'). L'hub tiene le regole trasversali e gli strumenti che le fanno
+  stesso indirizzo `/<repo>/`. **Eccezioni volute dall'utente**: `Aomidori/`, pagina di download e
+  appcast di un'app il cui repo è privato dal 2026-10-15, e `styles/`, l'archivio degli stili di
+  Aomidori che `release.sh` confronta; nessuna delle due si sposta per pulizia (`Rules.md` § '🗂️ I
+  progetti e i loro file di regole'). L'hub tiene le regole trasversali e gli strumenti che le fanno
   rispettare (`.memo/scripts/`); il testo completo delle sue regole vive in `Rules.md`.
 - **Prima di lavorare su un progetto si leggono le regole del suo repo** (`AGENTS.md` e
   `Rules.md`, o il `CLAUDE.md` finché non ne ha altri): dal 2026-10-10 `Rules.md` non si carica da
@@ -316,12 +317,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Il controllo settimanale delle dipendenze** ha la logica qui: il workflow riusabile
   `.github/workflows/dependencies.yml`, richiamato dai repo con un registro, lancia lo script unico
   `.memo/scripts/check-dependencies.py` e apre la issue `Dipendenze da leggere`; `dependabot.yml`
-  segue le azioni di GitHub in ogni repo con workflow (`docs/Workflow.md` § '🔗 Il controllo
+  segue le azioni di GitHub in ogni repo i cui workflow usano azioni con una versione (`docs/Workflow.md` § '🔗 Il controllo
   settimanale delle dipendenze').
-- **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
-  `catchup.py`, `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
-  `skills-update.sh`, `check-dependencies.py`); quelli di un sito solo vivono nel suo repo. L'indice, e i banchi di prova da
-  ricostruire quando un lavoro li richiede, vivono in `.memo/scripts/README.md`, che si legge su
-  richiesta.
+- **Qui vivono solo gli script che servono più progetti**, e quelli di un sito solo vivono nel suo
+  repo. L'elenco completo, e i banchi di prova da ricostruire quando un lavoro li richiede, vivono
+  in `.memo/scripts/README.md`, che è la fonte unica e si legge su richiesta.
 - **Le regole universali si leggono dal Worker `rules-proxy`** quando `tools` non è clonato: i raw
   di GitHub rispondono 404 (`Rules.md` § '🗂️ Che cosa contiene ciascun file').
