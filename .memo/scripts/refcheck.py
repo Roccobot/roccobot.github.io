@@ -379,8 +379,11 @@ VIETATI = {
 # alto e stretto), quindi la prosa che nomina quel tasto deve poterlo scrivere. Ammesso il
 # solo codepoint, non il blocco Halfwidth and Fullwidth Forms, che contiene le latine a
 # larghezza intera, cioè omografi perfetti.
+# U+2423 OPEN BOX, il simbolo della barra spaziatrice, si ammette da solo dal 2026-10-16: i
+# documenti di collaudo lo scrivono con `⌘⇧␣`, e la prosa che nomina quel tasto deve poterlo
+# scrivere, come gli altri tasti del Mac del blocco 2300-23FF.
 SIMBOLI_OK = [
-    (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7), (0xFF0B, 0xFF0B),
+    (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7), (0xFF0B, 0xFF0B), (0x2423, 0x2423),
     (0x2000, 0x206F), (0x2139, 0x2139), (0x2150, 0x218F), (0x2190, 0x21FF),
     (0x2200, 0x22FF), (0x2300, 0x23FF), (0x2460, 0x24FF), (0x2500, 0x257F),
     (0x25A0, 0x25FF), (0x2600, 0x27BF), (0x2900, 0x297F), (0x2B00, 0x2BFF),
