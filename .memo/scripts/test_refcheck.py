@@ -230,6 +230,40 @@ class RepoPathTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIsNone(refcheck.stato_in_repo(path))
 
+class AbsentProjectTests(unittest.TestCase):
+    """A line that names a project whose repository is not cloned, by the name the texts use
+    ('Aomidori', 'Terramare'), makes its paths unverifiable, not missing.
+
+    On 2026-10-16 rules-check of tools, where only the hub and tools are cloned, reported eleven
+    correct paths of AIV and Aomidori as missing (`docs/AppStore.md` next to 'Aomidori'), and
+    was red on every commit: only `Roccobot/Aomidori` was recognised.
+    """
+
+    def setUp(self):
+        original = refcheck.PROGETTI
+        refcheck.PROGETTI = {**original, 'Aomidori': Path('/absent/Aomidori'), 'earthsea': Path('/absent/earthsea')}
+        self.addCleanup(setattr, refcheck, 'PROGETTI', original)
+
+    def test_the_plain_name_of_an_absent_project_counts(self):
+        for line in ('i passi di TestFlight (`docs/AppStore.md`) di Aomidori',
+                     'nel registro di Terramare: `docs/Dependencies.json`'):
+            with self.subTest(line=line):
+                self.assertTrue(refcheck.cita_progetto_assente([line], 0))
+
+    def test_the_repository_name_still_counts(self):
+        self.assertTrue(refcheck.cita_progetto_assente(['vedi `Roccobot/earthsea`'], 0))
+
+    def test_other_words_do_not_count(self):
+        for line in ('le regole di `docs/Workflow.md`', 'un aomidori scritto in minuscolo',
+                     'la parola Terramareggiata'):
+            with self.subTest(line=line):
+                self.assertFalse(refcheck.cita_progetto_assente([line], 0))
+
+    def test_a_cloned_project_does_not_count(self):
+        refcheck.PROGETTI = {**refcheck.PROGETTI, 'Aomidori': Path(__file__).resolve().parent}
+        self.assertFalse(refcheck.cita_progetto_assente(['`docs/AppStore.md` di Aomidori'], 0))
+
+
 class BriefDoneTests(unittest.TestCase):
     """A brief entry marked as done is an error: it has to be deleted, not annotated.
 

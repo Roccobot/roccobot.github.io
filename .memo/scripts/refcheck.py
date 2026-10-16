@@ -92,7 +92,9 @@ RULEFILES = [
     TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
     TOOLS / "Platforms.md",
-    TOOLS / ".agents/skills/desc/SKILL.md",
+# Le skill di `tools` a glob dal 2026-10-16: fino ad allora c'era la sola `desc`, e `council` e
+# la nuova `audit` restavano fuori controllo.
+] + sorted(TOOLS.glob(".agents/skills/*/SKILL.md")) + [
 # ⚠️ I `CLAUDE.md` di progetto e i file di `rules/` si prendono a GLOB e non a elenco, dal
 # 2026-08-21, per la stessa ragione degli snippet qui sotto: erano un elenco scritto a mano, e
 # due file di regole nati lo stesso giorno (`earthsea/top/CLAUDE.md` e `rules/Earthsea.md`)
@@ -767,14 +769,26 @@ def stato_in_repo(p):
     return "ok" if (radice / resto).exists() else "rotto"
 
 
+# I nomi con cui i testi chiamano un progetto, oltre a quello del repo: il brief e le regole
+# scrivono 'Aomidori' o 'Terramare', non `Roccobot/Aomidori`. Senza, il 2026-10-16 `rules-check`
+# di `tools`, dove sono clonati solo l'hub e `tools`, dava per inesistenti undici percorsi giusti
+# di AIV e di Aomidori (`docs/Feedback-maintenance.md`, `docs/AppStore.md`), ed era rosso su ogni
+# commit. Con la maiuscola e a parola intera, perché `arda` minuscolo compare anche altrove.
+NOMI_PROGETTI = {"earthsea": ("Terramare",), "arda": ("Arda",), "ratiolab": ("RatioLab",),
+                 "CleanSVG": ("CleanSVG",), "ABP": ("ABP",), "RoccobotOS": ("RoccobotOS",),
+                 "Aomidori": ("Aomidori",)}
+
+
 def cita_progetto_assente(righe, i, intorno=1):
     """Vero se il rimando che parte dalla riga `i` nomina il repo di un progetto che questa
-    sessione non monta (`Roccobot/earthsea`, e gli altri di `PROGETTI`). Stesso criterio di
-    `cita_aiv`, col nome completo del repo perché `arda` o `ABP` da soli comparirebbero in
-    righe che parlano d'altro."""
+    sessione non monta (`Roccobot/earthsea`, e gli altri di `PROGETTI`), o il progetto col nome
+    di `NOMI_PROGETTI`. Stesso criterio di `cita_aiv`: un percorso davvero sbagliato in una riga
+    che nomina quel progetto passa come non verificabile, e lo vede la sessione che ha il repo."""
     vicine = righe[max(0, i - intorno): i + intorno + 1]
     assenti = [n for n, r in PROGETTI.items() if not r.exists()]
-    return any(f"Roccobot/{n}" in r for r in vicine for n in assenti)
+    nomi = [re.compile(rf"\b{re.escape(a)}\b") for n in assenti for a in NOMI_PROGETTI.get(n, ())]
+    return any(f"Roccobot/{n}" in r for r in vicine for n in assenti) \
+        or any(nome.search(r) for r in vicine for nome in nomi)
 
 
 def variants(title):
@@ -1684,6 +1698,7 @@ def main():
                     # `AIV/` (`tools/feedback-check.py`, visto il 2026-09-27).
                     progetto_assente = (aiv_missing or any(not r.exists() for r in PROGETTI.values())) and bool(coda) and (
                         cita_progetto_assente(righe, n - 1, intorno=2)
+                        or (aiv_missing and cita_aiv(righe, n - 1))
                         or (clone is not None and not clone.exists())
                         or not any((d / testa).exists() for d in (base, SITO, TOOLS)))
                     dove = (non_verif if (aiv_missing and p.startswith("AIV/")) or progetto_assente
