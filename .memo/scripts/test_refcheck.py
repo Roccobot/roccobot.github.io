@@ -230,6 +230,26 @@ class RepoPathTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIsNone(refcheck.stato_in_repo(path))
 
+class SpaceSymbolTests(unittest.TestCase):
+    """The space bar's symbol, U+2423, is a Mac key like ⏎ and is allowed in prose (the feedback
+    documents write it with ⌘⇧ and the space bar, 2026-10-16); its neighbours stay out."""
+
+    def check(self, text):
+        with tempfile.NamedTemporaryFile('w', suffix='.md', encoding='utf-8', delete=False) as handle:
+            handle.write(text)
+        self.addCleanup(os.unlink, handle.name)
+        return subprocess.run([sys.executable, str(SCRIPT), '--text', handle.name],
+                              capture_output=True, text=True)
+
+    def test_the_space_symbol_passes(self):
+        result = self.check('Il tasto ⌘⇧␣ scrive ␣ nel campo.\n')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_its_neighbour_is_still_refused(self):
+        result = self.check('Un simbolo vicino: ␤.\n')
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+
+
 class AbsentProjectTests(unittest.TestCase):
     """A line that names a project whose repository is not cloned, by the name the texts use
     ('Aomidori', 'Terramare'), makes its paths unverifiable, not missing.
