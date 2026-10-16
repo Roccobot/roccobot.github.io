@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.04
+> **Versione**: 2.05
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -109,8 +109,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **Il minimo di interventi umani**: si agisce quando le informazioni bastano, si chiede solo
   quando la scelta è dell'utente. **Un comando semplice per chiamata**: mai `cd` prima di `git`
-  (`git -C`), mai `&&` né heredoc (testi e script in un file), o ogni passo chiede conferma
-  (`Roccobot.md` § '⚙️ Automazione e interazioni').
+  (`git -C`), mai `&&` né heredoc (testi e script in un file): i comandi singoli offrono più
+  facilmente 'Consenti sempre' (`Roccobot.md` § '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio, ogni richiesta di autorizzazione è approvata**, nel
   cloud e in locale; in locale `caffeinate` parte da sé prima del lavoro, e si dice per quanto
   (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
