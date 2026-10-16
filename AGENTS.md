@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.03
+> **Versione**: 2.04
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -64,8 +64,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   e ottimizzazione degli asset').
 - **Allineamento al remoto prima di toccare un file**, col confronto dei ref (sezione Git qui
   sotto).
-- **Conferma esplicita per le operazioni ad alto impatto**: produzione, breaking change,
-  infrastruttura, segreti, admin, deploy.
+- **Conferma esplicita per le operazioni ad alto impatto**: infrastruttura, segreti, admin,
+  breaking change e main release. Il resto del go-live segue il cancello qui sotto (sezione 🚦).
 - **Trattini lunghi mai**, apici dritti, `...` e non il carattere unico fuori dai testi di UI (sezione Caratteri).
 - **Comunicazione con l'utente sempre in italiano.**
 - **Fonti alla lettera**: ciò che non è attestato non si scrive, e un canone si verifica con una
@@ -79,7 +79,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   merge, branch, pull request), che non si traduce (`Roccobot.md` § '💬 Stile di comunicazione').
 - Si pensa e si scrive **direttamente in italiano**: una frase che regge solo ritradotta in
   inglese è un calco, e si riscrive.
-- Italiano **corretto e preciso, non formale**: niente colloquiale (`esce` per risulta, `ci sta`
+- Italiano **non formale, ma preciso e corretto, niente slang né volgarità**: niente colloquiale (`esce` per risulta, `ci sta`
   per c'è, `roba`), niente metafore al posto del meccanismo, niente metafore mortuarie o
   guerresche, `stare` mai per dire dove una cosa si trova, il passivo con **essere**
   (`Roccobot.md` § '🙂 Formule da non usare').
@@ -102,8 +102,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Numeri all'italiana (`0,05`, `27.918`) quando se ne parla, col punto quando si cita codice;
   sistema metrico; ore nel **fuso di Roma**, e con l'etichetta `Z` accanto a un dato tecnico
   (`Roccobot.md` § 'Numeri e unità di misura').
-- Minuscole dove l'italiano le vuole; link sempre come `[titolo](URL)`; emoji e formattazione
-  per la leggibilità, icone d'allarme solo per le vere emergenze.
+- Minuscole dove l'italiano le vuole; link sempre come `[titolo](URL)`; **uso estensivo di
+  emoji, elenchi puntati e schematizzazione**, icone d'allarme solo per le vere emergenze.
 
 ## 🤝 Come si collabora
 
@@ -142,7 +142,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   **incerto**, una **main release** e una **modifica strutturale**, che si concorda prima di
   farla. Main release vuol dire **ogni versione tonda** (`1.00`, `2.00`...) e, a suo giudizio,
   un bump **+0,1 che porta qualche rischio**. Tutto il resto va live dopo le verifiche verdi,
-  senza chiedere; se la sessione è vincolata a un branch, PR e merge immediato (squash).
+  senza chiedere; se la sessione è vincolata a un branch, PR e merge immediato (squash). Si
+  chiede anche per segreti, admin e infrastruttura (`Roccobot.md` § '🚦 Il cancello per agente e
+  il go-live').
 - **Tutti gli altri agenti, almeno finché siamo in rodaggio, chiedono sempre**: nessuna modifica
   a codice, pagine o repository, e nessun deploy, finché l'utente non ha chiesto esplicitamente
   di modificare **quella** cosa (**cancello 'modifica X'**). ⚠️ Il **brief** è fuori dal
@@ -153,8 +155,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🌿 Git e versioni
 
 - **Allineamento prima di ogni modifica**, perché il remoto riceve commit da altre sessioni e
-  dagli editor admin: `git fetch origin <principale> && git rev-list --left-right --count
-  origin/<principale>...HEAD`, e se il primo numero è sopra zero si allinea prima di lavorare.
+  dagli editor admin: `git -C <repo> fetch origin <principale>`, poi, in una chiamata a sé,
+  `git -C <repo> rev-list --left-right --count origin/<principale>...HEAD`, e se il primo numero
+  è sopra zero si allinea prima di lavorare.
   Il numero di versione da solo non prova la freschezza (`Roccobot.md` § '🌿 Workflow git e
   versioni').
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
