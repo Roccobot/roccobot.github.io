@@ -316,6 +316,17 @@ class BriefDoneTests(unittest.TestCase):
         self.assertIn('brief lungo', nota)
 
 
+class SymbolTests(unittest.TestCase):
+    """Arrows are symbols the rules use, whatever block they are in.
+
+    On 2026-10-16 the circular arrows of Aomidori's rotate items (U+27F2, U+27F3) were refused in
+    the brief: Supplemental Arrows-A was missing from the declared ranges, and no rule forbids it.
+    """
+
+    def test_circular_arrows_pass(self):
+        self.assertEqual(refcheck.char_defects('Ruota immagine a sinistra ⟲, a destra ⟳.'), [])
+
+
 class LexiconTests(unittest.TestCase):
     """The user's lexical corrections block a commit, and a word named in code still passes.
 
