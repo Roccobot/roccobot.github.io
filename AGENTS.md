@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.08
+> **Versione**: 2.09
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -224,6 +224,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Una misura di layout vale solo col font reale caricato.**
 - **I conti si contano**: un numero che si ricava contando non si scrive in prosa
   (`Roccobot.md` § '🔢 I conti si contano, non si scrivono').
+- **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce dell'elenco di partenza si
+  confronta con il codice del ramo principale, non coi messaggi dei commit, e ha un esito
+  dichiarato (fatta, lasciata con la ragione, da fare o da chiedere) (`Roccobot.md` § '🧾 Il
+  bilancio di chiusura: alla fine di un lavoro si confronta l'elenco con il codice').
 
 ## 🔁 Il collaudo
 
