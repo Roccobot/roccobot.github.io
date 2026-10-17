@@ -64,7 +64,7 @@ e interazioni', e questi sono i tre momenti:
 3. **Alla chiusura della sessione**, che è il caso per cui questa skill è nata.
 
 ⚠️ In tutti e tre i casi il brief include anche l'elenco dei **riferimenti**, cioè le sigle
-lettera-numero, aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
+nome-numero (lettera-numero fino al 2026-10-17), aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
 riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso al resto.
 
 ⚠️ **Un gancio `PreCompact`** (il dispatcher `.memo/scripts/hooks.py`, modo `compact`) scatta a
@@ -435,12 +435,14 @@ Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
 uno script, la sua voce **si cancella**.
 
 ## Riferimenti in uso                     [una riga per sigla, aperti E chiusi]
-Le sigle lettera-numero con cui utente e sessione chiamano i punti di un lavoro (`A1`, `B12`,
-`C7`...). Ci vanno **tutte**, anche quelle già chiuse, perché sono un **vocabolario
-condiviso** e non voci di lavoro: se l'utente scrive 'torniamo su B3' e la sigla non significa
-più niente, la conversazione riparte da capo. Una riga ciascuna, con l'esito per le chiuse
-(`B7 - liste OISD morte, chiuso in 2.60`), mai il racconto. ⚠️ Se più giri di lavoro hanno
-usato le stesse lettere, dire **quale schema è in vigore** e dichiarare l'altro superato.
+Le sigle nome-numero con cui utente e sessione chiamano i punti di un lavoro (`Setaccio-01`,
+`Legatura-05`...; fino al 2026-10-17 erano lettera-numero, `A1`, `B12`, e quelle già scritte
+restano così: `Roccobot.md` § '💬 Stile di comunicazione'). Ci vanno **tutte**, anche quelle
+già chiuse, perché sono un **vocabolario condiviso** e non voci di lavoro: se l'utente scrive
+'torniamo su Setaccio-03' e la sigla non significa più niente, la conversazione riparte da
+capo. Una riga ciascuna, con l'esito per le chiuse (`Setaccio-07 - liste OISD ferme, chiuso in
+2.60`), mai il racconto. ⚠️ Se due lavori hanno usato le stesse sigle lettera-numero dello
+schema vecchio, dire a quale lavoro appartiene ognuna.
 
 ## Da decidere                            [senza tetto - NON sono cose da fare]
 Le domande poste all'utente e rimaste **senza risposta** entro un turno di botta e risposta:
