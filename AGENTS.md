@@ -278,17 +278,18 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **Qui non vivono progetti**: dal 2026-09-26 ognuno ha un repo suo, servito da Pages allo
   stesso indirizzo `/<repo>/`. **Eccezioni volute dall'utente**: `Aomidori/`, pagina di download e
-  appcast di un'app il cui repo è privato dal 2026-10-15, e `styles/`, l'archivio degli stili di
-  Aomidori che `release.sh` confronta; nessuna delle due si sposta per pulizia (`Rules.md` § '🗂️ I
-  progetti e i loro file di regole'). L'hub tiene le regole trasversali e gli strumenti che le fanno
-  rispettare (`.memo/scripts/`); il testo completo delle sue regole vive in `Rules.md`.
+  appcast di un'app il cui repo è privato dal 2026-10-15; `styles/`, l'archivio degli stili di
+  Aomidori che `release.sh` confronta; e `AIV/`, pagina di download e informativa di AIV, copiate da
+  `publish/` del suo repo, che diventa privato (`Serratura`), e da ricopiare qui a ogni modifica di
+  quei file. Nessuna si sposta per pulizia (`Rules.md` § '🗂️ I progetti e i loro file di regole').
+  L'hub tiene le regole trasversali e gli strumenti che le fanno rispettare (`.memo/scripts/`); il
+  testo completo delle sue regole vive in `Rules.md`.
 - **Prima di lavorare su un progetto si leggono le regole del suo repo** (`AGENTS.md` e
   `Rules.md`, o il `CLAUDE.md` finché non ne ha altri): dal 2026-10-10 `Rules.md` non si carica da
   sé, quindi si legge per intero prima di cominciare. La tabella dei progetti, coi repo, vive in
   `Rules.md` § '🗂️ I progetti e i loro file di regole'.
-- **La cartella `AIV/` non esiste più dal 2026-09-27 e non si ricrea**: la paginetta di AIV la
-  pubblica il repo `Roccobot/AIV` sul suo Pages. Da quel giorno questo repo non riceve più commit
-  esterni, ma altre sessioni possono lavorarci in parallelo.
+- **Questo repo non riceve commit esterni** (editor admin e bot scrivono nei repo dei progetti), ma
+  altre sessioni possono lavorarci in parallelo: per questo l'allineamento al remoto vale anche qui.
 - **Nomi dei progetti**: 'Arda Top', 'I Grandi di Arda' e 'Arda' sono sinonimi e nessuno si
   corregge; 'Grimorio' è terminologia morta. Le liste AdBlock sono 'Roccobot ABP'; RoccobotOS è il
   sito di riferimento personale (`Rules.md` § '🏷️ Nomi dei progetti (terminologia condivisa)').
