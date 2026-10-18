@@ -186,8 +186,9 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   il brief. Ognuno ha le sue regole (`AGENTS.md`, `Rules.md` e un `CLAUDE.md` corto che li
   importa); il brief copre tutti.
 - **Progetto** = di norma **un repo suo** (fino al 2026-09-26 era una cartella di
-  `roccobot.github.io`). Nel repo dell'hub restano soltanto i file dell'hub: la cartella `AIV/`
-  generata è uscita il 2026-09-27, quando la paginetta è passata al Pages del repo di AIV. **'I Grandi di Arda'** (il
+  `roccobot.github.io`). Nel repo dell'hub restano i file dell'hub, più le pagine dei due progetti
+  col repo privato, `Aomidori/` e `AIV/` (`Rules.md` dell'hub, § '🗂️ I progetti e i loro file di
+  regole'). **'I Grandi di Arda'** (il
   sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
   **userscript**, **RoccobotOS**, CleanSVG, RatioLab e **'Ma che parola è'** vivono ciascuno in
   un repo suo (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,

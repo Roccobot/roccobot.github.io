@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIV - Privacy</title>
+<meta name="description" content="Informativa sulla privacy di AIV, Astonishing Image Viewer: l'app non raccoglie e non condivide dati personali.">
+<meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://roccobot.github.io/AIV/privacy.html">
+<!--
+  THE PRIVACY POLICY OF AIV, since 5.70 (owner's choices A1 and C1, 2026-10-11).
+  Google Play wants one address for it, and an app that reads photos and videos
+  cannot be listed without one. It covers BOTH variants, because the honest answer
+  differs in one point only: AIV GitHub asks GitHub for the latest release.
+
+  ⚠️ Every sentence here is a claim about the code, and the code is what makes it
+  true: no analytics, ads or crash reporting library (`app/build.gradle.kts`), and
+  the network is opened only for an address the person chose (`ImageSource`,
+  `ImageActions`, `WebSeries`) or, in AIV GitHub only, by `Updater`. Whoever adds a
+  library or a request that sends something must change this page in the same
+  release, and the answers for Play's 'Data safety' with it (`docs/Store.md`).
+
+  ⚠️ Two languages in separate sections, Italian first (choice C1): one address,
+  readable outside Italy too. The same favicon as the download page, byte for byte.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2070%2060'%3E%3Cg%20fill='%2343B59E'%20transform='translate(-19,-19)'%3E%3Cpath%20d='M30,19a10,10%200%201,0%200,20a10,10%200%201,0%200,-20z'/%3E%3Cpath%20fill-rule='evenodd'%20d='M58.1311,27.1833L88.1311,71.1833A5,5%200%200%201%2084,79L24,79A5,5%200%200%201%2019.8689,71.1833L49.8689,27.1833A5,5%200%200%201%2058.1311,27.1833ZM56.0424,49.5583L68.0424,66.5583A2.5,2.5%200%200%201%2066,70.5L42,70.5A2.5,2.5%200%200%201%2039.9576,66.5583L51.9576,49.5583A2.5,2.5%200%200%201%2056.0424,49.5583Z'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  :root{--bg:#fbfbfa;--fg:#1d1f1e;--muted:#5b625f;--accent:#00727B;--rule:#d9dedc}
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#141716;--fg:#e8ecea;--muted:#a3aba7;--accent:#4FD9BE;--rule:#2c3331}
+  }
+  html{background:var(--bg);color:var(--fg)}
+  body{margin:0 auto;max-width:42rem;padding:2.5rem 1.25rem 4rem;
+    font:1rem/1.6 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  h1{font-size:1.6rem;line-height:1.25;margin:0 0 .25rem}
+  h2{font-size:1.15rem;margin:2rem 0 .5rem}
+  p,li{margin:.5rem 0}
+  a{color:var(--accent)}
+  .data{color:var(--muted);margin:0 0 1.5rem}
+  .lingue{display:flex;gap:1rem;margin:0 0 2rem}
+  hr{border:0;border-top:1px solid var(--rule);margin:3rem 0}
+</style>
+</head>
+<body>
+<nav class="lingue" aria-label="Lingua / Language"><a href="#it" hreflang="it">Italiano</a> <a href="#en" hreflang="en">English</a></nav>
+
+<section id="it" lang="it">
+  <h1>AIV: informativa sulla privacy</h1>
+  <p class="data">Aggiornata l'11 ottobre 2026</p>
+
+  <p>AIV (Astonishing Image Viewer) è un'app per Android di Rocco Casadei (Roccobot). Esiste in due varianti: AIV Play, distribuita su Google Play, e AIV GitHub, scaricabile da questo sito. Questa informativa vale per tutte e due.</p>
+
+  <h2>In breve</h2>
+  <p>AIV non raccoglie, non conserva e non condivide dati personali. Non ha account, pubblicità, statistiche d'uso né rapporti sugli errori, e non contiene librerie di terze parti che lo facciano.</p>
+
+  <h2>Le tue immagini</h2>
+  <p>AIV chiede di accedere a foto e video per mostrarli, organizzarli e modificarli. Le immagini restano sul tuo telefono: AIV non le carica da nessuna parte. Se concedi l'accesso solo ad alcune foto, AIV vede solo quelle.</p>
+
+  <h2>Le impostazioni</h2>
+  <p>Impostazioni, copertine e stili restano nella memoria dell'app sul telefono. Escono dal telefono solo se li esporti tu in un file, e solo dove scegli tu.</p>
+
+  <h2>La rete</h2>
+  <p>AIV si collega a internet solo quando apri un'immagine da un indirizzo web: la richiesta va al sito di quell'indirizzo, che come per ogni navigatore vede l'indirizzo IP del telefono. AIV non manda altro.</p>
+  <p>AIV GitHub, se l'aggiornamento automatico è acceso, una volta al giorno chiede a GitHub qual è l'ultima versione pubblicata, e scarica l'aggiornamento solo se lo confermi. AIV Play non lo fa: gli aggiornamenti li gestisce Google Play.</p>
+
+  <h2>Modifiche</h2>
+  <p>Se il comportamento di AIV cambia, questa pagina cambia nella stessa versione, con la data aggiornata in testa.</p>
+
+  <h2>Contatti</h2>
+  <p>Per domande su questa informativa puoi aprire una segnalazione su <a href="https://github.com/Roccobot/AIV-releases/issues">GitHub</a>.</p>
+</section>
+
+<hr>
+
+<section id="en" lang="en">
+  <h1>AIV: privacy policy</h1>
+  <p class="data">Updated October 11, 2026</p>
+
+  <p>AIV (Astonishing Image Viewer) is an Android app by Rocco Casadei (Roccobot). It comes in two variants: AIV Play, distributed on Google Play, and AIV GitHub, downloadable from this site. This policy covers both.</p>
+
+  <h2>In short</h2>
+  <p>AIV does not collect, store or share personal data. It has no accounts, ads, usage analytics or crash reports, and it contains no third-party library that does.</p>
+
+  <h2>Your images</h2>
+  <p>AIV asks for access to photos and videos to show, organize and edit them. Your images stay on your phone: AIV does not upload them anywhere. If you grant access to some photos only, AIV sees only those.</p>
+
+  <h2>Settings</h2>
+  <p>Settings, covers and styles stay in the app's storage on the phone. They leave the phone only if you export them to a file, and only where you choose.</p>
+
+  <h2>Network</h2>
+  <p>AIV connects to the internet only when you open an image from a web address: the request goes to the site at that address, which, as with any browser, sees the phone's IP address. AIV sends nothing else.</p>
+  <p>AIV GitHub, when automatic update is on, asks GitHub once a day for the latest published version, and downloads the update only if you confirm. AIV Play does not: Google Play handles its updates.</p>
+
+  <h2>Changes</h2>
+  <p>If AIV's behavior changes, this page changes in the same version, with the date at the top updated.</p>
+
+  <h2>Contact</h2>
+  <p>For questions about this policy you can open an issue on <a href="https://github.com/Roccobot/AIV-releases/issues">GitHub</a>.</p>
+</section>
+</body>
+</html>

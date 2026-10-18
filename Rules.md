@@ -27,7 +27,7 @@
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **'Ma che parola è'**, la pagina delle parole in colonna (dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo `/cheparolae/`; prima nella cartella `Parole/` di questo repo) | repo `Roccobot/cheparolae` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | l'`AGENTS.md` e il `Rules.md` di quella cartella |
-| **AIV**, l'app Android 'Astonishing Image Viewer' (la paginetta di download, servita dal suo Pages dal 2026-09-27; prima nella cartella `AIV/` di questo repo) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **AIV**, l'app Android 'Astonishing Image Viewer' (repo **privato** dal passo 5 di `Serratura`, 2026-10-18; la paginetta di download e l'informativa vivono qui, in `AIV/`, copiate da `publish/` del suo repo, e le release nel repo pubblico `Roccobot/AIV-releases`) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
@@ -37,23 +37,28 @@ prima si caricava in ogni sessione che montava il repo, anche quando il lavoro e
 `CLAUDE.md` di `worker/` importa ancora anche `Rules.md`, ed è giusto così: compare solo quando si
 legge un file di quella cartella, cioè quando il lavoro è già lì.
 
-⚠️⚠️ **LA CARTELLA `AIV/` NON C'È PIÙ DAL 2026-09-27, E NON VA RICREATA.** La riempiva una
-GitHub Action del repo `Roccobot/AIV` (l'app Android 'Astonishing Image Viewer'), che a ogni tag
-vi scriveva l'APK firmato e la paginetta di download con un token che poteva scrivere qui. Da
-quel giorno la paginetta la pubblica il repo di AIV sul **suo** Pages, allo stesso indirizzo
-(`roccobot.github.io/AIV/`: un repo di progetto vince sulla cartella omonima, misurato su
-RatioLab), e le sue regole vivono nel suo `Rules.md`, § '🚀 Che cosa produce un rilascio'.
-- ⚠️ **Su quel sito l'APK non c'è**: il pulsante di download punta all'asset dell'ultima
-  release, quindi un rilascio non cambia il sito. La copia dell'APK che viveva qui la leggeva
-  solo la sonda che controllava se era arrivata.
+⚠️⚠️ **LA CARTELLA `AIV/` È LA TERZA ECCEZIONE, COME `Aomidori/` E PER LA STESSA RAGIONE**
+(`Serratura`, scelta Serratura-01-A dell'utente, 2026-10-18): il repo di AIV diventa privato, e un
+repo privato non ha Pages senza un piano a pagamento. La paginetta di download e l'informativa sulla
+privacy vivono qui, allo stesso indirizzo `roccobot.github.io/AIV/`: quello dell'informativa è
+registrato nella Play Console e non può cambiare. Codice, regole e documento di feedback restano nel
+repo di AIV. Fino al 2026-09-27 la cartella la riempiva una GitHub Action di AIV; da allora al
+passo 4 di `Serratura` la paginetta l'ha pubblicata il Pages del repo di AIV, che vince sulla
+cartella omonima finché è acceso (misurato su RatioLab).
+- **È una copia, e la fonte resta `publish/` del repo di AIV**: la sessione che cambia la pagina,
+  l'informativa o le immagini là, nello stesso giro ricopia qui i file che servono al sito, cioè
+  quelli che fino a `Serratura` copiava `pages.yml` di AIV: `index.html`, `privacy.html`,
+  `anteprima.jpg`, `schermate/` e, in `assets/`, `Roboto.ttf` e `Roboto-license.txt`. Il resto di
+  `publish/` (il documento di feedback, i prototipi) qui non entra. La regola vive anche nel
+  `Rules.md` di AIV, § '🚀 Che cosa produce un rilascio'.
+- ⚠️ **L'APK non c'è**: il pulsante di download punta all'asset dell'ultima release del repo
+  pubblico `Roccobot/AIV-releases`, come Aomidori fa con le sue, quindi un rilascio non cambia il
+  sito.
+- ⚠️ Non va spostata né tolta per pulizia: l'informativa è l'indirizzo dato a Google Play.
 - ⚠️⚠️ **Il peso di un APK si misura sul file vero, non sull'artefatto della run**: lo stesso
   APK compare **circa dimezzato** fra gli artefatti (misurato sulla `0.12`: 787.248 byte contro
   1.634.026), perché quelli sono uno **zip** e un APK contiene voci non compresse
   (`resources.arsc` in testa) che lo zip esterno stringe. È già successo di dimezzarlo così.
-- ⚠️ **Da quel giorno questo repo non riceve più commit esterni**: il bot di AIV era l'ultima
-  sorgente, dopo gli editor admin di Arda e di Terramare, che dal 2026-09-26 committano nei repo
-  `Roccobot/arda` e `Roccobot/earthsea`. Restano le altre sessioni, che bastano a rendere
-  necessario l'allineamento al remoto.
 
 ⚠️⚠️ **LA CARTELLA `Aomidori/` È L'ECCEZIONE A 'QUI NON VIVONO PROGETTI', VOLUTA DALL'UTENTE** (sua
 richiesta del 2026-10-15: *rendi il repo privato, sposta il sito su Pages*, sul piano A1 proposto il
