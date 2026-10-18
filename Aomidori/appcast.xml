@@ -15,6 +15,16 @@
     <description>Updates of Aomidori, a minimal EPUB reader for macOS.</description>
     <language>en</language>
     <item>
+      <title>Aomidori 2.24</title>
+      <pubDate>Sun, 18 Oct 2026 12:35:11 GMT</pubDate>
+      <sparkle:version>61</sparkle:version>
+      <sparkle:shortVersionString>2.24</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>27.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/Roccobot/Aomidori-releases/releases/tag/v2.24</sparkle:fullReleaseNotesLink>
+      <description><![CDATA[<p>Aomidori 2.24. <a href="https://github.com/Roccobot/Aomidori-releases/releases/tag/v2.24">Release notes on GitHub</a>.</p>]]></description>
+      <enclosure url="https://github.com/Roccobot/Aomidori-releases/releases/download/v2.24/Aomidori-2.24.zip" length="7407757" type="application/octet-stream" sparkle:edSignature="NtVmm1wzUx3maJyspKHZ8oVCBlMIyKemxWkjFNdyR51376ewMDNN9imEN5e8Ohho6kNGIxea6MCCk4mI4tA9Bg=="/>
+    </item>
+    <item>
       <title>Aomidori 2.23</title>
       <pubDate>Sat, 17 Oct 2026 13:46:56 GMT</pubDate>
       <sparkle:version>60</sparkle:version>
