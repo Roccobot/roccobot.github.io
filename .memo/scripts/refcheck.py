@@ -648,6 +648,9 @@ FORMULE_ESENTI = (
     ".memo/scripts/refcheck.py",
     # E le sue prove, che per la stessa ragione le scrivono per vederle respinte.
     ".memo/scripts/test_refcheck.py",
+    # E il registro delle deroghe: i testi di UI scelti dall'utente vi si scrivono per intero, con
+    # la parola che altrove si vieta (`approved_ui_spans`).
+    ".memo/scripts/char-exceptions.json",
 )
 # ⚠️⚠️ UN FILE CHE È UNA CITAZIONE DA CIMA A FONDO NON SI CONTROLLA, e l'esenzione qui è per
 # PEZZO di percorso invece che per suffisso, perché questi file portano una data nel nome.
@@ -941,15 +944,46 @@ def libere_di(paragrafo):
     return fuori
 
 
+def approved_ui_spans(text, path):
+    """I tratti di testo di UI che l'utente ha scelto parola per parola: `{riga: [(da, a)]}`.
+
+    ⚠️ Nasce con `Parola` (2026-10-19): nella frase d'apertura del sito di Aomidori l'utente ha
+    scelto di tenere `roba` (sua scelta R3 del 2026-10-17), e un testo di interfaccia non può
+    usare il corsivo che esenta le sue citazioni nei file di regole. La deroga vive nel registro
+    `char-exceptions.json`, chiave `ui_texts`, accanto a quella dei caporali e con le stesse
+    garanzie: vale nel solo file registrato e dentro il solo testo esatto, quindi una parola
+    uguale altrove nello stesso file resta sotto controllo, e una frase riscritta anche di una
+    parola perde la deroga. Ogni voce dice chi l'ha scelta e quando.
+    """
+    if path is None:
+        return {}
+    path = Path(path)
+    path = (path if path.is_absolute() else Path.cwd() / path).resolve()
+    manifest = Path(__file__).with_name("char-exceptions.json")
+    entries = json.loads(manifest.read_text(encoding="utf-8")).get("ui_texts", [])
+    texts = [e["text"] for e in entries
+             if path == (_clone(e["repository"]) / e["path"]).resolve()]
+    spans = {}
+    for n, riga in enumerate(text.splitlines(), 1):
+        for approved in texts:
+            start = riga.find(approved)
+            while start >= 0:
+                spans.setdefault(n, []).append((start, start + len(approved)))
+                start = riga.find(approved, start + 1)
+    return spans
+
+
 def formula_defects(text, path=None):
     """Formule bandite e colloquialismi in un testo: (blocca, avvisa).
 
     Ogni elemento è `(riga, colonna, forma trovata, motivo)`. Vedi `FORMULE_BLOCCA` per il
-    perché questo controllo esiste e per il perché ha due canali.
+    perché questo controllo esiste e per il perché ha due canali, e `approved_ui_spans` per i
+    testi di UI scelti dall'utente, che non si segnalano.
     """
     if path and (any(str(path).endswith(e) for e in FORMULE_ESENTI)
                  or any(p in str(path) for p in FORMULE_ESENTI_PARTI)):
         return [], []
+    approved = approved_ui_spans(text, path)
     blocca, avvisa = [], []
     # Si lavora a PARAGRAFI, perché è l'unità in cui vivono le coppie di marcatori: vedi
     # `libere_di`. Una riga di recinto ``` chiude il paragrafo come una riga vuota.
@@ -993,6 +1027,8 @@ def formula_defects(text, path=None):
                 for rx, motivo in tabella:
                     for m in rx.finditer(riga):
                         if m.start() not in libere:
+                            continue
+                        if any(a <= m.start() and m.end() <= b for a, b in approved.get(n, ())):
                             continue
                         if any(a <= m.start() < b for a, b in presi):
                             continue

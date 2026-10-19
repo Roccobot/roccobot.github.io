@@ -133,5 +133,14 @@
       "source": "Ursula K. Le Guin, Tehanu",
       "reason": "Deroga autorizzata dall'utente il 2026-09-30: citazione letterale di Terramare."
     }
+  ],
+  "ui_texts": [
+    {
+      "repository": "roccobot.github.io",
+      "path": "Aomidori/index.html",
+      "text": "niente roba AI a pagamento",
+      "chosen_by": "Rocco Casadei",
+      "reason": "Sua scelta R3 del 2026-10-17 (Parola): nella frase d'apertura del sito di Aomidori la parola 'roba' resta."
+    }
   ]
 }
