@@ -80,13 +80,15 @@
 -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2070%2060'%3E%3Cg%20fill='%2343B59E'%20transform='translate(-19,-19)'%3E%3Cpath%20d='M30,19a10,10%200%201,0%200,20a10,10%200%201,0%200,-20z'/%3E%3Cpath%20fill-rule='evenodd'%20d='M58.1311,27.1833L88.1311,71.1833A5,5%200%200%201%2084,79L24,79A5,5%200%200%201%2019.8689,71.1833L49.8689,27.1833A5,5%200%200%201%2058.1311,27.1833ZM56.0424,49.5583L68.0424,66.5583A2.5,2.5%200%200%201%2066,70.5L42,70.5A2.5,2.5%200%200%201%2039.9576,66.5583L51.9576,49.5583A2.5,2.5%200%200%201%2056.0424,49.5583Z'/%3E%3C/g%3E%3C/svg%3E">
 <!--
-  QUESTA PAGINA LA PUBBLICA `pages.yml`, sul Pages di questo repository
-  (roccobot.github.io/AIV/), a ogni push su `main` che tocca `publish/`.
+  QUESTA PAGINA LA SERVE IL SITO PRINCIPALE, cartella `AIV/` del repository
+  `roccobot.github.io`, all'indirizzo roccobot.github.io/AIV/: il repository di AIV
+  è privato dal 2026-10-19 (`Serratura`), e un repository privato non ha Pages.
+  La fonte resta qui, e chi la cambia la ricopia là nello stesso giro.
 
-  ⚠️ IL SITO È UN ELENCO DI FILE DA INCLUDERE, dalla 6.29: questa pagina,
-  `privacy.html`, `anteprima.jpg`, la cartella `schermate/` e `assets/Roboto.ttf`
-  con la sua licenza. Un file nuovo che la pagina usa va aggiunto all'elenco in
-  `pages.yml`, e se manca `tools/site-check.py` ferma la pubblicazione.
+  ⚠️ IL SITO È UN ELENCO DI FILE: questa pagina, `privacy.html`, `anteprima.jpg`,
+  la cartella `schermate/` e `assets/Roboto.ttf` con la sua licenza. Un file nuovo
+  che la pagina usa va copiato anche là, e `tools/site-check.py`, lanciato sulla
+  cartella dell'hub, dice se ne manca uno.
 
   ⚠️⚠️ NESSUN SEGNAPOSTO DA SOSTITUIRE: versione, nome del file e peso arrivano
   da UNA chiamata all'API di GitHub al caricamento della pagina, quindi la pagina
@@ -489,8 +491,8 @@
            può mettere in vetrina una funzionalità nuova*. Le immagini del 2026-10-18
            hanno le etichette dell'app in inglese (`8 elements`), e la pagina italiana
            le mostra così.
-           ⚠️ Vivono in `publish/schermate/`, che `pages.yml` copia intera accanto alla
-           pagina.
+           ⚠️ Vivono in `publish/schermate/`, che si copia intera accanto alla pagina,
+           nella cartella `AIV/` del sito principale.
            ⚠️⚠️ **SUL TELEFONO LA TESTATA HA UN'ALTRA IMMAGINE**, dal 2026-10-18 (sue scelte
            Ritratto-03 e Paesaggio-01): sotto gli 880 pixel, e col telefono girato (in
            orizzontale e non più alto di 500), le due `orizzontale-*`, l'elenco delle
@@ -636,7 +638,7 @@
   <!-- ⚠️⚠️ SOLO `Privacy`, E A DESTRA (richiesta dell'utente, 2026-10-11): il DF, il mockup
        del tablet e la proposta delle impostazioni sono materiale di lavoro suo, e un link
        pubblico li esponeva a chiunque. Dalla 5.70 quelle due pagine non sono più nemmeno sul
-       sito (`pages.yml`): restano servite dal Worker del DF, insieme al documento. -->
+       sito: restano servite dal Worker del DF, insieme al documento. -->
   <nav aria-label="Documenti AIV"><a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a></nav>
   <div class="piede-riga">
     <div class="firma">
