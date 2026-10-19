@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.10
+> **Versione**: 2.11
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -178,7 +178,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Ogni repo ha una sessione titolare**, quella del suo progetto o, senza, quella
   dell'infrastruttura, e il registro delle sessioni vive nel brief. Un'azione con effetti fuori
   dalla sessione (merge o push sul ramo principale, un flusso di lavoro, un DF, un cambio di
-  versione) nel repo di un'altra si annuncia prima alla titolare, e si aspetta la risposta
+  versione) nel repo di un'altra si annuncia prima alla titolare, e si aspetta la risposta. Se la
+  titolare non risponde o non è disponibile, la sostituisce una sessione con gli strumenti e le
+  autorizzazioni giusti; senza sostituti si diagnostica il guasto, perché il lavoro torni a lei
   (`Roccobot.md` § '📋 Una sessione titolare per repo: registro e annuncio').
 
 ## 🧾 Il brief e il non perdere niente
