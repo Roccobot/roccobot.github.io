@@ -363,6 +363,18 @@ class LexiconTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertEqual(refcheck.formula_defects(text), ([], []))
 
+    def test_ui_text_chosen_by_the_owner_passes_only_where_registered(self):
+        # Parola (2026-10-19): the owner keeps 'roba' in the opening line of Aomidori's site, and
+        # char-exceptions.json registers that exact text in that file only.
+        page = refcheck.SITO / 'Aomidori/index.html'
+        chosen = "claim: 'Niente fuffa, niente lettura audio, niente roba AI a pagamento.',"
+        self.assertEqual(refcheck.formula_defects(chosen, page)[0], [])
+        for text, path in ((chosen, refcheck.SITO / 'Rules.md'),
+                           ("claim: 'Niente roba inutile.',", page),
+                           ("claim: 'Niente roba IA a pagamento.',", page)):
+            with self.subTest(text=text, path=path):
+                self.assertTrue(refcheck.formula_defects(text, path)[0])
+
 
 if __name__ == '__main__':
     unittest.main()
