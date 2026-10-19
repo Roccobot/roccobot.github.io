@@ -27,7 +27,7 @@
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **'Ma che parola è'**, la pagina delle parole in colonna (dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo `/cheparolae/`; prima nella cartella `Parole/` di questo repo) | repo `Roccobot/cheparolae` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | l'`AGENTS.md` e il `Rules.md` di quella cartella |
-| **AIV**, l'app Android 'Astonishing Image Viewer' (repo **privato** dal passo 5 di `Serratura`, 2026-10-18; la paginetta di download e l'informativa vivono qui, in `AIV/`, copiate da `publish/` del suo repo, e le release nel repo pubblico `Roccobot/AIV-releases`) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **AIV**, l'app Android 'Astonishing Image Viewer' (repo **privato** dal 2026-10-19, passo 5 di `Serratura`; la paginetta di download e l'informativa vivono qui, in `AIV/`, copiate da `publish/` del suo repo, e le release nel repo pubblico `Roccobot/AIV-releases`) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
@@ -43,8 +43,15 @@ repo privato non ha Pages senza un piano a pagamento. La paginetta di download e
 privacy vivono qui, allo stesso indirizzo `roccobot.github.io/AIV/`: quello dell'informativa è
 registrato nella Play Console e non può cambiare. Codice, regole e documento di feedback restano nel
 repo di AIV. Fino al 2026-09-27 la cartella la riempiva una GitHub Action di AIV; da allora al
-passo 4 di `Serratura` la paginetta l'ha pubblicata il Pages del repo di AIV, che vince sulla
-cartella omonima finché è acceso (misurato su RatioLab).
+2026-10-19 la paginetta l'ha pubblicata il Pages del repo di AIV, e da quel giorno la serve questa
+cartella.
+- ⚠️⚠️ **Un repo di progetto con Pages configurato vince sulla cartella omonima, anche a sito
+  spento** (misurato il 2026-10-19 col passaggio di AIV, dopo RatioLab): dopo `Unpublish site` l'API
+  del repo diceva ancora `has_pages: true`, e `/AIV/` rispondeva 404 anche con questo repo
+  ripubblicato. È passata a questa cartella solo col repo privato (`has_pages: false`) e un'altra
+  ripubblicazione di questo repo, rilanciando la sua corsa `pages build and deployment`. Chi sposta
+  qui un altro progetto toglie Pages dal suo repo del tutto (repo privato, o Pages cancellato
+  dall'API), poi ripubblica questo.
 - **È una copia, e la fonte resta `publish/` del repo di AIV**: la sessione che cambia la pagina,
   l'informativa o le immagini là, nello stesso giro ricopia qui i file che servono al sito, cioè
   quelli che fino a `Serratura` copiava `pages.yml` di AIV: `index.html`, `privacy.html`,
