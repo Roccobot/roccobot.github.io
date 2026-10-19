@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.11
+> **Versione**: 2.12
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -175,13 +175,15 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   progetto (brief, PR, branch, sessioni attive), e le sessioni si accordano fra loro, non
   attraverso l'utente (`Roccobot.md` § '🤝 Più sessioni sullo stesso progetto: il numero a chi
   mergia per primo').
-- **Ogni repo ha una sessione titolare**, quella del suo progetto o, senza, quella
-  dell'infrastruttura, e il registro delle sessioni vive nel brief. Un'azione con effetti fuori
-  dalla sessione (merge o push sul ramo principale, un flusso di lavoro, un DF, un cambio di
-  versione) nel repo di un'altra si annuncia prima alla titolare, e si aspetta la risposta. Se la
-  titolare non risponde o non è disponibile, la sostituisce una sessione con gli strumenti e le
-  autorizzazioni giusti; senza sostituti si diagnostica il guasto, perché il lavoro torni a lei
-  (`Roccobot.md` § '📋 Una sessione titolare per repo: registro e annuncio').
+- **Ogni area di competenza ha una sessione titolare**: quella del progetto per il suo prodotto
+  (codice, sito anche dentro l'hub, DF), quella dell'infrastruttura per regole, hub, `tools` e il
+  funzionamento dei DF; il registro vive nel brief. **Una richiesta dell'utente nella propria area
+  la fa chi la riceve, se è libero**, e passa alla titolare solo se è impegnato o se tocca un'altra
+  area. Un'azione con effetti fuori dalla sessione (merge o push sul ramo principale, un flusso di
+  lavoro, un DF, un cambio di versione) nell'area di un'altra si annuncia prima alla titolare, e si
+  aspetta la risposta. Se la titolare è impegnata, non risponde o non è disponibile, agisce chi ha
+  gli strumenti e le autorizzazioni giusti; senza nessuno si diagnostica il guasto, perché il
+  lavoro torni a lei (`Roccobot.md` § '📋 Una sessione titolare per repo: registro e annuncio').
 
 ## 🧾 Il brief e il non perdere niente
 
