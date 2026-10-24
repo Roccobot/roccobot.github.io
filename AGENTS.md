@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.13
+> **Versione**: 2.14
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -124,6 +124,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   lavoro di una squadra si salva man mano').
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
+- **GitHub Actions: avviso e stima prima di partire**, specie su macOS (costo 10x): quale flusso,
+  su che macchina, quanti minuti; su macOS si aspetta il suo via (`Roccobot.md` § '💸 GitHub
+  Actions: avviso e stima prima di partire').
 - **Prima di ogni lavoro si consigliano modello e sforzo**, perché solo l'utente li imposta: una
   riga in apertura, poi si aspetta il suo via (`Roccobot.md` § '🤖 Modello da usare').
 - **Le priorità le decide l'agente, e le dichiara nel turno in cui le decide**; un messaggio che
