@@ -454,9 +454,9 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
     stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
 
-- ⚠️⚠️ **OGNI MESSAGGIO ALL'UTENTE FINISCE CON IL RIQUADRO `✍🏻 Cosa devi fare tu`** (`Coda-01`, sua scelta
+- ⚠️⚠️ **OGNI MESSAGGIO ALL'UTENTE FINISCE CON IL RIQUADRO `🟠 Cosa devi fare tu`** (`Coda-01`, sua scelta
   del 2026-10-25, e sua segnalazione lo stesso giorno quando il riquadro è sparito: *poco fa mi hai
-  parlato di Coda-01 e poi più niente*; il titolo era `Ti tocca` con il quadrato blu, e titolo ed emoji li ha cambiati lui). È l'ultima cosa del messaggio, **anche del più breve** e di
+  parlato di Coda-01 e poi più niente*; il titolo era `Ti tocca` con il quadrato blu, e titolo ed emoji li ha cambiati lui, l'ultima volta in 🟠). È l'ultima cosa del messaggio, **anche del più breve** e di
   quello che commenta solo una notifica: al massimo tre voci, ognuna una sola azione sua con i clic
   in ordine, oppure `Niente per te`. Le voci ancora aperte si ripetono finché non sono chiuse, perché
   lui non tiene il conto della chat. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
