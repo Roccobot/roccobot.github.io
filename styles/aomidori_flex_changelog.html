@@ -89,6 +89,15 @@
   <p class="lead">Lo stile predefinito di <a href="https://roccobot.github.io/Aomidori/">Aomidori</a>: tutte le versioni, dalla più recente, con le modifiche di ciascuna. Il file dell'ultima versione è <a href="AomidoriFlex.css">AomidoriFlex.css</a>.</p>
 
   <section>
+    <h2>1.50 <time datetime="2026-10-25">25 ottobre 2026</time></h2>
+    <ul>
+      <li>Flex ha i suoi caratteri, inclusi in Aomidori e qui nella cartella <code>AomidoriFlex</code> accanto al file, con le loro licenze (SIL Open Font License 1.1): Roboto Flex per il testo e i titoli, Gelasio per versi, citazioni ed epigrafi, JetBrains Mono per il codice. Dopo ciascuno c'è solo la famiglia generica del suo tipo.</li>
+      <li>In Notte il testo si ispessisce con l'asse del grado di Roboto Flex (<code>GRAD</code> 50), che non allarga le lettere: peso e spaziatura restano quelli del Giorno (360 e 0,012 em), e ogni riga va a capo negli stessi punti nei due temi. Anche titoletti e intestazioni delle tabelle tengono in Notte il peso del Giorno, 500 e 600.</li>
+      <li>Via <code>text-rendering: optimizeLegibility</code>: col grado impostato, WebKit disegnava i corsivi di Roboto Flex con un altro peso e un'altra larghezza.</li>
+    </ul>
+  </section>
+
+  <section>
     <h2>1.43 <time datetime="2026-10-25">25 ottobre 2026</time></h2>
     <ul>
       <li>In Notte la spaziatura del testo scende a 0,0075 em, per compensare il peso maggiore: le righe vanno a capo quasi sempre negli stessi punti del Giorno. Misurato col SF Pro sul Mac.</li>

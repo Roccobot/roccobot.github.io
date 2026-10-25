@@ -288,7 +288,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Qui non vivono progetti**: dal 2026-09-26 ognuno ha un repo suo, servito da Pages allo
   stesso indirizzo `/<repo>/`. **Eccezioni volute dall'utente**: `Aomidori/`, pagina di download e
   appcast di un'app il cui repo è privato dal 2026-10-15; `styles/`, l'archivio degli stili di
-  Aomidori che `release.sh` confronta; e `AIV/`, pagina di download e informativa di AIV, copiate da
+  Aomidori e dei loro font, che il pacchetto dello Store confronta; e `AIV/`, pagina di download e informativa di AIV, copiate da
   `publish/` del suo repo, che diventa privato (`Serratura`), e da ricopiare qui a ogni modifica di
   quei file. Nessuna si sposta per pulizia (`Rules.md` § '🗂️ I progetti e i loro file di regole').
   L'hub tiene le regole trasversali e gli strumenti che le fanno rispettare (`.memo/scripts/`); il

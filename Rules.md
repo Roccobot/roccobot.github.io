@@ -83,9 +83,11 @@ cambiare. Il resto del progetto (codice, regole, documento di feedback) resta ne
 
 ⚠️ **E LA CARTELLA `styles/` È LA SECONDA ECCEZIONE, LEGATA ALLA PRIMA**: è l'archivio degli stili
 di Aomidori (lo stile predefinito, oggi `AomidoriFlex.css`, col registro
-`aomidori_flex_changelog.html`), pubblicato qui perché il repo dell'app è privato. Lo scrivono le
-sessioni che toccano lo stile, con le regole di Aomidori, e `scripts/release.sh` di Aomidori si
-ferma se la copia di qui è diversa da quella dell'app. Non va spostata né tolta per pulizia.
+`aomidori_flex_changelog.html`, e dalla Flex 1.50 i suoi font con le licenze in
+`styles/AomidoriFlex/`, che lo stile chiama col percorso relativo), pubblicato qui perché il repo
+dell'app è privato. Lo scrivono le sessioni che toccano lo stile, con le regole di Aomidori, e il
+pacchetto dello Store di Aomidori (`scripts/bundle.sh`) si ferma se lo stile o un font di qui è
+diverso da quello dell'app. Non va spostata né tolta per pulizia.
 Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessun file dell'hub.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti

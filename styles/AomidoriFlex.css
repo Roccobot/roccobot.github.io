@@ -1,9 +1,43 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.43
+#VERSION: 1.50
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
+
+/* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
+   and in the site), so the final rendering of the type is decided here: Roboto Flex for the text,
+   Gelasio for verses and quotations, JetBrains Mono for code, each followed only by the generic
+   family of its kind, which every system has. The original files of Google Fonts, under the SIL
+   Open Font License 1.1. Roboto Flex's italic is its slant axis. */
+@font-face {
+  font-family: 'Roboto Flex';
+  src: url('AomidoriFlex/RobotoFlex.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-stretch: 25% 151%;
+  font-style: oblique 0deg 10deg;
+}
+
+@font-face {
+  font-family: 'Gelasio';
+  src: url('AomidoriFlex/Gelasio.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gelasio';
+  src: url('AomidoriFlex/Gelasio-Italic.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('AomidoriFlex/JetBrainsMono.ttf') format('truetype');
+  font-weight: 100 800;
+  font-style: normal;
+}
 
 /* Define callout geometry and the warm technical palette. */
 :root {
@@ -26,8 +60,8 @@ html {
 body {
   background-color: #FCFAF6;
   color: #1F1A17;
-  /* Prefer the system font, with platform-specific sans-serif fallbacks. */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'MiSans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Roboto Flex, as declared above (1.50; the system font up to 1.43). */
+  font-family: 'Roboto Flex', sans-serif;
   font-size: 1.6em;
   /* Cap the text at 24px; keep the preceding declaration as a fallback for min(). */
   font-size: min(1.6em, 24px);
@@ -36,14 +70,16 @@ body {
   container-type: inline-size;
   margin: 0 auto;
   padding: 0 1.2em;
-  /* Use a light text weight in the light theme. */
+  /* A light text weight, the same in both themes: the dark one adds Roboto Flex's grade (1.50). */
   font-weight: 360;
   /* Keep generous line spacing for continuous reading. */
   line-height: 1.6;
   letter-spacing: 0.012em;
   font-kerning: normal;
   font-optical-sizing: auto;
-  text-rendering: optimizeLegibility;
+  /* No text-rendering: optimizeLegibility since 1.50: with the dark theme's grade set, WebKit drew
+     Roboto Flex's italics at another weight and width under it (the subheadings, measured on
+     2026-10-25: 284.7px in dark against 278.3px in light; with auto both 278.3). */
 }
 
 p {
@@ -260,8 +296,9 @@ Reference rule with expanded letter spacing.
   text-indent: 0;
 }
 
+/* A book's sans-serif passages: the Flex's sans-serif is Roboto Flex (1.50). */
 .sans {
-  font-family: sans-serif;
+  font-family: 'Roboto Flex', sans-serif;
 }
 
 div.index p {
@@ -287,7 +324,8 @@ a:any-link {
 :is(code, pre, kbd, samp, tt) .small-caps *,
 .small-caps :is(code, pre, kbd, samp, tt),
 .small-caps :is(code, pre, kbd, samp, tt) * {
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  /* JetBrains Mono, as declared at the top (1.50; the system's monospace up to 1.43). */
+  font-family: 'JetBrains Mono', monospace;
   font-variant-caps: normal;
   font-variant-ligatures: none;
   font-style: normal;
@@ -582,14 +620,12 @@ html.cover-page img {
     color: #f5f5f2;
   }
 
-  /* Heavier text in the dark theme. The tighter tracking (light is 0.012em) compensates for the extra weight so lines break where they do in light: measured with SF Pro on the Mac on 2026-10-25 (WKWebView, 24px, 7 paragraphs, 53 lines). */
-  body { font-weight: 420; letter-spacing: 0.0075em; }
+  /* Heavier text in the dark theme through Roboto Flex's grade, which thickens the strokes without widening the letters: weights and tracking stay those of light, and every line breaks where it does in light (1.50; up to 1.43 heavier weights, and a tighter tracking to compensate). GRAD 50 adds about the ink that weight 420 added to 360, measured in WebKit on 2026-10-25 (24px, 7 paragraphs: +9.1% against +9.6%; weight 420 moved the breaks of 3 paragraphs of 7, no grade from 0 to 150 moved any). */
+  body { font-variation-settings: 'GRAD' 50; }
 
   h1, h2, h3, .title, .aut, .aut-sub { color: #cdc7c1; }
 
-  h4, .subheading, .titoletto { font-weight: 560; }
-
-  th { font-weight: 650; background-color: #4a4744; }
+  th { background-color: #4a4744; }
   tbody tr:nth-child(2n) { background-color: #45423f; }
 
   h1 { border-bottom-color: #57514b; }
@@ -604,9 +640,9 @@ html.cover-page img {
   }
 }
 
-/* Use Georgia italics for verses, quotations and epigraphs. */
+/* Gelasio italics for verses, quotations and epigraphs (1.50; Georgia up to 1.43, whose metrics Gelasio shares). */
 :is(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
-  font-family: 'Georgia', 'Iowan Old Style', 'Palatino Linotype', 'Palatino', 'Noto Serif', serif;
+  font-family: 'Gelasio', serif;
   font-style: italic;
   font-weight: 400;
 }
