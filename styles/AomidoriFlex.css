@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.40
+#VERSION: 1.41
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -582,14 +582,14 @@ html.cover-page img {
     color: #f5f5f2;
   }
 
-  /* Increase text weight and tracking in the dark theme. */
-  body { font-weight: 420; letter-spacing: 0.02em; }
+  /* Until 1.40 the dark body was weight 420 with 0.02em tracking; since 1.41 it keeps the light 360 and 0.012em, so lines break at the same points in both themes. */
 
   h1, h2, h3, .title, .aut, .aut-sub { color: #cdc7c1; }
 
-  h4, .subheading, .titoletto { font-weight: 560; }
+  /* Until 1.40 the dark subheadings were weight 560; since 1.41 they keep the light 500. */
 
-  th { font-weight: 650; background-color: #4a4744; }
+  /* Until 1.40 dark header cells were weight 650; since 1.41 they keep the light 600. */
+  th { background-color: #4a4744; }
   tbody tr:nth-child(2n) { background-color: #45423f; }
 
   h1 { border-bottom-color: #57514b; }
@@ -773,4 +773,75 @@ p.vv:not(:has(+ p.vv)) > :is(i, em):only-child::before {
 :is(p.vv, :is(div, section, blockquote:where(:not(.markdown-alert))):has(> p.vv):not(:has(> :not(p.vv))))
   + p:not(.vv):not(:empty):not(:has(> br:first-child)) {
   margin-top: calc(1.2em + 1lh);
+}
+
+/* Since 1.41: generic elements that RoccobotOS 1.71 styles and Flex did not, in Flex colours. None of them changes size or position between the two schemes. */
+
+/* Disclosure widgets: block level, with the marker and a pointer on the summary. */
+details {
+  display: block;
+  margin-block: 1.2em;
+}
+
+summary {
+  display: list-item;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details[open] > summary {
+  margin-bottom: 0.5em;
+}
+
+/* Nested ordered lists count in roman, then alphabetic numerals. */
+:is(ol, ul) ol { list-style-type: lower-roman; }
+:is(ol, ul) :is(ol, ul) ol { list-style-type: lower-alpha; }
+
+/* Markdown task lists: no bullet, and a flat checkbox in the link colour pulled into the list indent. */
+.task-list-item {
+  list-style-type: none;
+}
+
+.task-list-item input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  inline-size: 0.875em;
+  block-size: 0.875em;
+  margin: 0 0.35em 0.2em -1.35em;
+  padding: 0;
+  vertical-align: middle;
+  border: 1px solid var(--link-ink);
+  border-radius: 0.15em;
+  background: transparent;
+  font: inherit;
+}
+
+.task-list-item input[type='checkbox']:checked {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2376614d' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E") center / 80% no-repeat;
+}
+
+/* Videos fit the column like images; aligned images keep a gap from the text. */
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+img[align='right'] { padding-left: 1.25em; }
+img[align='left'] { padding-right: 1.25em; }
+
+/* Printed code wraps instead of being cut at the page edge. */
+@media print {
+  pre, pre :is(code, samp, kbd, tt) {
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+}
+
+/* The checkmark takes the dark link colour. */
+@media (prefers-color-scheme: dark) {
+  .task-list-item input[type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23d2ba9e' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E");
+  }
 }
