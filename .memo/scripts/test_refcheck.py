@@ -293,10 +293,14 @@ class RemovedFileTests(unittest.TestCase):
     """
 
     def test_removed_files_are_indexed(self):
+        # Only the files that exist: a repository that is not cloned (AIV and Aomidori are private,
+        # so the rules-check workflow cannot clone them) has nothing to index.
         indicizzati = set(refcheck.RULEFILES)
         for repo in (refcheck.SITO, refcheck.TOOLS, refcheck.AIV, *refcheck.PROGETTI.values()):
+            path = repo / 'docs/Removed.md'
+            if not path.exists():
+                continue
             with self.subTest(repo=repo.name):
-                path = repo / 'docs/Removed.md'
                 self.assertTrue(path in indicizzati, f'{path} is not indexed')
 
 
