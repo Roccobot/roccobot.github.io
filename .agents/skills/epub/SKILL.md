@@ -80,8 +80,8 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
 ## 🎨 Il foglio di stile
 
 Regola dell'utente del 2026-10-12, che sostituisce quella del 2026-10-08 (*il foglio di stile è
-sempre `Roccobot.css`*, un file accanto a questa skill, che è stato tolto e resta nella storia git,
-commit `e2af707`):
+sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md` dell'hub
+§ '🎨 Il foglio di stile `Roccobot.css` della skill `epub`'):
 
 1. **Se con i file arriva un CSS, il libro usa quello**, copiato così com'è in `Styles/style.css`.
    Non si corregge e non si fonde con un altro foglio.
