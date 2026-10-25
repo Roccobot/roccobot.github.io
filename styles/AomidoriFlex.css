@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.50
+#VERSION: 1.51
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -405,25 +405,40 @@ hr {
   color: #19433A;
 }
 
-/* Preserve native merged-cell layout and scroll wide tables locally. */
+/* Preserve native merged-cell layout and scroll wide tables locally. Since 1.51 the outer border
+   is the table's own and follows its rounded corners; the cells draw only the lines between them
+   (up to 1.50 every cell drew its four sides, and the corner cut them off square). */
 table {
   display: block;
   width: fit-content;
   max-width: 100%;
   overflow-x: auto;
   margin: 1.5em 0;
-  border-collapse: collapse;
+  border-collapse: separate;
   border-spacing: 0;
-  border-radius: 0.2em;
+  border: 1px solid var(--technical-border);
+  border-radius: var(--brano-raggio);
   font-size: 0.9em;
   line-height: 1.45;
 }
 
 th, td {
   padding: 0.375em 0.75em;
-  border: 1px solid var(--technical-border);
+  border: 0;
+  border-inline-end: 1px solid var(--technical-border);
+  border-block-end: 1px solid var(--technical-border);
   text-align: start;
   vertical-align: top;
+}
+
+:is(th, td):last-child {
+  border-inline-end: 0;
+}
+
+/* The last row lies on the table's own border. */
+table > :last-child > tr:last-child > :is(th, td),
+table > tr:last-child > :is(th, td) {
+  border-block-end: 0;
 }
 
 th {
