@@ -452,6 +452,14 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
     stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
 
+- ⚠️⚠️ **OGNI MESSAGGIO ALL'UTENTE FINISCE CON IL RIQUADRO `🟦 Ti tocca`** (`Coda-01`, sua scelta
+  del 2026-10-25, e sua segnalazione lo stesso giorno quando il riquadro è sparito: *poco fa mi hai
+  parlato di Coda-01 e poi più niente*). È l'ultima cosa del messaggio, **anche del più breve** e di
+  quello che commenta solo una notifica: al massimo tre voci, ognuna una sola azione sua con i clic
+  in ordine, oppure `Niente per te`. Le voci ancora aperte si ripetono finché non sono chiuse, perché
+  lui non tiene il conto della chat. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
+  non si ricarica a ogni turno: dopo una compattazione la regola non era più in scena. Il testo
+  completo è in `Roccobot.md` § '💬 Stile di comunicazione'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
