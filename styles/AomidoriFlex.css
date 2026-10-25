@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.51
+#VERSION: 1.52
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -417,7 +417,8 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--technical-border);
-  border-radius: var(--brano-raggio);
+  /* 8 points since 1.52 (Rocco's note on 2.57-02: the 0.2em of the quotations showed too little on a table). */
+  border-radius: 8px;
   font-size: 0.9em;
   line-height: 1.45;
 }
@@ -480,7 +481,10 @@ figcaption, caption {
 }
 
 figcaption { margin-block: 0.5em; }
-caption { padding-block: 0.5em; }
+/* A table's caption sits inside its border since 1.51, so its text starts where the cells' text
+   does (1.52, Rocco's note on 2.57-02: it touched the left border): the cells' 0.75em, at the
+   caption's smaller size. */
+caption { padding-block: 0.5em; padding-inline: calc(0.75em / 0.85); }
 
 /* Keep nested lists and definition lists comfortably spaced. */
 ul, ol, dl {
