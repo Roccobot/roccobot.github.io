@@ -196,8 +196,20 @@
     registro con `in_use`, cioè il file e il modello che ne leggono la versione. A mano si lancia
     dalla radice del repo: `python3 ../roccobot.github.io/.memo/scripts/check-dependencies.py`.
   - ⚠️ **Lo script esce 1 anche quando va in errore**, non solo quando trova una versione nuova:
-    il workflow distingue i due casi dalle righe `NEW` dell'uscita, e un errore senza quelle righe
-    fa rossa la run invece di aprire una issue vuota.
+    il workflow distingue i due casi dalle righe `NEW` e `STALE` dell'uscita, e un errore senza
+    quelle righe fa rossa la run invece di aprire una issue vuota.
+  - ⚠️⚠️ **Dal 2026-10-25 (`Linfa`) segnala anche le dipendenze ferme**, con una riga `STALE`:
+    quelle la cui ultima versione ha più di un anno (`STALE_DAYS`, 365). Il confronto delle sole
+    versioni le dava sempre a posto, perché una libreria abbandonata non ha mai una versione nuova
+    (la domanda di Rocco del 2026-10-16 sulle icone Material di AIV, ferme alla 1.7.8 da febbraio
+    2025). La data è quella dell'ultima versione pubblicata: npm la dà da `npm view`, GitHub dalla
+    release o dal commit, Maven dal file `.pom` della versione (non da `maven-metadata.xml`, che
+    Maven Central riscrive quando vuole), Gradle dal suo `buildTime`. I font non hanno una data,
+    perché un carattere è un disegno finito e un anno senza versioni non dice niente della sua cura.
+    - **Come si chiude**: si guarda se il progetto è ancora curato (attività, issue, un
+      sostituto), e la dipendenza o si sostituisce o si accetta nel registro con
+      `"stale_accepted": "AAAA-MM-GG: la ragione"`. Accettata, la riga torna `ok` col promemoria
+      fra parentesi quadre, finché non esce una versione nuova.
 - **Quando gira**: il lunedì alle 06:17 UTC, cioè alle 08:17 a Roma con l'ora legale e alle 07:17
   con quella solare; Dependabot alle 08:00 di Roma. Una run si lancia anche a mano dalla scheda
   Actions del repo (`workflow_dispatch`).
