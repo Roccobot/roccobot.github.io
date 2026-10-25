@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.41
+#VERSION: 1.42
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -582,14 +582,14 @@ html.cover-page img {
     color: #f5f5f2;
   }
 
-  /* Until 1.40 the dark body was weight 420 with 0.02em tracking; since 1.41 it keeps the light 360 and 0.012em, so lines break at the same points in both themes. */
+  /* Increase text weight in the dark theme. Until 1.40 the tracking was 0.02em; since 1.41 it is the light 0.012em. */
+  body { font-weight: 420; }
 
   h1, h2, h3, .title, .aut, .aut-sub { color: #cdc7c1; }
 
-  /* Until 1.40 the dark subheadings were weight 560; since 1.41 they keep the light 500. */
+  h4, .subheading, .titoletto { font-weight: 560; }
 
-  /* Until 1.40 dark header cells were weight 650; since 1.41 they keep the light 600. */
-  th { background-color: #4a4744; }
+  th { font-weight: 650; background-color: #4a4744; }
   tbody tr:nth-child(2n) { background-color: #45423f; }
 
   h1 { border-bottom-color: #57514b; }
