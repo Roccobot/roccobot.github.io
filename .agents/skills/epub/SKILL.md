@@ -89,11 +89,11 @@ sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md`
    stile di Aomidori, il lettore dell'utente. Si cerca in due posti:
    - **in una sessione sul Mac dell'utente**,
      `~/Library/Application Support/Aomidori/Styles/AomidoriFlex.css`;
-   - **in ogni sessione**, `styles/AomidoriFlex.css` nel repo `Roccobot/Aomidori`, che un'altra
-     sessione tiene allineato all'ultima versione (annunciato dall'utente il 2026-10-12, quando la
-     cartella non c'era ancora). Senza il repo clonato si legge dal raw di GitHub, che risponde
-     perché il repo è pubblico. Finché `styles/` non c'è, vale la copia che l'app si porta dietro,
-     `Resources/Aomidori Flex.css`.
+   - **in ogni sessione**, `styles/AomidoriFlex.css` di questo repo, l'archivio degli stili di
+     Aomidori, che la sessione di Aomidori tiene allineato all'ultima versione (`Rules.md`
+     § '🗂️ I progetti e i loro file di regole'). Senza l'hub clonato si legge dal sito,
+     <https://roccobot.github.io/styles/AomidoriFlex.css>: il repo di Aomidori è privato dal
+     2026-10-15, quindi il suo raw di GitHub non risponde.
 
    ⚠️ **Il nome del file è `AomidoriFlex.css`, senza spazio** (precisazione dell'utente,
    2026-10-12: *Aomidori Flex* è il nome colloquiale). Il 2026-10-12 il codice di Aomidori
