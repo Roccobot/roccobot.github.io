@@ -284,6 +284,26 @@ class AbsentProjectTests(unittest.TestCase):
         self.assertFalse(refcheck.cita_progetto_assente(['`docs/AppStore.md` di Aomidori'], 0))
 
 
+class RemovedFileTests(unittest.TestCase):
+    """Every repository's `docs/Removed.md` is a rule file, so its titles can be cited.
+
+    On 2026-10-25 (`Dieta`) the rule files of CleanSVG and cheparolae began to point to a
+    section of their `docs/Removed.md`, and the correct references were reported as missing
+    sections, which blocked every commit: those files were outside the index.
+    """
+
+    def test_removed_files_are_indexed(self):
+        # Only the files that exist: a repository that is not cloned (AIV and Aomidori are private,
+        # so the rules-check workflow cannot clone them) has nothing to index.
+        indicizzati = set(refcheck.RULEFILES)
+        for repo in (refcheck.SITO, refcheck.TOOLS, refcheck.AIV, *refcheck.PROGETTI.values()):
+            path = repo / 'docs/Removed.md'
+            if not path.exists():
+                continue
+            with self.subTest(repo=repo.name):
+                self.assertTrue(path in indicizzati, f'{path} is not indexed')
+
+
 class BriefDoneTests(unittest.TestCase):
     """A brief entry marked as done is an error: it has to be deleted, not annotated.
 

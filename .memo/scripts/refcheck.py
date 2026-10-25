@@ -105,12 +105,16 @@ RULEFILES = [
 # ⚠️ I `docs/` di AIV (dal 2026-09-28) sono le specifiche delle funzioni, spostate fuori da
 # `Rules.md` col punto 12: le regole li citano per sezione, quindi si indicizzano come loro. Lo
 # stesso vale dal 2026-10-10 per i `docs/` dell'hub (scelta C2: `docs/Workflow.md`).
+# ⚠️ E dal 2026-10-25 (`Dieta`) per il `docs/Removed.md` di ogni repo, dove le regole spostano le
+# note sulle cose tolte e lasciano il rimando alla sezione: fuori dall'indice, quei rimandi giusti
+# risultavano 'sezioni inesistenti' e bloccavano il commit. Un file assente si scarta più sotto.
 ] + sorted(SITO.glob("*/CLAUDE.md")) + sorted(SITO.glob("*/*/CLAUDE.md")) \
   + sorted(AIV.glob("CLAUDE.md")) + sorted(AIV.glob("*/CLAUDE.md")) \
   + sorted(AIV.glob("docs/*.md")) + sorted(SITO.glob("docs/*.md")) \
   + [f for r in PROGETTI.values() for f in sorted(r.glob("CLAUDE.md")) + sorted(r.glob("*/CLAUDE.md"))] \
   + sorted(TOOLS.glob("rules/*.md")) \
   + [r / nome for r in (SITO, TOOLS, AIV, *PROGETTI.values()) for nome in ("AGENTS.md", "Rules.md")] \
+  + [r / "docs/Removed.md" for r in (TOOLS, *PROGETTI.values())] \
   + [f for r in (AIV, *PROGETTI.values()) for nome in ("AGENTS.md", "Rules.md") for f in sorted(r.glob(f"*/{nome}"))] + [
 # ⚠️ Dal 2026-09-27 le regole di un repo stanno in tre file: `AGENTS.md` (il nucleo, letto da
 # tutti gli agenti), `Rules.md` (il testo completo) e un `CLAUDE.md` corto che li importa. I due
