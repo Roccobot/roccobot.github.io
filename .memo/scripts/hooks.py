@@ -32,6 +32,7 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
 ⚠️ Nessun controllo deve rompere il lavoro per un suo guasto: un errore imprevisto qui dentro
 esce 0 e lo dichiara, perché un hook che fallisce a vuoto bloccherebbe ogni comando.
 """
+import importlib.util
 import json
 import os
 import re
@@ -395,6 +396,17 @@ def refcheck(*args, stdin=None, cwd=None):
     return r.returncode, (r.stdout + r.stderr).strip()
 
 
+def senza_terzi(diff):
+    """Il diff senza i file delle skill di terzi: l'elenco di quali sono nostre vive in
+    `refcheck.py`, e qui lo si legge da lì invece di ricopiarlo."""
+    if not REFCHECK.is_file():
+        return diff
+    spec = importlib.util.spec_from_file_location('refcheck', REFCHECK)
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo.senza_terzi(diff)
+
+
 def blocca(msg):
     print(msg, file=sys.stderr)
     sys.exit(2)
@@ -492,8 +504,8 @@ def mode_bash(ev):
         if v and v[0] != v[1]:
             blocca(f'Commit bloccato in {repo.name}: badge v{v[0]} contro datiVersion {v[1]} (fonte '
                    'unica: dati.js). Allinea il badge di ripiego in index.src.html prima di committare.')
-        diff = diff_da_controllare(repo, aggiunge)
-        aggiunte = [l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
+        diff = senza_terzi(diff_da_controllare(repo, aggiunge))
+        aggiunte =[l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
         if any(c in l for l in aggiunte for c in TRATTINI):
             blocca(f'Commit bloccato in {repo.name}: trattino lungo (em-dash o en-dash) nelle righe '
                    'aggiunte. Tolleranza zero per entrambi: trattino breve negli intervalli (1954-55), '

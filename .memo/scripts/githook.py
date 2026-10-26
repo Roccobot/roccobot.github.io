@@ -22,6 +22,7 @@ Exit status: 0 when everything is in order, 1 when something must be fixed.
 Author: Rocco Casadei, a.k.a. Roccobot
 """
 import re
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -43,9 +44,19 @@ def refcheck(*args, stdin=None):
     return r.returncode, (r.stdout + r.stderr).strip()
 
 
+def without_third_party(diff):
+    """The diff without the files of third-party skills; which skills are ours is decided
+    in refcheck.py, and read from there instead of copied."""
+    spec = importlib.util.spec_from_file_location('refcheck', REFCHECK)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.senza_terzi(diff)
+
+
 def check_diff(diff):
     """Problems in the added lines of a diff, as a list of messages."""
     problems = []
+    diff = without_third_party(diff)
     added = [l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
     dashed = [l[1:].strip()[:100] for l in added if any(c in l for c in DASHES)]
     if dashed:

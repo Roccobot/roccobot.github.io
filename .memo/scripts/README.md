@@ -27,7 +27,7 @@
 | `fcp-probe.js` | la sonda del primo disegno, con gli script ritardati |
 | `test-zoom-gesture.js` | il banco del gesto 'doppio tocco e trascina' del visualizzatore, sui due siti |
 | `test-site-search.js` | il banco della ricerca del sito dal tocco lungo sul FAB, sui due siti |
-| `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` |
+| `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/`; i controlli sui caratteri non guardano quei file, salvo `handoff` ed `epub` (`refcheck.py`, `SKILL_DI_CASA`) |
 | `check-dependencies.py` | confronta il registro `docs/Dependencies.json` di un repo con le ultime versioni pubblicate; lo lancia ogni lunedì il workflow `dependencies.yml` |
 
 Il perché di ognuno vive nell'intestazione del file.
