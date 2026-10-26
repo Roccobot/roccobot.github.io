@@ -14,8 +14,10 @@
 # argomenti insieme il comando tiene solo l'ultimo (misurato il 2026-09-23).
 #
 # Ogni skill si sostituisce per intero, così un file tolto a monte esce anche da qui. Le skill di
-# casa non si toccano, e quelle che nessun pacchetto porta più si segnalano senza cancellarle: a
-# decidere è chi guarda la PR.
+# casa non si toccano, e quelle che nessun pacchetto fornisce più, perché gli autori le hanno
+# ritirate, si cancellano e si segnalano con `RIMOSSA` (scelta dell'utente, 2026-10-26: una skill
+# ritirata dagli autori non si tiene nell'archivio, mentre una ancora fornita ma ferma si
+# rivaluta ogni sei mesi). Per recuperarne una si guarda `docs/Removed.md`.
 #
 # I file di queste skill sono degli autori: i controlli sui caratteri (trattini lunghi, caporali,
 # accenti) non li guardano, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`; scelta
@@ -26,7 +28,7 @@ RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
 DEST="$RADICE/.agents/skills"
 CASA=(handoff epub blend)
 # Copiate a mano da un repo che non è in PACCHETTI: lo script non le aggiorna e non le segnala come
-# 'non più fornite' (la corsa del 2026-10-26 segnalò così `security-audit`, di Cloudflare).
+# 'ritirate' e non le cancella (la corsa del 2026-10-26 segnalò così `security-audit`, di Cloudflare).
 MANUALI=(security-audit)
 # 'VoltAgent/awesome-design-md' non c'è di proposito: non porta nessun SKILL.md, quindi non è
 # una skill ma una raccolta di documenti.
@@ -51,8 +53,9 @@ LAVORO="$(mktemp -d)"
 trap 'rm -rf "$LAVORO"' EXIT
 cd "$LAVORO"
 
+FALLITI=0
 for p in "${PACCHETTI[@]}"; do
-  if npx -y skills add "$p" >/dev/null 2>&1; then echo "ok        $p"; else echo "FALLITO   $p"; fi
+  if npx -y skills add "$p" >/dev/null 2>&1; then echo "ok        $p"; else echo "FALLITO   $p"; FALLITI=$((FALLITI + 1)); fi
 done
 
 FRESCHE="$LAVORO/.agents/skills"
@@ -70,5 +73,8 @@ done
 for d in "$DEST"/*/; do
   n="$(basename "$d")"
   [[ " ${CASA[*]} ${MANUALI[*]} " == *" $n "* ]] && continue
-  [ -d "$FRESCHE/$n" ] || echo "NON PIÙ FORNITA   $n"
+  [ -d "$FRESCHE/$n" ] && continue
+  # Con un pacchetto fallito la skill potrebbe mancare solo perché non è stata scaricata: si
+  # segnala e non si cancella.
+  if [ "$FALLITI" -gt 0 ]; then echo "NON PIÙ FORNITA (forse: pacchetto fallito, non rimossa)   $n"; else rm -rf "${DEST:?}/$n"; echo "RIMOSSA   $n"; fi
 done
