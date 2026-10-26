@@ -1,11 +1,11 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.55
+#VERSION: 1.56
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.55: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.56: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -140,6 +140,7 @@ h1, h2, h3 {
   text-indent: 0;
   text-align: center;
   font-family: inherit;
+  font-weight: 600;
   line-height: 1.35;
   page-break-after: avoid;
   break-after: avoid;
@@ -147,8 +148,9 @@ h1, h2, h3 {
 }
 
 /* Headings 100 lighter and narrower than the text since 1.55 (Rocco's choice Titoli-02, from WebKit
-   previews: up to 1.54 weight 700, the subheadings 500, at the text's width). */
-h1, h2, h3, h5, h6 { font-weight: 600; }
+   previews: up to 1.54 weight 700, the subheadings 500, at the text's width). H5 and H6 keep the
+   browser's sizes and spacing, at 500 since 1.56 (his choice: 600 in 1.55, the browser's 700 before). */
+h5, h6 { font-weight: 500; }
 h1, h2, h3, h4, h5, h6, .subheading, .titoletto { font-stretch: 94%; }
 
 /* Use consistent letter spacing across headings, title-page titles and small capitals. */

@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.55
+#VERSION: 1.56
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -137,6 +137,7 @@ h1, h2, h3 {
   text-indent: 0;
   text-align: center;
   font-family: inherit;
+  font-weight: 600;
   line-height: 1.35;
   page-break-after: avoid;
   break-after: avoid;
@@ -144,8 +145,9 @@ h1, h2, h3 {
 }
 
 /* Headings 100 lighter and narrower than the text since 1.55 (Rocco's choice Titoli-02, from WebKit
-   previews: up to 1.54 weight 700, the subheadings 500, at the text's width). */
-h1, h2, h3, h5, h6 { font-weight: 600; }
+   previews: up to 1.54 weight 700, the subheadings 500, at the text's width). H5 and H6 keep the
+   browser's sizes and spacing, at 500 since 1.56 (his choice: 600 in 1.55, the browser's 700 before). */
+h5, h6 { font-weight: 500; }
 h1, h2, h3, h4, h5, h6, .subheading, .titoletto { font-stretch: 94%; }
 
 /* Use consistent letter spacing across headings, title-page titles and small capitals. */
