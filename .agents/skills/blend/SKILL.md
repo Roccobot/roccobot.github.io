@@ -27,10 +27,8 @@ stile2: <percorso o URL>
   vengono dagli stessi stili di `-elem`.
 - **Le righe dopo il comando** danno i percorsi (un file allegato, un percorso locale o un URL).
   Uno stile di casa si può nominare senza percorso (sezione qui sotto).
-- **Le indicazioni libere** valgono per quel giro. Quelle codificate:
-  - `unisci elementi`: l'uscita copre gli elementi di **tutti** gli stili di origine. È già il
-    comportamento di `-elem` con più stili, quindi l'indicazione conferma e non cambia niente
-    (lettura dichiarata: se l'utente voleva dire altro, lo dirà).
+- **Le indicazioni libere** valgono per quel giro. Nessuna è codificata: `unisci elementi` è
+  stata scartata il 2026-10-26, perché è già il comportamento di `-elem` con più stili.
 
 **Esempio dell'utente**: `stile1` non definisce le epigrafi e `stile2` sì, `stile1` definisce il
 codice in linea e `stile2` no. Con `-elem stile1 stile2`, l'uscita definisce le epigrafi come
