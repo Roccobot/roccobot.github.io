@@ -116,6 +116,59 @@ class CaporaliTests(unittest.TestCase):
         self.assertEqual([d[2] for d in defects], ['\u00ab', '\u00bb'])
 
 
+class ThirdPartySkillTests(unittest.TestCase):
+    """The files of third-party skills are the authors' own: the monthly routine replaces them
+    whole, so the diff checks leave them alone. Only the two house skills stay checked."""
+
+    @staticmethod
+    def block(path, line):
+        return ('diff --git a/%s b/%s\n--- a/%s\n+++ b/%s\n@@ -1 +1 @@\n-old\n+%s\n'
+                % (path, path, path, path, line))
+
+    def run_diff(self, diff):
+        return subprocess.run([sys.executable, str(SCRIPT), '--diff'], input=diff, text=True,
+                              capture_output=True, cwd=tempfile.gettempdir())
+
+    def test_which_paths_count_as_third_party(self):
+        cases = {'.agents/skills/hallmark/SKILL.md': True,
+                 '.agents/skills/hallmark/scripts/install-hook.mjs': True,
+                 '.agents/skills/handoff/SKILL.md': False,
+                 '.agents/skills/epub/SKILL.md': False,
+                 '.agents/skills-extra/x/SKILL.md': False,
+                 'docs/.agents/skills/x/SKILL.md': False,
+                 'Rules.md': False}
+        for path, expected in cases.items():
+            with self.subTest(path=path):
+                self.assertEqual(refcheck.skill_di_terzi(path), expected)
+
+    def test_the_filter_drops_only_third_party_blocks(self):
+        mixed = (self.block('.agents/skills/hallmark/SKILL.md', 'a \u2014 b')
+                 + self.block('.agents/skills/handoff/SKILL.md', 'c')
+                 + self.block('Rules.md', 'd'))
+        kept = refcheck.senza_terzi(mixed)
+        self.assertNotIn('hallmark', kept)
+        self.assertIn('handoff', kept)
+        self.assertIn('Rules.md', kept)
+
+    def test_diff_ignores_a_third_party_skill_and_checks_a_house_skill(self):
+        line = 'Testo \u00abnon ammesso\u00bb.'
+        third = self.run_diff(self.block('.agents/skills/hallmark/SKILL.md', line))
+        house = self.run_diff(self.block('.agents/skills/handoff/SKILL.md', line))
+        self.assertEqual(third.returncode, 0, third.stdout)
+        self.assertEqual(house.returncode, 1, house.stdout)
+
+    def test_git_hook_ignores_long_dashes_in_a_third_party_skill_only(self):
+        githook_spec = importlib.util.spec_from_file_location(
+            'githook', SCRIPT.with_name('githook.py'))
+        githook = importlib.util.module_from_spec(githook_spec)
+        githook_spec.loader.exec_module(githook)
+        line = 'a \u2014 b'
+        third = githook.check_diff(self.block('.agents/skills/hallmark/scripts/x.mjs', line))
+        house = githook.check_diff(self.block('.agents/skills/handoff/scripts/x.py', line))
+        self.assertFalse([p for p in third if 'trattino lungo' in p], third)
+        self.assertTrue([p for p in house if 'trattino lungo' in p], house)
+
+
 class InputTests(unittest.TestCase):
     """A mode that reads text must say so when it read nothing.
 

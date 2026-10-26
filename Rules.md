@@ -510,6 +510,18 @@ perché **questo file ha priorità più alta**.
   riconoscerli in un testo remoto. In tutti i casi il carattere è **fra backtick** o dentro
   un blocco di codice, che è ciò che distingue il nominare dall'usare.
 
+- ⚠️ **Eccezione dichiarata dal 2026-10-26: i file delle skill di terzi** (`Skill-01`, scelta
+  dell'utente, dopo che la corsa mensile di ottobre si era fermata su 1.463 righe con trattini lunghi
+  in 134 file). `.agents/skills/` contiene file degli autori, che la Routine 'Aggiornamento skill di
+  terzi' sostituisce per intero ogni mese: trattini lunghi, caporali e accenti di quei file non si
+  controllano né si correggono, e correggerli a mano non regge, perché il giro dopo li rimette.
+  - **Restano controllate `handoff` ed `epub`**, che sono nostre, e tutto il resto del repo.
+  - **L'elenco ha una fonte sola**, `SKILL_DI_CASA` in `refcheck.py`, che leggono anche `hooks.py` e
+    `githook.py` (l'hook di Claude e quello di git): il modo `--diff` di `refcheck.py` e i due
+    controlli dei trattini lunghi saltano i blocchi di quei file.
+  - ⚠️ **È un'eccezione a un divieto non derogabile, scelta da lui e limitata a una cartella**: non si
+    estende ad altri file di terzi, e una skill nuova di terzi entra senza correggere i suoi
+    caratteri (la `security-audit` di Cloudflare era entrata ripulita a mano, 35 trattini).
 - **Apici sempre dritti** (`'`), mai i curvi e mai le doppie; **ellissi** con tre punti
   (`...`), mai il carattere unico `…`. ⚠️ Valgono anche per il testo **che l'utente
   fornisce**: un carattere vietato ricevuto in input (p.es. l'apostrofo curvo

@@ -1521,6 +1521,36 @@ def main_fix():
 
 
 
+# Le skill di terzi vivono in `.agents/skills/` e la Routine mensile le sostituisce per intero:
+# trattini lunghi, caporali e accenti di quei file sono degli autori e non si correggono a mano
+# (Skill-01, scelta dell'utente del 2026-10-26, dopo che la corsa di ottobre si era fermata su
+# 1.463 righe in 134 file). Restano nostre, e quindi controllate, le sole due di casa.
+SKILL_DI_CASA = ("handoff", "epub")
+
+
+def skill_di_terzi(percorso):
+    """Vero se il percorso (relativo alla radice del repo) è un file di una skill di terzi."""
+    parti = percorso.split("/")
+    return (len(parti) >= 3 and parti[0] == ".agents" and parti[1] == "skills"
+            and parti[2] not in SKILL_DI_CASA)
+
+
+def senza_terzi(diff):
+    """Il diff senza i blocchi dei file delle skill di terzi.
+
+    ⚠️ Il filtro sta qui e lo usano anche `hooks.py` e `githook.py`, che hanno il loro controllo dei
+    trattini lunghi: un valore in un posto solo, o le tre copie divergono alla prima modifica.
+    """
+    righe, saltando = [], False
+    for riga in diff.splitlines():
+        trovato = re.match(r"diff --git a/.+ b/(.+)$", riga) or re.match(r"\+\+\+ b/(.+)$", riga)
+        if trovato:
+            saltando = skill_di_terzi(trovato.group(1))
+        if not saltando:
+            righe.append(riga)
+    return "\n".join(righe)
+
+
 def diff_quote_defects(text, path, added_lines):
     """Check delimiters also when an added line changes the body of an existing quote."""
     touched = set(added_lines)
@@ -1550,7 +1580,7 @@ def main_diff():
         return 2
     corrente, aggiunte, contexts = None, {}, {}
     current_hunk, new_line = None, 0
-    for riga in "\n".join(testo for _, testo in fonti).splitlines():
+    for riga in senza_terzi("\n".join(testo for _, testo in fonti)).splitlines():
         if riga.startswith("+++ b/"):
             corrente = riga[6:]
             aggiunte.setdefault(corrente, [])

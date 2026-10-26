@@ -16,11 +16,18 @@
 # Ogni skill si sostituisce per intero, così un file tolto a monte esce anche da qui. Le skill di
 # casa non si toccano, e quelle che nessun pacchetto porta più si segnalano senza cancellarle: a
 # decidere è chi guarda la PR.
+#
+# I file di queste skill sono degli autori: i controlli sui caratteri (trattini lunghi, caporali,
+# accenti) non li guardano, salvo `handoff` ed `epub` (`refcheck.py`, `SKILL_DI_CASA`; scelta
+# Skill-01 dell'utente, 2026-10-26, dopo che la corsa di ottobre si era fermata su 1.463 righe).
 set -euo pipefail
 
 RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
 DEST="$RADICE/.agents/skills"
 CASA=(handoff epub)
+# Copiate a mano da un repo che non è in PACCHETTI: lo script non le aggiorna e non le segnala come
+# 'non più fornite' (la corsa del 2026-10-26 segnalò così `security-audit`, di Cloudflare).
+MANUALI=(security-audit)
 # 'VoltAgent/awesome-design-md' non c'è di proposito: non porta nessun SKILL.md, quindi non è
 # una skill ma una raccolta di documenti.
 PACCHETTI=(
@@ -62,6 +69,6 @@ done
 
 for d in "$DEST"/*/; do
   n="$(basename "$d")"
-  [[ " ${CASA[*]} " == *" $n "* ]] && continue
+  [[ " ${CASA[*]} ${MANUALI[*]} " == *" $n "* ]] && continue
   [ -d "$FRESCHE/$n" ] || echo "NON PIÙ FORNITA   $n"
 done
