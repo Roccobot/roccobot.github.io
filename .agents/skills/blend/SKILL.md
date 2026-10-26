@@ -38,14 +38,15 @@ codice in linea e `stile2` no. Con `-elem stile1 stile2`, l'uscita definisce le 
 
 | come lo nomina | che cosa è |
 |---|---|
-| `RoccobotOS` | lo stile più recente dell'indice <https://roccobot.github.io/RoccobotOS/styles/index.json> |
-| `RoccobotOS142`, `RoccobotOS 1.42` | quella versione, in <https://roccobot.github.io/RoccobotOS/styles/> |
+| `RoccobotOS` | lo stile predefinito di RoccobotOS, il primo dell'indice <https://roccobot.github.io/RoccobotOS/styles/index.json> (oggi `Roccobot OS Classic` 0.5) |
+| `RoccobotOS Classic`, `RoccobotOS_Classic` | quello stile col suo nome; allo stesso modo ogni altro stile dell'indice, col nome del file o del titolo senza spazi, in <https://roccobot.github.io/RoccobotOS/styles/> |
 | `AomidoriFlex`, `Aomidori Flex`, `Flex` | <https://roccobot.github.io/styles/AomidoriFlex.css> |
 | un altro nome che comincia con `Aomidori` | la variante con quel nome in <https://roccobot.github.io/styles/> |
 
 Lo script risolve questi nomi da sé, e senza rete li legge dai cloni locali dell'hub e di
-`RoccobotOS`. ⚠️ Se un nome è ambiguo (una versione che l'indice non ha, una variante che non
-esiste) lo script si ferma: si chiede all'utente, non si sceglie un file vicino.
+`RoccobotOS`. ⚠️ Se un nome è ambiguo (uno stile che l'indice non ha, o una variante che non
+esiste) lo script si ferma: si chiede all'utente, non si sceglie un file vicino. Dal 2026-10-26
+`RoccobotOS142` non esiste più e `RoccobotOS171` si chiama `RoccobotOS Classic`.
 
 ## 🔧 Come si fa
 
@@ -98,7 +99,7 @@ esiste) lo script si ferma: si chiede all'utente, non si sceglie un file vicino.
 
 ## 📤 La consegna
 
-- **Il nome**: `<stile1>-<stileC>-blend.css` (per esempio `AomidoriFlex-RoccobotOS142-blend.css`),
+- **Il nome**: `<stile1>-<stileC>-blend.css` (per esempio `AomidoriFlex-RoccobotOSClassic-blend.css`),
   salvo un nome dato dall'utente.
 - **Sessione nel cloud**: il file si manda come allegato (`SendUserFile`, da allegare e non da
   mostrare), dalla cartella di lavoro della sessione.

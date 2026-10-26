@@ -4,7 +4,7 @@
 Usage:
   blend_css.py --elem A [B ...] [--color C [D ...]] [--out FILE] [--report FILE]
 
-A sheet is a local path, a URL, or a house alias (`RoccobotOS`, `RoccobotOS142`,
+A sheet is a local path, a URL, or a house alias (`RoccobotOS`, `RoccobotOS Classic`,
 `AomidoriFlex`; see `resolve`). Sheets after `--elem` are in priority order: an element
 (a selector inside its at-rule context) comes from the first sheet that styles it with
 something other than colour. Sheets after `--color` give the colours, again in priority
@@ -36,20 +36,24 @@ HUB = Path(__file__).resolve().parents[3]
 def resolve(name):
     """A sheet name as the user writes it, turned into a URL or a path.
 
-    `RoccobotOS` is the newest style of the RoccobotOS index; `RoccobotOS142` or
-    `RoccobotOS 1.42` a given version. `AomidoriFlex` (or `Aomidori Flex`, `Flex`) is the
-    default Aomidori style, and any other `Aomidori...` name a variant in /styles/.
+    `RoccobotOS` is the default style of the RoccobotOS index, which keeps it first
+    (today Roccobot OS Classic); any other style of that index is named by its file or its
+    title without spaces and punctuation (`RoccobotOS Classic`, `RoccobotOS_Classic`).
+    `AomidoriFlex` (or `Aomidori Flex`, `Flex`) is the default Aomidori style, and any other
+    `Aomidori...` name a variant in /styles/.
     """
     if re.match(r"https?://", name) or Path(name).expanduser().exists():
         return name
-    key = re.sub(r"[\s._-]", "", name).lower()
-    m = re.fullmatch(r"roccobotos(\d*)", key)
-    if m:
-        if m.group(1):
-            return f"{SITE}/RoccobotOS/styles/RoccobotOS{m.group(1)}.css"
-        index = json.loads(fetch(f"{SITE}/RoccobotOS/styles/index.json"))
-        newest = max(index["styles"], key=lambda s: float(s["version"]))
-        return f"{SITE}/RoccobotOS/styles/{newest['file']}"
+    norm = lambda text: re.sub(r"[\s._-]", "", text).lower()
+    key = norm(name)
+    if key.startswith("roccobotos"):
+        styles = json.loads(fetch(f"{SITE}/RoccobotOS/styles/index.json"))["styles"]
+        chosen = styles[0] if key == "roccobotos" else next(
+            (s for s in styles if key in (norm(s["file"][:-4]), norm(s["name"]))), None)
+        if not chosen:
+            raise SystemExit(f"RoccobotOS style not found: {name} (the index has: "
+                             f"{', '.join(s['file'] for s in styles)})")
+        return f"{SITE}/RoccobotOS/styles/{chosen['file']}"
     if key in ("aomidoriflex", "flex"):
         return f"{SITE}/styles/AomidoriFlex.css"
     if key.startswith("aomidori"):
