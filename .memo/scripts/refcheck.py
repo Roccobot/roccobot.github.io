@@ -1524,8 +1524,8 @@ def main_fix():
 # Le skill di terzi vivono in `.agents/skills/` e la Routine mensile le sostituisce per intero:
 # trattini lunghi, caporali e accenti di quei file sono degli autori e non si correggono a mano
 # (Skill-01, scelta dell'utente del 2026-10-26, dopo che la corsa di ottobre si era fermata su
-# 1.463 righe in 134 file). Restano nostre, e quindi controllate, le sole due di casa.
-SKILL_DI_CASA = ("handoff", "epub")
+# 1.463 righe in 134 file). Restano nostre, e quindi controllate, le sole skill di casa.
+SKILL_DI_CASA = ("handoff", "epub", "blend")
 
 
 def skill_di_terzi(percorso):

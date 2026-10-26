@@ -18,13 +18,13 @@
 # decidere è chi guarda la PR.
 #
 # I file di queste skill sono degli autori: i controlli sui caratteri (trattini lunghi, caporali,
-# accenti) non li guardano, salvo `handoff` ed `epub` (`refcheck.py`, `SKILL_DI_CASA`; scelta
+# accenti) non li guardano, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`; scelta
 # Skill-01 dell'utente, 2026-10-26, dopo che la corsa di ottobre si era fermata su 1.463 righe).
 set -euo pipefail
 
 RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
 DEST="$RADICE/.agents/skills"
-CASA=(handoff epub)
+CASA=(handoff epub blend)
 # Copiate a mano da un repo che non è in PACCHETTI: lo script non le aggiorna e non le segnala come
 # 'non più fornite' (la corsa del 2026-10-26 segnalò così `security-audit`, di Cloudflare).
 MANUALI=(security-audit)
