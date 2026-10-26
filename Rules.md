@@ -89,6 +89,16 @@ dell'app è privato. Lo scrivono le sessioni che toccano lo stile, con le regole
 pacchetto dello Store di Aomidori (`scripts/bundle.sh`) si ferma se lo stile o un font di qui è
 diverso da quello dell'app. Non va spostata né tolta per pulizia.
 Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessun file dell'hub.
+- ⚠️⚠️ **`Famiglia`: aggiornare Aomidori Flex vuol dire aggiornare anche i suoi derivati** (regola
+  dell'utente del 2026-10-26, per chiunque tocchi gli stili, sessione o agente): oggi **Aomidori
+  Menta** (`AomidoriMenta.css`) e **RoccobotOS** (`RoccobotOS.css`, da non confondere con gli stili
+  del sito di RoccobotOS). Le modifiche di **tavolozza** valgono per la sola Flex; **tutto il resto**
+  passa ai derivati, salvo le loro eccezioni (RoccobotOS nessuna, Menta la forma dei riquadri del
+  codice e il carattere del codice). I derivati non si scrivono a mano: li fa
+  `scripts/make-flex-variants.py` del repo Aomidori, che scrive in `styles/` la Flex, i derivati
+  (al posto delle copie precedenti) e `aomidori_flex_variations.html`, la pagina delle differenze di
+  ogni derivato, a cui rimanda la testata fissa del registro della Flex. **Le copie di riserva
+  degli stili si fanno solo in `styles/backup/`.** Il testo completo è in `Rules.md` di Aomidori.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**

@@ -1,0 +1,919 @@
+/*
+#NAME: RoccobotOS
+#VERSION: 1.54
+#NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
+#COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
+*/
+
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.54: edit the Flex, then run it
+   again. Everything but the colours is the Flex's, but for the exceptions at the end. */
+
+/* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
+   and in the site), so the final rendering of the type is decided here: Roboto Flex for the text,
+   JetBrains Mono for code, each followed only by the generic family of its kind, which every
+   system has. The original files of Google Fonts, under the SIL Open Font License 1.1. Roboto
+   Flex's italic is its slant axis. Verses and quotations are in Georgia, which every Mac has, with
+   the generic serif after it (since 1.54; Gelasio in 1.50-1.52, Source Serif 4 in 1.53). */
+@font-face {
+  font-family: 'Roboto Flex';
+  src: url('AomidoriFlex/RobotoFlex.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-stretch: 25% 151%;
+  /* Its italic is its slant, kept to 7 degrees since 1.53 (Rocco's note B on the 2.59 round: the
+     emphasis leaned too much at the font's 10). */
+  font-style: oblique 0deg 7deg;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('AomidoriFlex/JetBrainsMono.ttf') format('truetype');
+  font-weight: 100 800;
+  font-style: normal;
+}
+
+/* Define callout geometry and the warm technical palette. */
+:root {
+  --brano-fondo: color-mix(in srgb, #f7f8f5 96%, black);
+  --brano-raggio: 0.2em;
+  --technical-ink: #303735;
+  --technical-muted: #626b66;
+  --technical-border: #c8d1ca;
+  --link-ink: #1c7a68;
+}
+
+/* Use the light palette when no dark colour scheme is selected. */
+html {
+  background-color: #f7f8f5;
+  color: #303735;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background-color: #f7f8f5;
+  color: #303735;
+  /* Roboto Flex, as declared above (1.50; the system font up to 1.43). */
+  font-family: 'Roboto Flex', sans-serif;
+  font-size: 1.6em;
+  /* Cap the text at 24px; keep the preceding declaration as a fallback for min(). */
+  font-size: min(1.6em, 24px);
+  max-width: 32em;
+  box-sizing: border-box;
+  container-type: inline-size;
+  margin: 0 auto;
+  padding: 0 1.2em;
+  /* A light text weight, the same in both themes: the dark one adds Roboto Flex's grade (1.50). */
+  font-weight: 360;
+  /* Keep generous line spacing for continuous reading. */
+  line-height: 1.6;
+  /* Roboto Flex a little wider and more open since 1.54 (Rocco's choice Falcata-01, from WebKit
+     previews: width 107 and tracking 0.02em; up to 1.53 width 100 and 0.012em), the same in both
+     themes, which differ only in the grade. */
+  font-stretch: 107%;
+  letter-spacing: 0.02em;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  /* No slant made up by the browser (1.53): up to 1.52 WebKit drew Roboto Flex's italics with a
+     synthetic slant of its own, not with the font's axis; bold and small capitals may still be
+     made where a font lacks them. */
+  font-synthesis: weight small-caps;
+  /* No text-rendering: optimizeLegibility since 1.50: with the dark theme's grade set, WebKit drew
+     Roboto Flex's italics at another weight and width under it (the subheadings, measured on
+     2026-10-25: 284.7px in dark against 278.3px in light; with auto both 278.3). */
+}
+
+p {
+  /* Separate paragraphs with vertical spacing rather than first-line indentation. */
+  text-indent: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  /* Allow explicit soft hyphens without automatic hyphenation. */
+  -webkit-hyphens: manual;
+  hyphens: manual;
+  orphans: 2;
+  widows: 2;
+  /* Balance paragraph endings where text-wrap: pretty is supported. */
+  text-wrap: pretty;
+}
+
+/* Add space between consecutive paragraphs. */
+p + p {
+  margin-top: 1.2em;
+}
+
+/* Share typography across the first three heading levels. */
+h1, h2, h3 {
+  color: #236c80;
+  text-indent: 0;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.35;
+  page-break-after: avoid;
+  break-after: avoid;
+  text-wrap: balance;
+}
+
+/* Use consistent letter spacing across headings, title-page titles and small capitals. */
+h1, h2, h3, h4, h5, h6, .subheading, .titoletto, .title,
+.small-caps, .small-caps * {
+  letter-spacing: 0.03em;
+}
+
+h1 {
+  margin: 5em 0 1em 0;
+  font-size: 160%;
+  padding-bottom: 0.55em;
+  border-bottom: 1px solid #dce3dc;
+}
+
+/* Keep paragraphs after named subheadings flush left, including hanging-indent paragraphs. */
+.subheading + p, .titoletto + p {
+  text-indent: 0;
+}
+
+h1.no {
+  margin: 1em 0 0 0;
+}
+
+h1.up {
+  margin: 0 0 5em 0;
+}
+
+/* Let the second-level heading set the gap after a top title. */
+h1.up:has(+ h2) {
+  margin-bottom: 0;
+}
+
+/* Set second-level headings in capitals. */
+h2 {
+  margin: 3em 0 1em 0;
+  font-size: 125%;
+  text-transform: uppercase;
+}
+
+/* Disable small capitals inside headings. */
+:is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto),
+:is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto) * {
+  font-variant-caps: normal;
+}
+:is(
+  :is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto).small-caps,
+  :is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto) .small-caps
+):where(:not(
+  code, pre, kbd, samp, tt, var, math, .katex, .MathJax, mjx-container,
+  :is(code, pre, kbd, samp, tt, var, math, .katex, .MathJax, mjx-container) *
+)) {
+  font-variant-caps: normal;
+  text-transform: uppercase;
+}
+/* Keep manually constructed small capitals at the surrounding heading size. */
+:is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto) small {
+  font-size: inherit;
+}
+
+/* Style third-level section headings. */
+h3 {
+  margin: 0 0 0.75em 0;
+  font-size: 115%;
+}
+
+p + h3 {
+  margin-top: 3.5em;
+}
+
+/* Distinguish subheadings with italics at the body text size. */
+h4, .subheading, .titoletto {
+  text-indent: 0;
+  text-align: left;
+  margin: 2.5em 0 0.5em 0;
+  font-size: 100%;
+  font-weight: 500;
+  font-style: italic;
+  line-height: inherit;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Reduce the gap between a section heading and its immediate subheading. */
+h3 + h4, h3 + .subheading, h3 + .titoletto {
+  margin-top: 0.75em;
+}
+
+/* Align Markdown headings with the document text. */
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  text-align: left;
+}
+
+/* Use small capitals with the shared heading spacing. */
+.small-caps {
+  font-variant-caps: small-caps;
+}
+
+/*
+.small-caps {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.05em;
+}
+Reference rule with expanded letter spacing.
+*/
+
+/* Support document spacing and alignment classes. */
+.sp {
+  margin-top: 1em;
+}
+
+.sd {
+  margin-bottom: 1em;
+}
+
+.spd {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-indent: 0;
+  text-align: center;
+}
+
+.noindent {
+  text-indent: 0;
+}
+
+.vv {
+  text-indent: -1em;
+  margin-left: 3em;
+}
+
+/* Remove paragraph gaps between consecutive verse elements. */
+.vv + .vv {
+  margin-top: 0;
+}
+
+.neg {
+  text-indent: -1em;
+  margin-left: 3em;
+  margin-right: 2em;
+  margin-top: 0.5em;
+}
+
+/* Style title-page text. */
+.title {
+  color: #236c80;
+  text-indent: 0;
+  text-align: center;
+  margin-bottom: 3em;
+  font-family: inherit;
+  font-size: 1.2em;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.aut {
+  color: #236c80;
+  text-indent: 0;
+  font-size: 170%;
+  font-weight: 700;
+}
+
+.aut-sub {
+  color: #236c80;
+  text-indent: 0;
+  font-size: 140%;
+  font-weight: 700;
+  margin-bottom: 1em;
+}
+
+.aut-sub + p {
+  text-indent: 0;
+}
+
+/* A book's sans-serif passages: the Flex's sans-serif is Roboto Flex (1.50). */
+.sans {
+  font-family: 'Roboto Flex', sans-serif;
+}
+
+div.index p {
+  margin-left: 2em;
+  text-indent: 0;
+}
+
+/* Keep links warm, underlined and recognisable in both colour schemes. */
+a:any-link {
+  color: var(--link-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 65%, transparent);
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.16em;
+  overflow-wrap: anywhere;
+}
+
+/* Preserve literal text inside headings, quotations and small capitals. */
+:is(code, pre, kbd, samp, tt),
+:is(code, pre, kbd, samp, tt).small-caps,
+:is(code, pre, kbd, samp, tt).small-caps *,
+:is(code, pre, kbd, samp, tt) .small-caps,
+:is(code, pre, kbd, samp, tt) .small-caps *,
+.small-caps :is(code, pre, kbd, samp, tt),
+.small-caps :is(code, pre, kbd, samp, tt) * {
+  /* JetBrains Mono, as declared at the top (1.50; the system's monospace up to 1.43). */
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-caps: normal;
+  font-variant-ligatures: none;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  text-indent: 0;
+  text-align: start;
+  text-shadow: none;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+code, kbd, samp, tt {
+  font-size: 0.9em;
+  color: var(--technical-ink);
+}
+code, tt {
+  background: var(--brano-fondo);
+  border-radius: 0.15em;
+  padding: 0.08em 0.22em;
+  overflow-wrap: anywhere;
+}
+pre {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  margin: 1.4em 0;
+  padding: 0.8em 1em;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--technical-ink);
+  background: var(--brano-fondo);
+  border: 0;
+  border-radius: 0.2em;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: auto;
+  tab-size: 4;
+}
+pre :is(code, samp, kbd, tt) {
+  font-size: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  white-space: inherit;
+  overflow-wrap: inherit;
+}
+kbd {
+  padding: 0.05em 0.25em;
+  background: var(--brano-fondo);
+  border: 1px solid var(--technical-border);
+  border-radius: 0.15em;
+}
+kbd:has(kbd) {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+kbd kbd { font-size: inherit; }
+samp { color: var(--technical-muted); }
+var { font-style: italic; }
+a:any-link :is(code, samp, tt) { color: inherit; }
+
+/* Use a muted warm colour for quotations. */
+blockquote:where(:not(.markdown-alert)) {
+  color: color-mix(in srgb, #303735 75%, #f7f8f5);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #dce3dc;
+  margin: 2em auto;
+}
+
+::selection {
+  background-color: #A0D8CA;
+  color: #19433A;
+}
+
+/* Preserve native merged-cell layout and scroll wide tables locally. Since 1.51 the outer border
+   is the table's own and follows its rounded corners; the cells draw only the lines between them
+   (up to 1.50 every cell drew its four sides, and the corner cut them off square). */
+table {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--technical-border);
+  /* 8 points since 1.52 (Rocco's note on 2.57-02: the 0.2em of the quotations showed too little on a table). */
+  border-radius: 8px;
+  font-size: 0.9em;
+  line-height: 1.45;
+}
+
+th, td {
+  padding: 0.375em 0.75em;
+  border: 0;
+  border-inline-end: 1px solid var(--technical-border);
+  border-block-end: 1px solid var(--technical-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+:is(th, td):last-child {
+  border-inline-end: 0;
+}
+
+/* The last row lies on the table's own border. */
+table > :last-child > tr:last-child > :is(th, td),
+table > tr:last-child > :is(th, td) {
+  border-block-end: 0;
+}
+
+th {
+  font-weight: 600;
+  background-color: #e3e9e3;
+}
+
+tbody tr:nth-child(2n) {
+  background-color: #eef1ed;
+}
+
+tfoot {
+  color: var(--technical-muted);
+  font-weight: 500;
+}
+
+:is(th, td):is(.numeric, [data-type='number'], [align='right']) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Distinguish captions without changing the colours of illustrations. */
+figure {
+  margin: 1.5em 0;
+}
+
+figure > :is(img, svg, picture), figure > picture > img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  margin-inline: auto;
+}
+
+figcaption, caption {
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--technical-muted);
+  text-align: start;
+}
+
+figcaption { margin-block: 0.5em; }
+/* A table's caption sits inside its border since 1.51, so its text starts where the cells' text
+   does (1.52, Rocco's note on 2.57-02: it touched the left border): the cells' 0.75em, at the
+   caption's smaller size. */
+caption { padding-block: 0.5em; padding-inline: calc(0.75em / 0.85); }
+
+/* Keep nested lists and definition lists comfortably spaced. */
+ul, ol, dl {
+  margin-block: 1.2em;
+}
+
+ul, ol { padding-inline-start: 1.5em; }
+li + li { margin-top: 0.35em; }
+li > :is(ul, ol) { margin-block: 0.5em 0; }
+dt { font-weight: 600; }
+dd { margin: 0.3em 0 1em 1.3em; }
+
+/* Support HTML, EPUB and Markdown note collections. */
+:is(.footnotes, [role='doc-endnotes'], [epub\:type~='endnotes'], [*|type~='endnotes'], [epub\:type~='footnotes'], [*|type~='footnotes']) {
+  margin-top: 1.8em;
+  padding-top: 0.8em;
+  border-top: 1px solid var(--technical-border);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+:is([role='doc-footnote'], [epub\:type~='footnote'], [*|type~='footnote']) {
+  margin-block: 0.6em;
+  line-height: 1.5;
+}
+
+/* Superscript note links only when the markup does not already do so. */
+a:is(.footnote-ref, [role='doc-noteref'], [epub\:type~='noteref'], [*|type~='noteref']):not(sup *):not(:has(sup)) {
+  font-size: 0.75em;
+  vertical-align: super;
+  line-height: 0;
+  white-space: nowrap;
+}
+
+/* Keep bibliographies compact and preserve explicit list numbering. */
+:is(.bibliography, [role='doc-bibliography'], [epub\:type~='bibliography'], [*|type~='bibliography']) {
+  margin-block: 1.5em;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+:is(.bibliography, [role='doc-bibliography'], [epub\:type~='bibliography'], [*|type~='bibliography']) > p {
+  padding-inline-start: 1.3em;
+  text-indent: -1.3em;
+}
+
+/* Separate editorial notes from literary quotations with a flat warm surface. */
+aside:not(:is(
+  .side, .epigraph, .footnotes, .bibliography,
+  [role='doc-footnote'], [role='doc-endnotes'], [role='doc-bibliography'], [role='doc-epigraph'],
+  [epub\:type~='footnote'], [*|type~='footnote'],
+  [epub\:type~='footnotes'], [*|type~='footnotes'],
+  [epub\:type~='endnotes'], [*|type~='endnotes'],
+  [epub\:type~='bibliography'], [*|type~='bibliography'],
+  [epub\:type~='epigraph'], [*|type~='epigraph']
+)), .markdown-alert {
+  margin: 1.5em 0;
+  padding: 0.75em 1em;
+  background: var(--brano-fondo);
+  border-inline-start: 1px solid var(--technical-border);
+  border-radius: 0.2em;
+  font-style: normal;
+}
+
+.markdown-alert-title {
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+
+abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.15em;
+}
+
+sup, sub {
+  font-size: 0.75em;
+  line-height: 0;
+}
+
+mark {
+  background: color-mix(in srgb, #f7b59e 25%, transparent);
+  color: inherit;
+  /* A little room round the text and softened corners since 1.54 (Rocco's request Evidenza, seen
+     in a WebKit preview): a point more below, where the descenders are, than the ascenders had;
+     each line of a highlight that wraps keeps its own room and corners. */
+  padding-inline: 0.12em;
+  padding-bottom: 0.05em;
+  border-radius: 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Preserve mathematical notation inside headings and small capitals. */
+:is(var, math, .katex, .MathJax, mjx-container),
+:is(var, math, .katex, .MathJax, mjx-container) *,
+.small-caps :is(var, math, .katex, .MathJax, mjx-container),
+.small-caps :is(var, math, .katex, .MathJax, mjx-container) *,
+:is(var, math, .katex, .MathJax, mjx-container).small-caps,
+:is(var, math, .katex, .MathJax, mjx-container).small-caps * {
+  font-variant-caps: normal;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+math[display='block'], .katex-display, mjx-container[display='true'],
+:is(p, div, section, figure):has(> math[display='block']) {
+  margin-block: 1.4em;
+  max-inline-size: 100%;
+  overflow: auto;
+}
+
+/* Constrain images and musical scores to the reading column. */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+img.partit {
+  margin: 1em 10%;
+  width: 80%;
+}
+
+/* Fit complete cover images inside the viewport. */
+html.cover-page, html.cover-page body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  text-align: center;
+}
+
+html.cover-page img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100vh;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Disable animation when reduced motion is requested. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Use a warm dark palette with near-white text. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brano-fondo: #242c29;
+    --technical-ink: #dee5e1;
+    --technical-muted: #b8c6be;
+    --technical-border: #3d4842;
+    --link-ink: #43b59e;
+  }
+
+  html, body {
+    background-color: #191e1d;
+    color: #dee5e1;
+  }
+
+  /* Heavier text in the dark theme through Roboto Flex's grade, which thickens the strokes without widening the letters: weights and tracking stay those of light, and every line breaks where it does in light (1.50; up to 1.43 heavier weights, and a tighter tracking to compensate). GRAD 50 adds about the ink that weight 420 added to 360, measured in WebKit on 2026-10-25 (24px, 7 paragraphs: +9.1% against +9.6%; weight 420 moved the breaks of 3 paragraphs of 7, no grade from 0 to 150 moved any). */
+  body { font-variation-settings: 'GRAD' 50; }
+
+  h1, h2, h3, .title, .aut, .aut-sub { color: #6eb7c9; }
+
+  th { background-color: #2d3732; }
+  tbody tr:nth-child(2n) { background-color: #202724; }
+
+  h1 { border-bottom-color: #303c36; }
+  hr { border-top-color: #303c36; }
+
+  blockquote:where(:not(.markdown-alert)) {
+    color: color-mix(in srgb, #dee5e1 85%, #191e1d);
+  }
+  ::selection {
+    background-color: #43B59E;
+    color: #dee5e1;
+  }
+}
+
+/* Georgia italics for verses, quotations and epigraphs, the system's (1.54, Rocco's choice: none of
+   its substitutes pleased him; Georgia up to 1.43, Gelasio in 1.50-1.52, Source Serif 4 in 1.53). */
+:is(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Keep ordinary callout tracking neutral while preserving explicit text styles. */
+:where(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
+  letter-spacing: normal;
+}
+
+:is(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) :where(p, span, i, em, b, strong, small, a, cite) {
+  font-family: inherit;
+}
+
+/* Centre each text block while keeping its text flush left. */
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']),
+:is(div, section):has(> p.vv):not(:has(> :not(p.vv))) {
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1.5em auto;
+  padding: 0.65em 1em;
+  text-indent: 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: var(--brano-raggio);
+  overflow-wrap: anywhere;
+  position: relative;
+  isolation: isolate;
+}
+
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) :where(p, .right, .center) {
+  text-align: left;
+  text-indent: 0;
+}
+
+/* Indent wrapped verse continuations by 1em and join consecutive backgrounds. */
+p.vv {
+  margin: 0;
+  padding: 0 1em 0 2em;
+  text-indent: -1em;
+  text-align: left;
+  background: var(--brano-fondo);
+  border: 0;
+  border-radius: 0;
+}
+
+p.vv i, p.vv em {
+  font-style: italic;
+  font-weight: inherit;
+}
+
+p.vv:not(p.vv + p.vv) {
+  padding-top: 0.65em;
+  border-radius: var(--brano-raggio) var(--brano-raggio) 0 0;
+}
+
+p.vv:not(:has(+ p.vv)) {
+  padding-bottom: 0.65em;
+  border-bottom-left-radius: var(--brano-raggio);
+  border-bottom-right-radius: var(--brano-raggio);
+}
+
+/* Use an anonymous table to share the width of unwrapped i/em verse sequences. */
+:is(body, div, section, article):has(> p.vv > :is(i, em):only-child) {
+  text-align: -webkit-center;
+}
+
+p.vv:has(> :is(i, em):only-child) {
+  display: table-row;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+}
+
+p.vv > :is(i, em):only-child {
+  display: block;
+  margin: 0;
+  padding: 0 1em 0 2em;
+  text-indent: -1em;
+  text-align: left;
+  overflow-wrap: anywhere;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  position: relative;
+  isolation: isolate;
+}
+
+p.vv:not(p.vv + p.vv) > :is(i, em):only-child {
+  margin-top: 1.2em;
+  padding-top: 0.65em;
+  border-top-left-radius: var(--brano-raggio);
+  border-top-right-radius: var(--brano-raggio);
+}
+
+p.vv:not(:has(+ p.vv)) > :is(i, em):only-child {
+  padding-bottom: 0.65em;
+  border-bottom-left-radius: var(--brano-raggio);
+  border-bottom-right-radius: var(--brano-raggio);
+}
+
+/* Extend callout backgrounds across the body's content box using container units. */
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'])::before,
+:is(div, section):has(> p.vv):not(:has(> :not(p.vv)))::before,
+p.vv > :is(i, em):only-child::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100cqw;
+  background: var(--brano-fondo);
+  border-radius: var(--brano-raggio);
+}
+
+/* Round only the outside corners of an unwrapped verse sequence. */
+p.vv > :is(i, em):only-child::before { border-radius: 0; }
+p.vv:not(p.vv + p.vv) > :is(i, em):only-child::before {
+  border-top-left-radius: var(--brano-raggio);
+  border-top-right-radius: var(--brano-raggio);
+}
+p.vv:not(:has(+ p.vv)) > :is(i, em):only-child::before {
+  border-bottom-left-radius: var(--brano-raggio);
+  border-bottom-right-radius: var(--brano-raggio);
+}
+
+/* Keep a single background when callouts or verses are nested. */
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'],
+  :is(div, section):has(> p.vv):not(:has(> :not(p.vv))))
+  :is(p.vv, p.vv > :is(i, em):only-child, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'],
+  :is(div, section):has(> p.vv):not(:has(> :not(p.vv))))
+  :is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'],
+    p.vv > :is(i, em):only-child)::before {
+  content: none;
+}
+
+/* Wrapped verse groups use the container's padding and background. */
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'],
+  :is(div, section):has(> p.vv):not(:has(> :not(p.vv)))) > p.vv {
+  display: block;
+  padding: 0 0 0 1em;
+  text-indent: -1em;
+}
+
+:is(blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph'],
+  :is(div, section):has(> p.vv):not(:has(> :not(p.vv)))) > p.vv > :is(i, em):only-child {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  text-indent: inherit;
+}
+
+/* Add one line of separation after verses unless an explicit break follows. */
+:is(p.vv, :is(div, section, blockquote:where(:not(.markdown-alert))):has(> p.vv):not(:has(> :not(p.vv))))
+  + p:not(.vv):not(:empty):not(:has(> br:first-child)) {
+  margin-top: calc(1.2em + 1lh);
+}
+
+/* Since 1.41: generic elements that RoccobotOS 1.71 styles and Flex did not, in Flex colours. None of them changes size or position between the two schemes. */
+
+/* Disclosure widgets: block level, with the marker and a pointer on the summary. */
+details {
+  display: block;
+  margin-block: 1.2em;
+}
+
+summary {
+  display: list-item;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details[open] > summary {
+  margin-bottom: 0.5em;
+}
+
+/* Nested ordered lists count in roman, then alphabetic numerals. */
+:is(ol, ul) ol { list-style-type: lower-roman; }
+:is(ol, ul) :is(ol, ul) ol { list-style-type: lower-alpha; }
+
+/* Markdown task lists: no bullet, and a flat checkbox in the link colour pulled into the list indent. */
+.task-list-item {
+  list-style-type: none;
+}
+
+.task-list-item input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  inline-size: 0.875em;
+  block-size: 0.875em;
+  margin: 0 0.35em 0.2em -1.35em;
+  padding: 0;
+  vertical-align: middle;
+  border: 1px solid var(--link-ink);
+  border-radius: 0.15em;
+  background: transparent;
+  font: inherit;
+}
+
+.task-list-item input[type='checkbox']:checked {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%231c7a68' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E") center / 80% no-repeat;
+}
+
+/* Videos fit the column like images; aligned images keep a gap from the text. */
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+img[align='right'] { padding-left: 1.25em; }
+img[align='left'] { padding-right: 1.25em; }
+
+/* Printed code wraps instead of being cut at the page edge. */
+@media print {
+  pre, pre :is(code, samp, kbd, tt) {
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+}
+
+/* The checkmark takes the dark link colour. */
+@media (prefers-color-scheme: dark) {
+  .task-list-item input[type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2343b59e' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E");
+  }
+}
+
+/* Code in RoccobotOS 1.40's colour (its code is plum by day, pink by night); blocks keep the text's ink. */
+code, kbd, tt { color: #9b5065; }
+pre :is(code, samp, kbd, tt) { color: inherit; }
+@media (prefers-color-scheme: dark) {
+  code, kbd, tt { color: #dbadb9; }
+  pre :is(code, samp, kbd, tt) { color: inherit; }
+}
