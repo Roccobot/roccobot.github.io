@@ -101,8 +101,11 @@ Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessu
   degli stili si fanno solo in `styles/backup/`.** Il codice della Flex e dei derivati si tiene il
   più compatto possibile (sua regola: meno dichiarazioni, sovrascritture ed eccezioni possibili):
   dalla Flex 1.55 colori e forma del codice sono variabili dei due blocchi `:root`, e un derivato
-  cambia solo quei valori. Si modifica la Flex e si rilancia lo script, mai i derivati a mano. Il
-  testo completo è in `Rules.md` di Aomidori.
+  cambia solo quei valori. Si modifica la Flex e si rilancia lo script, mai i derivati a mano.
+  **Ogni aggiornamento della Flex e dei derivati entra anche in Aomidori** (sua regola, stesso
+  giorno): lo script scrive le copie dell'app accanto a quelle di `styles/`, e una modifica
+  arrivata solo qui non è finita. Fino a nuovo ordine la Flex è il predefinito dei libri e
+  RoccobotOS quello dei Markdown. Il testo completo è in `Rules.md` di Aomidori.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**
