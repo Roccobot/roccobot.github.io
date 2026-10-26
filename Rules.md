@@ -515,7 +515,7 @@ perché **questo file ha priorità più alta**.
   in 134 file). `.agents/skills/` contiene file degli autori, che la Routine 'Aggiornamento skill di
   terzi' sostituisce per intero ogni mese: trattini lunghi, caporali e accenti di quei file non si
   controllano né si correggono, e correggerli a mano non regge, perché il giro dopo li rimette.
-  - **Restano controllate `handoff` ed `epub`**, che sono nostre, e tutto il resto del repo.
+  - **Restano controllate le skill di casa** (`handoff`, `epub` e, dal 2026-10-26, `blend`), e tutto il resto del repo.
   - **L'elenco ha una fonte sola**, `SKILL_DI_CASA` in `refcheck.py`, che leggono anche `hooks.py` e
     `githook.py` (l'hook di Claude e quello di git): il modo `--diff` di `refcheck.py` e i due
     controlli dei trattini lunghi saltano i blocchi di quei file.

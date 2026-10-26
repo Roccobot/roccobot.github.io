@@ -134,6 +134,7 @@ class ThirdPartySkillTests(unittest.TestCase):
                  '.agents/skills/hallmark/scripts/install-hook.mjs': True,
                  '.agents/skills/handoff/SKILL.md': False,
                  '.agents/skills/epub/SKILL.md': False,
+                 '.agents/skills/blend/blend_css.py': False,
                  '.agents/skills-extra/x/SKILL.md': False,
                  'docs/.agents/skills/x/SKILL.md': False,
                  'Rules.md': False}
