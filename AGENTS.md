@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.15
+> **Versione**: 2.16
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -273,7 +273,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   dichiarano nel collaudo (`Roccobot.md` § '🏅 Codice di altissima qualità').
 - Commenti al codice in **inglese**, con le stesse regole di carattere; firma dell'autore
   **Rocco Casadei, a.k.a. Roccobot** (`Roccobot.md` § '🧑‍💻 Codice e artefatti generati').
-- I **nomi dei file** sono in inglese, e un nome che esiste già non si cambia mai; il
+- I **nomi dei file** sono in inglese, e un nome che esiste già non si cambia mai (una cartella con la maiuscola si corregge una volta; **le cartelle sono minuscole**); il
   **contenuto** è in inglese se si comincia da zero, altrimenti resta nella lingua che c'è già
   (`Roccobot.md` § '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
 - **Le dipendenze si seguono**: ogni progetto tiene il registro di ciò da cui dipende, e ogni
