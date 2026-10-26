@@ -98,7 +98,11 @@ Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessu
   `scripts/make-flex-variants.py` del repo Aomidori, che scrive in `styles/` la Flex, i derivati
   (al posto delle copie precedenti) e `aomidori_flex_variations.html`, la pagina delle differenze di
   ogni derivato, a cui rimanda la testata fissa del registro della Flex. **Le copie di riserva
-  degli stili si fanno solo in `styles/backup/`.** Il testo completo è in `Rules.md` di Aomidori.
+  degli stili si fanno solo in `styles/backup/`.** Il codice della Flex e dei derivati si tiene il
+  più compatto possibile (sua regola: meno dichiarazioni, sovrascritture ed eccezioni possibili):
+  dalla Flex 1.55 colori e forma del codice sono variabili dei due blocchi `:root`, e un derivato
+  cambia solo quei valori. Si modifica la Flex e si rilancia lo script, mai i derivati a mano. Il
+  testo completo è in `Rules.md` di Aomidori.
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
 vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**

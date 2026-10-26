@@ -1,12 +1,12 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.54
+#VERSION: 1.55
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.54: edit the Flex, then run it
-   again. Everything but the colours is the Flex's, but for the exceptions at the end. */
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.55: edit the Flex, then run it
+   again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
    and in the site), so the final rendering of the type is decided here: Roboto Flex for the text,
@@ -31,27 +31,58 @@
   font-style: normal;
 }
 
-/* Define callout geometry and the warm technical palette. */
+/* Every colour of the style, and the shape and font of its code, in one place since 1.55 (Rocco's
+   rule Famiglia): the rules below use these variables only, and a style derived from the Flex
+   (scripts/make-flex-variants.py of Aomidori) changes their values and nothing else. The light
+   palette here, the dark one in the dark scheme's block below; what that block leaves out is the
+   same in both. */
 :root {
-  --brano-fondo: color-mix(in srgb, #f7f8f5 96%, black);
-  --brano-raggio: 0.2em;
+  --page: #f7f8f5;
+  --ink: #303735;
+  --heading-ink: #236c80;
+  --h1-ink: var(--heading-ink);
+  --h2-ink: var(--heading-ink);
+  --h3-ink: var(--heading-ink);
+  --rule: #dce3dc;
+  --quote-ink: color-mix(in srgb, var(--ink) 75%, var(--page));
+  --link-ink: #1c7a68;
   --technical-ink: #303735;
   --technical-muted: #626b66;
   --technical-border: #c8d1ca;
-  --link-ink: #1c7a68;
+  --th-ground: #e3e9e3;
+  --th-ink: var(--ink);
+  --stripe: #eef1ed;
+  --mark: color-mix(in srgb, #f7b59e 25%, transparent);
+  --selection-ground: #A0D8CA;
+  --selection-ink: #19433A;
+  /* The callouts' ground and corners. */
+  --brano-fondo: color-mix(in srgb, var(--page) 96%, black);
+  --brano-raggio: 0.2em;
+  /* Code: the ink and ground of inline code and of blocks, its font, and the boxes' shape. */
+  --code-ink: #9b5065;
+  --code-ground: var(--brano-fondo);
+  --pre-ink: var(--technical-ink);
+  --pre-ground: var(--brano-fondo);
+  --code-font: 'JetBrains Mono', monospace;
+  --code-weight: 400;
+  --code-padding: 0.08em 0.22em;
+  --code-radius: 0.15em;
+  --pre-padding: 0.8em 1em;
+  --pre-radius: 0.2em;
+  --pre-leading: 1.5;
 }
 
-/* Use the light palette when no dark colour scheme is selected. */
 html {
-  background-color: #f7f8f5;
-  color: #303735;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
+html, body {
+  background-color: var(--page);
+  color: var(--ink);
+}
+
 body {
-  background-color: #f7f8f5;
-  color: #303735;
   /* Roboto Flex, as declared above (1.50; the system font up to 1.43). */
   font-family: 'Roboto Flex', sans-serif;
   font-size: 1.6em;
@@ -67,9 +98,9 @@ body {
   /* Keep generous line spacing for continuous reading. */
   line-height: 1.6;
   /* Roboto Flex a little wider and more open since 1.54 (Rocco's choice Falcata-01, from WebKit
-     previews: width 107 and tracking 0.02em; up to 1.53 width 100 and 0.012em), the same in both
-     themes, which differ only in the grade. */
-  font-stretch: 107%;
+     previews: tracking 0.02em; up to 1.53 width 100 and 0.012em), width 105 since 1.55 (his
+     request, 107 in 1.54), the same in both themes, which differ only in the grade. */
+  font-stretch: 105%;
   letter-spacing: 0.02em;
   font-kerning: normal;
   font-optical-sizing: auto;
@@ -106,16 +137,19 @@ p + p {
 
 /* Share typography across the first three heading levels. */
 h1, h2, h3 {
-  color: #236c80;
   text-indent: 0;
   text-align: center;
   font-family: inherit;
-  font-weight: 700;
   line-height: 1.35;
   page-break-after: avoid;
   break-after: avoid;
   text-wrap: balance;
 }
+
+/* Headings 100 lighter and narrower than the text since 1.55 (Rocco's choice Titoli-02, from WebKit
+   previews: up to 1.54 weight 700, the subheadings 500, at the text's width). */
+h1, h2, h3, h5, h6 { font-weight: 600; }
+h1, h2, h3, h4, h5, h6, .subheading, .titoletto { font-stretch: 94%; }
 
 /* Use consistent letter spacing across headings, title-page titles and small capitals. */
 h1, h2, h3, h4, h5, h6, .subheading, .titoletto, .title,
@@ -127,7 +161,8 @@ h1 {
   margin: 5em 0 1em 0;
   font-size: 160%;
   padding-bottom: 0.55em;
-  border-bottom: 1px solid #dce3dc;
+  border-bottom: 1px solid var(--rule);
+  color: var(--h1-ink);
 }
 
 /* Keep paragraphs after named subheadings flush left, including hanging-indent paragraphs. */
@@ -153,6 +188,7 @@ h2 {
   margin: 3em 0 1em 0;
   font-size: 125%;
   text-transform: uppercase;
+  color: var(--h2-ink);
 }
 
 /* Disable small capitals inside headings. */
@@ -179,19 +215,21 @@ h2 {
 h3 {
   margin: 0 0 0.75em 0;
   font-size: 115%;
+  color: var(--h3-ink);
 }
 
 p + h3 {
   margin-top: 3.5em;
 }
 
-/* Distinguish subheadings with italics at the body text size. */
+/* Distinguish subheadings with italics at the body text size, centred since 1.55 (Rocco's request;
+   flush left up to 1.54). */
 h4, .subheading, .titoletto {
   text-indent: 0;
-  text-align: left;
+  text-align: center;
   margin: 2.5em 0 0.5em 0;
   font-size: 100%;
-  font-weight: 500;
+  font-weight: 400;
   font-style: italic;
   line-height: inherit;
   page-break-after: avoid;
@@ -204,7 +242,7 @@ h3 + h4, h3 + .subheading, h3 + .titoletto {
 }
 
 /* Align Markdown headings with the document text. */
-.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+.markdown-body :is(h1, h2, h3, h4) {
   text-align: left;
 }
 
@@ -266,29 +304,24 @@ Reference rule with expanded letter spacing.
 }
 
 /* Style title-page text. */
-.title {
-  color: #236c80;
+.title, .aut, .aut-sub {
+  color: var(--heading-ink);
   text-indent: 0;
+  font-weight: 700;
+}
+
+.title {
   text-align: center;
   margin-bottom: 3em;
   font-family: inherit;
   font-size: 1.2em;
-  font-weight: 700;
   line-height: 1.4;
 }
 
-.aut {
-  color: #236c80;
-  text-indent: 0;
-  font-size: 170%;
-  font-weight: 700;
-}
+.aut { font-size: 170%; }
 
 .aut-sub {
-  color: #236c80;
-  text-indent: 0;
   font-size: 140%;
-  font-weight: 700;
   margin-bottom: 1em;
 }
 
@@ -325,11 +358,11 @@ a:any-link {
 .small-caps :is(code, pre, kbd, samp, tt),
 .small-caps :is(code, pre, kbd, samp, tt) * {
   /* JetBrains Mono, as declared at the top (1.50; the system's monospace up to 1.43). */
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--code-font);
   font-variant-caps: normal;
   font-variant-ligatures: none;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--code-weight);
   letter-spacing: normal;
   text-transform: none;
   text-indent: 0;
@@ -343,22 +376,23 @@ code, kbd, samp, tt {
   color: var(--technical-ink);
 }
 code, tt {
-  background: var(--brano-fondo);
-  border-radius: 0.15em;
-  padding: 0.08em 0.22em;
+  color: var(--code-ink);
+  background: var(--code-ground);
+  border-radius: var(--code-radius);
+  padding: var(--code-padding);
   overflow-wrap: anywhere;
 }
 pre {
   box-sizing: border-box;
   max-inline-size: 100%;
   margin: 1.4em 0;
-  padding: 0.8em 1em;
+  padding: var(--pre-padding);
   font-size: 0.9em;
-  line-height: 1.5;
-  color: var(--technical-ink);
-  background: var(--brano-fondo);
+  line-height: var(--pre-leading);
+  color: var(--pre-ink);
+  background: var(--pre-ground);
   border: 0;
-  border-radius: 0.2em;
+  border-radius: var(--pre-radius);
   white-space: pre;
   overflow-wrap: normal;
   overflow: auto;
@@ -366,6 +400,7 @@ pre {
 }
 pre :is(code, samp, kbd, tt) {
   font-size: inherit;
+  color: inherit;
   background: none;
   border: 0;
   border-radius: 0;
@@ -391,18 +426,18 @@ a:any-link :is(code, samp, tt) { color: inherit; }
 
 /* Use a muted warm colour for quotations. */
 blockquote:where(:not(.markdown-alert)) {
-  color: color-mix(in srgb, #303735 75%, #f7f8f5);
+  color: var(--quote-ink);
 }
 
 hr {
   border: 0;
-  border-top: 1px solid #dce3dc;
+  border-top: 1px solid var(--rule);
   margin: 2em auto;
 }
 
 ::selection {
-  background-color: #A0D8CA;
-  color: #19433A;
+  background-color: var(--selection-ground);
+  color: var(--selection-ink);
 }
 
 /* Preserve native merged-cell layout and scroll wide tables locally. Since 1.51 the outer border
@@ -444,11 +479,12 @@ table > tr:last-child > :is(th, td) {
 
 th {
   font-weight: 600;
-  background-color: #e3e9e3;
+  color: var(--th-ink);
+  background-color: var(--th-ground);
 }
 
 tbody tr:nth-child(2n) {
-  background-color: #eef1ed;
+  background-color: var(--stripe);
 }
 
 tfoot {
@@ -565,7 +601,7 @@ sup, sub {
 }
 
 mark {
-  background: color-mix(in srgb, #f7b59e 25%, transparent);
+  background: var(--mark);
   color: inherit;
   /* A little room round the text and softened corners since 1.54 (Rocco's request Evidenza, seen
      in a WebKit preview): a point more below, where the descenders are, than the ascenders had;
@@ -632,38 +668,32 @@ html.cover-page img {
   }
 }
 
-/* Use a warm dark palette with near-white text. */
+/* The warm dark palette, with near-white text. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --brano-fondo: #242c29;
+    --page: #191e1d;
+    --ink: #dee5e1;
+    --heading-ink: #6eb7c9;
+    --rule: #303c36;
+    --quote-ink: color-mix(in srgb, var(--ink) 85%, var(--page));
+    --link-ink: #43b59e;
     --technical-ink: #dee5e1;
     --technical-muted: #b8c6be;
     --technical-border: #3d4842;
-    --link-ink: #43b59e;
-  }
-
-  html, body {
-    background-color: #191e1d;
-    color: #dee5e1;
+    --th-ground: #2d3732;
+    --stripe: #202724;
+    --selection-ground: #43B59E;
+    --selection-ink: var(--ink);
+    --brano-fondo: #242c29;
+    --code-ink: #dbadb9;
   }
 
   /* Heavier text in the dark theme through Roboto Flex's grade, which thickens the strokes without widening the letters: weights and tracking stay those of light, and every line breaks where it does in light (1.50; up to 1.43 heavier weights, and a tighter tracking to compensate). GRAD 50 adds about the ink that weight 420 added to 360, measured in WebKit on 2026-10-25 (24px, 7 paragraphs: +9.1% against +9.6%; weight 420 moved the breaks of 3 paragraphs of 7, no grade from 0 to 150 moved any). */
   body { font-variation-settings: 'GRAD' 50; }
 
-  h1, h2, h3, .title, .aut, .aut-sub { color: #6eb7c9; }
-
-  th { background-color: #2d3732; }
-  tbody tr:nth-child(2n) { background-color: #202724; }
-
-  h1 { border-bottom-color: #303c36; }
-  hr { border-top-color: #303c36; }
-
-  blockquote:where(:not(.markdown-alert)) {
-    color: color-mix(in srgb, #dee5e1 85%, #191e1d);
-  }
-  ::selection {
-    background-color: #43B59E;
-    color: #dee5e1;
+  /* The checkmark takes the dark link colour (an image's colour cannot be a variable). */
+  .task-list-item input[type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2343b59e' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E");
   }
 }
 
@@ -903,17 +933,3 @@ img[align='left'] { padding-right: 1.25em; }
   }
 }
 
-/* The checkmark takes the dark link colour. */
-@media (prefers-color-scheme: dark) {
-  .task-list-item input[type='checkbox']:checked {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2343b59e' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E");
-  }
-}
-
-/* Code in RoccobotOS 1.40's colour (its code is plum by day, pink by night); blocks keep the text's ink. */
-code, kbd, tt { color: #9b5065; }
-pre :is(code, samp, kbd, tt) { color: inherit; }
-@media (prefers-color-scheme: dark) {
-  code, kbd, tt { color: #dbadb9; }
-  pre :is(code, samp, kbd, tt) { color: inherit; }
-}
