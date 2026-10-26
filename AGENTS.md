@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.14
+> **Versione**: 2.15
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
@@ -139,7 +139,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Un'affermazione non è una verifica**, nemmeno se è dell'utente: un fatto si dà per accertato
   solo con un dato letto sul momento (`Roccobot.md` § '🧪 Test e verifiche').
 - **Raccomandazioni di prodotti**: paese d'origine sempre; niente Israele né entità legate;
-  prima i servizi europei; prima l'open source e il pagamento una tantum; **criptovalute mai**;
+  prima i servizi europei, salvo uno gratuito e più efficace; prima l'open source e il pagamento una tantum; **criptovalute mai**;
   **niente spoiler**.
 
 ## 🚦 Per agente: il cancello e il go-live
