@@ -38,8 +38,8 @@ codice in linea e `stile2` no. Con `-elem stile1 stile2`, l'uscita definisce le 
 
 | come lo nomina | che cosa è |
 |---|---|
-| `RoccobotOS` | lo stile più recente dell'indice <https://roccobot.github.io/RoccobotOS/Styles/index.json> |
-| `RoccobotOS142`, `RoccobotOS 1.42` | quella versione, in <https://roccobot.github.io/RoccobotOS/Styles/> |
+| `RoccobotOS` | lo stile più recente dell'indice <https://roccobot.github.io/RoccobotOS/styles/index.json> |
+| `RoccobotOS142`, `RoccobotOS 1.42` | quella versione, in <https://roccobot.github.io/RoccobotOS/styles/> |
 | `AomidoriFlex`, `Aomidori Flex`, `Flex` | <https://roccobot.github.io/styles/AomidoriFlex.css> |
 | un altro nome che comincia con `Aomidori` | la variante con quel nome in <https://roccobot.github.io/styles/> |
 

@@ -46,10 +46,10 @@ def resolve(name):
     m = re.fullmatch(r"roccobotos(\d*)", key)
     if m:
         if m.group(1):
-            return f"{SITE}/RoccobotOS/Styles/RoccobotOS{m.group(1)}.css"
-        index = json.loads(fetch(f"{SITE}/RoccobotOS/Styles/index.json"))
+            return f"{SITE}/RoccobotOS/styles/RoccobotOS{m.group(1)}.css"
+        index = json.loads(fetch(f"{SITE}/RoccobotOS/styles/index.json"))
         newest = max(index["styles"], key=lambda s: float(s["version"]))
-        return f"{SITE}/RoccobotOS/Styles/{newest['file']}"
+        return f"{SITE}/RoccobotOS/styles/{newest['file']}"
     if key in ("aomidoriflex", "flex"):
         return f"{SITE}/styles/AomidoriFlex.css"
     if key.startswith("aomidori"):
@@ -65,7 +65,7 @@ def fetch(source):
         except OSError:
             # The house sheets also live in the local clones, for a session without network.
             local = {f"{SITE}/styles/": HUB / "styles",
-                     f"{SITE}/RoccobotOS/Styles/": HUB.parent / "roccobotos" / "Styles"}
+                     f"{SITE}/RoccobotOS/styles/": HUB.parent / "roccobotos" / "styles"}
             for prefix, folder in local.items():
                 if source.startswith(prefix) and (folder / source[len(prefix):]).is_file():
                     return (folder / source[len(prefix):]).read_text(encoding="utf-8")
