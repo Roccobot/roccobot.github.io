@@ -9,6 +9,20 @@
 > `rules/Roccobot.md` di `Roccobot/tools`, § '🗄️ Le cose tolte vivono in Removed.md').
 > Le voci vanno dalla più recente alla più vecchia.
 
+## 🧩 Le 13 skill di terzi ritirate dagli autori
+
+- **Che cosa erano**: skill di terzi di `.agents/skills/` che i pacchetti di origine non
+  contengono più dall'aggiornamento mensile di ottobre 2026, e che lo script
+  `.memo/scripts/skills-update.sh` segnalava come 'non più fornita': `archify-review`,
+  `brandkit`, `design-taste-frontend-v1`, `full-output-enforcement`, `gpt-taste`,
+  `high-end-visual-design`, `image-to-code`, `imagegen-frontend-mobile`,
+  `imagegen-frontend-web`, `industrial-brutalist-ui`, `minimalist-ui`,
+  `redesign-existing-projects` e `stitch-design-taste`.
+- **Tolte il 2026-10-26** su richiesta dell'utente: una skill ritirata dagli autori non si tiene
+  nel proprio archivio, mentre una ancora fornita ma ferma si rivaluta ogni sei mesi.
+- **Si recuperano dal commit `af711b4`** del ramo `master` (#1403, l'ultimo che le contiene), per
+  esempio `git show af711b4:.agents/skills/brandkit/SKILL.md`.
+
 ## 🎨 Il foglio di stile `Roccobot.css` della skill `epub`
 
 - **Che cosa faceva**: era il foglio di stile della casa, l'unico che un libro della skill `epub`
