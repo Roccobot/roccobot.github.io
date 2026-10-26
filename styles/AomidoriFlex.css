@@ -1,16 +1,16 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.53
+#VERSION: 1.54
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
    and in the site), so the final rendering of the type is decided here: Roboto Flex for the text,
-   Source Serif 4 for verses and quotations (since 1.53; Gelasio in 1.50-1.52), JetBrains Mono for
-   code, each followed only by the generic
-   family of its kind, which every system has. The original files of Google Fonts, under the SIL
-   Open Font License 1.1. Roboto Flex's italic is its slant axis. */
+   JetBrains Mono for code, each followed only by the generic family of its kind, which every
+   system has. The original files of Google Fonts, under the SIL Open Font License 1.1. Roboto
+   Flex's italic is its slant axis. Verses and quotations are in Georgia, which every Mac has, with
+   the generic serif after it (since 1.54; Gelasio in 1.50-1.52, Source Serif 4 in 1.53). */
 @font-face {
   font-family: 'Roboto Flex';
   src: url('AomidoriFlex/RobotoFlex.ttf') format('truetype');
@@ -19,20 +19,6 @@
   /* Its italic is its slant, kept to 7 degrees since 1.53 (Rocco's note B on the 2.59 round: the
      emphasis leaned too much at the font's 10). */
   font-style: oblique 0deg 7deg;
-}
-
-@font-face {
-  font-family: 'Source Serif 4';
-  src: url('AomidoriFlex/SourceSerif4.ttf') format('truetype');
-  font-weight: 200 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Source Serif 4';
-  src: url('AomidoriFlex/SourceSerif4-Italic.ttf') format('truetype');
-  font-weight: 200 900;
-  font-style: italic;
 }
 
 @font-face {
@@ -77,7 +63,11 @@ body {
   font-weight: 360;
   /* Keep generous line spacing for continuous reading. */
   line-height: 1.6;
-  letter-spacing: 0.012em;
+  /* Roboto Flex a little wider and more open since 1.54 (Rocco's choice Falcata-01, from WebKit
+     previews: width 107 and tracking 0.02em; up to 1.53 width 100 and 0.012em), the same in both
+     themes, which differ only in the grade. */
+  font-stretch: 107%;
+  letter-spacing: 0.02em;
   font-kerning: normal;
   font-optical-sizing: auto;
   /* No slant made up by the browser (1.53): up to 1.52 WebKit drew Roboto Flex's italics with a
@@ -574,6 +564,14 @@ sup, sub {
 mark {
   background: color-mix(in srgb, #c8ad75 25%, transparent);
   color: inherit;
+  /* A little room round the text and softened corners since 1.54 (Rocco's request Evidenza, seen
+     in a WebKit preview): a point more below, where the descenders are, than the ascenders had;
+     each line of a highlight that wraps keeps its own room and corners. */
+  padding-inline: 0.12em;
+  padding-bottom: 0.05em;
+  border-radius: 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* Preserve mathematical notation inside headings and small capitals. */
@@ -666,9 +664,10 @@ html.cover-page img {
   }
 }
 
-/* Source Serif 4 italics for verses, quotations and epigraphs (1.53; Georgia up to 1.43, Gelasio in 1.50-1.52, which Rocco found too angular). */
+/* Georgia italics for verses, quotations and epigraphs, the system's (1.54, Rocco's choice: none of
+   its substitutes pleased him; Georgia up to 1.43, Gelasio in 1.50-1.52, Source Serif 4 in 1.53). */
 :is(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
-  font-family: 'Source Serif 4', serif;
+  font-family: Georgia, serif;
   font-style: italic;
   font-weight: 400;
 }
