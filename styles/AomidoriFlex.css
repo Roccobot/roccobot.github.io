@@ -1,13 +1,14 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.52
+#VERSION: 1.53
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
    and in the site), so the final rendering of the type is decided here: Roboto Flex for the text,
-   Gelasio for verses and quotations, JetBrains Mono for code, each followed only by the generic
+   Source Serif 4 for verses and quotations (since 1.53; Gelasio in 1.50-1.52), JetBrains Mono for
+   code, each followed only by the generic
    family of its kind, which every system has. The original files of Google Fonts, under the SIL
    Open Font License 1.1. Roboto Flex's italic is its slant axis. */
 @font-face {
@@ -15,20 +16,22 @@
   src: url('AomidoriFlex/RobotoFlex.ttf') format('truetype');
   font-weight: 100 1000;
   font-stretch: 25% 151%;
-  font-style: oblique 0deg 10deg;
+  /* Its italic is its slant, kept to 7 degrees since 1.53 (Rocco's note B on the 2.59 round: the
+     emphasis leaned too much at the font's 10). */
+  font-style: oblique 0deg 7deg;
 }
 
 @font-face {
-  font-family: 'Gelasio';
-  src: url('AomidoriFlex/Gelasio.ttf') format('truetype');
-  font-weight: 400 700;
+  font-family: 'Source Serif 4';
+  src: url('AomidoriFlex/SourceSerif4.ttf') format('truetype');
+  font-weight: 200 900;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Gelasio';
-  src: url('AomidoriFlex/Gelasio-Italic.ttf') format('truetype');
-  font-weight: 400 700;
+  font-family: 'Source Serif 4';
+  src: url('AomidoriFlex/SourceSerif4-Italic.ttf') format('truetype');
+  font-weight: 200 900;
   font-style: italic;
 }
 
@@ -77,6 +80,10 @@ body {
   letter-spacing: 0.012em;
   font-kerning: normal;
   font-optical-sizing: auto;
+  /* No slant made up by the browser (1.53): up to 1.52 WebKit drew Roboto Flex's italics with a
+     synthetic slant of its own, not with the font's axis; bold and small capitals may still be
+     made where a font lacks them. */
+  font-synthesis: weight small-caps;
   /* No text-rendering: optimizeLegibility since 1.50: with the dark theme's grade set, WebKit drew
      Roboto Flex's italics at another weight and width under it (the subheadings, measured on
      2026-10-25: 284.7px in dark against 278.3px in light; with auto both 278.3). */
@@ -659,9 +666,9 @@ html.cover-page img {
   }
 }
 
-/* Gelasio italics for verses, quotations and epigraphs (1.50; Georgia up to 1.43, whose metrics Gelasio shares). */
+/* Source Serif 4 italics for verses, quotations and epigraphs (1.53; Georgia up to 1.43, Gelasio in 1.50-1.52, which Rocco found too angular). */
 :is(p.vv, blockquote:where(:not(.markdown-alert)), .side, .epigraph, [epub\:type~='epigraph'], [role='doc-epigraph']) {
-  font-family: 'Gelasio', serif;
+  font-family: 'Source Serif 4', serif;
   font-style: italic;
   font-weight: 400;
 }
