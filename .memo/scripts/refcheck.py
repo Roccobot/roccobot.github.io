@@ -948,6 +948,12 @@ def libere_di(paragrafo):
     return fuori
 
 
+# Il registro delle deroghe ai caratteri e al lessico. Una costante, così le prove possono dargli un
+# registro loro: una prova che legge quello vero si rompe quando cambia il dato, come è successo il
+# 2026-10-27, quando la frase con `roba` è uscita dal sito di Aomidori e con lei la sua deroga.
+EXCEPTIONS = Path(__file__).with_name("char-exceptions.json")
+
+
 def approved_ui_spans(text, path):
     """I tratti di testo di UI che l'utente ha scelto parola per parola: `{riga: [(da, a)]}`.
 
@@ -963,7 +969,7 @@ def approved_ui_spans(text, path):
         return {}
     path = Path(path)
     path = (path if path.is_absolute() else Path.cwd() / path).resolve()
-    manifest = Path(__file__).with_name("char-exceptions.json")
+    manifest = EXCEPTIONS
     entries = json.loads(manifest.read_text(encoding="utf-8")).get("ui_texts", [])
     texts = [e["text"] for e in entries
              if path == (_clone(e["repository"]) / e["path"]).resolve()]
@@ -1052,7 +1058,7 @@ def approved_quote_positions(text, path):
     if path is None:
         return set()
     path = Path(path).resolve()
-    manifest = Path(__file__).with_name("char-exceptions.json")
+    manifest = EXCEPTIONS
     entries = json.loads(manifest.read_text(encoding="utf-8"))["quotes"]
     allowed = set()
     for entry in entries:

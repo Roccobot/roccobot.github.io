@@ -438,16 +438,27 @@ class LexiconTests(unittest.TestCase):
                 self.assertEqual(refcheck.formula_defects(text), ([], []))
 
     def test_ui_text_chosen_by_the_owner_passes_only_where_registered(self):
-        # Parola (2026-10-19): the owner keeps 'roba' in the opening line of Aomidori's site, and
-        # char-exceptions.json registers that exact text in that file only.
+        # Parola (2026-10-19): a text the owner chose word for word passes in the file it is
+        # registered for, and only as written. A registry of the test's own: the real one changes
+        # with the sites (on 2026-10-27 the phrase with 'roba' left Aomidori's site, and with it
+        # the registry entry this test used to read).
         page = refcheck.SITO / 'Aomidori/index.html'
-        chosen = "claim: 'Niente fuffa, niente lettura audio, niente roba AI a pagamento.',"
-        self.assertEqual(refcheck.formula_defects(chosen, page)[0], [])
-        for text, path in ((chosen, refcheck.SITO / 'Rules.md'),
-                           ("claim: 'Niente roba inutile.',", page),
-                           ("claim: 'Niente roba IA a pagamento.',", page)):
-            with self.subTest(text=text, path=path):
-                self.assertTrue(refcheck.formula_defects(text, path)[0])
+        chosen = "niente roba AI a pagamento"
+        line = "claim: 'Niente fuffa, niente lettura audio, niente roba AI a pagamento.',"
+        with tempfile.TemporaryDirectory() as folder:
+            registry = Path(folder) / 'char-exceptions.json'
+            registry.write_text('{"quotes": [], "ui_texts": [{"repository": "roccobot.github.io", '
+                                '"path": "Aomidori/index.html", "text": "' + chosen + '"}]}', encoding='utf-8')
+            saved, refcheck.EXCEPTIONS = refcheck.EXCEPTIONS, registry
+            try:
+                self.assertEqual(refcheck.formula_defects(line, page)[0], [])
+                for text, path in ((line, refcheck.SITO / 'Rules.md'),
+                                   ("claim: 'Niente roba inutile.',", page),
+                                   ("claim: 'Niente roba IA a pagamento.',", page)):
+                    with self.subTest(text=text, path=path):
+                        self.assertTrue(refcheck.formula_defects(text, path)[0])
+            finally:
+                refcheck.EXCEPTIONS = saved
 
 
 if __name__ == '__main__':
