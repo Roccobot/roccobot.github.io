@@ -55,10 +55,12 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
      se vanno incluse, e lo script per ora non lo fa;
    - **titolo dedotto, autore non trovato**: si ripassano con `--title` e `--author`.
 4. **Valida con epubcheck**, il validatore ufficiale del W3C (open source, sviluppato dal W3C e
-   dal consorzio DAISY), che gira su Java:
+   dal consorzio DAISY), che gira su Java, alla versione **5.4.0** o successiva:
    ```
-   curl -sSL -o ec.zip https://github.com/w3c/epubcheck/releases/download/v5.2.1/epubcheck-5.2.1.zip && unzip -q ec.zip && java -jar epubcheck-5.2.1/epubcheck.jar "<Titolo>.epub"
+   curl -sSL -o ec.zip https://github.com/w3c/epubcheck/releases/download/v5.4.0/epubcheck-5.4.0.zip && unzip -q ec.zip && java -jar epubcheck-5.4.0/epubcheck.jar "<Titolo>.epub"
    ```
+   ⚠️ La 5.2.1, usata fino al 2026-10-27, non conosce il CSS di oggi e dava cinque errori falsi
+   sulla Flex (misurato sull'EPUB della Groenlandia); la 5.4.0 lo stesso libro lo dà valido.
    Si consegna solo con `0 errors / 0 warnings`. Se Java manca, lo si dice nel resoconto
    invece di dare il libro per valido.
 5. **Consegna** il file all'utente, con il resoconto in breve: i metadati scritti, quelli
@@ -106,6 +108,16 @@ sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md`
 In tutti e due i casi lo script lo riceve con `--css` e lo scrive in `Styles/style.css`. Le regole
 che il testo porta in un `<style>` si accodano in fondo, dopo un commento che lo dichiara: il
 foglio sopra resta intatto. La copertina ha il suo `Styles/cover.css`, con la sola geometria.
+
+⚠️ **I font che il foglio cita col percorso relativo entrano nel libro** (dal 2026-10-27, richiesta
+dell'utente): la Flex chiama i suoi due font come `AomidoriFlex/RobotoFlex.ttf` e
+`AomidoriFlex/JetBrainsMono.ttf`, accanto al foglio, e lo script li copia in `Styles/AomidoriFlex/`
+con la licenza OFL che ciascuno ha accanto (`<nome>-OFL.txt`), dichiarati nel manifesto. Senza, il
+libro si vede bene solo in Aomidori, che i font li ha già, e altrove compaiono dei ripieghi
+generici. Quindi il foglio si passa **dalla sua cartella**, con la cartella dei font accanto:
+`styles/AomidoriFlex.css` dell'hub li ha; se entra la copia del Mac, si mette accanto a lei una
+copia di `styles/AomidoriFlex/` dell'hub. Un font citato e non trovato è una riga ⚠️ del
+resoconto. Vale per ogni foglio, non solo per la Flex.
 
 ## ⚓ Gli ancoraggi
 

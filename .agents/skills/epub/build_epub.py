@@ -452,6 +452,36 @@ def xhtml_page(title, lang, body_xml, css_href=None, extra_head=''):
 
 # ── The book ──
 
+FONT_TYPES = {'.ttf': 'font/ttf', '.otf': 'font/otf', '.woff': 'font/woff', '.woff2': 'font/woff2'}
+
+
+def css_fonts(css, folder, report):
+    """The font files the stylesheet names with a relative url(), with their licences: a list of
+    (path inside Styles/, file on disk, media type). Aomidori Flex names its fonts as
+    `AomidoriFlex/<file>`, next to the sheet, with an OFL licence beside each; without them in the
+    book the reader shows generic fallbacks outside Aomidori (2026-10-27, the Greenland EPUB)."""
+    files, seen = [], set()
+    for ref in re.findall(r'url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)', css):
+        ref = ref.strip()
+        if ref.startswith(('data:', 'http:', 'https:', '/')) or Path(ref).suffix.lower() not in FONT_TYPES or ref in seen:
+            continue
+        seen.add(ref)
+        path = (folder / ref).resolve()
+        if not path.is_file():
+            report.append(f'⚠️ font citato dal CSS e non trovato: {ref} (fuori da Aomidori si vedrà un ripiego)')
+            continue
+        files.append((ref, path, FONT_TYPES[path.suffix.lower()]))
+        # The licence travels with the font: the OFL asks for it wherever the font goes.
+        for licence in sorted(path.parent.glob(path.stem + '*.txt')):
+            name = str(Path(ref).parent / licence.name)
+            if name not in seen:
+                seen.add(name)
+                files.append((name, licence, 'text/plain'))
+    if files:
+        report.append(f'{sum(1 for f in files if f[2] != "text/plain")} font del CSS inclusi, con le loro licenze')
+    return files
+
+
 def build(args):
     cover = Path(args.cover).read_bytes()
     source = Path(args.text).read_bytes().decode('utf-8', errors='replace')
@@ -459,6 +489,7 @@ def build(args):
     css = Path(args.css).read_text(encoding='utf-8')
     body, lang, title, found, moved, toc, report = clean(source, args.lang)
     labels = LABELS.get(lang, LABELS['en'])
+    fonts = css_fonts(css, Path(args.css).resolve().parent, report)
     title = args.title or found.get('dc.title') or title or 'Senza titolo'
     author = args.author or found.get('dc.creator') or found.get('author') or ''
     if not args.title:
@@ -562,6 +593,8 @@ def build(args):
            f'    <item id="text" href="Text/text.xhtml" media-type="application/xhtml+xml"/>\n'
            f'    <item id="css" href="Styles/style.css" media-type="text/css"/>\n'
            f'    <item id="cover-css" href="Styles/cover.css" media-type="text/css"/>\n'
+           + ''.join(f'    <item id="font-{i}" href="Styles/{esc_attr(name)}" media-type="{kind}"/>\n'
+                     for i, (name, _, kind) in enumerate(fonts, 1)) +
            f'  </manifest>\n'
            f'  <spine>\n    <itemref idref="cover"/>\n    <itemref idref="text"/>\n  </spine>{guide}\n</package>\n')
     container = ('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -582,6 +615,8 @@ def build(args):
         z.writestr('EPUB/Text/text.xhtml', text_page, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Styles/style.css', css, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Styles/cover.css', cover_css, compress_type=zipfile.ZIP_DEFLATED)
+        for name, path, _ in fonts:
+            z.write(path, f'EPUB/Styles/{name}', compress_type=zipfile.ZIP_DEFLATED)
 
     report += [f'titolo: {title}', f'autore: {author or "(nessuno)"}', f'identificatore: {ident}',
                f'voci d\'indice: {len(toc)}', f'scritto: {out}']
