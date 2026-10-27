@@ -18,9 +18,10 @@
   ⚠️ Never innerHTML: every text goes in with textContent.
   The English texts are written in the page itself, so it reads (and is indexed) without
   JavaScript; the script switches them to Italian for an Italian browser, title included.
-  The screenshot on the right (below, on narrow screens) is one file per language and theme:
-  assets/screenshot-it-light.png, screenshot-it-dark.png, screenshot-en-light.png and
-  screenshot-en-dark.png (about 1600 px wide). Until a file exists its slot stays hidden and the
+  The screenshot on the right (below, on narrow screens) is one file per theme, the same in both
+  languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.png and
+  screenshot-dark.png, a 1600 x 1176 pt window taken at full resolution (3200 x 2352 px), made by
+  the owner. Until a file exists its slot stays hidden and the
   page keeps one column: adding the four files is the whole change.
   ⚠️ The icon is Graphe's artwork, copied unaltered from Resources/Icon/ (aomidori-v2.svg and
   aomidori-v2-dark.svg): the page picks one per theme, it never redraws it.
@@ -146,14 +147,13 @@
   .solo-mac[hidden]{display:none}
 
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
-     as a broken image. Expected files, one per language and theme (see the script):
-     assets/screenshot-it-light.png, -it-dark, -en-light, -en-dark; a portrait window without
-     the sidebar (the owner's requests, 2026-10-10). In two columns its place comes from the
-     feature cards below: it starts where the right cards' text starts, and it is as wide as the
-     span from the left cards' text to the right cards' glyphs (402 px); its top is on the
-     icon's tile. Its bottom was at the end of the install steps, which went with the Mac App
-     Store (2026-10-27): the picture kept its proportions and now reaches below the left column
-     (the owner's choice Schermata-01; see ScreenshotSession.contentSize).
+     as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.png
+     and -dark.png, a landscape window of 1600 x 1176 pt (3200 x 2352 px) since the owner's choice
+     Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns its
+     place comes from the feature cards below: it starts where the right cards' text starts, and
+     it is as wide as the span from the left cards' text to the right cards' glyphs (402 px), so
+     it is 295.5 px tall, the height of the left column with the same text in both languages
+     (measured on 2026-10-27); its top is on the icon's tile.
      The shadow is AIV's: a soft shadow on light, and on dark (where black would not show) a
      shadow plus a glow in the accent colour. It is a drop-shadow, which follows the window's
      rounded corners and takes no room: only the picture lines up with the column's edges. */
@@ -256,7 +256,7 @@
       </div>
     </div>
   </div>
-  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1600" height="1894" alt=""></figure>
+  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="3200" height="2352" alt=""></figure>
   </div>
 
   <div class="fatti">
@@ -467,17 +467,17 @@
     tastoTema.title = T.titoliTema[altro];
   }
 
-  // The screenshot for the language and theme in force: assets/screenshot-<it|en>-<light|dark>.png.
+  // The screenshot for the theme in force, the same in both languages: assets/screenshot-<light|dark>.png.
   // The slot stays hidden until the file has loaded, and a file that failed is not asked again.
   // The screenshots keep their names when they are taken again, so a browser could show an old
   // one from its cache next to a new one: their version goes in the address, and goes up by one
-  // whenever scripts/screenshots.sh runs.
-  var VERSIONE_SCHERMATE = 6;
+  // whenever they are replaced.
+  var VERSIONE_SCHERMATE = 7;
   var schermataMancante = {};
   function mostraSchermata(T) {
     var figura = el('schermata');
     var img = el('schermata-img');
-    var src = 'assets/screenshot-' + stato.lingua + '-' + temaInVigore() + '.png?v=' + VERSIONE_SCHERMATE;
+    var src = 'assets/screenshot-' + temaInVigore() + '.png?v=' + VERSIONE_SCHERMATE;
     img.alt = T.schermata;
     if (schermataMancante[src]) { nascondiSchermata(); return; }
     if (img.getAttribute('src') === src) return;
