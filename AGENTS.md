@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.18
+> **Versione**: 2.19
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -247,8 +247,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   una **divergenza funzionale non deve esistere**, e restano diversi solo il contenuto del giro e
   ciò che è specifico del progetto. Chi non raggiunge il repo dell'altro DF lo dice all'utente
   nello stesso turno.
-- **Una prova che cita un file ne dà la scorciatoia**: allegato in cloud, percorso (e link, se
-  funziona) in locale (`Roccobot.md` § '🔁 Il giro del collaudo').
+- **Una prova che cita un file ne dà la scorciatoia**: allegato in cloud, percorso col pulsante
+  `Copia` in locale (`Roccobot.md` § '🔁 Il giro del collaudo').
 
 ## 🏗️ Sviluppo
 
