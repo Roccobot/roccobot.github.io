@@ -18,8 +18,9 @@
   ⚠️ Every sentence here is a claim about the code, and the code is what makes it true: no
   analytics, ads or crash reporting library (Package.swift of Roccobot/Aomidori); the pages load
   nothing from the network (PageSchemeHandler); the network is opened only by AniList, once the
-  reader connects an account (AniListService, the token in the Keychain), and by Sparkle in the
-  version from this site. Whoever adds a library or a request that sends something changes this
+  reader connects an account (AniListService, the token in the Keychain), by the styles' update
+  (2.74, StyleUpdater: off until the reader turns it on, and it reads only styles/ of this site) and
+  by Sparkle in the version from this site. Whoever adds a library or a request that sends something changes this
   page in the same release, and the App Store's privacy answers with it (docs/AppStore.md there).
   Paragraphs wrap with text-wrap: pretty, and their lines were checked at 390 px and on desktop
   (Roccobot.md, the rule on words left alone at either end of a sentence).
@@ -66,7 +67,7 @@
   <p>Il&nbsp;collegamento ad&nbsp;AniList è&nbsp;facoltativo, e&nbsp;resta spento finché non lo&nbsp;accendi&nbsp;tu. Se&nbsp;colleghi&nbsp;il&nbsp;tuo account in&nbsp;Impostazioni&nbsp;›&nbsp;Fumetti, Aomidori manda ad&nbsp;AniList, con quell'account, le&nbsp;ricerche delle serie che scrivi per collegarle e&nbsp;il&nbsp;numero dei capitoli che leggi fino all'ultima pagina, per le&nbsp;serie collegate. Il&nbsp;token&nbsp;d'accesso resta nel Portachiavi del&nbsp;Mac. Puoi&nbsp;scollegare l'account quando vuoi, dalla stessa scheda; quello che AniList conserva segue la&nbsp;sua informativa.</p>
 
   <h2>La rete</h2>
-  <p>Oltre ad&nbsp;AniList, Aomidori si&nbsp;collega a&nbsp;internet solo nella versione scaricata da&nbsp;questo sito, per gli aggiornamenti: se&nbsp;l'aggiornamento automatico è&nbsp;acceso, una volta al&nbsp;giorno chiede a&nbsp;questo sito qual è&nbsp;l'ultima versione, e&nbsp;la&nbsp;scarica da&nbsp;GitHub. Come&nbsp;per ogni sito, quelle richieste fanno vedere l'indirizzo IP&nbsp;del&nbsp;Mac. La&nbsp;versione&nbsp;del Mac App Store non lo&nbsp;fa: gli aggiornamenti li&nbsp;gestisce l'App&nbsp;Store.</p>
+  <p>Oltre ad&nbsp;AniList, Aomidori si&nbsp;collega a&nbsp;internet in&nbsp;due casi, entrambi facoltativi. Il&nbsp;primo è&nbsp;l'aggiornamento degli stili, spento finché non lo&nbsp;accendi in&nbsp;Impostazioni&nbsp;›&nbsp;Contenuto: una volta al&nbsp;giorno chiede a&nbsp;questo sito se&nbsp;ci sono versioni nuove di&nbsp;Aomidori&nbsp;Flex, Aomidori&nbsp;Menta e&nbsp;RoccobotOS, e&nbsp;scarica solo fogli di&nbsp;stile, mai programmi. Il&nbsp;secondo vale solo nella versione scaricata da&nbsp;questo sito, per gli aggiornamenti dell'app: se&nbsp;l'aggiornamento automatico è&nbsp;acceso, una volta al&nbsp;giorno chiede a&nbsp;questo sito qual è&nbsp;l'ultima versione, e&nbsp;la&nbsp;scarica da&nbsp;GitHub. Come&nbsp;per ogni sito, quelle richieste fanno vedere l'indirizzo IP&nbsp;del&nbsp;Mac. Gli&nbsp;aggiornamenti dell'app, nella versione del Mac App Store, li&nbsp;gestisce l'App&nbsp;Store.</p>
 
   <h2>Modifiche</h2>
   <p>Se&nbsp;il&nbsp;comportamento di&nbsp;Aomidori cambia, questa pagina cambia nella stessa versione, con la&nbsp;data aggiornata in&nbsp;testa.</p>
@@ -96,7 +97,7 @@
   <p>The link to&nbsp;AniList is&nbsp;optional, and stays off until you turn it&nbsp;on. If&nbsp;you&nbsp;connect your account in&nbsp;Settings&nbsp;›&nbsp;Comics, Aomidori sends AniList, with that account, the searches for the series you type to&nbsp;link them and the number of&nbsp;the chapters you read to&nbsp;the last page, for the linked&nbsp;series. The&nbsp;access token stays in&nbsp;the Mac's&nbsp;Keychain. You&nbsp;can disconnect the account at&nbsp;any time, from the same tab; what AniList keeps follows its own&nbsp;policy.</p>
 
   <h2>Network</h2>
-  <p>Besides AniList, Aomidori connects to&nbsp;the internet only in&nbsp;the version downloaded from this site, for updates: when automatic updates are on, it&nbsp;asks this site once a&nbsp;day for the latest version, and downloads it&nbsp;from&nbsp;GitHub. As&nbsp;with&nbsp;any site, those requests show the Mac's&nbsp;IP&nbsp;address. The&nbsp;Mac App Store's&nbsp;version does not: the App Store handles its updates.</p>
+  <p>Besides AniList, Aomidori connects to&nbsp;the internet in&nbsp;two cases, both optional. The&nbsp;first is&nbsp;the styles' update, off until you turn it&nbsp;on in&nbsp;Settings&nbsp;›&nbsp;Content: once a&nbsp;day it&nbsp;asks this site for new versions of&nbsp;Aomidori&nbsp;Flex, Aomidori&nbsp;Menta and&nbsp;RoccobotOS, and downloads style sheets only, never programs. The&nbsp;second applies only to&nbsp;the version downloaded from this site, for the app's updates: when automatic updates are on, it&nbsp;asks this site once a&nbsp;day for the latest version, and downloads it&nbsp;from&nbsp;GitHub. As&nbsp;with&nbsp;any site, those requests show the Mac's&nbsp;IP&nbsp;address. In&nbsp;the Mac App Store's&nbsp;version, the App Store handles the app's updates.</p>
 
   <h2>Changes</h2>
   <p>If&nbsp;Aomidori's&nbsp;behavior changes, this page changes in&nbsp;the same version, with the date at&nbsp;the top updated.</p>
