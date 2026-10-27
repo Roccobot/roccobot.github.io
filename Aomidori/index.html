@@ -12,11 +12,9 @@
   whose structure, theme tokens, footer and scripts are reused here on the owner's instruction.
   Author: Rocco Casadei, a.k.a. Roccobot
 
-  ⚠️ Nothing on this page changes at a release: the download button, the file name and its size
-  come from ONE call to the GitHub API (releases/latest) while the page loads, as on the AIV page.
-  Without an answer the button still works: it points at the latest release on GitHub.
-  ⚠️ releases/latest skips pre-releases and drafts, so a version published as a pre-release
-  never reaches this page: that is the switch between a main release and a test build.
+  ⚠️ Nothing on this page changes at a release: since the Mac App Store approved the app
+  (2026-10-27, Insegna), the button leads to its page there and nothing else. Up to then it asked
+  the GitHub API for the latest ZIP of Roccobot/Aomidori-releases, with steps to install it.
   ⚠️ Never innerHTML: every text goes in with textContent.
   The English texts are written in the page itself, so it reads (and is indexed) without
   JavaScript; the script switches them to Italian for an Italian browser, title included.
@@ -143,12 +141,7 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.18);
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
-  .tecnica{font-size:13px; color:var(--text-muted); font-variant-numeric:tabular-nums}
-  .tecnica .minuta{opacity:0.72}
-  .installa{font-size:14px; line-height:1.5; color:var(--text-muted); max-width:52ch; margin:8px 0 0}
-  .installa h2{font-size:14px; font-weight:600; color:var(--text-body); margin:0 0 4px}
-  .installa ol{margin:0; padding-left:1.3em}
-  .installa li{margin:2px 0}
+  .tecnica{font-size:13px; color:var(--text-muted); opacity:0.72; margin:0}
   .solo-mac{font-size:14px; color:var(--text-body); margin:0}
   .solo-mac[hidden]{display:none}
 
@@ -158,8 +151,9 @@
      the sidebar (the owner's requests, 2026-10-10). In two columns its place comes from the
      feature cards below: it starts where the right cards' text starts, and it is as wide as the
      span from the left cards' text to the right cards' glyphs (402 px); its top is on the
-     icon's tile, its bottom at the end of the install steps. The picture's proportions are
-     measured on that layout, in both languages (see ScreenshotSession.contentSize).
+     icon's tile. Its bottom was at the end of the install steps, which went with the Mac App
+     Store (2026-10-27): the picture kept its proportions and now reaches below the left column
+     (the owner's choice Schermata-01; see ScreenshotSession.contentSize).
      The shadow is AIV's: a soft shadow on light, and on dark (where black would not show) a
      shadow plus a glow in the accent colour. It is a drop-shadow, which follows the window's
      rounded corners and takes no room: only the picture lines up with the column's edges. */
@@ -184,10 +178,9 @@
       max-width:calc(var(--schermata-inizio) + var(--schermata-larghezza));
     }
     .con-schermata .parole{max-width:none}
-    /* The subtitle names books, comics and documents since 2.00 (Rocco's answer F2): wider than
-       its column, it wraps in two balanced lines, which stay within the icon's height, so the
-       column keeps its measure. Up to then it was kept on one line with nowrap. */
-    .con-schermata .sottotitolo{text-wrap:balance}
+    /* The subtitle on one line (Rocco's note on 2.10-13: books and comics, short; from 2.00 to 2.10
+       it named the documents too and wrapped in two balanced lines). */
+    .con-schermata .sottotitolo{white-space:nowrap}
     .con-schermata .schermata{margin-top:calc(var(--icona) * 100 / 1024)}
   }
 
@@ -228,11 +221,7 @@
     h1{font-size:30px}
     .scarica{font-size:18px; padding:16px 30px; border-radius:14px; align-self:center}
     .blocco-scarica{align-items:stretch}
-    .tecnica{text-align:center; line-height:1.8}
-    .installa{align-self:center}
-    .solo-mac{text-align:center}
-    .tecnica .sep{display:none}
-    .tecnica .pezzo{display:block}
+    .tecnica, .solo-mac{text-align:center}
     .fatti{grid-template-columns:1fr; padding-top:40px}
   }
 </style>
@@ -250,28 +239,20 @@
     </picture>
     <div>
       <h1>Aomidori</h1>
-      <p class="sottotitolo"><span id="sottotitolo">Book, comic and document reader for macOS</span></p>
+      <p class="sottotitolo"><span id="sottotitolo">Book and comic reader for macOS</span></p>
     </div>
     <div class="parole">
-      <p class="claim" id="claim">A light, snappy reader of books, comics and documents: books scroll like a web page, comics turn page by page, and your CSS always has the last word.</p>
+      <p class="claim" id="claim">Books scroll like web pages, comics turn the way they should, and your CSS is always right. No fluff, no read-aloud, no paid AI stuff.</p>
       <div class="blocco-scarica">
         <p class="solo-mac" id="solo-mac" hidden></p>
-        <a class="scarica" id="scarica" href="https://github.com/Roccobot/Aomidori-releases/releases/latest">
+        <a class="scarica" id="scarica" href="https://apps.apple.com/app/id6824296623">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M12 3.5v11.2M12 15.6l4.4-4.4M12 15.6L7.6 11.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
             <path d="M4.4 18.8h15.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
           </svg>
           <span id="scarica-testo">Download Aomidori</span>
         </a>
-        <div class="tecnica" id="tecnica"><span class="pezzo minuta">macOS 27 or later, Apple Silicon only</span></div>
-        <section class="installa" aria-labelledby="installa-titolo">
-          <h2 id="installa-titolo">Installing</h2>
-          <ol>
-            <li id="passo-1">Unzip the download and drag Aomidori to Applications.</li>
-            <li id="passo-2">On first launch macOS stops it, as it doesn't come from the App Store: open System Settings &rsaquo; Privacy &amp; Security and choose Open Anyway.</li>
-            <li id="passo-3">From then on, updates arrive by themselves.</li>
-          </ol>
-        </section>
+        <p class="tecnica" id="tecnica">macOS 27 or later, Apple Silicon only</p>
       </div>
     </div>
   </div>
@@ -356,8 +337,6 @@
 (function () {
   'use strict';
 
-  var REPO = 'Roccobot/Aomidori-releases';
-
   // The texts of both languages. New and changed ones are validated by the owner in the review
   // round (rules: interface texts are written as a copywriter would, then validated).
   var TESTI = {
@@ -365,18 +344,11 @@
       lang: 'it', loc: 'it-IT',
       titolo: 'Aomidori - lettore di libri, fumetti e documenti per macOS',
       descrizione: 'Aomidori: un lettore di libri, fumetti e documenti per macOS, leggero e scattante. I libri scorrono come una pagina web, e il tuo CSS ha l\'ultima parola.',
-      sottotitolo: 'Lettore di libri, fumetti e documenti per macOS',
-      claim: 'Un lettore leggero e scattante di libri, fumetti e documenti: i libri scorrono come una pagina web, i fumetti si sfogliano a pagine, e il tuo CSS ha sempre l\'ultima parola.',
+      sottotitolo: 'Lettore di libri e fumetti per macOS',
+      claim: 'I libri scorrono come pagine Web, i fumetti si sfogliano come si deve, e il tuo CSS ha sempre ragione. Niente fuffa, niente lettura audio, niente roba AI a pagamento.',
       scarica: 'Scarica Aomidori',
       sistema: 'macOS 27 o successivo, solo Apple Silicon',
-      versioni: 'tutte le versioni',
       soloMac: 'Aomidori è un\'app per Mac: scaricala da un Mac con Apple Silicon.',
-      installaTitolo: 'Come si installa',
-      passi: [
-        'Estrai lo ZIP e trascina Aomidori in Applicazioni.',
-        'Al primo avvio macOS la blocca, perché non viene dall\'App Store: apri Impostazioni di Sistema › Privacy e sicurezza e scegli Apri comunque.',
-        'Da lì in poi gli aggiornamenti arrivano da soli.'
-      ],
       schermata: 'Aomidori con un libro aperto',
       fatti: [
         ['Un capitolo, una pagina', 'Ogni capitolo di un libro scorre in verticale come una pagina web, e le frecce cambiano capitolo. Niente impaginazione.'],
@@ -398,18 +370,11 @@
       lang: 'en', loc: 'en-GB',
       titolo: 'Aomidori - book, comic and document reader for macOS',
       descrizione: 'Aomidori: a light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.',
-      sottotitolo: 'Book, comic and document reader for macOS',
-      claim: 'A light, snappy reader of books, comics and documents: books scroll like a web page, comics turn page by page, and your CSS always has the last word.',
+      sottotitolo: 'Book and comic reader for macOS',
+      claim: 'Books scroll like web pages, comics turn the way they should, and your CSS is always right. No fluff, no read-aloud, no paid AI stuff.',
       scarica: 'Download Aomidori',
       sistema: 'macOS 27 or later, Apple Silicon only',
-      versioni: 'all versions',
       soloMac: 'Aomidori is an app for the Mac: download it on a Mac with Apple Silicon.',
-      installaTitolo: 'Installing',
-      passi: [
-        'Unzip the download and drag Aomidori to Applications.',
-        'On first launch macOS stops it, as it doesn\'t come from the App Store: open System Settings › Privacy & Security and choose Open Anyway.',
-        'From then on, updates arrive by themselves.'
-      ],
       schermata: 'Aomidori with a book open',
       fatti: [
         ['One chapter, one page', 'Each chapter of a book scrolls vertically like a web page, and the arrow keys change chapter. No pagination.'],
@@ -435,25 +400,22 @@
     return 'en';
   }
   function el(id) { return document.getElementById(id); }
-  function svuota(nodo) { while (nodo.firstChild) nodo.removeChild(nodo.firstChild); }
 
   // The words the rule on lines wants together (rules/Roccobot.md of Roccobot/tools, 3.89: no
   // word left alone at either end of a sentence), bound with no-break spaces as each text is
   // written, in both languages: a word of one or two letters with the next one, a sentence's first
-  // word with the second, a sentence's last word under seven characters with the one before, and
-  // the steps of a path in System Settings. Checked on the real lines in WebKit at 390, 768 and
-  // 1280 px (2.00, Rocco's answer F2).
+  // word with the second, and a sentence's last word under seven characters with the one before.
+  // Checked on the real lines in WebKit at 390, 768 and 1280 px (2.00, Rocco's answer F2).
   var NB = '\u00A0';
   function lega(testo) {
     return testo
       .replace(/(?<![^\s(])(\p{L}{1,2}) (?=\S)/gu, '$1' + NB)
       .replace(/([.!?]) (\S+) (?=\S)/g, '$1 $2' + NB)
-      .replace(/ ([\p{L}']{1,6}[.!?])(?=\s|$)/gu, NB + '$1')
-      .replace(/ \u203A /g, NB + '\u203A' + NB);
+      .replace(/ ([\p{L}']{1,6}[.!?])(?=\s|$)/gu, NB + '$1');
   }
 
   // The theme follows the system until the visitor picks one, for this visit only (AIV's rule).
-  var stato = { lingua: linguaIniziale(), scelto: null, rel: null };
+  var stato = { lingua: linguaIniziale(), scelto: null };
   var mqScuro = window.matchMedia('(prefers-color-scheme: dark)');
   function temaInVigore() { return stato.scelto || (mqScuro.matches ? 'dark' : 'light'); }
 
@@ -467,56 +429,26 @@
   if (mqScuro.addEventListener) mqScuro.addEventListener('change', alSistema);
   else if (mqScuro.addListener) mqScuro.addListener(alSistema);
 
-  // Decimal megabytes, as GitHub and the Finder count them.
-  function peso(byte, loc) {
-    return (byte / 1e6).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' MB';
-  }
-
   // A visitor on a phone or on Windows learns at once that this is an app for the Mac.
   var suMac = /Macintosh|Mac OS X/.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1);
 
   function disegna() {
     var T = TESTI[stato.lingua];
-    var rel = stato.rel;
-    var asset = rel && rel.asset;
     document.documentElement.lang = T.lang;
     document.title = T.titolo;
     var descrizione = document.querySelector('meta[name="description"]');
     if (descrizione) descrizione.setAttribute('content', T.descrizione);
 
-    el('sottotitolo').textContent = lega(T.sottotitolo);
+    // The subtitle's last word tied to the one before: on a phone it wraps as `per macOS`, never
+    // `macOS` alone (2.20, the subtitle of his note on 2.10-13).
+    el('sottotitolo').textContent = lega(T.sottotitolo).replace(/ (\S+)$/, NB + '$1');
     el('claim').textContent = lega(T.claim);
-    el('installa-titolo').textContent = T.installaTitolo;
-    for (var p = 0; p < T.passi.length; p++) el('passo-' + (p + 1)).textContent = lega(T.passi[p]);
     var soloMac = el('solo-mac');
     soloMac.textContent = lega(T.soloMac);
     soloMac.hidden = suMac;
     mostraSchermata(T);
-
-    var tasto = el('scarica');
-    el('scarica-testo').textContent = T.scarica + (rel ? ' ' + rel.tag : '');
-    tasto.href = asset ? asset.browser_download_url
-      : (rel ? rel.pagina : 'https://github.com/' + REPO + '/releases/latest');
-
-    var tecnica = el('tecnica');
-    svuota(tecnica);
-    var pezzi = [];
-    if (asset) pezzi.push({ testo: peso(asset.size, T.loc) });
-    pezzi.push({ testo: T.sistema, classe: ' minuta' });
-    pezzi.push({ testo: T.versioni, href: 'https://github.com/' + REPO + '/releases', classe: ' minuta' });
-    for (var r = 0; r < pezzi.length; r++) {
-      if (r) {
-        var sep = document.createElement('span');
-        sep.className = 'sep';
-        sep.textContent = ' \u00B7 ';
-        tecnica.appendChild(sep);
-      }
-      var pz = document.createElement(pezzi[r].href ? 'a' : 'span');
-      pz.className = 'pezzo' + (pezzi[r].classe || '');
-      pz.textContent = pezzi[r].testo;
-      if (pezzi[r].href) pz.href = pezzi[r].href;
-      tecnica.appendChild(pz);
-    }
+    el('scarica-testo').textContent = T.scarica;
+    el('tecnica').textContent = T.sistema;
 
     for (var f = 0; f < T.fatti.length; f++) {
       var titolo = document.querySelector('[data-t="f' + f + '"]');
@@ -561,35 +493,6 @@
     document.body.classList.remove('con-schermata');
   }
 
-  // One call: the latest main release (pre-releases and drafts excluded) and its ZIP. The answer
-  // is kept for this visit (sessionStorage), so reloading does not spend GitHub's hourly quota;
-  // storage may be unavailable, and then the call is simply made again.
-  var CHIAVE = 'aomidori-release';
-  function leggiRelease() {
-    try {
-      var tenuta = JSON.parse(sessionStorage.getItem(CHIAVE) || 'null');
-      if (tenuta && tenuta.tag) { stato.rel = tenuta; disegna(); return; }
-    } catch (e) { /* no storage: ask GitHub */ }
-    fetch('https://api.github.com/repos/' + REPO + '/releases/latest', {
-      headers: { Accept: 'application/vnd.github+json' }
-    }).then(function (r) {
-      if (!r.ok) throw new Error(r.status);
-      return r.json();
-    }).then(function (ultima) {
-      var zip = null;
-      var assets = ultima.assets || [];
-      for (var i = 0; i < assets.length; i++) {
-        if (/^Aomidori-.*\.zip$/i.test(assets[i].name)) {
-          zip = { size: assets[i].size, browser_download_url: assets[i].browser_download_url };
-          break;
-        }
-      }
-      stato.rel = { tag: String(ultima.tag_name || '').replace(/^v/i, ''), asset: zip, pagina: ultima.html_url };
-      try { sessionStorage.setItem(CHIAVE, JSON.stringify(stato.rel)); } catch (e) { /* not kept */ }
-      disegna();
-    }).catch(function () { /* the button keeps pointing at the latest release page */ });
-  }
-
   el('lingua').addEventListener('click', function () {
     stato.lingua = (stato.lingua === 'it') ? 'en' : 'it';
     disegna();
@@ -616,7 +519,6 @@
 
   applicaTema();
   disegna();
-  leggiRelease();
 })();
 </script>
 

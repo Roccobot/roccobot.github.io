@@ -77,8 +77,8 @@ cambiare. Il resto del progetto (codice, regole, documento di feedback) resta ne
   `Aomidori/appcast.xml` di questo clone, e la sessione che rilascia committa e pusha qui. La pagina
   (`Aomidori/index.html`) e le sue immagini, e la politica sulla privacy (`Aomidori/privacy.html`,
   dal 2026-10-15, per il Mac App Store), si toccano con le regole di Aomidori, § '🌐 Il sito'.
-- **Lo ZIP non c'è**: il pulsante e l'appcast puntano alle release di `Roccobot/Aomidori-releases`,
-  pubblico, come AIV fa con le sue.
+- **Lo ZIP non c'è**: l'appcast punta alle release di `Roccobot/Aomidori-releases`, pubblico, come
+  AIV fa con le sue; il pulsante della pagina, dal 2026-10-27, porta al Mac App Store.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
 
 ⚠️ **E LA CARTELLA `styles/` È LA SECONDA ECCEZIONE, LEGATA ALLA PRIMA**: è l'archivio degli stili
