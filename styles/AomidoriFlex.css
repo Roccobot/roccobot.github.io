@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.56
+#VERSION: 1.57
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -584,7 +584,13 @@ aside:not(:is(
   font-style: normal;
 }
 
+/* The alert's icon and its title side by side with a gap since 1.57 (Rocco's note on 2.71-02:
+   "ⓘNota" in all three styles, where only the Markdown page's own sheet, off with the override,
+   gave the gap). */
 .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   font-weight: 600;
   margin-bottom: 0.5em;
 }
