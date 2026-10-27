@@ -1,11 +1,11 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.57
+#VERSION: 1.58
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.57: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.58: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -596,6 +596,47 @@ aside:not(:is(
   gap: 0.5em;
   font-weight: 600;
   margin-bottom: 0.5em;
+}
+
+/* Wide layouts since 1.58 (Rocco's request Colonne: his Markdown page in two columns worked only with
+   the override off, since a document's CSS goes with it). They are classes of this style, so they
+   work with the override on, for a Markdown (a div, with blank lines around its content, or an
+   img) and for a book alike. None changes a page that does not use them.
+     .wide                 breaks out of the text column to the window, up to 72em, centred
+     .columns, .columns-3  two or three columns of blocks, wide, one column under 700px
+     .bleed                a block or a picture as wide as the window, with no margin
+     .hero                 a bleed picture 46% as tall as the window, cropped, not squeezed
+   The window's width is divided by the text size (--aomidori-scale): the page zooms its body, and
+   a width in vw would grow with it and scroll sideways. */
+.wide, .columns, .columns-3 {
+  width: min(94vw / var(--aomidori-scale, 1), 72em);
+  margin-inline: calc(50% - min(47vw / var(--aomidori-scale, 1), 36em));
+}
+
+.columns, .columns-3 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 3em;
+  align-items: start;
+}
+
+.columns-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.bleed, .hero {
+  width: calc(100vw / var(--aomidori-scale, 1));
+  margin-inline: calc(50% - 50vw / var(--aomidori-scale, 1));
+}
+
+:is(.bleed, .hero) img, img:is(.bleed, .hero) {
+  display: block;
+  width: 100%;
+  max-width: none;
+}
+
+.hero img, img.hero { height: calc(46vh / var(--aomidori-scale, 1)); object-fit: cover; }
+
+@media (max-width: 700px) {
+  .columns, .columns-3 { grid-template-columns: minmax(0, 1fr); }
 }
 
 abbr[title] {
