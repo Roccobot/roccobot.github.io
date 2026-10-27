@@ -20,9 +20,9 @@
   JavaScript; the script switches them to Italian for an Italian browser, title included.
   The screenshot on the right (below, on narrow screens) is one file per theme, the same in both
   languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.webp and
-  screenshot-dark.webp, a 1600 x 1176 pt window made by the owner, served at 1600 x 1176 px in
-  lossy WebP at quality 90 (his rule of 2026-10-27: web images light, at most 500 KB; the window
-  shows a photograph, and the picture is never wider than 440 px on the page). Until a file exists
+  screenshot-dark.webp, a 1600 x 1176 pt window made by the owner, served at 1320 x 970 px in
+  lossy WebP at quality 90 (his rule of 2026-10-27, Roccobot.md, web images light: at most three
+  times the 440 px the page gives it, and the window shows a photograph). Until a file exists
   its slot stays hidden and the
   page keeps one column: adding the four files is the whole change.
   ⚠️ The icon is Graphe's artwork, copied unaltered from Resources/Icon/ (aomidori-v2.svg and
@@ -258,7 +258,7 @@
       </div>
     </div>
   </div>
-  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1600" height="1176" alt=""></figure>
+  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1320" height="970" alt=""></figure>
   </div>
 
   <div class="fatti">
@@ -474,7 +474,7 @@
   // The screenshots keep their names when they are taken again, so a browser could show an old
   // one from its cache next to a new one: their version goes in the address, and goes up by one
   // whenever they are replaced.
-  var VERSIONE_SCHERMATE = 8;
+  var VERSIONE_SCHERMATE = 9;
   var schermataMancante = {};
   function mostraSchermata(T) {
     var figura = el('schermata');
