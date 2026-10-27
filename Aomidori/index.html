@@ -19,9 +19,11 @@
   The English texts are written in the page itself, so it reads (and is indexed) without
   JavaScript; the script switches them to Italian for an Italian browser, title included.
   The screenshot on the right (below, on narrow screens) is one file per theme, the same in both
-  languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.png and
-  screenshot-dark.png, a 1600 x 1176 pt window taken at full resolution (3200 x 2352 px), made by
-  the owner. Until a file exists its slot stays hidden and the
+  languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.webp and
+  screenshot-dark.webp, a 1600 x 1176 pt window made by the owner, served at 1600 x 1176 px in
+  lossy WebP at quality 90 (his rule of 2026-10-27: web images light, at most 500 KB; the window
+  shows a photograph, and the picture is never wider than 440 px on the page). Until a file exists
+  its slot stays hidden and the
   page keeps one column: adding the four files is the whole change.
   ⚠️ The icon is Graphe's artwork, copied unaltered from Resources/Icon/ (aomidori-v2.svg and
   aomidori-v2-dark.svg): the page picks one per theme, it never redraws it.
@@ -35,8 +37,8 @@
 <meta property="og:description" content="A light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="it_IT">
-<meta property="og:image" content="https://roccobot.github.io/Aomidori/assets/preview.png">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="https://roccobot.github.io/Aomidori/assets/preview.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Aomidori icon beside its name, and the app with a book open.">
@@ -147,8 +149,8 @@
   .solo-mac[hidden]{display:none}
 
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
-     as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.png
-     and -dark.png, a landscape window of 1600 x 1176 pt (3200 x 2352 px) since the owner's choice
+     as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.webp
+     and -dark.webp, a landscape window of 1600 x 1176 since the owner's choice
      Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns its
      place comes from the feature cards below: it starts at the left edge of the right cards'
      glyphs (the owner's request, 2026-10-27; up to then at their text), and ends where it did,
@@ -256,7 +258,7 @@
       </div>
     </div>
   </div>
-  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="3200" height="2352" alt=""></figure>
+  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1600" height="1176" alt=""></figure>
   </div>
 
   <div class="fatti">
@@ -467,17 +469,17 @@
     tastoTema.title = T.titoliTema[altro];
   }
 
-  // The screenshot for the theme in force, the same in both languages: assets/screenshot-<light|dark>.png.
+  // The screenshot for the theme in force, the same in both languages: assets/screenshot-<light|dark>.webp.
   // The slot stays hidden until the file has loaded, and a file that failed is not asked again.
   // The screenshots keep their names when they are taken again, so a browser could show an old
   // one from its cache next to a new one: their version goes in the address, and goes up by one
   // whenever they are replaced.
-  var VERSIONE_SCHERMATE = 7;
+  var VERSIONE_SCHERMATE = 8;
   var schermataMancante = {};
   function mostraSchermata(T) {
     var figura = el('schermata');
     var img = el('schermata-img');
-    var src = 'assets/screenshot-' + temaInVigore() + '.png?v=' + VERSIONE_SCHERMATE;
+    var src = 'assets/screenshot-' + temaInVigore() + '.webp?v=' + VERSIONE_SCHERMATE;
     img.alt = T.schermata;
     if (schermataMancante[src]) { nascondiSchermata(); return; }
     if (img.getAttribute('src') === src) return;
