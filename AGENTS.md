@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.17
+> **Versione**: 2.18
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -33,8 +33,8 @@
   per Terramare. Parlano di mondi diversi e non competono fra loro.
 - **Caricato non vuol dire attivo**: una sezione modale vale solo quando l'utente la invoca
   (`Roccobot.md` § '🗃️ File di regole collegati').
-- Le **skill** di ogni repo vivono in `.agents/skills/`, e `.claude/skills` è un collegamento a
-  quella cartella (`Roccobot.md` § '🧩 Dove vivono le skill').
+- Le **skill** vivono in `.agents/skills/` di ogni repo, con `.claude/skills` come collegamento
+  (`Roccobot.md` § '🧩 Dove vivono le skill').
 
 ## ⚖️ Priorità
 
@@ -159,9 +159,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Allineamento prima di ogni modifica**, perché il remoto riceve commit da altre sessioni e
   dagli editor admin: `git -C <repo> fetch origin <principale>`, poi, in una chiamata a sé,
   `git -C <repo> rev-list --left-right --count origin/<principale>...HEAD`, e se il primo numero
-  è sopra zero si allinea prima di lavorare.
-  Il numero di versione da solo non prova la freschezza (`Roccobot.md` § '🌿 Workflow git e
-  versioni').
+  è sopra zero si allinea prima di lavorare. Il numero di versione non prova la freschezza.
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
@@ -194,13 +192,11 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   sul remoto con obiettivo, scelte e stato, prima di modificare il prodotto o riprendere
   (`Roccobot.md` § '🚨 Non perdere niente').
 - **Si scrive in tre momenti**: quando una richiesta nasce e non si esegue subito (anche se
-  arriva a turno in corso), prima di ogni compattazione, e alla chiusura (`Roccobot.md`
-  § '🚨 Non perdere niente').
+  arriva a turno in corso), prima di ogni compattazione, e alla chiusura.
 - **'Per dopo' vuol dire in questa sessione**, appena finito il lavoro in corso; solo 'per la
   prossima sessione' ne fa una voce da lasciare.
 - **Un compito che non si esegue subito ha un nome in codice**, di preferenza una parola
-  italiana, unico nel brief: si scrive nel titolo della voce e poi si comunica all'utente
-  (`Roccobot.md` § '🚨 Non perdere niente').
+  italiana, unico nel brief: si scrive nel titolo della voce e poi si comunica all'utente.
 - Una domanda rimasta senza risposta entro un turno finisce nel brief, con le opzioni e il
   parere; una risposta a scelta si travasa con la **sua chiave** accanto.
 - **Come si scrive**: con un commit, oppure dal Worker dichiarando `baseSha`, cioè la versione da
@@ -250,12 +246,15 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Una modifica a un DF si fa a tutti gli omologhi** nello stesso giro (oggi AIV e Aomidori):
   una **divergenza funzionale non deve esistere**, e restano diversi solo il contenuto del giro e
   ciò che è specifico del progetto. Chi non raggiunge il repo dell'altro DF lo dice all'utente
-  nello stesso turno (`Roccobot.md` § '🔁 Il giro del collaudo').
+  nello stesso turno.
+- **Una prova che cita un file ne dà la scorciatoia**: allegato in cloud, percorso (e link, se
+  funziona) in locale (`Roccobot.md` § '🔁 Il giro del collaudo').
 
 ## 🏗️ Sviluppo
 
 - **I testi di interfaccia si scrivono da copywriter** (sintesi, astrazione, eleganza,
-  semplicità, precisione); ogni testo nuovo o cambiato, anche scelto dall'utente, si valida
+  semplicità, precisione), quelli bilingui con `/microcopy-it` e `/microcopy-en`; ogni testo
+  nuovo o cambiato, anche scelto dall'utente, si valida
   nel collaudo (`Roccobot.md` § '✍️ I testi nuovi entrano con la proposta, e si validano nel
   collaudo').
 - **Nei paragrafi di UI nessuna parola resta sola a un capo della frase**: una frase non va a
