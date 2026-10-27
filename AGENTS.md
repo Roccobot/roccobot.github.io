@@ -10,17 +10,13 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.16
+> **Versione**: 2.17
 >
-> **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
-> piattaforma della squadra (Claude Code, Codex, Grok Bot) e in qualunque repo di Roccobot. Una
-> regola per riga, col rimando alla sezione che ne dà il perché: il testo completo vive in
-> `rules/Roccobot.md`, e in caso di dubbio fa fede quello. Nei repo questo testo arriva copiato
-> dentro `AGENTS.md`, in un blocco generato: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 20.000 byte**: ogni `AGENTS.md` include anche le regole del suo repo, e
-> `core-sync` non lo scrive oltre i 30.000 (40.000 in Arda e Terramare), contati con l'`AGENTS.md`
-> annidato. Un repo che col nucleo al tetto li supererebbe ha un avviso `TIGHT` nella run: il
-> dettaglio passa nel suo `Rules.md`.
+> **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
+> repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
+> fede. Nei repo arriva copiato in `AGENTS.md`: si modifica **qui**, mai nella copia.
+> ⚠️ Resta **sotto i 20.000 byte**: `core-sync` non scrive un `AGENTS.md` oltre i 30.000 (40.000
+> in Arda e Terramare); l'avviso `TIGHT` dice chi sposta il dettaglio nel suo `Rules.md`.
 
 ## 🧭 Come si legge il resto
 
@@ -266,6 +262,11 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   capo dopo una parola sola o meno di 7 caratteri, e non finisce con una parola sotto i 7
   caratteri andata a capo da sola; si regolano larghezze, spazi, crenatura e corpo, e si prova
   sulle righe vere (`Roccobot.md` § 'Caratteri').
+- ⚠️⚠️ **Nucleo e interfaccia separati, inderogabile**: le decisioni nascono nel nucleo con le
+  prove, l'interfaccia le esegue (`Roccobot.md` § '🏛️ Nucleo funzionale e interfaccia separati,
+  sempre').
+- **Immagini per il Web leggere**: mai oltre 500 KB, larghe al massimo il triplo della misura in
+  pagina (`Roccobot.md` § '🪶 Le immagini per il Web sono leggere').
 - **Qualità**: un modo solo per ogni cosa, un valore in un posto solo, le note che dicono il
   perché, niente codice morto (`Roccobot.md` § '🏅 Codice di altissima qualità').
 - **L'aggiornamento non si chiede, si fa**: ultime versioni e pratica raccomandata dalla
