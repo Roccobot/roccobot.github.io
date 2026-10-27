@@ -150,10 +150,11 @@
      as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.png
      and -dark.png, a landscape window of 1600 x 1176 pt (3200 x 2352 px) since the owner's choice
      Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns its
-     place comes from the feature cards below: it starts where the right cards' text starts, and
-     it is as wide as the span from the left cards' text to the right cards' glyphs (402 px), so
-     it is 295.5 px tall, the height of the left column with the same text in both languages
-     (measured on 2026-10-27); its top is on the icon's tile.
+     place comes from the feature cards below: it starts at the left edge of the right cards'
+     glyphs (the owner's request, 2026-10-27; up to then at their text), and ends where it did,
+     at the far edge of the right cards' column: 440 px wide, 323.4 px tall, 28 px below the left
+     column, which is 295 px with the same text in both languages (measured on 2026-10-27); its
+     top is on the icon's tile.
      The shadow is AIV's: a soft shadow on light, and on dark (where black would not show) a
      shadow plus a glow in the accent colour. It is a drop-shadow, which follows the window's
      rounded corners and takes no room: only the picture lines up with the column's edges. */
@@ -171,9 +172,8 @@
        icon's tile (the canvas has 100 px of margin in 1024, as in .icona). */
     .con-schermata .testa{
       --colonna-fatti:calc((var(--fatti-larghezza) - var(--fatti-spazio)) / 2);
-      --rientro:calc(var(--glifo) + var(--glifo-spazio));
-      --schermata-larghezza:calc(var(--colonna-fatti) + var(--fatti-spazio) - var(--rientro));
-      --schermata-inizio:calc(var(--colonna-fatti) + var(--fatti-spazio) + var(--rientro));
+      --schermata-larghezza:calc(var(--colonna-fatti) + var(--fatti-spazio));
+      --schermata-inizio:calc(var(--colonna-fatti) + var(--fatti-spazio));
       grid-template-columns:minmax(0,1fr) var(--schermata-larghezza); gap:56px; align-items:start;
       max-width:calc(var(--schermata-inizio) + var(--schermata-larghezza));
     }
