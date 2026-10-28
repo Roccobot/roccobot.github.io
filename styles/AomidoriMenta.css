@@ -1,11 +1,11 @@
 /*
 #NAME: Aomidori Menta
-#VERSION: 1.58
+#VERSION: 1.59
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.71 and its code.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; mint tables, coloured headings, code in the text's font.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.58: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.59: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -21,6 +21,20 @@
   font-stretch: 25% 151%;
   /* Its italic is its slant, kept to 7 degrees since 1.53 (Rocco's note B on the 2.59 round: the
      emphasis leaned too much at the font's 10). */
+  font-style: oblique 0deg 7deg;
+}
+
+/* The same file for the text, existing at width 105 only (1.59, Rocco's request): drawn wider while
+   the text asks for no width, so another font in its place (the custom one, SF Pro, a book's own)
+   keeps its normal width. Up to 1.58 the body asked for `font-stretch: 105%`, which widened every
+   font with a width axis. Two traps, measured in WebKit on 2026-10-28: a width written as
+   `font-variation-settings` inside @font-face is ignored, and under the name 'Roboto Flex' a Mac
+   with Roboto Flex installed draws the installed copy at width 100, hence a name of its own. */
+@font-face {
+  font-family: 'Roboto Flex Text';
+  src: url('AomidoriFlex/RobotoFlex.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-stretch: 105%;
   font-style: oblique 0deg 7deg;
 }
 
@@ -77,7 +91,7 @@ html, body {
 
 body {
   /* Roboto Flex, as declared above (1.50; the system font up to 1.43). */
-  font-family: 'Roboto Flex', sans-serif;
+  font-family: 'Roboto Flex Text', sans-serif;
   font-size: 1.6em;
   /* Cap the text at 24px; keep the preceding declaration as a fallback for min(). */
   font-size: min(1.6em, 24px);
@@ -92,8 +106,8 @@ body {
   line-height: 1.6;
   /* Roboto Flex a little wider and more open since 1.54 (Rocco's choice Falcata-01, from WebKit
      previews: tracking 0.02em; up to 1.53 width 100 and 0.012em), width 105 since 1.55 (his
-     request, 107 in 1.54), the same in both themes, which differ only in the grade. */
-  font-stretch: 105%;
+     request, 107 in 1.54), the same in both themes, which differ only in the grade. The width is
+     the font's own since 1.59 (its @font-face above), not asked here. */
   letter-spacing: 0.02em;
   font-kerning: normal;
   font-optical-sizing: auto;
@@ -144,7 +158,7 @@ h1, h2, h3 {
    previews: up to 1.54 weight 700, the subheadings 500, at the text's width). H5 and H6 keep the
    browser's sizes and spacing, at 500 since 1.56 (his choice: 600 in 1.55, the browser's 700 before). */
 h5, h6 { font-weight: 500; }
-h1, h2, h3, h4, h5, h6, .subheading, .titoletto { font-stretch: 94%; }
+h1, h2, h3, h4, h5, h6, .subheading, .titoletto { font-family: 'Roboto Flex', sans-serif; font-stretch: 94%; }
 
 /* Use consistent letter spacing across headings, title-page titles and small capitals. */
 h1, h2, h3, h4, h5, h6, .subheading, .titoletto, .title,
@@ -326,7 +340,7 @@ Reference rule with expanded letter spacing.
 
 /* A book's sans-serif passages: the Flex's sans-serif is Roboto Flex (1.50). */
 .sans {
-  font-family: 'Roboto Flex', sans-serif;
+  font-family: 'Roboto Flex Text', sans-serif;
 }
 
 div.index p {
