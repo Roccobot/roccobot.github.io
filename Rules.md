@@ -471,12 +471,17 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
     stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
 
-- ⚠️⚠️ **OGNI MESSAGGIO ALL'UTENTE FINISCE CON IL RIQUADRO `🟠 Cosa devi fare tu`** (`Coda-01`, sua scelta
-  del 2026-10-25, e sua segnalazione lo stesso giorno quando il riquadro è sparito: *poco fa mi hai
-  parlato di Coda-01 e poi più niente*; il titolo era `Ti tocca` con il quadrato blu, e titolo ed emoji li ha cambiati lui, l'ultima volta in 🟠). È l'ultima cosa del messaggio, **anche del più breve** e di
-  quello che commenta solo una notifica: al massimo tre voci, ognuna una sola azione sua con i clic
-  in ordine, oppure `Niente per te`. Le voci ancora aperte si ripetono finché non sono chiuse, perché
-  lui non tiene il conto della chat. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
+- ⚠️⚠️ **IL RIQUADRO `🟠 Cosa devi fare tu` CHIUDE I MESSAGGI CHE RISPONDONO A LUI E QUELLI IN CUI LE SUE
+  VOCI CAMBIANO** (`Coda-01`, sua scelta del 2026-10-25, e sua segnalazione lo stesso giorno quando il
+  riquadro è sparito: *poco fa mi hai parlato di Coda-01 e poi più niente*; il titolo era `Ti tocca`
+  con il quadrato blu, e titolo ed emoji li ha cambiati lui, l'ultima volta in 🟠). È l'ultima cosa
+  del messaggio, **anche del più breve**: al massimo tre voci, ognuna una sola azione sua con i clic
+  in ordine, oppure `Niente per te`. ⚠️ **`Coda-02`, sua scelta del 2026-10-29, toglie le notifiche**:
+  dopo lo stesso riquadro ripetuto nove volte di fila (*non mi sembra il massimo della vita una
+  conversazione in cui mi dici di fare la stessa cosa per decine di volte*), un messaggio che nasce
+  da una notifica automatica e non cambia niente per lui è di **una riga**, senza riquadro; quando una
+  voce cambia, o quando risponde a un suo messaggio, si riscrive l'elenco intero. Le voci ancora aperte
+  restano il suo promemoria, perché lui non tiene il conto della chat. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
   non si ricarica a ogni turno: dopo una compattazione la regola non era più in scena. Il testo
   completo è in `Roccobot.md` § '💬 Stile di comunicazione'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
