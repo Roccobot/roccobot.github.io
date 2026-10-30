@@ -73,6 +73,15 @@ e non va creduto tale**: gira solo dove gli hook sono installati (le impostazion
 riga del passo 0 del protocollo di avvio), e altrove resta solo la regola. Gli altri agenti non
 hanno questo gancio: per loro la regola è il nucleo.
 
+⚠️ **Dal 2026-10-30 i lavori vivono anche sulla bacheca Trello `Roccobot`** (`Roccobot.md`
+§ '📌 La bacheca di lavoro', scelte `Servizio-01` e `Regole-01` dell'utente). Quindi:
+- **in lettura**, accanto al brief si leggono dal Worker le card di `In corso` e di `Richiede
+  intervento`: sono i lavori aperti da altre sessioni e le decisioni che aspettano l'utente;
+- **in scrittura**, una voce nuova diventa anche una card (titolo `Codice: che cosa`, etichetta del
+  progetto, backlog del progetto), e nel brief resta la riga col codice e il collegamento;
+- **alla chiusura**, ogni card toccata ha il suo commento e la sua lista giusta, e chi apre per primo
+  la bacheca nella giornata sposta in `Archivio` le card di `Fatte oggi` più vecchie di 24 ore.
+
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
 Tutto ciò che vale **oltre** la prossima sessione va nelle regole del repo che riguarda
