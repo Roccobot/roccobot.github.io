@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.19
+> **Versione**: 2.20
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -111,8 +111,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   cloud e in locale; in locale `caffeinate` parte da sé prima del lavoro, e si dice per quanto
   (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
   § '☕ Le sessioni locali e `caffeinate`'). Restano i divieti di sicurezza.
-- **Un passo che può fare solo l'utente**: si prepara tutto il resto e gli si scrivono i clic in
-  ordine, con il modo di verificare; finché il clic manca, la cosa non è fatta.
+- **Un passo che può fare solo l'utente**: si prepara il resto e gli si scrivono i clic in ordine,
+  col modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
   voci, intera UI): si **concorda prima di farla**, da qualunque agente; nel dubbio lo è.
 - **Un agente solo per sessione**, con la sua squadra se serve (fissa, coi nomi permanenti, solo
@@ -120,20 +120,20 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   lavoro di una squadra si salva man mano').
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
-- **GitHub Actions: avviso e stima prima di partire**, specie su macOS (costo 10x): quale flusso,
-  su che macchina, quanti minuti; su macOS si aspetta il suo via (`Roccobot.md` § '💸 GitHub
-  Actions: avviso e stima prima di partire').
+- **GitHub Actions: avviso e stima prima di partire** (quale flusso, che macchina, quanti minuti),
+  e su macOS, che costa 10x, si aspetta il suo via (`Roccobot.md` § '💸 GitHub Actions: avviso e
+  stima prima di partire').
 - **Prima di ogni lavoro si consigliano modello e sforzo**, perché solo l'utente li imposta: una
   riga in apertura, poi si aspetta il suo via (`Roccobot.md` § '🤖 Modello da usare').
-- **Le priorità le decide l'agente, e le dichiara nel turno in cui le decide**; un messaggio che
-  comincia con `‼︎` o con `\\` va in coda, anche a turno iniziato (`Roccobot.md` § '🗂️ Le priorità le
-  decide la sessione, e le dichiara').
-- **Liste di scelte a blocchi con un nome**, e sigle **nome-numero** (`Setaccio-01`,
-  `Legatura-05`), mai lettera-numero, dappertutto: chat, domande, rilievi, brief. Così l'utente
-  risponde per blocco e due lavori non hanno la stessa sigla; una scelta si chiede con lo
-  **strumento a scelta multipla**, dove c'è (`Roccobot.md` § '💬 Stile di comunicazione').
-- **Un'affermazione non è una verifica**, nemmeno se è dell'utente: un fatto si dà per accertato
-  solo con un dato letto sul momento (`Roccobot.md` § '🧪 Test e verifiche').
+- **Le priorità le decide l'agente, e le dichiara subito**; un messaggio che comincia con `‼︎` o
+  con `\\` va in coda, anche a turno iniziato (`Roccobot.md` § '🗂️ Le priorità le decide la
+  sessione, e le dichiara').
+- **Liste di scelte a blocchi con un nome**, e sigle **nome-numero** (`Setaccio-01`), mai
+  lettera-numero, dappertutto: l'utente risponde per blocco e due lavori non hanno la stessa sigla;
+  una scelta si chiede con lo **strumento a scelta multipla**, dove c'è (`Roccobot.md`
+  § '💬 Stile di comunicazione').
+- **Un'affermazione non è una verifica**, nemmeno dell'utente: un fatto è accertato solo con un
+  dato letto sul momento (`Roccobot.md` § '🧪 Test e verifiche').
 - **Raccomandazioni di prodotti**: paese d'origine sempre; niente Israele né entità legate;
   prima i servizi europei, salvo uno gratuito e più efficace; prima l'open source e il pagamento una tantum; **criptovalute mai**;
   **niente spoiler**.
@@ -199,14 +199,15 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   italiana, unico nel brief: si scrive nel titolo della voce e poi si comunica all'utente.
 - Una domanda rimasta senza risposta entro un turno finisce nel brief, con le opzioni e il
   parere; una risposta a scelta si travasa con la **sua chiave** accanto.
-- **Come si scrive**: con un commit, oppure dal Worker dichiarando `baseSha`, cioè la versione da
-  cui si parte; chi non committa da sé usa la parola d'ordine che scrive soltanto il brief, e manda
-  il file intero con la sua voce aggiunta (`Roccobot.md` § '🔌 Worker `rules-proxy`').
+- **Come si scrive**: con un commit, o dal Worker dichiarando `baseSha` e mandando il file intero;
+  chi non committa usa la parola che scrive solo il brief (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - Le regole durevoli non vivono nel brief: vivono nei file di regole.
-- **Il brief contiene il timbro `Last turn`** (lo genera `catchup.py --stamp`), e all'avvio
-  `catchup.py` dell'hub dice che cosa è arrivato dopo. Ogni commit include la riga `Agent:
-  <piattaforma>`, e una versione nuova di un file di `rules/` aggiunge la sua riga in
-  `rules/Changelog.md` (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
+- **Il brief ha il timbro `Last turn`** (`catchup.py --stamp`); ogni commit ha la riga `Agent:
+  <piattaforma>`, e una versione nuova di un file di `rules/` ha la sua riga in `rules/Changelog.md`
+  (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
+- **I lavori vivono anche sulla bacheca Trello `Roccobot`** (Worker, azione `trello`): card
+  `Codice: che cosa` con l'etichetta del progetto, in `In corso` quando inizia, in `Richiede
+  intervento` assegnata all'utente per una decisione (`Roccobot.md` § '📌 La bacheca di lavoro').
 
 ## 🧪 Verifiche e controlli
 
