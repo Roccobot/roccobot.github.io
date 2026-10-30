@@ -47,6 +47,9 @@ PACCHETTI=(
   Egonex-AI/Understand-Anything
   ayghri/i-have-adhd
   zarazhangrui/frontend-slides
+  # 'repo:nome1,nome2' installa solo quelle skill: il pacchetto intero di Matt Pocock contiene anche
+  # una 'handoff' che sovrascriverebbe la nostra (scelta dell'utente, 2026-10-30, Wayfinder-01).
+  mattpocock/skills:wayfinder,grilling,domain-modeling,research,prototype,setup-matt-pocock-skills
 )
 
 LAVORO="$(mktemp -d)"
@@ -55,7 +58,10 @@ cd "$LAVORO"
 
 FALLITI=0
 for p in "${PACCHETTI[@]}"; do
-  if npx -y skills add "$p" >/dev/null 2>&1; then echo "ok        $p"; else echo "FALLITO   $p"; FALLITI=$((FALLITI + 1)); fi
+  repo="${p%%:*}"
+  scelte=()
+  if [[ "$p" == *:* ]]; then IFS=',' read -r -a nomi <<< "${p#*:}"; scelte=(-s "${nomi[@]}"); fi
+  if npx -y skills add "$repo" ${scelte[@]+"${scelte[@]}"} -y >/dev/null 2>&1; then echo "ok        $p"; else echo "FALLITO   $p"; FALLITI=$((FALLITI + 1)); fi
 done
 
 FRESCHE="$LAVORO/.agents/skills"
