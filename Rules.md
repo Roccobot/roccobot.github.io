@@ -42,9 +42,7 @@ legge un file di quella cartella, cioè quando il lavoro è già lì.
 repo privato non ha Pages senza un piano a pagamento. La paginetta di download e l'informativa sulla
 privacy vivono qui, allo stesso indirizzo `roccobot.github.io/AIV/`: quello dell'informativa è
 registrato nella Play Console e non può cambiare. Codice, regole e documento di feedback restano nel
-repo di AIV. Fino al 2026-09-27 la cartella la riempiva una GitHub Action di AIV; da allora al
-2026-10-19 la paginetta l'ha pubblicata il Pages del repo di AIV, e da quel giorno la serve questa
-cartella.
+repo di AIV.
 - ⚠️⚠️ **Un repo di progetto con Pages configurato vince sulla cartella omonima, anche a sito
   spento** (misurato il 2026-10-19 col passaggio di AIV, dopo RatioLab): dopo `Unpublish site` l'API
   del repo diceva ancora `has_pages: true`, e `/AIV/` rispondeva 404 anche con questo repo
@@ -62,10 +60,6 @@ cartella.
   pubblico `Roccobot/AIV-releases`, come Aomidori fa con le sue, quindi un rilascio non cambia il
   sito.
 - ⚠️ Non va spostata né tolta per pulizia: l'informativa è l'indirizzo dato a Google Play.
-- ⚠️⚠️ **Il peso di un APK si misura sul file vero, non sull'artefatto della run**: lo stesso
-  APK compare **circa dimezzato** fra gli artefatti (misurato sulla `0.12`: 787.248 byte contro
-  1.634.026), perché quelli sono uno **zip** e un APK contiene voci non compresse
-  (`resources.arsc` in testa) che lo zip esterno stringe. È già successo di dimezzarlo così.
 
 ⚠️⚠️ **LA CARTELLA `Aomidori/` È L'ECCEZIONE A 'QUI NON VIVONO PROGETTI', VOLUTA DALL'UTENTE** (sua
 richiesta del 2026-10-15: *rendi il repo privato, sposta il sito su Pages*, sul piano A1 proposto il
@@ -73,12 +67,11 @@ richiesta del 2026-10-15: *rendi il repo privato, sposta il sito su Pages*, sul 
 pagamento: la pagina di download e l'appcast di Sparkle vivono qui, allo stesso indirizzo
 `roccobot.github.io/Aomidori/`, che le copie installate leggono (`SUFeedURL`) e che quindi non può
 cambiare. Il resto del progetto (codice, regole, documento di feedback) resta nel suo repo.
-- **Chi la scrive**: lo `scripts/release.sh` di Aomidori aggiunge la versione a
-  `Aomidori/appcast.xml` di questo clone, e la sessione che rilascia committa e pusha qui. La pagina
-  (`Aomidori/index.html`) e le sue immagini, e la politica sulla privacy (`Aomidori/privacy.html`,
-  dal 2026-10-15, per il Mac App Store), si toccano con le regole di Aomidori, § '🌐 Il sito'.
-- **Lo ZIP non c'è**: l'appcast punta alle release di `Roccobot/Aomidori-releases`, pubblico, come
-  AIV fa con le sue; il pulsante della pagina, dal 2026-10-27, porta al Mac App Store.
+- **Chi la scrive**: la pagina (`Aomidori/index.html`) e le sue immagini, e la politica sulla
+  privacy (`Aomidori/privacy.html`, per il Mac App Store), si toccano con le regole di Aomidori,
+  § '🌐 Il sito'. Il pulsante della pagina porta al Mac App Store.
+- **L'appcast non riceve più versioni dalla 2.27**, l'ultima pubblicata su GitHub (le release di
+  `Roccobot/Aomidori-releases`): resta qui per le copie installate da GitHub, che lo leggono ancora.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
 
 ⚠️ **E LA CARTELLA `styles/` È LA SECONDA ECCEZIONE, LEGATA ALLA PRIMA**: è l'archivio degli stili
@@ -88,7 +81,6 @@ di Aomidori (lo stile predefinito, oggi `AomidoriFlex.css`, col registro
 dell'app è privato. Lo scrivono le sessioni che toccano lo stile, con le regole di Aomidori, e il
 pacchetto dello Store di Aomidori (`scripts/bundle.sh`) si ferma se lo stile o un font di qui è
 diverso da quello dell'app. Non va spostata né tolta per pulizia.
-Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessun file dell'hub.
 - ⚠️⚠️ **`Famiglia`: aggiornare Aomidori Flex vuol dire aggiornare anche i suoi derivati** (regola
   dell'utente del 2026-10-26, per chiunque tocchi gli stili, sessione o agente): oggi **Aomidori
   Menta** (`AomidoriMenta.css`) e **RoccobotOS** (`RoccobotOS.css`, da non confondere con gli stili
@@ -107,8 +99,7 @@ Dichiarata il 2026-10-16 (`Tagliando`): fino a quel giorno non la nominava nessu
   arrivata solo qui non è finita. Fino a nuovo ordine la Flex è il predefinito dei libri e
   RoccobotOS quello dei Markdown. Il testo completo è in `Rules.md` di Aomidori.
 
-⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
-vivevano ancora in cartelle di questo repo. All'avvio le istruzioni includono i **soli**
+⚠️ **Il caricamento è DINAMICO, alla lettura**: all'avvio le istruzioni includono i **soli**
 `CLAUDE.md` alla radice dei repo montati; uno che vive più in basso (come `worker/CLAUDE.md`
 nei repo di Arda e di Terramare) compare nel momento in cui si legge un file di quella
 cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
@@ -119,24 +110,13 @@ cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
   è di portata generale è qui, se è universale vive in `rules/Roccobot.md`. Nel dubbio, questo
   file.
 
-⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: 'I Grandi di Arda' e
-**RoccobotOS** seguono **SlimVer**, lo schema `x.xx` che dal 2026-08-01 è il default dei
-progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fonte in
-`datiVersion` e il badge in testata, il secondo col numero visibile in cima e sopra il logo
-(dettagli nel `Rules.md` del repo `Roccobot/RoccobotOS`, § '🔢 Versione del progetto: VISIBILE in pagina'); le
-liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
-il link di installazione da ripetere dopo ogni go-live; 'I Grandi di Terramare' nasce con
-SlimVer e la fonte in `datiVersion`, come il progetto da cui è copiato. ⚠️ 'Senza versione'
-non è vero per nessun progetto.
-- ⚠️ **Ogni progetto ha il SUO deploy Pages da attendere**, nel suo repo (fino al 2026-09-26
-  era uno solo per tutti): la verifica di pubblicazione si fa con la sonda del progetto
-  toccato (vedi '🌿 Branch, allineamento e push').
-- ⚠️ **Su RoccobotOS la regola di versione è cambiata TRE volte in tre giorni**, e conviene
-  saperlo per non applicare una versione vecchia della regola: numero nato **interno** il
-  2026-07-30, **visibile e SemVer** il 2026-07-31 (quando l'utente ha stabilito che il
-  progetto **conta come sito e non come documentazione**), **SlimVer** dal 2026-08-01 con la
-  promozione dello schema a default. Le note che lo dicono 'interno' o 'a tre cifre' sono
-  superate.
+⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: SlimVer (`x.xx`) è il
+default (`Roccobot.md`, § '🌿 Workflow git e versioni'), con la fonte e la resa che ogni repo
+dichiara; le liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version`
+SemVer e il link di installazione da ripetere dopo ogni go-live; 'Ma che parola è' resta senza
+numero per scelta dell'utente.
+- ⚠️ **Ogni progetto ha il SUO deploy Pages da attendere**, nel suo repo: la verifica di
+  pubblicazione si fa con la sonda del progetto toccato (vedi '🌿 Branch, allineamento e push').
 
 ## 🌐 I file della radice del dominio
 
@@ -174,10 +154,9 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Earthsea.md>
 
-  ⚠️ **I raw GitHub NON funzionano** (verificato il 2026-07-29 e riverificato il
-  2026-08-01: `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 **con e senza
-  UA da browser**, su entrambi i branch, mentre il Worker risponde 200). Non perderci
-  tempo: **il Worker è l'unica via**, e questa nota è la fonte del fatto.
+  ⚠️ **I raw GitHub NON funzionano**: `raw.githubusercontent.com/Roccobot/tools/...` risponde
+  404 **con e senza UA da browser**, mentre il Worker risponde 200. **Il Worker è l'unica via**,
+  e questa nota è la fonte del fatto.
 - **Leggi sempre in grezzo, mai con un fetch che riassume**: qui solo il minimo che serve
   PRIMA di aver letto le regole (`curl` con UA da browser, poi verificare che ci siano
   l'intestazione e la riga `> **Versione**:`); regola completa e motivazione nella sezione
@@ -205,9 +184,6 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
   - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
     primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
     lingua nel suo `Rules.md`.)
-  - Ⓘ Due deroghe storiche sono **decadute il 2026-08-01** diventando il default: lo schema
-    di versione `x.xx` è ora **SlimVer**, la regola universale, e il gate W3C 'alle minor,
-    se disponibile, senza bloccare' è scritto in `Roccobot.md` § '🧪 Test e verifiche (siti e app web)'.
 
   Resta invece pienamente valido tutto il resto: rigore tecnico, igiene del codice
   (niente codice morto), conferma esplicita per le operazioni ad alto impatto,
@@ -239,8 +215,6 @@ Dalla più forte alla più debole:
      progetto che lo riguarda (`JRRT.md` per il repo `Roccobot/arda`, `Earthsea.md` per
      il repo `Roccobot/earthsea`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
      questione di scala.
-   - ⚠️ **`Earthsea.md` attesta dal 2026-08-21**: fino a quel giorno era un guscio che
-     dichiarava di non essere un'autorità, e le note che lo dicono ancora sono superate.
    - ⚠️ Ma resta **sotto** le regole del repo `Roccobot/arda`, il solo
      progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
      **scelte editoriali deliberate** che divergono dal canone pubblicato
@@ -511,21 +485,10 @@ perché **questo file ha priorità più alta**.
   al 2026-07-28) e l'en-dash 'ammesso negli intervalli d'anno' (fino al 2026-08-01). Tenere
   un'eccezione in un file a priorità più alta **non circoscrive** il carattere: lo tiene vivo,
   e da lì rientra dappertutto, chat compresa.
-- **I due repo sono bonificati, e questa volta è una misura.** Censimento del 2026-07-30 su
-  **tutti** i file tracciati dei due repo, contando le occorrenze **fuori** dal codice inline
-  separatamente da quelle fra backtick: restano **soltanto** le eccezioni legittime, cioè le 4
-  di `rules/Roccobot.md` più 1 di questo file (la regola che per vietare il carattere deve
-  nominarlo, tutte fra backtick) e le 2 celle delle **tabelle dei caratteri** di RoccobotOS,
-  che ne documentano la scorciatoia. Trovati e corretti nella stessa passata: **11 em-dash in
-  `rules/JRRT.md`** e 1 nell'intestazione di `workers/rules-proxy.js`.
-  - ⚠️ **Il controllo a mano NON basta, e sapere perché evita di rifidarsi:**
-    `git ls-files | while read f; do grep -c '—' "$f"; done` gira dentro **un** repo e conta
-    **tutte** le occorrenze. Eseguito nel repo del sito dava 0 e sembrava una conferma, mentre
-    in `Roccobot/tools` nessuno l'aveva mai lanciato; e non distingue l'uso dalla citazione,
-    quindi su `Roccobot.md` darebbe 4 senza che ci sia niente da correggere. La misura
-    attendibile è quella del verificatore, che guarda il contesto.
-  - Nei commenti si usa il **trattino breve**, e nei marcatori di sezione lo stile di casa è
-    `// ── Titolo ──` (box drawing).
+- **La misura attendibile è quella del verificatore** (`refcheck.py`), che guarda il contesto e
+  distingue l'uso dalla citazione: un `grep` a mano conta anche le citazioni e copre un repo solo.
+  Nei commenti si usa il **trattino breve**, e nei marcatori di sezione lo stile di casa è
+  `// ── Titolo ──` (box drawing).
 - **Le sole occorrenze legittime**, uguali per i due caratteri: questa regola, che per dire di
   non usarli deve nominarli; le **tabelle dei caratteri** di RoccobotOS, che ne documentano la
   scorciatoia di tastiera; e per necessità tecnica le **espressioni regolari** che devono
@@ -548,9 +511,6 @@ perché **questo file ha priorità più alta**.
   (`...`), mai il carattere unico `…`. ⚠️ Valgono anche per il testo **che l'utente
   fornisce**: un carattere vietato ricevuto in input (p.es. l'apostrofo curvo
   dell'autocorrezione) va normalizzato, come in ogni altra circostanza.
-- **La bonifica dell'en-dash è del 2026-08-01**, quando è caduta la sua eccezione: 264
-  occorrenze di `1954-55` nelle fonti di 'I Grandi di Arda', più gli intervalli di `JRRT.md`
-  e pochi usi puntuativi. Da allora il presidio automatico li tratta come l'em-dash.
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
   nomi di creatura, toponimi con o senza articolo) vivono nel `Rules.md` del repo `Roccobot/arda`.
 
@@ -603,10 +563,8 @@ poi divergerebbe.
   `-H 'Cache-Control: no-cache'`, perché resta in cache più a lungo di `dati.js`.
 - ⚠️ **Allineamento al remoto prima di toccare un file: la regola vive in `Roccobot.md`**
   ('Workflow git e versioni') ed è **non derogabile**, col confronto dei ref come comando.
-  Qui si aggiungeva che **questo repo era il caso peggiore**, perché l'editor admin di 'I Grandi
-  di Arda' committava via API: dal 2026-09-26 lo fa nel repo `Roccobot/arda`, e là vale la
-  stessa cautela. Qui `master` non riceve più commit esterni dal 2026-09-27 (il bot di AIV era
-  l'ultimo), ma più sessioni possono lavorarci in parallelo.
+  Qui `master` non riceve commit esterni (gli editor admin scrivono nei repo `Roccobot/arda` e
+  `Roccobot/earthsea`), ma più sessioni possono lavorarci in parallelo.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
     'I Grandi di Arda' vive nel `Rules.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
@@ -622,11 +580,8 @@ poi divergerebbe.
 
 ## 🚀 Protocollo di avvio
 
-> ⚠️ **Le tre sezioni che seguono (protocollo di avvio, modello, artefatti) fino al 2026-10-03
-> vivevano nel `CLAUDE.md` dell'hub**, che da quel giorno è corto come quello degli altri repo e
-> le carica importando questo file: una nota che nomina 'il passo 0 del `CLAUDE.md`' o 'il
-> protocollo di avvio del `CLAUDE.md` di root' parla di queste sezioni. Valgono per Claude; per
-> gli altri agenti l'avvio è l'ordine di lettura del nucleo (`AGENTS.md` § '🧭 Come si legge il resto').
+> Valgono per Claude; per gli altri agenti l'avvio è l'ordine di lettura del nucleo (`AGENTS.md`
+> § '🧭 Come si legge il resto').
 
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
@@ -684,10 +639,6 @@ sessione:
        dell'ambiente** (via 1), che gira prima che la sessione parta: la riga da incollare là è
        questo stesso comando, e quando la lista cambia all'utente si ridà. ⚠️ **Non si promette
        che la sessione dopo non chiederà**: senza lo script, chiederà.
-     - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
-       affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
-       `send_later` senza avere l'opzione durevole. Fino al 2026-09-25 il comando configurava il solo
-       `Artifact`, e i tool MCP si aggiungevano a mano man mano che chiedevano.
    - ⚠️⚠️ **E NELLO STESSO PASSO SI CONTROLLA CLAUDE DESIGN, che dalla richiesta dell'utente
      del 2026-09-02 va agganciato SEMPRE** (*aggiorna le routine delle nuove sessioni in modo
      che sia sempre agganciato anche Claude Design*). Là vive il **design system** dei
@@ -723,8 +674,6 @@ sessione:
      richiesta non scatta quando nessuno sa di averne bisogno. Le altre regole che servono
      sempre (sicurezza, non derogabili, git, brief) sono già una riga ciascuna nel nucleo di
      `AGENTS.md`, che il sistema carica da sé.
-   - ⚠️ **Fino al 2026-10-10 il file si leggeva tutto all'avvio**: oltre 300.000 byte in ogni
-     sessione, quasi tutti su argomenti che il lavoro di quella sessione non toccava.
 2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
    **si attende la risposta** prima di iniziare il lavoro: l'utente ha detto
    esplicitamente che il ritardo di un giro non è un problema, perché si paga una
@@ -733,10 +682,6 @@ sessione:
      tolkieniano) e `rules/Earthsea.md` (il canone di Terramare). Sono i **soli** file di
      regole opzionali: tutto il resto vive in `Roccobot.md`, letto come dice il passo 1. Se un
      domani ne nascono altri, si aggiungono qui come opzioni.
-     - ⚠️ **Il secondo è nato il 2026-08-20 con il progetto 'I Grandi di Terramare'** ed è
-       **canone vero dal 2026-08-21**: opere, edizioni italiane coi traduttori, sigle
-       bilingui, Maestri di Roke, e i link alle fonti scaricabili. Le note che lo dicono un
-       guscio sono superate.
    - **`Quali regole di progetto leggo subito?`**, a **scelta multipla** fra i progetti
      della tabella in testa a `Rules.md` (richiesta dell'utente, 2026-07-30): di quelli scelti
      si legge per intero il `Rules.md`, o il `CLAUDE.md` dove non ce n'è altro.
@@ -755,9 +700,6 @@ sessione:
    il repo, evadere le voci, cancellare quelle provate) vive nella skill `handoff`,
    modo lettura, e non si duplica qui: qui si dice soltanto che il brief **si legge
    sempre**, perché il suo puntatore non può dipendere da una riga di passaggio.
-   Storico che lo motiva: fino al 2026-07-30 l'unico rimando in questo file viveva
-   dentro una nota su una verifica in corso, e chiudendo quella verifica il rimando è
-   sparito con lei.
    - ⚠️ **Si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
      `.memo/` come già `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>.
      È la via che copre le sessioni **senza** `Roccobot/tools` agganciato, o con meno
