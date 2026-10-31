@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.40
+> **Versione**: 2.50
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -30,7 +30,7 @@
 - Un file di regole si legge **per intero e in grezzo**, mai con uno strumento che riassume, e si
   controlla che contenga la riga `> **Versione**:` (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - I canoni si leggono quando il tema li tocca: `rules/JRRT.md` per Tolkien, `rules/Earthsea.md`
-  per Terramare. Parlano di mondi diversi e non competono fra loro.
+  per Terramare.
 - **Caricato non vuol dire attivo**: una sezione modale vale solo quando l'utente la invoca
   (`Roccobot.md` § '🗃️ File di regole collegati').
 - Le **skill** vivono in `.agents/skills/` di ogni repo, con `.claude/skills` come collegamento
@@ -156,10 +156,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 ## 🌿 Git e versioni
 
-- **Allineamento prima di ogni modifica**, perché il remoto riceve commit da altre sessioni e
-  dagli editor admin: `git -C <repo> fetch origin <principale>`, poi, in una chiamata a sé,
+- **Allineamento prima di ogni modifica**, perché il remoto riceve commit da altri: `git -C <repo> fetch origin <principale>`, poi, in una chiamata a sé,
   `git -C <repo> rev-list --left-right --count origin/<principale>...HEAD`, e se il primo numero
-  è sopra zero si allinea prima di lavorare. Il numero di versione non prova la freschezza.
+  è sopra zero si allinea prima di lavorare.
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
@@ -172,7 +171,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Più sessioni sullo stesso progetto: il numero lo prende chi mergia per primo**, e chi arriva
   dopo riparte dal ramo principale col numero successivo, senza togliere niente al lavoro
   dell'altra. Prima di un lavoro che rilascia si guarda se un'altra sessione è sullo stesso
-  progetto (brief, PR, branch, sessioni attive), e le sessioni si accordano fra loro, non
+  progetto, e le sessioni si accordano fra loro, non
   attraverso l'utente (`Roccobot.md` § '🤝 Più sessioni sullo stesso progetto: il numero a chi
   mergia per primo').
 - **Ogni area di competenza ha una sessione titolare**: quella del progetto per il suo prodotto
@@ -202,7 +201,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   parere; una risposta a scelta si travasa con la **sua chiave** accanto.
 - **Come si scrive**: con un commit, o dal Worker dichiarando `baseSha` e mandando il file intero;
   chi non committa usa la parola che scrive solo il brief (`Roccobot.md` § '🔌 Worker `rules-proxy`').
-- Le regole durevoli non vivono nel brief: vivono nei file di regole.
+- Le regole durevoli vivono nei file di regole, non nel brief. **Aggiungere, cambiare o togliere
+  una regola vuol dire anche correggere subito ogni frase datata, in tutti i repo** (protocollo
+  'Aggiungi alle regole' di `Roccobot.md`).
 - **Il brief ha il timbro `Last turn`** (`catchup.py --stamp`); ogni commit ha la riga `Agent:
   <piattaforma>`, e una versione nuova di un file di `rules/` ha la sua riga in `rules/Changelog.md`
   (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
