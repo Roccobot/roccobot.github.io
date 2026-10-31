@@ -461,6 +461,37 @@ class LexiconTests(unittest.TestCase):
                 refcheck.EXCEPTIONS = saved
 
 
+class UniversalRulePathTests(unittest.TestCase):
+    """A universal rule names files that live in every project repo, like `docs/Stores.md`."""
+
+    def run_on(self, with_clones):
+        with tempfile.TemporaryDirectory() as folder:
+            base = Path(folder)
+            scripts = base / 'roccobot.github.io/.memo/scripts'
+            scripts.mkdir(parents=True)
+            for name in ('refcheck.py', 'char-exceptions.json'):
+                shutil.copyfile(SCRIPT.with_name(name), scripts / name)
+            (base / 'roccobot.github.io/docs').mkdir()
+            (base / 'tools/rules').mkdir(parents=True)
+            (base / 'tools/rules/Roccobot.md').write_text(
+                '# Regole\n\n> **Versione**: 1.00\n\nI testi in `docs/Stores.md`.\n', encoding='utf-8')
+            if with_clones:
+                for name in (*refcheck.PROGETTI, 'AIV'):
+                    (base / name).mkdir()
+            return subprocess.run([sys.executable, str(scripts / 'refcheck.py')],
+                                  capture_output=True, text=True)
+
+    def test_without_the_project_clones_it_is_unverifiable(self):
+        result = self.run_on(with_clones=False)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn('non verificabili', result.stdout)
+
+    def test_with_every_clone_a_missing_file_is_broken(self):
+        result = self.run_on(with_clones=True)
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn('docs/Stores.md', result.stdout)
+
+
 class BriefCardTests(unittest.TestCase):
     """Every pending job with a code name has a link to its card on the Trello board."""
 
