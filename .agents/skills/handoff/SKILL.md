@@ -79,8 +79,8 @@ hanno questo gancio: per loro la regola è il nucleo.
   intervento`: sono i lavori aperti da altre sessioni e le decisioni che aspettano l'utente;
 - **in scrittura**, una voce nuova diventa anche una card (titolo `Codice: che cosa`, etichetta del
   progetto, backlog del progetto), e nel brief resta la riga col codice e il collegamento;
-- **alla chiusura**, ogni card toccata ha il suo commento e la sua lista giusta, e chi apre per primo
-  la bacheca nella giornata sposta in `Archivio` le card di `Fatte oggi` più vecchie di 24 ore.
+- **alla chiusura**, ogni card toccata ha il suo commento e la sua lista giusta (`Fatte` per un
+  lavoro finito); in `Archivio` non si sposta niente, lo fa l'utente se vuole.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
