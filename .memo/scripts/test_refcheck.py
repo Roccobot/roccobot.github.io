@@ -461,5 +461,60 @@ class LexiconTests(unittest.TestCase):
                 refcheck.EXCEPTIONS = saved
 
 
+class BriefCardTests(unittest.TestCase):
+    """Every pending job with a code name has a link to its card on the Trello board."""
+
+    BRIEF = """# Handoff
+
+## In sospeso
+
+### Aomidori: `Travaso`, convertire EPUB e Markdown (richiesta del 2026-10-27)
+
+Card: [Travaso](https://trello.com/c/ftlz3OVq) (`Da fare Aomidori`).
+
+### `Tools`: `Glossa`, proposta ritirata (sessione `Aomidori`, 2026-10-31)
+
+Testo della voce, senza card.
+
+### AIV: stato e coda dei lavori (Claude Code, `AIV`, 2026-10-27)
+
+Nessun nome in codice nel titolo.
+
+### `Universale-01`: due regole da rileggere
+
+Card: [Universale-01](https://trello.com/c/CHHT0MAm).
+
+### `Obolo-01`: l'acquisto una tantum
+
+Testo che cita [Travaso](https://trello.com/c/ftlz3OVq) e non la sua card.
+
+## Decisioni dell'utente
+
+### `Fuori`: una voce fuori da In sospeso non conta
+"""
+
+    def check(self, text):
+        with tempfile.TemporaryDirectory() as folder:
+            brief = Path(folder) / 'LATEST.md'
+            brief.write_text(text, encoding='utf-8')
+            return [m for _, _, m in refcheck.check_brief_card(brief)]
+
+    def test_only_the_jobs_without_their_card_are_reported(self):
+        found = self.check(self.BRIEF)
+        self.assertEqual(len(found), 2, found)
+        self.assertIn('`Glossa`', found[0])
+        self.assertIn('`Obolo-01`', found[1])
+
+    def test_repo_and_session_names_are_not_code_names(self):
+        self.assertFalse(any('`Tools`' in m or '`AIV`' in m or '`Aomidori`' in m
+                             for m in self.check(self.BRIEF)))
+
+    def test_a_brief_with_every_card_passes(self):
+        text = (self.BRIEF.replace('Testo della voce, senza card.',
+                                   'Card: [Glossa](https://trello.com/c/vTIvS0J9).')
+                .replace('e non la sua card.', 'e la sua [Obolo](https://trello.com/c/3JhuoJ8v).'))
+        self.assertEqual(self.check(text.replace('`Obolo-01`', '`Obolo`')), [])
+
+
 if __name__ == '__main__':
     unittest.main()

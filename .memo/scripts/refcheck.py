@@ -17,13 +17,15 @@ file, file assente o vuoto, stdin vuoto, terminale o muto): un controllo senza i
 un verde. Gli hook PreToolUse sui commit lo lanciano da sé: vedi .claude/settings.json nei
 due repo.
 
-Sei controlli:
+Otto controlli:
   1. link markdown relativi       -> il file bersaglio esiste?
   2. percorsi citati fra backtick -> il file esiste?
   3. rimandi a sezione per titolo -> quel titolo esiste in un file di regole?
   4. titoli VOLATILI              -> nessun titolo contiene date o versioni
   5. CARATTERI                    -> niente omografi, niente caratteri vietati fuori dal codice
   6. riquadro del brief           -> la copia in LATEST.md combacia con la sorgente nella skill
+  7. voci evase nel brief         -> niente segno di spunta né 'fatta e pubblicata'
+  8. card della bacheca           -> ogni lavoro in sospeso col nome in codice ha la sua card
 
 Il controllo 3 è permissivo per scelta: verifica che il titolo esista da
 qualche parte, non che il file citato sia quello giusto. Becca il caso peggiore,
@@ -1265,6 +1267,58 @@ def check_brief_evase(path=None):
     return (difetti, nota)
 
 
+# ── Ogni lavoro col nome in codice ha la sua card sulla bacheca ──
+# Regola dell'utente del 2026-10-30 (`Roccobot.md` § '📌 La bacheca di lavoro', ciclo, passo 1):
+# la card nasce nello stesso momento del nome in codice. Il 2026-10-31 lui ha trovato voci del
+# brief senza card, e ha chiesto un presidio che non dipenda dalla memoria di chi scrive: una
+# regola scritta in prosa, senza un controllo, nelle sessioni dopo una compattazione non c'è.
+# Il criterio si legge dal titolo della voce: un nome fra backtick fatto di una sola parola con
+# l'iniziale maiuscola (`Travaso`, `Obolo-01`) è un nome in codice, salvo che sia il nome di un
+# repo o di una sessione (`AIV`, `Tools`, `Aomidori`), che l'elenco dei progetti già contiene.
+# La voce deve contenere un collegamento alla card il cui testo comincia con quel nome:
+# `[Travaso](https://trello.com/c/...)`. Guarda le sole voci di `## In sospeso`, dove vivono i
+# lavori; le note di stato senza nome in codice (una versione pubblicata, la pulizia del lunedì)
+# restano fuori.
+RE_CODICE = re.compile(r"`([A-ZÀ-Ý][a-zà-ÿ]+(?:-\d{2})?)`")
+NOMI_DI_REPO = {n.lower() for n in (*PROGETTI, "AIV", "tools", "hub", "Tools")}
+
+
+def check_brief_card(path=None):
+    """Cerca nel brief le voci in sospeso con un nome in codice e senza la card collegata.
+
+    Rende la lista dei difetti, che bloccano.
+    """
+    path = path or INTRO_COPIA
+    if not path.exists():
+        return []
+    righe = path.read_text(encoding="utf-8").splitlines()
+    difetti, in_sospeso, voce = [], False, None
+
+    def chiudi(v):
+        if not v:
+            return
+        n, codici, corpo = v
+        for c in codici:
+            card = re.compile(r"\[" + re.escape(c) + r"(?:[-:][^\]]*)?\]\(https://trello\.com/c/\w+")
+            if not card.search(corpo):
+                difetti.append((path, n, f"`{c}` senza il collegamento alla sua card: "
+                                         f"[{c}](https://trello.com/c/...)"))
+
+    for n, r in enumerate(righe, 1):
+        if r.startswith("## "):
+            chiudi(voce)
+            voce, in_sospeso = None, r.strip() == "## In sospeso"
+        elif r.startswith("### ") and in_sospeso:
+            chiudi(voce)
+            codici = [c for c in dict.fromkeys(RE_CODICE.findall(r))
+                      if c.lower() not in NOMI_DI_REPO]
+            voce = (n, codici, "")
+        elif voce:
+            voce = (voce[0], voce[1], voce[2] + "\n" + r)
+    chiudi(voce)
+    return difetti
+
+
 # Quanti secondi uno stdin aperto può tacere prima che l'ingresso valga come assente.
 ATTESA_INGRESSO = 5
 
@@ -1841,6 +1895,11 @@ def main():
     if nota_evase:
         print(f"\n(avviso) {nota_evase}, non contato come difetto")
 
+    bad_card = check_brief_card()
+    report("lavori del brief senza la card della bacheca", bad_card,
+           "crea la card (titolo `Codice: che cosa`, etichetta del progetto) e scrivi il "
+           "collegamento nella voce: `Roccobot.md` § '📌 La bacheca di lavoro (Trello)'")
+
     # ⚠️ Senza il repo sibling, un rimando ai suoi file non è ROTTO: è soltanto
     # NON VERIFICABILE, e i due casi non si confondono (regola universale: un
     # errore che risponde 'non trovato' non prova un'assenza). Trattarli come
@@ -1862,7 +1921,7 @@ def main():
 
     tot = sum(seen.values())
     rotti = (len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
-             + len(bad_chars) + len(bad_intro) + len(bad_lex) + len(bad_evase))
+             + len(bad_chars) + len(bad_intro) + len(bad_lex) + len(bad_evase) + len(bad_card))
     if missing_repo:
         print(f"\nNota: {TOOLS} non è agganciato a questa sessione, quindi il controllo è "
               "PARZIALE: restano i link interni, i titoli e i caratteri, non i rimandi ai file "

@@ -78,7 +78,10 @@ hanno questo gancio: per loro la regola è il nucleo.
 - **in lettura**, accanto al brief si leggono dal Worker le card di `In corso` e di `Richiede
   intervento`: sono i lavori aperti da altre sessioni e le decisioni che aspettano l'utente;
 - **in scrittura**, una voce nuova diventa anche una card (titolo `Codice: che cosa`, etichetta del
-  progetto, backlog del progetto), e nel brief resta la riga col codice e il collegamento;
+  progetto, backlog del progetto), e nel brief resta la riga col codice e il collegamento. Dal
+  2026-10-31 `refcheck.py` blocca ogni voce di `In sospeso` il cui titolo ha un nome in codice
+  (`Travaso`, `Obolo-01`) e il cui testo non ha il collegamento `[Codice](https://trello.com/c/...)`:
+  il rimedio è creare la card, mai togliere il nome dal titolo;
 - **alla chiusura**, ogni card toccata ha il suo commento e la sua lista giusta (`Fatte` per un
   lavoro finito, sempre in cima con `pos: top`); in `Archivio` non si sposta niente, lo fa l'utente se vuole.
 
