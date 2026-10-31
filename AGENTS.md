@@ -10,13 +10,13 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.30
+> **Versione**: 2.40
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
 > fede. Nei repo arriva copiato in `AGENTS.md`: si modifica **qui**, mai nella copia.
-> ⚠️ Resta **sotto i 20.000 byte**: `core-sync` non scrive un `AGENTS.md` oltre i 30.000 (40.000
-> in Arda e Terramare); l'avviso `TIGHT` dice quale repo snellire.
+> ⚠️ Resta **sotto i 20.000 byte** (il perché: `Rules.md` di `tools`, § '🔄 L'Action
+> `core-sync`').
 
 ## 🧭 Come si legge il resto
 
@@ -163,10 +163,11 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
-- **SlimVer** (`x.xx`) sempre: +0,01 ritocco, decimale successivo per una funzionalità, +1,0 release maggiore, a ogni
-  commit che tocca il prodotto. Funzionalità vuol dire una capacità nuova: le note di un giro su
-  funzioni che esistono già valgono +0,01 (`Roccobot.md` § '🌿 Workflow git e versioni').
-  Eccezioni per compatibilità: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
+- **SlimVer** (`x.xx`) sempre, a ogni commit sul prodotto: +0,01 ritocco, decimale
+  successivo per una funzionalità (capacità nuova: 5.85 diventa 5.90), intero successivo per una
+  release maggiore (5.85 diventa 6.00). Conferma all'utente se un ritocco porta a un decimale tondo
+  (1.59) o una funzionalità a un intero (2.90) (`Roccobot.md` § '🌿 Workflow git e versioni').
+  Eccezioni: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
 - **Il numero di versione ha una fonte sola**, ed è visibile nel prodotto.
 - **Più sessioni sullo stesso progetto: il numero lo prende chi mergia per primo**, e chi arriva
   dopo riparte dal ramo principale col numero successivo, senza togliere niente al lavoro
@@ -206,8 +207,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   <piattaforma>`, e una versione nuova di un file di `rules/` ha la sua riga in `rules/Changelog.md`
   (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
 - **I lavori vivono anche sulla bacheca Trello `Roccobot`** (Worker, azione `trello`): card
-  `Codice: che cosa` con l'etichetta del progetto, in `In corso` quando inizia, in `Richiede
-  intervento` assegnata all'utente per una decisione (`Roccobot.md` § '📌 La bacheca di lavoro').
+  `Codice: che cosa` con l'etichetta del progetto, `In corso` quando inizia, `Richiede intervento`
+  (assegnata all'utente) per una decisione (`Roccobot.md` § '📌 La bacheca di lavoro').
 
 ## 🧪 Verifiche e controlli
 
