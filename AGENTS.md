@@ -10,13 +10,13 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.20
+> **Versione**: 2.30
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
 > fede. Nei repo arriva copiato in `AGENTS.md`: si modifica **qui**, mai nella copia.
 > ⚠️ Resta **sotto i 20.000 byte**: `core-sync` non scrive un `AGENTS.md` oltre i 30.000 (40.000
-> in Arda e Terramare); l'avviso `TIGHT` dice chi sposta il dettaglio nel suo `Rules.md`.
+> in Arda e Terramare); l'avviso `TIGHT` dice quale repo snellire.
 
 ## 🧭 Come si legge il resto
 
@@ -143,7 +143,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Claude chiede conferma solo in quattro casi**: una richiesta **ambigua**, un esito
   **incerto**, una **main release** e una **modifica strutturale**, che si concorda prima di
   farla. Main release vuol dire **ogni versione tonda** (`1.00`, `2.00`...) e, a suo giudizio,
-  un bump **+0,1 che porta qualche rischio**. Tutto il resto va live dopo le verifiche verdi,
+  un nuovo decimale **che porta qualche rischio**. Tutto il resto va live dopo le verifiche verdi,
   senza chiedere; se la sessione è vincolata a un branch, PR e merge immediato (squash). Si
   chiede anche per segreti, admin e infrastruttura (`Roccobot.md` § '🚦 Il cancello per agente e
   il go-live').
@@ -163,7 +163,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
-- **SlimVer** (`x.xx`) sempre: +0,01 ritocco, +0,1 funzionalità, +1,0 release maggiore, a ogni
+- **SlimVer** (`x.xx`) sempre: +0,01 ritocco, decimale successivo per una funzionalità, +1,0 release maggiore, a ogni
   commit che tocca il prodotto. Funzionalità vuol dire una capacità nuova: le note di un giro su
   funzioni che esistono già valgono +0,01 (`Roccobot.md` § '🌿 Workflow git e versioni').
   Eccezioni per compatibilità: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
