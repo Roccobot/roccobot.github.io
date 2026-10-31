@@ -1,11 +1,11 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.59
+#VERSION: 1.60
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.59: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.60: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -688,11 +688,17 @@ mark {
   text-transform: none;
 }
 
+/* A block formula wider than the column scrolls sideways, never up and down. Since 1.60 it has
+   room above and below for what goes past its box, the round figures under the baseline and the
+   exponents (Rocco's capture of Greenland-Flex.md: the denominator's 0, 6 and 8 were cut), taken
+   from its margin, so the space round it stays as it was. */
 math[display='block'], .katex-display, mjx-container[display='true'],
 :is(p, div, section, figure):has(> math[display='block']) {
-  margin-block: 1.4em;
+  margin-block: 0.9em;
+  padding-block: 0.5em;
   max-inline-size: 100%;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* Constrain images and musical scores to the reading column. */

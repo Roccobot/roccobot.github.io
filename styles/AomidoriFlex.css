@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.59
+#VERSION: 1.60
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -685,11 +685,17 @@ mark {
   text-transform: none;
 }
 
+/* A block formula wider than the column scrolls sideways, never up and down. Since 1.60 it has
+   room above and below for what goes past its box, the round figures under the baseline and the
+   exponents (Rocco's capture of Greenland-Flex.md: the denominator's 0, 6 and 8 were cut), taken
+   from its margin, so the space round it stays as it was. */
 math[display='block'], .katex-display, mjx-container[display='true'],
 :is(p, div, section, figure):has(> math[display='block']) {
-  margin-block: 1.4em;
+  margin-block: 0.9em;
+  padding-block: 0.5em;
   max-inline-size: 100%;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* Constrain images and musical scores to the reading column. */
