@@ -1273,13 +1273,14 @@ def check_brief_evase(path=None):
 # brief senza card, e ha chiesto un presidio che non dipenda dalla memoria di chi scrive: una
 # regola scritta in prosa, senza un controllo, nelle sessioni dopo una compattazione non c'è.
 # Il criterio si legge dal titolo della voce: un nome fra backtick fatto di una sola parola con
-# l'iniziale maiuscola (`Travaso`, `Obolo-01`) è un nome in codice, salvo che sia il nome di un
+# l'iniziale maiuscola, anche con una sigla numerica di qualunque lunghezza (`Travaso`,
+# `Obolo-01`, `Nota-7`, `Icona-06a`), è un nome in codice, salvo che sia il nome di un
 # repo o di una sessione (`AIV`, `Tools`, `Aomidori`), che l'elenco dei progetti già contiene.
 # La voce deve contenere un collegamento alla card il cui testo comincia con quel nome:
 # `[Travaso](https://trello.com/c/...)`. Guarda le sole voci di `## In sospeso`, dove vivono i
 # lavori; le note di stato senza nome in codice (una versione pubblicata, la pulizia del lunedì)
 # restano fuori.
-RE_CODICE = re.compile(r"`([A-ZÀ-Ý][a-zà-ÿ]+(?:-\d{2})?)`")
+RE_CODICE = re.compile(r"`([A-ZÀ-Ý][a-zà-ÿ]+(?:-\d+[a-z]?)?)`")
 NOMI_DI_REPO = {n.lower() for n in (*PROGETTI, "AIV", "tools", "hub", "Tools")}
 
 

@@ -515,6 +515,14 @@ Testo che cita [Travaso](https://trello.com/c/ftlz3OVq) e non la sua card.
                 .replace('e non la sua card.', 'e la sua [Obolo](https://trello.com/c/3JhuoJ8v).'))
         self.assertEqual(self.check(text.replace('`Obolo-01`', '`Obolo`')), [])
 
+    def test_any_number_makes_a_code_name(self):
+        for code in ('Nota-7', 'Nota-123', 'Icona-06a'):
+            with self.subTest(code=code):
+                text = f"## In sospeso\n\n### `{code}`: una voce\n\nSenza card.\n"
+                self.assertEqual(len(self.check(text)), 1)
+                linked = text.replace('Senza card.', f'[{code}](https://trello.com/c/abc123)')
+                self.assertEqual(self.check(linked), [])
+
 
 if __name__ == '__main__':
     unittest.main()
