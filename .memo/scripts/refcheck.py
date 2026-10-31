@@ -1833,8 +1833,14 @@ def main():
                     # percorso davvero sbagliato con una cartella inventata non si vede.
                     # Vale anche per AIV, i cui percorsi il brief scrive senza il prefisso
                     # `AIV/` (`tools/feedback-check.py`, visto il 2026-09-27).
+                    # ⚠️ Dal 2026-10-31 conta anche un percorso scritto in un file di `rules/`: le
+                    # regole universali nominano file che vivono nel repo di OGNI progetto
+                    # (`docs/Stores.md`, `docs/Removed.md`), e senza quei cloni il percorso non si
+                    # può cercare. La cartella `docs/` dell'hub lo faceva passare per rotto, e il
+                    # gancio bloccava ogni commit delle sessioni senza il clone di Aomidori.
                     progetto_assente = (aiv_missing or any(not r.exists() for r in PROGETTI.values())) and bool(coda) and (
-                        cita_progetto_assente(righe, n - 1, intorno=2)
+                        f.is_relative_to(TOOLS / "rules")
+                        or cita_progetto_assente(righe, n - 1, intorno=2)
                         or (aiv_missing and cita_aiv(righe, n - 1))
                         or (clone is not None and not clone.exists())
                         or not any((d / testa).exists() for d in (base, SITO, TOOLS)))
