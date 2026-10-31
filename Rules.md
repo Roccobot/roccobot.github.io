@@ -200,7 +200,7 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
     **go-live automatico** (vedi 'Branch, allineamento e push'), e la conferma
     preventiva si chiede solo per le modifiche pesanti o strutturali.
   - **Niente snapshot (tag git) dopo ogni rilascio** e **nessun Report post-rilascio
-    dopo ogni release maggiore**: qui un bump `+1.0` è frequente e non è un evento di
+    dopo ogni release maggiore**: qui il passo all'intero successivo è frequente e non è un evento di
     programma; l'archivio è la storia git.
   - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
     primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
