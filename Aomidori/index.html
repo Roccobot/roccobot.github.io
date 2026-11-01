@@ -148,6 +148,29 @@
   .solo-mac{font-size:14px; color:var(--text-body); margin:0}
   .solo-mac[hidden]{display:none}
 
+  /* Regalo: the giveaway, under the download button and quieter than it (an outline, not a fill). */
+  .regalo{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
+  .regalo[hidden],.regalo-codice[hidden],.regalo-tasto[hidden]{display:none}
+  .regalo-tasto{
+    display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+    font:inherit; font-size:15px; font-weight:600; color:var(--text-link);
+    background:none; border:1.5px solid currentColor; padding:11px 20px; border-radius:12px;
+  }
+  .regalo-tasto:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
+  .regalo-tasto:disabled{opacity:0.6; cursor:default}
+  .regalo-codice{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .regalo-codice code{
+    font:600 18px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:0.06em;
+    padding:12px 16px; border-radius:10px; border:1px solid var(--outline-variant);
+    user-select:all; overflow-wrap:anywhere;
+  }
+  .regalo-copia{
+    font:inherit; font-size:14px; color:var(--text-link); background:none; border:0;
+    border-bottom:1px dotted var(--outline); padding:4px 0 3px; cursor:pointer;
+  }
+  /* pre-line: the validity date goes on a line of its own (the \n in the texts). */
+  .regalo-nota{font-size:14px; line-height:1.5; color:var(--text-muted); margin:0; max-width:30rem; text-wrap:pretty; white-space:pre-line}
+
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
      as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.webp
      and -dark.webp, a landscape window of 1600 x 1176 since the owner's choice
@@ -224,6 +247,8 @@
     .scarica{font-size:18px; padding:16px 30px; border-radius:14px; align-self:center}
     .blocco-scarica{align-items:stretch}
     .tecnica, .solo-mac{text-align:center}
+    .regalo{align-items:center}
+    .regalo-nota{text-align:center}
     .fatti{grid-template-columns:1fr; padding-top:40px}
   }
 </style>
@@ -255,6 +280,20 @@
           <span id="scarica-testo">Download Aomidori</span>
         </a>
         <p class="tecnica" id="tecnica">macOS 27 or later, Apple Silicon only</p>
+      </div>
+      <!-- Regalo (2026-11-01): the promo code giveaway. Hidden until aomidori-codes answers, so
+           without JavaScript, or once the block is removed from the Worker, nothing shows. -->
+      <div class="regalo" id="regalo" hidden>
+        <button type="button" class="regalo-tasto" id="regalo-tasto">
+          <!-- A gift: a box with a ribbon. -->
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="9.6" width="16" height="10.8" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3.2 9.6h17.6M12 9.6v10.8M12 9.6c-1.4-3.6-5.6-4.4-5.6-1.8 0 1.2 1.6 1.8 5.6 1.8 4 0 5.6-.6 5.6-1.8 0-2.6-4.2-1.8-5.6 1.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span id="regalo-testo"></span>
+        </button>
+        <div class="regalo-codice" id="regalo-codice" hidden>
+          <code id="regalo-valore"></code>
+          <button type="button" class="regalo-copia" id="regalo-copia"></button>
+        </div>
+        <p class="regalo-nota" id="regalo-nota" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -364,6 +403,15 @@
         ['I fumetti, a pagine', 'I CBZ e i CBR si leggono a pagine, anche da destra a sinistra come i manga, con le pagine affiancate, i filtri e i capitoli della cartella.'],
         ['Anche i documenti', 'I file Markdown si aprono come un libro, con formule, note, tabelle e uno stile tutto loro.']
       ],
+      regalo: {
+        tasto: 'Ricevi un codice gratis',
+        attesa: 'Un attimo',
+        restano: function (n, tot) { return 'Ne restano ' + n + ' su ' + tot + ', uno a persona.'; },
+        come: 'Nell\'App Store fai clic sul tuo nome nella barra laterale e riscatta il codice come una carta regalo.\nVale fino al 28 novembre.',
+        finiti: function () { return 'I codici gratis sono finiti. Grazie a tutti!'; },
+        errore: 'Il codice non è arrivato. Riprova fra poco.',
+        copia: 'Copia', copiato: 'Copiato'
+      },
       altra: 'English', titoloAltra: 'Read this page in English',
       temi: { light: 'Tema chiaro', dark: 'Tema scuro' },
       titoliTema: { light: 'Passa al tema chiaro', dark: 'Passa al tema scuro' }
@@ -390,6 +438,15 @@
         ['Comics, page by page', 'CBZ and CBR files read page by page, right to left too like manga, with spreads, filters and the folder\'s chapters.'],
         ['Documents too', 'Markdown files open like a book, with formulas, footnotes, tables and a style of their own.']
       ],
+      regalo: {
+        tasto: 'Get a free code',
+        attesa: 'One moment',
+        restano: function (n, tot) { return n + ' of ' + tot + ' left, one per person.'; },
+        come: 'In the App Store, click your name in the sidebar and redeem the code like a gift card.\nValid until 28 November.',
+        finiti: function (tot) { return 'All ' + tot + ' free codes are gone. Thank you!'; },
+        errore: 'The code didn\'t arrive. Try again in a moment.',
+        copia: 'Copy', copiato: 'Copied'
+      },
       altra: 'Italiano', titoloAltra: 'Leggi questa pagina in italiano',
       temi: { light: 'Light theme', dark: 'Dark theme' },
       titoliTema: { light: 'Switch to the light theme', dark: 'Switch to the dark theme' }
@@ -451,6 +508,7 @@
     mostraSchermata(T);
     el('scarica-testo').textContent = T.scarica;
     el('tecnica').textContent = T.sistema;
+    disegnaRegalo(T.regalo);
 
     for (var f = 0; f < T.fatti.length; f++) {
       var titolo = document.querySelector('[data-t="f' + f + '"]');
@@ -495,6 +553,79 @@
     document.body.classList.remove('con-schermata');
   }
 
+  // Regalo (2026-11-01): the promo code giveaway. The codes live only in the Worker
+  // aomidori-codes (Roccobot/Aomidori, cloud/codes/), which gives one per connection; the code a
+  // browser got is kept in it, so a second visit shows the same code instead of asking again.
+  // The page sends nothing about the visitor. Its state: 'chiuso' (hidden: no answer yet, or no
+  // Worker), 'aperto', 'attesa', 'codice', 'finiti', 'errore'.
+  var REGALO_URL = 'https://aomidori-codes.roccobot-b90.workers.dev';
+  var REGALO_CHIAVE = 'aomidori-promo-code';
+  var regalo = { fase: 'chiuso', codice: null, restano: 0, totale: 0, copiato: false };
+  function leggiCodice() { try { return localStorage.getItem(REGALO_CHIAVE); } catch (e) { return null; } }
+  function salvaCodice(codice) { try { localStorage.setItem(REGALO_CHIAVE, codice); } catch (e) { /* the Worker remembers it too */ } }
+
+  function disegnaRegalo(R) {
+    var blocco = el('regalo');
+    blocco.hidden = regalo.fase === 'chiuso';
+    if (blocco.hidden) return;
+    var tasto = el('regalo-tasto');
+    var conCodice = regalo.fase === 'codice';
+    tasto.hidden = conCodice || regalo.fase === 'finiti';
+    tasto.disabled = regalo.fase === 'attesa';
+    el('regalo-testo').textContent = regalo.fase === 'attesa' ? R.attesa : R.tasto;
+    el('regalo-codice').hidden = !conCodice;
+    if (conCodice) {
+      el('regalo-valore').textContent = regalo.codice;
+      el('regalo-copia').textContent = regalo.copiato ? R.copiato : R.copia;
+    }
+    var nota = '';
+    if (conCodice) nota = R.come;
+    else if (regalo.fase === 'finiti') nota = R.finiti(regalo.totale);
+    else if (regalo.fase === 'errore') nota = R.errore;
+    else nota = R.restano(regalo.restano, regalo.totale);
+    el('regalo-nota').textContent = lega(nota);
+  }
+  function ridisegnaRegalo() { disegnaRegalo(TESTI[stato.lingua].regalo); }
+
+  function apriRegalo() {
+    var noto = leggiCodice();
+    if (noto) { regalo.codice = noto; regalo.fase = 'codice'; ridisegnaRegalo(); return; }
+    fetch(REGALO_URL + '/status', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); return r.json(); })
+      .then(function (s) {
+        if (!s.total) return;
+        regalo.totale = s.total; regalo.restano = s.remaining;
+        regalo.fase = s.remaining > 0 ? 'aperto' : 'finiti';
+        ridisegnaRegalo();
+      })
+      .catch(function () { /* no Worker, no giveaway: the block stays hidden */ });
+  }
+
+  el('regalo-tasto').addEventListener('click', function () {
+    if (regalo.fase === 'attesa') return;
+    regalo.fase = 'attesa';
+    ridisegnaRegalo();
+    fetch(REGALO_URL + '/claim', { method: 'POST', cache: 'no-store' })
+      .then(function (r) {
+        if (r.status !== 200 && r.status !== 410) throw new Error('claim ' + r.status);
+        return r.json();
+      })
+      .then(function (a) {
+        regalo.totale = a.total; regalo.restano = a.remaining;
+        if (a.code) { regalo.codice = a.code; salvaCodice(a.code); regalo.fase = 'codice'; }
+        else regalo.fase = 'finiti';
+        ridisegnaRegalo();
+      })
+      .catch(function () { regalo.fase = 'errore'; ridisegnaRegalo(); });
+  });
+  el('regalo-copia').addEventListener('click', function () {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(regalo.codice).then(function () {
+      regalo.copiato = true;
+      ridisegnaRegalo();
+    });
+  });
+
   el('lingua').addEventListener('click', function () {
     stato.lingua = (stato.lingua === 'it') ? 'en' : 'it';
     disegna();
@@ -521,6 +652,7 @@
 
   applicaTema();
   disegna();
+  apriRegalo();
 })();
 </script>
 
