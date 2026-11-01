@@ -83,7 +83,7 @@ hanno questo gancio: per loro la regola è il nucleo.
   (`Travaso`, `Obolo-01`, con qualunque numero) e il cui testo non ha il collegamento `[Codice](https://trello.com/c/...)`:
   il rimedio è creare la card, mai togliere il nome dal titolo;
 - **alla chiusura**, ogni card toccata ha il suo commento e la sua lista giusta (`Fatte` per un
-  lavoro finito, sempre in cima con `pos: top` e spuntata con `dueComplete: true`); in `Archivio` non si sposta niente, lo fa l'utente se vuole.
+  lavoro finito, sempre in cima con `pos: top` e spuntata con `dueComplete: true`); `Backlog` è dell'utente e non si tocca, salvo la card che lui assegna all'account degli agenti.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
