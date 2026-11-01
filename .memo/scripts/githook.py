@@ -86,6 +86,110 @@ def check_diff(diff):
     return problems
 
 
+# ── Freno (2026-11-01): which workflows a commit wakes up ──
+# Twenty-five pull requests of sole documentation in Aomidori ran its tests every time: a folder
+# the agents had just created (`.scratch/`) was missing from the list of paths the tests skip.
+# In a private repo each run is paid out of the monthly minutes, so before a commit lands the hook
+# says which workflows it will start when it touches only text. A warning, not a block: the fix is
+# in the workflow's filter, and the commit itself is fine.
+TEXT_ONLY = re.compile(r'(\.md$|^\.scratch/|^docs/)')
+# The workflows that exist for text, and so are meant to run on it: the rules check, and the
+# copy of the nucleus (rules/Core.md) into every AGENTS.md.
+FOR_TEXT = ('rules-check', 'core-sync')
+
+
+def _glob(pattern):
+    """A GitHub Actions path filter as a regular expression: `**` crosses folders, `*` does not."""
+    out = ''
+    i = 0
+    while i < len(pattern):
+        if pattern.startswith('**', i):
+            out += '.*'
+            i += 2
+            if pattern.startswith('/', i):
+                out += '/?'
+                i += 1
+        elif pattern[i] == '*':
+            out += '[^/]*'
+            i += 1
+        else:
+            out += re.escape(pattern[i])
+            i += 1
+    return re.compile(out + '$')
+
+
+def workflow_filters(text):
+    """{event: (kind, [patterns])} for the push and pull_request triggers of a workflow, where
+    kind is 'paths', 'paths-ignore' or None (no filter). A small reader of the `on:` block, so
+    the hook needs no YAML library on a Mac's system Python."""
+    events = {}
+    lines = text.splitlines()
+    try:
+        start = next(i for i, l in enumerate(lines) if re.match(r"^['\"]?on['\"]?:", l))
+    except StopIteration:
+        return events
+    head = lines[start].split(':', 1)[1].strip()
+    if head:  # on: [push, pull_request] or on: push
+        for ev in re.findall(r'\b(push|pull_request)\b', head):
+            events[ev] = (None, [])
+        return events
+    current, kind = None, None
+    for l in lines[start + 1:]:
+        if l and not l[0].isspace() and not l.startswith('#'):
+            break
+        m = re.match(r'^  (\w[\w-]*):\s*(.*)$', l)
+        if m:
+            current = m.group(1) if m.group(1) in ('push', 'pull_request') else None
+            kind = None
+            if current:
+                events[current] = (None, [])
+            continue
+        if not current:
+            continue
+        # A push filtered by tags alone starts on a tag, never on a commit to a branch.
+        if re.match(r'^\s+tags:', l) and current == 'push':
+            events.setdefault('_tags_only', True)
+        if re.match(r'^\s+branches:', l) and current == 'push':
+            events['_tags_only'] = False
+        m = re.match(r'^\s+(paths|paths-ignore):\s*(.*)$', l)
+        if m:
+            kind = m.group(1)
+            inline = re.findall(r"['\"]([^'\"]+)['\"]", m.group(2))
+            events[current] = (kind, inline)
+            continue
+        m = re.match(r"^\s+-\s*['\"]?([^'\"#]+?)['\"]?\s*(#.*)?$", l)
+        if m and kind:
+            events[current][1].append(m.group(1))
+        elif re.match(r'^\s+\w', l):
+            kind = None
+    if events.pop('_tags_only', False):
+        events.pop('push', None)
+    return events
+
+
+def would_run(filt, files):
+    kind, patterns = filt
+    if not kind:
+        return True
+    regs = [_glob(p) for p in patterns]
+    hit = [f for f in files if any(r.match(f) for r in regs)]
+    return bool(hit) if kind == 'paths' else len(hit) < len(files)
+
+
+def actions_warning(files, root=Path('.')):
+    """The workflows a text-only commit would start on push or on a pull request, by name."""
+    if not files or not all(TEXT_ONLY.search(f) for f in files):
+        return []
+    woken = []
+    for wf in sorted((root / '.github' / 'workflows').glob('*.y*ml')):
+        if wf.stem in FOR_TEXT:
+            continue
+        filters = workflow_filters(wf.read_text(encoding='utf-8'))
+        if any(would_run(f, files) for f in filters.values()):
+            woken.append(wf.name)
+    return woken
+
+
 def clean_message(text):
     """The message as git records it: no comment lines, nothing below the scissors line."""
     lines = []
@@ -120,6 +224,12 @@ def main(argv):
     if mode == 'pre-commit':
         # -M: a moved file is a rename, not a deletion plus a file full of added lines. Without
         # it, the legitimate dashes of a moved rule file (the rule that names them) would block.
+        woken = actions_warning(git('diff', '--cached', '--name-only', '-M').split())
+        if woken:
+            print('githook (avviso, Freno): il commit tocca solo testo ma, una volta pubblicato, fa '
+                  'partire ' + ', '.join(woken) + '. In un repo privato sono minuti a pagamento: '
+                  'il filtro dei percorsi di quel flusso deve elencare le cartelle del codice '
+                  '(Roccobot.md, la voce sui flussi che partono da soli).', file=sys.stderr)
         return report(check_diff(git('diff', '--cached', '-M')), 'commit bloccato')
     if mode == 'commit-msg' and len(argv) == 2:
         text = Path(argv[1]).read_text(encoding='utf-8')
