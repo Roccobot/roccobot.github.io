@@ -554,6 +554,20 @@ Testo che cita [Travaso](https://trello.com/c/ftlz3OVq) e non la sua card.
                 linked = text.replace('Senza card.', f'[{code}](https://trello.com/c/abc123)')
                 self.assertEqual(self.check(linked), [])
 
+    def test_a_promise_inside_another_voice_needs_its_card(self):
+        # The real case of 2026-11-01: a commitment written as a reply in another session's
+        # voice, with no title of its own, so no code name for the check above to see.
+        text = ("## Sessioni aperte\n\n- **Risposta di `Tools`**: d'accordo, lo spostamento lo fa "
+                "`Tools`, quando `Aomidroid` lo chiede.\n")
+        self.assertEqual(len(self.check(text)), 1)
+        linked = text.replace("`Tools`, quando", "`Tools` ([Attrezzi](https://trello.com/c/v6MFWzra)), quando")
+        self.assertEqual(self.check(linked), [])
+        for fine in ("una richiesta nella propria area la fa chi la riceve",
+                     "`SharpCopy` la fa entrare in 150 ms",
+                     "il lavoro lo fa la sessione `Aomidori` ([Catalogo](https://trello.com/c/ahws65oO))"):
+            with self.subTest(fine=fine):
+                self.assertEqual(self.check(f"## Stato\n\n- {fine}.\n"), [])
+
 
 if __name__ == '__main__':
     unittest.main()
