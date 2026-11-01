@@ -1317,7 +1317,21 @@ def check_brief_card(path=None):
         elif voce:
             voce = (voce[0], voce[1], voce[2] + "\n" + r)
     chiudi(voce)
+    # Un impegno preso dentro la voce di un'altra sessione (`Attrezzi`, 2026-11-01: *lo
+    # spostamento lo fa `Tools`, quando `Aomidroid` lo chiede*) non ha un titolo suo, quindi il
+    # controllo qui sopra non lo vedeva, e il lavoro restava senza card. Una riga che dice chi
+    # farà un lavoro deve avere sulla stessa riga il collegamento alla sua card.
+    for n, r in enumerate(righe, 1):
+        if RE_IMPEGNO.search(r) and "https://trello.com/c/" not in r:
+            difetti.append((path, n, "impegno senza la card: chi farà il lavoro lo scrive con il "
+                                     "nome in codice e il collegamento [Codice](https://trello.com/c/...)"))
     return difetti
+
+
+# 'lo fa `Tools`', 'il lavoro lo fa la sessione `Aomidori`', 'lo faccio io': chi si prende un
+# lavoro. Solo 'lo' e il nome di una sessione fra backtick, o la prima persona: 'la fa chi la
+# riceve' e 'la fa entrare in 150 ms' sono regole e descrizioni, e non si toccano.
+RE_IMPEGNO = re.compile(r"\blo (?:fa|farà) (?:la sessione )?`[A-Za-z]|\blo (?:faccio|farò)\b")
 
 
 # Quanti secondi uno stdin aperto può tacere prima che l'ingresso valga come assente.
