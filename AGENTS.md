@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.50
+> **Versione**: 2.51
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -257,13 +257,12 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **I testi di interfaccia si scrivono da copywriter** (sintesi, astrazione, eleganza,
   semplicità, precisione), quelli bilingui con `/microcopy-it` e `/microcopy-en`; ogni testo
-  nuovo o cambiato, anche scelto dall'utente, si valida
-  nel collaudo (`Roccobot.md` § '✍️ I testi nuovi entrano con la proposta, e si validano nel
+  nuovo o cambiato si valida nel collaudo (`Roccobot.md` § '✍️ I testi nuovi entrano con la proposta, e si validano nel
   collaudo').
-- **Nei paragrafi di UI nessuna parola resta sola a un capo della frase**: una frase non va a
-  capo dopo una parola sola o meno di 7 caratteri, e non finisce con una parola sotto i 7
-  caratteri andata a capo da sola; si regolano larghezze, spazi, crenatura e corpo, e si prova
-  sulle righe vere (`Roccobot.md` § 'Caratteri').
+- **Nei paragrafi di UI nessuna parola resta sola a un capo della frase**: niente a capo dopo
+  una parola sola o meno di 10 caratteri, né una frase che finisce con una parola sotto i 10
+  caratteri andata a capo da sola; si regola l'impaginazione e si prova sulle righe vere, e
+  dove non si può lo si dice prima della release (`Roccobot.md` § 'Caratteri').
 - ⚠️⚠️ **Nucleo e interfaccia separati, inderogabile**: le decisioni nascono nel nucleo con le
   prove, l'interfaccia le esegue (`Roccobot.md` § '🏛️ Nucleo funzionale e interfaccia separati,
   sempre').
