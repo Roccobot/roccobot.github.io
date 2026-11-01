@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.51
+> **Versione**: 2.52
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -105,8 +105,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **Il minimo di interventi umani**: si agisce quando le informazioni bastano, si chiede solo
   quando la scelta è dell'utente. **Un comando semplice per chiamata**: mai `cd` prima di `git`
-  (`git -C`), mai `&&` né heredoc (testi e script in un file): i comandi singoli offrono più
-  facilmente 'Consenti sempre' (`Roccobot.md` § '⚙️ Automazione e interazioni').
+  (`git -C`), mai `&&` né heredoc (testi e script in un file)
+  (`Roccobot.md` § '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio, ogni richiesta di autorizzazione è approvata**, nel
   cloud e in locale; in locale `caffeinate` parte da sé prima del lavoro, e si dice per quanto
   (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
@@ -121,8 +121,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
 - **GitHub Actions: avviso e stima prima di partire** (quale flusso, che macchina, quanti minuti),
-  e su macOS, che costa 10x, si aspetta il suo via (`Roccobot.md` § '💸 GitHub Actions: avviso e
-  stima prima di partire').
+  anche per un push, e su macOS (10x) si aspetta il suo via; le prove partono solo dal codice
+  (`Roccobot.md` § '💸 GitHub Actions: avviso e stima prima di partire').
 - **Prima di ogni lavoro si consigliano modello e sforzo**, perché solo l'utente li imposta: una
   riga in apertura, poi si aspetta il suo via (`Roccobot.md` § '🤖 Modello da usare').
 - **Le priorità le decide l'agente, e le dichiara subito**; un messaggio che comincia con `‼︎` o
