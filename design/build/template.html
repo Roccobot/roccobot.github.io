@@ -31,6 +31,8 @@ code { font-family: var(--mono); font-size: .86em; white-space: nowrap; }
 p, li, dd, figcaption, td { text-wrap: pretty; }
 h1, h2, h3 { text-wrap: balance; }
 h2, h3 { margin: 0; }
+/* two languages, one shown: Italian first; the L key and the language button switch */
+:root:not([data-lang="en"]) [lang="en"], :root[data-lang="en"] [lang="it"]:not(html) { display: none !important; }
 
 /* top bar */
 .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--fondo) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--linea); }
@@ -39,10 +41,13 @@ h2, h3 { margin: 0; }
 .bar-name { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
 .bar-sep { color: var(--testo-secondario); }
 .bar-ver { color: var(--testo-secondario); font-size: .875rem; white-space: nowrap; }
-.theme { margin-left: auto; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--contorno); border-radius: var(--raggio-pieno); background: var(--superficie); color: var(--testo); font: 500 .875rem/1 var(--tipo); white-space: nowrap; cursor: pointer; }
-.theme:hover { border-color: var(--testo-accento); }
-.theme kbd { font: 500 .75rem/1 var(--mono); padding: .2rem .4rem; border-radius: 4px; background: var(--superficie-alta); color: var(--testo-secondario); }
-.theme svg { width: 1.1rem; height: 1.1rem; }
+/* the language and theme controls, side by side at the top right */
+.ctl { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--contorno); border-radius: var(--raggio-pieno); background: var(--superficie); color: var(--testo); font: 500 .875rem/1 var(--tipo); white-space: nowrap; cursor: pointer; }
+.lang { margin-left: auto; }
+.ctl:hover { border-color: var(--testo-accento); }
+.ctl kbd { font: 500 .75rem/1 var(--mono); padding: .2rem .4rem; border-radius: 4px; background: var(--superficie-alta); color: var(--testo-secondario); }
+.ctl svg { width: 1.1rem; height: 1.1rem; }
+.ctl-code { display: none; font-weight: 600; }
 
 /* page frame */
 .frame { max-width: 76rem; margin: 0 auto; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 5rem; }
@@ -162,6 +167,11 @@ tr:last-child th, tr:last-child td { border-bottom: 0; }
 thead th { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--testo-secondario); font-weight: 600; background: var(--superficie); }
 tbody th { font-weight: 400; }
 td.kind { color: var(--testo-secondario); }
+.fx th code { font-size: .875rem; }
+.fx-state { display: block; margin-top: .35rem; font-size: .8125rem; color: var(--testo-secondario); }
+.fx-on { color: var(--testo-accento); font-weight: 600; }
+.fx-val { font-family: var(--mono); font-size: .8125rem; min-width: 9rem; }
+.steps { margin: 1rem 0 0; padding-left: 1.25rem; display: grid; gap: .5rem; max-width: var(--colonna); }
 
 /* type */
 .type-group { margin-top: 2.5rem; }
@@ -236,12 +246,15 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   .spec-usage { grid-column: 1; }
   .spec-meta { grid-auto-flow: column; justify-content: start; gap: .75rem; margin-bottom: .4rem; }
   .ic { grid-template-columns: minmax(0, 1fr); }
-  .bar-ver, .bar-sep, .theme span { display: none; }
+  /* on a phone there is no keyboard to show: the controls keep their icon and the language code */
+  .bar-ver, .bar-sep, .ctl-label, .ctl kbd { display: none; }
+  .ctl-code { display: inline; }
+  .ctl { padding: 0 .75rem; }
   section { padding-top: 3.5rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
-  .theme, .btn, .toc a { transition: background-color .16s, border-color .16s, color .16s; }
+  .ctl, .btn, .toc a { transition: background-color .16s, border-color .16s, color .16s; }
 }
 </style>
 
@@ -255,33 +268,38 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 
 <header class="bar">
   <div class="bar-in">
-    <svg class="bar-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot"><use href="#tian"/></svg>
+    <svg class="bar-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design System</span>
     <span class="bar-sep" aria-hidden="true">·</span>
-    <span class="bar-ver">versione 2, 2 novembre 2026</span>
-    <button class="theme" id="theme" type="button" aria-label="Cambia tema">
+    <span class="bar-ver"><span lang="it">versione 3, 3 novembre 2026</span><span lang="en">version 3, November 3, 2026</span></span>
+    <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span class="ctl-label" id="lang-label">English</span><b class="ctl-code" id="lang-code">EN</b><kbd>L</kbd>
+    </button>
+    <button class="ctl theme" id="theme" type="button" aria-label="Cambia tema">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-      <span id="theme-label">Tema scuro</span><kbd>T</kbd>
+      <span class="ctl-label" id="theme-label">Tema scuro</span><kbd>T</kbd>
     </button>
   </div>
 </header>
 
 <div class="frame">
-  <nav class="toc" aria-label="Sezioni">
-    <p>Sezioni</p>
+  <nav class="toc" aria-label="Sezioni" data-label-en="Sections">
+    <p><span lang="it">Sezioni</span><span lang="en">Sections</span></p>
     <ol>
-      <li><a href="#identita">Identità</a></li>
-      <li><a href="#accenti">I due accenti</a></li>
-      <li><a href="#marchio">Il marchio</a></li>
-      <li><a href="#icona">L'icona di AIV</a></li>
-      <li><a href="#colori">Tutti i colori</a></li>
-      <li><a href="#contrasti">Contrasti</a></li>
-      <li><a href="#caratteri">Caratteri</a></li>
-      <li><a href="#misure">Spazi e forme</a></li>
-      <li><a href="#movimento">Movimento</a></li>
-      <li><a href="#componenti">Componenti</a></li>
-      <li><a href="#voce">Voce e testi</a></li>
-      <li><a href="#principi">Principi</a></li>
+      <li><a href="#identita"><span lang="it">Identità</span><span lang="en">Identity</span></a></li>
+      <li><a href="#accenti"><span lang="it">I due accenti</span><span lang="en">The two accents</span></a></li>
+      <li><a href="#marchio"><span lang="it">Il marchio</span><span lang="en">The mark</span></a></li>
+      <li><a href="#icona"><span lang="it">L'icona di AIV</span><span lang="en">The AIV icon</span></a></li>
+      <li><a href="#colori"><span lang="it">Tutti i colori</span><span lang="en">All colors</span></a></li>
+      <li><a href="#contrasti"><span lang="it">Contrasti</span><span lang="en">Contrast</span></a></li>
+      <li><a href="#caratteri"><span lang="it">Caratteri</span><span lang="en">Typefaces</span></a></li>
+      <li><a href="#misure"><span lang="it">Spazi e forme</span><span lang="en">Space and shape</span></a></li>
+      <li><a href="#movimento"><span lang="it">Movimento</span><span lang="en">Motion</span></a></li>
+      <li><a href="#effetti"><span lang="it">Vetro e sfocature</span><span lang="en">Glass and blur</span></a></li>
+      <li><a href="#componenti"><span lang="it">Componenti</span><span lang="en">Components</span></a></li>
+      <li><a href="#voce"><span lang="it">Voce e testi</span><span lang="en">Voice and copy</span></a></li>
+      <li><a href="#principi"><span lang="it">Principi</span><span lang="en">Principles</span></a></li>
     </ol>
   </nav>
 
@@ -289,73 +307,83 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     <section class="hero" id="identita" aria-labelledby="h-id">
       <div>
         <p class="eyebrow">Rocco Casadei, a.k.a. Roccobot</p>
-        <h1 id="h-id"><svg class="h1-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot"><use href="#tian"/></svg>Design System</h1>
-        <p class="lead">Le regole visive e di scrittura del marchio personale di Roccobot, graphic designer e fotografo: le app AIV e Aomidori, il sito fotografico, le pagine e i documenti che portano il suo nome.</p>
+        <h1 id="h-id"><svg class="h1-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>Design System</h1>
+        <p class="lead" lang="it">Le regole visive e di scrittura del marchio personale di Roccobot, graphic designer e fotografo: le app AIV e Aomidori, il sito fotografico, le pagine e i documenti che portano il suo nome.</p>
+        <p class="lead" lang="en">The visual and writing rules of the personal brand of Roccobot, graphic designer and photographer: the AIV and Aomidori apps, the photography site, and the pages and documents that bear his name.</p>
         <ul class="hero-meta">
-          <li><b>Due accenti</b> turchese e petrolio</li>
-          <li><b>Due temi</b> Giorno e Notte</li>
-          <li><b>Un marchio</b> il carattere U+5929</li>
+          <li><span lang="it"><b>Due accenti</b> turchese e petrolio</span><span lang="en"><b>Two accents</b> turquoise and petrol</span></li>
+          <li><span lang="it"><b>Due temi</b> Giorno e Notte</span><span lang="en"><b>Two themes</b> Day and Night</span></li>
+          <li><span lang="it"><b>Un marchio</b> il carattere U+5929</span><span lang="en"><b>One mark</b> the character U+5929</span></li>
         </ul>
       </div>
       <div class="hero-tile" aria-hidden="true"><svg viewBox="@tile-frame"><use href="#tian"/></svg></div>
     </section>
 
     <section aria-labelledby="h-come">
-      <p class="eyebrow">Come si usa</p>
-      <h2 id="h-come">Una fonte sola</h2>
+      <p class="eyebrow"><span lang="it">Come si usa</span><span lang="en">How to use it</span></p>
+      <h2 id="h-come"><span lang="it">Una fonte sola</span><span lang="en">One single source</span></h2>
       <div class="prose">
-        <p>Questa pagina è l'unica fonte del design system. Accanto a lei, nella stessa cartella, ci sono i file per gli agenti e per il codice: i token (<a href="tokens.json"><code>tokens.json</code></a>), da cui la pagina prende ogni valore, il manuale (<a href="README.md"><code>README.md</code></a>), le schede dei componenti delle app, i file del marchio e dell'icona di AIV, e il generatore che costruisce la pagina. Chi disegna usa la pagina; chi scrive codice usa il token, mai il valore copiato.</p>
-        <p>La pagina segue il tema del sistema. Il tasto&nbsp;<code>T</code>&nbsp;lo inverte da qualunque punto, salvo mentre si scrive in un campo di testo: così ogni colore si vede sul suo fondo vero, di giorno e di notte.</p>
+        <p lang="it">Questa pagina è l'unica fonte del design system. Accanto a lei, nella stessa cartella, ci sono i file per gli agenti e per il codice: i token (<a href="tokens.json"><code>tokens.json</code></a>), da cui la pagina prende ogni valore, il manuale (<a href="README.md"><code>README.md</code></a>, e in inglese <a href="README.en.md"><code>README.en.md</code></a>), le schede dei componenti delle app, i file del marchio e dell'icona di AIV, e il generatore che costruisce la pagina. Chi disegna usa la pagina; chi scrive codice usa il token, mai il valore copiato.</p>
+        <p lang="en">This page is the only source of the design system. Next to it, in the same folder, are the files for agents and for code: the tokens (<a href="tokens.json"><code>tokens.json</code></a>), where the page takes every value from, the manual (<a href="README.en.md"><code>README.en.md</code></a>, and in Italian <a href="README.md"><code>README.md</code></a>), the app component sheets, the files of the mark and of the AIV icon, and the generator that builds the page. Designers use the page; developers use the token, never a copied value.</p>
+        <p lang="it">La pagina segue il tema del sistema e si apre in italiano. Il tasto&nbsp;<code>T</code>&nbsp;inverte il tema e il tasto&nbsp;<code>L</code>&nbsp;passa all'inglese, da qualunque punto, salvo mentre si scrive in un campo di testo; i due pulsanti in alto a destra fanno lo stesso. Così ogni colore si vede sul suo fondo vero, di giorno e di notte.</p>
+        <p lang="en">The page follows the system theme and opens in Italian. The&nbsp;<code>T</code>&nbsp;key flips the theme and the&nbsp;<code>L</code>&nbsp;key switches the language, from anywhere except while typing in a text field; the two buttons at the top right do the same. This way every color is seen on its real background, by day and by night.</p>
       </div>
     </section>
 
     <section id="accenti" aria-labelledby="h-acc">
-      <p class="eyebrow">Colore</p>
-      <h2 id="h-acc">I due accenti primari</h2>
-      <p class="lead">Turchese e petrolio sono la firma del marchio, e si completano: il turchese si legge sullo sfondo scuro, il petrolio su quello chiaro. Insieme coprono i due temi.</p>
+      <p class="eyebrow"><span lang="it">Colore</span><span lang="en">Color</span></p>
+      <h2 id="h-acc"><span lang="it">I due accenti primari</span><span lang="en">The two primary accents</span></h2>
+      <p class="lead" lang="it">Turchese e petrolio sono la firma del marchio, e si completano: il turchese si legge sullo sfondo scuro, il petrolio su quello chiaro. Insieme coprono i due temi.</p>
+      <p class="lead" lang="en">Turquoise and petrol are the signature of the brand, and they complete each other: turquoise reads on the dark background, petrol on the light one. Together they cover both themes.</p>
       <div class="primaries">
         <!--@turchese-->
         <!--@petrolio-->
       </div>
-      <div class="duo" aria-label="Le coppie di accenti sui fondi">
-        <div class="d1">Petrolio su sfondo chiaro</div>
-        <div class="d2">Menta su petrolio</div>
-        <div class="d3">Su-accento su turchese</div>
-        <div class="d4">Turchese su sfondo scuro</div>
+      <div class="duo" aria-label="Le coppie di accenti sui fondi" data-label-en="The accent pairs on their backgrounds">
+        <div class="d1"><span lang="it">Petrolio su sfondo chiaro</span><span lang="en">Petrol on light background</span></div>
+        <div class="d2"><span lang="it">Menta su petrolio</span><span lang="en">Mint on petrol</span></div>
+        <div class="d3"><span lang="it">Su-accento su turchese</span><span lang="en">On-accent on turquoise</span></div>
+        <div class="d4"><span lang="it">Turchese su sfondo scuro</span><span lang="en">Turquoise on dark background</span></div>
       </div>
-      <p class="note">Il turchese è anche il colore di Aomidori, il cui nome vuol dire turchese in giapponese, ed è quasi identico all'accento del sito roccobot.me (<code>hsl(170, 46%, 49%)</code>). Per un testo d'accento si usa sempre <code>testo-accento</code>, che vale 6,21 sullo sfondo chiaro e 9,97 su quello scuro.</p>
+      <p class="note" lang="it">Il turchese è anche il colore di Aomidori, il cui nome vuol dire turchese in giapponese, ed è quasi identico all'accento del sito roccobot.me (<code>hsl(170, 46%, 49%)</code>). Per un testo d'accento si usa sempre <code>testo-accento</code>, che vale 6,21 sullo sfondo chiaro e 9,97 su quello scuro.</p>
+      <p class="note" lang="en">Turquoise is also the color of Aomidori, whose name means turquoise in Japanese, and it is almost identical to the accent of the roccobot.me site (<code>hsl(170, 46%, 49%)</code>). Accent text always uses <code>testo-accento</code>, at 6.21 on the light background and 9.97 on the dark one.</p>
     </section>
 
     <section id="marchio" aria-labelledby="h-mar">
-      <p class="eyebrow">Marchio</p>
-      <h2 id="h-mar">Il marchio</h2>
-      <p class="lead">Il segno personale di Roccobot è il carattere U+5929, cielo in cinese e in giapponese, disegnato come tracciato. Si usa sempre dal file originale.</p>
+      <p class="eyebrow"><span lang="it">Marchio</span><span lang="en">Mark</span></p>
+      <h2 id="h-mar"><span lang="it">Il marchio</span><span lang="en">The mark</span></h2>
+      <p class="lead" lang="it">Il segno personale di Roccobot è il carattere U+5929, cielo in cinese e in giapponese, disegnato come tracciato. Si usa sempre dal file originale.</p>
+      <p class="lead" lang="en">Roccobot's personal sign is the character U+5929, sky in Chinese and Japanese, drawn as a path. It is always used from the original file.</p>
       <div class="marks">
-        <figure class="mk mk-1"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo chiaro"><use href="#tian"/></svg></div><figcaption><b>Turchese su chiaro</b>Solo grafica, a 2,43: si usa grande.</figcaption></figure>
-        <figure class="mk mk-2"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo scuro"><use href="#tian"/></svg></div><figcaption><b>Turchese su scuro</b>La forma principale, 6,93.</figcaption></figure>
-        <figure class="mk mk-3"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio scuro su turchese"><use href="#tian"/></svg></div><figcaption><b>Su-accento su turchese</b>Per un pulsante o un riquadro pieno, 5,19.</figcaption></figure>
-        <figure class="mk mk-4"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio menta su petrolio"><use href="#tian"/></svg></div><figcaption><b>Menta su petrolio</b>Il negativo per il tema scuro, 5,46.</figcaption></figure>
+        <figure class="mk mk-1"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo chiaro" data-label-en="Turquoise mark on a light background"><use href="#tian"/></svg></div><figcaption><span lang="it"><b>Turchese su chiaro</b>Solo grafica, a 2,43: si usa grande.</span><span lang="en"><b>Turquoise on light</b>Graphics only, at 2.43: use it large.</span></figcaption></figure>
+        <figure class="mk mk-2"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo scuro" data-label-en="Turquoise mark on a dark background"><use href="#tian"/></svg></div><figcaption><span lang="it"><b>Turchese su scuro</b>La forma principale, 6,93.</span><span lang="en"><b>Turquoise on dark</b>The main form, 6.93.</span></figcaption></figure>
+        <figure class="mk mk-3"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio scuro su turchese" data-label-en="Dark mark on turquoise"><use href="#tian"/></svg></div><figcaption><span lang="it"><b>Su-accento su turchese</b>Per un pulsante o un riquadro pieno, 5,19.</span><span lang="en"><b>On-accent on turquoise</b>For a filled button or box, 5.19.</span></figcaption></figure>
+        <figure class="mk mk-4"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio menta su petrolio" data-label-en="Mint mark on petrol"><use href="#tian"/></svg></div><figcaption><span lang="it"><b>Menta su petrolio</b>Il negativo per il tema scuro, 5,46.</span><span lang="en"><b>Mint on petrol</b>The negative for the dark theme, 5.46.</span></figcaption></figure>
       </div>
       <div class="center-ref">
         <div class="cr-tile"><!--@centerref--></div>
         <div>
-          <h3>Centratura ponderata</h3>
-          <p>Si centra il quadrato ideale del segno, e non il riquadro del disegno: alcuni tratti ne escono, ed è così che il glifo risulta centrato all'occhio. In una piastrella il quadrato ideale occupa il 58,5% del lato. È il riferimento ufficiale di Rocco, e vale per icone, piastrelle e ogni riquadro che contiene il marchio.</p>
+          <h3><span lang="it">Centratura ponderata</span><span lang="en">Weighted centering</span></h3>
+          <p lang="it">Si centra il quadrato ideale del segno, e non il riquadro del disegno: alcuni tratti ne escono, ed è così che il glifo risulta centrato all'occhio. In una piastrella il quadrato ideale occupa il 58,5% del lato, in larghezza e in altezza. È il riferimento ufficiale di Rocco, e vale per icone, piastrelle e ogni riquadro che contiene il marchio.</p>
+          <p lang="en">Center the ideal square of the sign, not the box of the drawing: some strokes stick out of it, and that is how the glyph looks centered to the eye. In a tile the ideal square takes 58.5% of the side, in width and in height. It is Rocco's official reference, and it applies to icons, tiles and any box that holds the mark.</p>
         </div>
       </div>
       <div class="mark-rules">
         <div class="rule">
-          <h3>Non si tocca</h3>
-          <p>Il tracciato non si ridisegna, non si arrotonda, non si deforma e non si uniforma ad altri glifi. Si cambia soltanto il colore, fra quelli di questa sezione. Un ritocco al segno è sempre una proposta, e lo decide Rocco.</p>
+          <h3><span lang="it">Non si tocca</span><span lang="en">Hands off</span></h3>
+          <p lang="it">Il tracciato non si ridisegna, non si arrotonda, non si deforma e non si uniforma ad altri glifi. Si cambia soltanto il colore, fra quelli di questa sezione. Un ritocco al segno è sempre una proposta, e lo decide Rocco.</p>
+          <p lang="en">The path is never redrawn, rounded, distorted or matched to other glyphs. Only its color changes, among the ones in this section. Any retouch of the sign is a proposal, and Rocco decides.</p>
         </div>
         <div class="rule">
-          <h3>Area di rispetto</h3>
-          <p>Intorno al quadrato ideale resta libero almeno un decimo della sua altezza, su tutti e quattro i lati.</p>
+          <h3><span lang="it">Area di rispetto</span><span lang="en">Clear space</span></h3>
+          <p lang="it">Intorno al quadrato ideale resta libero almeno un decimo della sua altezza, su tutti e quattro i lati.</p>
+          <p lang="en">At least a tenth of the ideal square's height stays clear around it, on all four sides.</p>
           <div class="clear"><div class="clear-box"><!--@clear--></div></div>
         </div>
         <div class="rule">
-          <h3>Misura minima</h3>
-          <p>16 px sullo schermo; sotto i 24 px solo sui fondi a contrasto pieno. L'unica eccezione, voluta da Rocco, sono alcune favicon più piccole, anche se si leggono meno bene.</p>
+          <h3><span lang="it">Misura minima</span><span lang="en">Minimum size</span></h3>
+          <p lang="it">16 px sullo schermo; sotto i 24 px solo sui fondi a contrasto pieno. L'unica eccezione, voluta da Rocco, sono alcune favicon più piccole, anche se si leggono meno bene.</p>
+          <p lang="en">16 px on screen; below 24 px only on full-contrast backgrounds. The only exception, which Rocco wants, is a few smaller favicons, even though they read less well.</p>
           <div class="sizes" aria-hidden="true">
             <span><svg viewBox="@fit-frame" width="16"><use href="#tian"/></svg>16</span>
             <span><svg viewBox="@fit-frame" width="24"><use href="#tian"/></svg>24</span>
@@ -367,155 +395,228 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     </section>
 
     <section id="icona" aria-labelledby="h-ico">
-      <p class="eyebrow">Icone delle app</p>
-      <h2 id="h-ico">L'icona di AIV</h2>
-      <p class="lead">L'icona più rappresentativa del marchio: la A col disco solare, disegnata da Rocco, sui due accenti primari. Cambiano tutti e due i livelli fra i temi, glifo compreso.</p>
+      <p class="eyebrow"><span lang="it">Icone delle app</span><span lang="en">App icons</span></p>
+      <h2 id="h-ico"><span lang="it">L'icona di AIV</span><span lang="en">The AIV icon</span></h2>
+      <p class="lead" lang="it">L'icona più rappresentativa del marchio: la A col disco solare, disegnata da Rocco, sui due accenti primari. Cambiano tutti e due i livelli fra i temi, glifo compreso.</p>
+      <p class="lead" lang="en">The most representative icon of the brand: the A with the sun disc, drawn by Rocco, on the two primary accents. Both layers change between themes, glyph included.</p>
       <div class="icons">
         <figure class="ic ic-day">
           <div class="ic-shapes">
-            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di giorno"><rect width="108" height="108" fill="#43b59e"/><g style="color:#ebfff7"><use href="#aiv-glyph"/></g></svg>
+            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di giorno" data-label-en="AIV icon by day"><rect width="108" height="108" fill="#43b59e"/><g style="color:#ebfff7"><use href="#aiv-glyph"/></g></svg>
             <svg class="ci" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" fill="#43b59e"/><g style="color:#ebfff7"><use href="#aiv-glyph"/></g></svg>
           </div>
-          <figcaption><b>Giorno</b><p>Menta <code>#EBFFF7</code> su turchese <code>#43B59E</code>. Contrasto 2,42, sotto il 3:1 della grafica: coppia scelta da Rocco.</p></figcaption>
+          <figcaption><b><span lang="it">Giorno</span><span lang="en">Day</span></b><p lang="it">Menta <code>#EBFFF7</code> su turchese <code>#43B59E</code>. Contrasto 2,42, sotto il 3:1 della grafica: coppia scelta da Rocco.</p><p lang="en">Mint <code>#EBFFF7</code> on turquoise <code>#43B59E</code>. Contrast 2.42, below the 3:1 for graphics: a pair Rocco chose.</p></figcaption>
         </figure>
         <figure class="ic ic-night">
           <div class="ic-shapes">
-            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di notte"><rect width="108" height="108" fill="#00727b"/><g style="color:#4fd9be"><use href="#aiv-glyph"/></g></svg>
+            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di notte" data-label-en="AIV icon by night"><rect width="108" height="108" fill="#00727b"/><g style="color:#4fd9be"><use href="#aiv-glyph"/></g></svg>
             <svg class="ci" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" fill="#00727b"/><g style="color:#4fd9be"><use href="#aiv-glyph"/></g></svg>
           </div>
-          <figcaption><b>Notte</b><p>Turchese luce <code>#4FD9BE</code> su petrolio <code>#00727B</code>, a 3,25.</p></figcaption>
+          <figcaption><b><span lang="it">Notte</span><span lang="en">Night</span></b><p lang="it">Turchese luce <code>#4FD9BE</code> su petrolio <code>#00727B</code>, a 3,25.</p><p lang="en">Light turquoise <code>#4FD9BE</code> on petrol <code>#00727B</code>, at 3.25.</p></figcaption>
         </figure>
       </div>
       <div class="prose">
-        <p>L'icona di un'app Android è adattiva: un quadrato pieno, col soggetto nella zona sicura e al 45% del lato circa, senza nessuna forma disegnata. Il ritaglio, tondo o a quadrato arrotondato come qui sopra, lo decide il telefono. Il disegno vive in <code>ic_launcher_foreground.xml</code> del repo di AIV, ed è quello di questa pagina, senza modifiche.</p>
+        <p lang="it">L'icona di un'app Android è adattiva: un quadrato pieno, col soggetto nella zona sicura e al 45% del lato circa, senza nessuna forma disegnata. Il ritaglio, tondo o a quadrato arrotondato come qui sopra, lo decide il telefono. Il disegno vive in <code>ic_launcher_foreground.xml</code> del repo di AIV, ed è quello di questa pagina, senza modifiche.</p>
+        <p lang="en">An Android app icon is adaptive: a full square, with the subject in the safe zone at about 45% of the side, and no drawn shape. The crop, round or a rounded square as above, is up to the phone. The drawing lives in <code>ic_launcher_foreground.xml</code> in the AIV repo, and it is the one on this page, unchanged.</p>
       </div>
     </section>
 
     <section id="colori" aria-labelledby="h-col">
-      <p class="eyebrow">Colore</p>
-      <h2 id="h-col">Tutti i colori</h2>
-      <p class="lead">Ogni token ha il campione di giorno e quello di notte, affiancati; un token con un campione solo vale uguale nei due temi.</p>
-      <ul class="legend"><li><i class="l-day"></i>a sinistra, Giorno</li><li><i class="l-night"></i>a destra, Notte</li></ul>
+      <p class="eyebrow"><span lang="it">Colore</span><span lang="en">Color</span></p>
+      <h2 id="h-col"><span lang="it">Tutti i colori</span><span lang="en">All colors</span></h2>
+      <p class="lead" lang="it">Ogni token ha il campione di giorno e quello di notte, affiancati; un token con un campione solo vale uguale nei due temi.</p>
+      <p class="lead" lang="en">Every token shows its day and night swatches side by side; a token with one swatch is the same in both themes.</p>
+      <ul class="legend"><li><i class="l-day"></i><span lang="it">a sinistra, Giorno</span><span lang="en">left, Day</span></li><li><i class="l-night"></i><span lang="it">a destra, Notte</span><span lang="en">right, Night</span></li></ul>
       <!--@palette-->
+      <div class="pal-group">
+        <h3><span lang="it">Come si aggiunge un colore</span><span lang="en">How to add a color</span></h3>
+        <ol class="steps" lang="it">
+          <li>Si stabilisce il suo ruolo: azione, struttura o testo. Un elemento nuovo prende il colore del suo ruolo, non quello che sta meglio nel punto in cui capita.</li>
+          <li>Si sceglie il valore nei due temi, mai guardandone uno solo.</li>
+          <li>Si misura il contrasto sul fondo peggiore in cui quel colore capita, che è il fondo vero del componente.</li>
+          <li>Si controlla la distanza di tinta dai colori che possono capitargli accanto: un titolo colorato resta ad almeno 20 gradi dalla tinta dei collegamenti, o si legge come un collegamento.</li>
+          <li>Se resta sotto soglia, o si corregge o diventa un'eccezione dichiarata, col numero e la ragione, approvata da Rocco.</li>
+          <li>Si scrive in questo design system, e solo dopo nel codice.</li>
+        </ol>
+        <ol class="steps" lang="en">
+          <li>Decide its role: action, structure or text. A new element takes the color of its role, not the one that looks best where it happens to sit.</li>
+          <li>Pick the value in both themes, never looking at only one.</li>
+          <li>Measure the contrast on the worst background the color can land on, which is the component's real background.</li>
+          <li>Check the hue distance from the colors that can sit next to it: a colored heading stays at least 20 degrees away from the link hue, or it reads as a link.</li>
+          <li>If it stays below the threshold, either fix it or make it a declared exception, with the number and the reason, approved by Rocco.</li>
+          <li>Write it in this design system first, and only then in the code.</li>
+        </ol>
+      </div>
     </section>
 
     <section id="contrasti" aria-labelledby="h-con">
-      <p class="eyebrow">Accessibilità</p>
-      <h2 id="h-con">Contrasti misurati</h2>
-      <p class="lead">Il testo vuole 4,5:1, la grafica (icone, bordi dei controlli, anelli di fuoco) 3:1. Un'eccezione la approva Rocco, col numero davanti.</p>
+      <p class="eyebrow"><span lang="it">Accessibilità</span><span lang="en">Accessibility</span></p>
+      <h2 id="h-con"><span lang="it">Contrasti misurati</span><span lang="en">Measured contrast</span></h2>
+      <p class="lead" lang="it">Il testo vuole 4,5:1, la grafica (icone, bordi dei controlli, anelli di fuoco) 3:1. Un'eccezione la approva Rocco, col numero davanti.</p>
+      <p class="lead" lang="en">Text needs 4.5:1, graphics (icons, control borders, focus rings) 3:1. Rocco approves any exception, with the number in front of him.</p>
       <div class="tbl">
         <table>
-          <thead><tr><th scope="col">Coppia</th><th scope="col">Uso</th><th scope="col">Giorno</th><th scope="col">Notte</th></tr></thead>
+          <thead><tr><th scope="col"><span lang="it">Coppia</span><span lang="en">Pair</span></th><th scope="col"><span lang="it">Uso</span><span lang="en">Use</span></th><th scope="col"><span lang="it">Giorno</span><span lang="en">Day</span></th><th scope="col"><span lang="it">Notte</span><span lang="en">Night</span></th></tr></thead>
           <tbody><!--@pairs--></tbody>
         </table>
       </div>
     </section>
 
     <section id="caratteri" aria-labelledby="h-car">
-      <p class="eyebrow">Tipografia</p>
-      <h2 id="h-car">Caratteri</h2>
-      <p class="lead">Archivo per il marchio e le pagine web, Roboto per le app, Roboto Flex per la lettura, Noto Serif per versi e citazioni, JetBrains Mono per il codice. Tutti gratuiti e open source.</p>
+      <p class="eyebrow"><span lang="it">Tipografia</span><span lang="en">Typography</span></p>
+      <h2 id="h-car"><span lang="it">Caratteri</span><span lang="en">Typefaces</span></h2>
+      <p class="lead" lang="it">Archivo per il marchio e le pagine web, Roboto per le app, Roboto Flex per la lettura, Noto Serif per versi e citazioni, JetBrains Mono per il codice. Tutti gratuiti e open source.</p>
+      <p class="lead" lang="en">Archivo for the brand and web pages, Roboto for the apps, Roboto Flex for reading, Noto Serif for verse and quotations, JetBrains Mono for code. All free and open source.</p>
       <!--@type-->
-      <p class="note">Le app seguono la scala dei caratteri di Android; la pagina di Aomidori ignora la scala di sistema e ha la sua dimensione del testo, fino al triplo di quella di partenza.</p>
+      <p class="note" lang="it">Le app seguono la scala dei caratteri di Android; la pagina di Aomidori ignora la scala di sistema e ha la sua dimensione del testo, fino al triplo di quella di partenza.</p>
+      <p class="note" lang="en">The apps follow Android's font scale; the Aomidori page ignores the system scale and has its own text size, up to three times the starting one.</p>
     </section>
 
     <section id="misure" aria-labelledby="h-mis">
-      <p class="eyebrow">Forma</p>
-      <h2 id="h-mis">Spazi, raggi e misure</h2>
-      <p class="lead">Il passo di base è 8: le distanze ne sono multipli. Le misure delle app sono in dp di Android, e qui 1 px vale 1 dp.</p>
+      <p class="eyebrow"><span lang="it">Forma</span><span lang="en">Shape</span></p>
+      <h2 id="h-mis"><span lang="it">Spazi, raggi e misure</span><span lang="en">Spacing, radii and sizes</span></h2>
+      <p class="lead" lang="it">Il passo di base è 8: le distanze ne sono multipli. Le misure delle app sono in dp di Android, e qui 1 px vale 1 dp.</p>
+      <p class="lead" lang="en">The base step is 8: distances are multiples of it. App sizes are in Android dp, and here 1 px equals 1 dp.</p>
       <div class="scales">
-        <div><h3>Spazi</h3><!--@spacing--></div>
-        <div><h3>Raggi</h3><!--@radius--></div>
-        <div><h3>Misure</h3><!--@misura--></div>
+        <div><h3><span lang="it">Spazi</span><span lang="en">Spacing</span></h3><!--@spacing--></div>
+        <div><h3><span lang="it">Raggi</span><span lang="en">Radii</span></h3><!--@radius--></div>
+        <div><h3><span lang="it">Misure</span><span lang="en">Sizes</span></h3><!--@misura--></div>
       </div>
     </section>
 
     <section id="movimento" aria-labelledby="h-mov">
-      <p class="eyebrow">Movimento</p>
-      <h2 id="h-mov">Movimento</h2>
-      <p class="lead">Nessun cambio di schermata a taglio netto. Con le animazioni di sistema spente, ogni animazione diventa una dissolvenza breve o sparisce.</p>
+      <p class="eyebrow"><span lang="it">Movimento</span><span lang="en">Motion</span></p>
+      <h2 id="h-mov"><span lang="it">Movimento</span><span lang="en">Motion</span></h2>
+      <p class="lead" lang="it">Nessun cambio di schermata a taglio netto. Con le animazioni di sistema spente, ogni animazione diventa una dissolvenza breve o sparisce.</p>
+      <p class="lead" lang="en">No screen change is a hard cut. With system animations off, every animation becomes a short fade or goes away.</p>
       <div class="tbl">
         <table class="motion">
-          <thead><tr><th scope="col">Che cosa</th><th scope="col">Durata</th><th scope="col">Curva</th></tr></thead>
+          <thead><tr><th scope="col"><span lang="it">Che cosa</span><span lang="en">What</span></th><th scope="col"><span lang="it">Durata</span><span lang="en">Duration</span></th><th scope="col"><span lang="it">Curva</span><span lang="en">Curve</span></th></tr></thead>
           <tbody>
-            <tr><td>Velo dietro i pannelli</td><td>800 ms</td><td><code>CubicBezier(0.2, 0.6, 0.35, 1)</code></td></tr>
-            <tr><td>Entrata di un menu, da scala 0,96</td><td>120 ms</td><td><code>CubicBezier(0.2, 0, 0, 1)</code></td></tr>
-            <tr><td>Uscita di un menu</td><td>75 ms</td><td>lineare</td></tr>
-            <tr><td>Apertura del menu Start, dal suo angolo</td><td>110 ms</td><td>quella della pillola</td></tr>
-            <tr><td>Apertura e chiusura della pillola</td><td>160 ms</td><td>esponenziale</td></tr>
-            <tr><td>Cambio di schermata</td><td>180 ms</td><td>dissolvenza</td></tr>
-            <tr><td>Tondo che sparisce leggendo, dopo 2 secondi</td><td>150 ms</td><td>dissolvenza</td></tr>
-            <tr><td>Avvisi</td><td>2.000 o 3.000 ms</td><td>a schermo</td></tr>
-            <tr><td>Pagine web: passaggio del mouse</td><td>160 ms</td><td>colori e bordi</td></tr>
+            <tr><td><span lang="it">Velo dietro i pannelli</span><span lang="en">Scrim behind panels</span></td><td>800 ms</td><td><code>CubicBezier(0.2, 0.6, 0.35, 1)</code></td></tr>
+            <tr><td><span lang="it">Entrata di un menu, da scala 0,96</span><span lang="en">Menu entrance, from scale 0.96</span></td><td>120 ms</td><td><code>CubicBezier(0.2, 0, 0, 1)</code></td></tr>
+            <tr><td><span lang="it">Uscita di un menu</span><span lang="en">Menu exit</span></td><td>75 ms</td><td><span lang="it">lineare</span><span lang="en">linear</span></td></tr>
+            <tr><td><span lang="it">Apertura del menu Start, dal suo angolo</span><span lang="en">Start menu opening, from its corner</span></td><td>110 ms</td><td><span lang="it">quella della pillola</span><span lang="en">the pill's curve</span></td></tr>
+            <tr><td><span lang="it">Apertura e chiusura della pillola</span><span lang="en">Pill opening and closing</span></td><td>160 ms</td><td><span lang="it">esponenziale</span><span lang="en">exponential</span></td></tr>
+            <tr><td><span lang="it">Cambio di schermata</span><span lang="en">Screen change</span></td><td>180 ms</td><td><span lang="it">dissolvenza</span><span lang="en">fade</span></td></tr>
+            <tr><td><span lang="it">Tondo che sparisce leggendo, dopo 2 secondi</span><span lang="en">Tondo fading while reading, after 2 seconds</span></td><td>150 ms</td><td><span lang="it">dissolvenza</span><span lang="en">fade</span></td></tr>
+            <tr><td><span lang="it">Avvisi</span><span lang="en">Notices</span></td><td><span lang="it">2.000 o 3.000 ms</span><span lang="en">2,000 or 3,000 ms</span></td><td><span lang="it">a schermo</span><span lang="en">on screen</span></td></tr>
+            <tr><td><span lang="it">Pagine web: passaggio del mouse</span><span lang="en">Web pages: hover</span></td><td>160 ms</td><td><span lang="it">colori e bordi</span><span lang="en">colors and borders</span></td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
+    <section id="effetti" aria-labelledby="h-fx">
+      <p class="eyebrow"><span lang="it">Vetro e sfocature</span><span lang="en">Glass and blur</span></p>
+      <h2 id="h-fx"><span lang="it">Effetti</span><span lang="en">Effects</span></h2>
+      <p class="lead" lang="it">Le scelte di Rocco su vetro e sfocature, coi valori di fabbrica di AIV, che Aomidori per Android adotta. Le sfocature delle app vogliono Android 12: sotto, le loro voci restano spente e grigie.</p>
+      <p class="lead" lang="en">Rocco's choices on glass and blur, with AIV's defaults, which Aomidori for Android adopts. App blurs need Android 12: below it, their settings stay off and grayed out.</p>
+      <div class="tbl">
+        <table class="fx">
+          <thead><tr><th scope="col"><span lang="it">Effetto</span><span lang="en">Effect</span></th><th scope="col"><span lang="it">Valori</span><span lang="en">Values</span></th><th scope="col"><span lang="it">Come si usa</span><span lang="en">How it works</span></th></tr></thead>
+          <tbody><!--@effects--></tbody>
+        </table>
+      </div>
+      <p class="note" lang="it">Una sfocatura che cala vuole in scena qualcosa che se ne va, o si legge come una messa a fuoco: per questo un menu esce con una dissolvenza sola di 75 ms, pannello, sfocatura e velo insieme. Sul web il vetro è lo stesso: la barra in alto di questa pagina sfoca di 12 px sopra il fondo all'88%.</p>
+      <p class="note" lang="en">A blur that fades needs something leaving the scene, or it reads as focusing: that is why a menu exits with a single 75 ms fade, panel, blur and scrim together. On the web the glass is the same: this page's top bar blurs by 12 px over the background at 88%.</p>
+    </section>
+
     <section id="componenti" aria-labelledby="h-comp">
-      <p class="eyebrow">Componenti</p>
-      <h2 id="h-comp">Componenti</h2>
-      <p class="lead">I pezzi che si ripetono nelle app e nelle pagine. Le schede complete del <a href="components/tondo/README.md">Tondo</a> e del <a href="components/start-menu/README.md">menu Start</a> sono fra i file di questa pagina.</p>
+      <p class="eyebrow"><span lang="it">Componenti</span><span lang="en">Components</span></p>
+      <h2 id="h-comp"><span lang="it">Componenti</span><span lang="en">Components</span></h2>
+      <p class="lead" lang="it">I pezzi che si ripetono nelle app e nelle pagine. Le schede complete del <a href="components/tondo/README.md">Tondo</a> e del <a href="components/start-menu/README.md">menu Start</a> sono fra i file di questa pagina.</p>
+      <p class="lead" lang="en">The pieces that repeat across the apps and pages. The full sheets of the <a href="components/tondo/README.en.md">Tondo</a> and of the <a href="components/start-menu/README.en.md">Start menu</a> are among this page's files.</p>
       <div class="comps">
         <div class="comp">
-          <h3>Pulsanti</h3>
-          <p>Il pieno per l'azione principale, uno per schermata; il contorno per le altre. A pillola e alti almeno 44 px.</p>
-          <div class="stage"><a class="btn btn-full" href="#componenti">Apri</a><a class="btn btn-line" href="#componenti">Tutte le versioni</a></div>
+          <h3><span lang="it">Pulsanti</span><span lang="en">Buttons</span></h3>
+          <p lang="it">Il pieno per l'azione principale, uno per schermata; il contorno per le altre. A pillola e alti almeno 44 px.</p>
+          <p lang="en">Filled for the main action, one per screen; outlined for the others. Pill-shaped and at least 44 px tall.</p>
+          <div class="stage"><a class="btn btn-full" href="#componenti"><span lang="it">Apri</span><span lang="en">Open</span></a><a class="btn btn-line" href="#componenti"><span lang="it">Tutte le versioni</span><span lang="en">All versions</span></a></div>
         </div>
         <div class="comp">
-          <h3>Scheda</h3>
-          <p>Un oggetto con un nome, una riga di spiegazione e una sola azione.</p>
-          <div class="stage"><div class="card"><div class="card-t"><b>AIV</b> <span>Astonishing Image Viewer</span><p>Gestore di immagini avanzato per Android</p></div><a class="btn btn-full" href="#componenti">Apri</a></div></div>
+          <h3><span lang="it">Scheda</span><span lang="en">Card</span></h3>
+          <p lang="it">Un oggetto con un nome, una riga di spiegazione e una sola azione.</p>
+          <p lang="en">One object with a name, one line of explanation and a single action.</p>
+          <div class="stage"><div class="card"><div class="card-t"><b>AIV</b> <span>Astonishing Image Viewer</span><p><span lang="it">Gestore di immagini avanzato per Android</span><span lang="en">Advanced image manager for Android</span></p></div><a class="btn btn-full" href="#componenti"><span lang="it">Apri</span><span lang="en">Open</span></a></div></div>
         </div>
         <div class="comp">
           <h3>Tondo</h3>
-          <p>Il comando principale delle app: tondo e traslucido nell'angolo del pollice, di 44 a vista con una zona di tocco di 48.</p>
-          <div class="stage tondo-stage"><p>Zona di tocco tratteggiata</p><span class="tondo-zone" aria-hidden="true"></span><span class="tondo" role="img" aria-label="Comandi"><svg viewBox="0 0 70 60" aria-hidden="true"><use href="#aiv-mark"/></svg></span></div>
+          <p lang="it">Il comando principale delle app: tondo e traslucido nell'angolo del pollice, di 44 a vista con una zona di tocco di 48.</p>
+          <p lang="en">The main command of the apps: round and translucent in the thumb's corner, 44 to the eye with a touch area of 48.</p>
+          <div class="stage tondo-stage"><p><span lang="it">Zona di tocco tratteggiata</span><span lang="en">Touch area, dashed</span></p><span class="tondo-zone" aria-hidden="true"></span><span class="tondo" role="img" aria-label="Comandi" data-label-en="Commands"><svg viewBox="0 0 70 60" aria-hidden="true"><use href="#aiv-mark"/></svg></span></div>
         </div>
         <div class="comp">
-          <h3>Collegamenti</h3>
-          <p>Nel colore <code>testo-accento</code>, sottolineati; lo spessore cresce al passaggio del mouse.</p>
-          <div class="stage"><div class="links"><a href="https://roccobot.me">roccobot.me</a><a href="https://roccobot.github.io/AIV/">La pagina di AIV</a></div></div>
+          <h3><span lang="it">Collegamenti</span><span lang="en">Links</span></h3>
+          <p lang="it">Nel colore <code>testo-accento</code>, sottolineati; lo spessore cresce al passaggio del mouse.</p>
+          <p lang="en">In <code>testo-accento</code>, underlined; the underline thickens on hover.</p>
+          <div class="stage"><div class="links"><a href="https://roccobot.me">roccobot.me</a><a href="https://roccobot.github.io/AIV/"><span lang="it">La pagina di AIV</span><span lang="en">The AIV page</span></a></div></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Comandi fissi sul web</span><span lang="en">Fixed controls on the web</span></h3>
+          <p lang="it">Tondi, sopra il contenuto: compaiono mentre si scorre e spariscono dopo 3 secondi di quiete. Si nasconde il comando che in quel momento non porta da nessuna parte (in cima non c'è 'vai in cima'), e un comando invisibile esce anche dal giro del tasto Tab. Ogni tasto sparisce verso il suo lato, e sul telefono non mostra l'evidenziazione del tocco.</p>
+          <p lang="en">Round, above the content: they appear while scrolling and disappear after 3 seconds of stillness. A control that leads nowhere at that moment is hidden (there is no 'back to top' at the top), and a hidden control also leaves the Tab order. Each button slides out toward its own side, and on a phone it shows no tap highlight.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Icone nel testo</span><span lang="en">Icons in text</span></h3>
+          <p lang="it">SVG nel colore del testo (<code>currentColor</code>), così seguono il tema. Si allineano al centro di una maiuscola spostandole con <code>translateY</code>, mai con un margine, e l'ingombro non cambia: un'icona nuova non sposta il testo intorno. La correzione ottica non si calcola, si guarda.</p>
+          <p lang="en">SVG in the text color (<code>currentColor</code>), so they follow the theme. They align to the center of a capital letter by moving them with <code>translateY</code>, never with a margin, and their footprint stays the same: a new icon never shifts the text around it. Optical correction isn't computed, it is judged by eye.</p>
         </div>
       </div>
     </section>
 
     <section id="voce" aria-labelledby="h-voce">
-      <p class="eyebrow">Scrittura</p>
-      <h2 id="h-voce">Voce e testi</h2>
-      <p class="lead">I testi si scrivono da copywriter: sintesi, eleganza, semplicità, precisione. In italiano e in inglese americano.</p>
+      <p class="eyebrow"><span lang="it">Scrittura</span><span lang="en">Writing</span></p>
+      <h2 id="h-voce"><span lang="it">Voce e testi</span><span lang="en">Voice and copy</span></h2>
+      <p class="lead" lang="it">I testi si scrivono da copywriter: sintesi, eleganza, semplicità, precisione. In italiano e in inglese americano.</p>
+      <p class="lead" lang="en">Copy is written like a copywriter would: concise, elegant, simple, precise. In Italian and in American English.</p>
       <div class="voice">
         <div class="say say-yes">
-          <h3>Sì</h3>
-          <ul>
+          <h3><span lang="it">Sì</span><span lang="en">Yes</span></h3>
+          <ul lang="it">
             <li>Chiamare una funzione con l'etichetta della sua voce, alla lettera.</li>
             <li>Dire che cosa succede: <code>Salvata in Download</code>.</li>
             <li>Apici dritti, accenti veri, tre punti; nei testi delle app i puntini sono il carattere unico.</li>
             <li>Legare le parole corte alla successiva, perché nessuna resti sola a un capo della riga.</li>
           </ul>
+          <ul lang="en">
+            <li>Call a feature by the label of its item, word for word.</li>
+            <li>Say what happened: <code>Saved to Downloads</code>.</li>
+            <li>Straight quotes, real accents, three dots; in app text the ellipsis is the single character.</li>
+            <li>Tie short words to the next one, so no word is left alone at either end of a line.</li>
+          </ul>
         </div>
         <div class="say">
           <h3>No</h3>
-          <ul>
+          <ul lang="it">
             <li>Trattini lunghi, caporali, virgolette curve.</li>
             <li>Gergo tecnico senza spiegazione, metafore al posto del meccanismo.</li>
             <li>Un segno come → o › a un capo della riga: va a capo con le parole vicine.</li>
             <li>Emoji come titoli di sezione nei prodotti.</li>
+          </ul>
+          <ul lang="en">
+            <li>Em and en dashes, guillemets, curly quotes.</li>
+            <li>Unexplained jargon, metaphors in place of the mechanism.</li>
+            <li>A sign like → or › at either end of a line: it wraps together with the words next to it.</li>
+            <li>Emoji as section titles in products.</li>
           </ul>
         </div>
       </div>
     </section>
 
     <section id="principi" aria-labelledby="h-pri">
-      <p class="eyebrow">Principi</p>
-      <h2 id="h-pri">Principi</h2>
+      <p class="eyebrow"><span lang="it">Principi</span><span lang="en">Principles</span></p>
+      <h2 id="h-pri"><span lang="it">Principi</span><span lang="en">Principles</span></h2>
       <div class="mark-rules">
-        <div class="rule"><h3>Il contenuto prima di tutto</h3><p>Fotografie, immagini e libri sono il soggetto: fondi neutri, appena verdi, e l'accento solo dove serve un'azione o un segno.</p></div>
-        <div class="rule"><h3>Il pollice decide</h3><p>Nelle app il comando principale vive nell'angolo del pollice, e i comandi che apre gli crescono intorno.</p></div>
-        <div class="rule"><h3>Meno opzioni</h3><p>Un'impostazione esiste solo se cambia un valore che vale per tutto; quello che si accende usando l'app è un comando.</p></div>
-        <div class="rule"><h3>Stessa forma, due temi</h3><p>Giorno e Notte hanno la stessa impaginazione e cambiano solo i colori: il cambio di tema non sposta niente.</p></div>
-        <div class="rule"><h3>Nessuna scelta senza Rocco</h3><p>Forma, icona, posizione, comportamento visibile e testo si propongono e si chiedono.</p></div>
-        <div class="rule"><h3>Immagini leggere</h3><p>Sul web un'immagine resta sotto i 500 KB e larga al massimo il triplo della misura in pagina, salvo le gallerie di fotografia.</p></div>
+        <div class="rule"><h3><span lang="it">Il contenuto prima di tutto</span><span lang="en">Content first</span></h3><p lang="it">Fotografie, immagini e libri sono il soggetto: fondi neutri, appena verdi, e l'accento solo dove serve un'azione o un segno.</p><p lang="en">Photographs, images and books are the subject: neutral backgrounds, barely green, and the accent only where an action or a sign needs it.</p></div>
+        <div class="rule"><h3><span lang="it">Il colore per ruolo</span><span lang="en">Color by role</span></h3><p lang="it">L'accento è l'azione, i titoli sono la struttura, il neutro è il testo. Una tinta sola a più profondità fa una scala; tinte vicine che gridano insieme fanno rumore.</p><p lang="en">The accent is action, headings are structure, neutral is text. One hue at several depths makes a scale; nearby hues shouting together make noise.</p></div>
+        <div class="rule"><h3><span lang="it">Il colore non basta da solo</span><span lang="en">Color is never alone</span></h3><p lang="it">Dove il colore distingue qualcosa, come una voce attiva, c'è sempre anche il peso o la posizione.</p><p lang="en">Wherever color tells something apart, like an active item, weight or position does too.</p></div>
+        <div class="rule"><h3><span lang="it">Il pollice decide</span><span lang="en">The thumb decides</span></h3><p lang="it">Nelle app il comando principale vive nell'angolo del pollice, e i comandi che apre gli crescono intorno.</p><p lang="en">In the apps the main command lives in the thumb's corner, and the commands it opens grow around it.</p></div>
+        <div class="rule"><h3><span lang="it">Meno opzioni</span><span lang="en">Fewer options</span></h3><p lang="it">Un'impostazione esiste solo se cambia un valore che vale per tutto; quello che si accende usando l'app è un comando.</p><p lang="en">A setting exists only if it changes a value that applies everywhere; what you turn on while using the app is a command.</p></div>
+        <div class="rule"><h3><span lang="it">Stessa forma, due temi</span><span lang="en">Same shape, two themes</span></h3><p lang="it">Giorno e Notte hanno la stessa impaginazione e cambiano solo i colori: il cambio di tema non sposta niente.</p><p lang="en">Day and Night share the same layout and change only the colors: switching theme moves nothing.</p></div>
+        <div class="rule"><h3><span lang="it">Due lingue, una forma</span><span lang="en">Two languages, one shape</span></h3><p lang="it">Ogni pagina nuova chiede prima se è bilingue e quale lingua apre; lingua e tema hanno la loro scorciatoia, <code>L</code> e <code>T</code>, in alto a destra.</p><p lang="en">Every new page first asks whether it is bilingual and which language it opens in; language and theme have their shortcut, <code>L</code> and <code>T</code>, at the top right.</p></div>
+        <div class="rule"><h3><span lang="it">Nessuna scelta senza Rocco</span><span lang="en">No choice without Rocco</span></h3><p lang="it">Forma, icona, posizione, comportamento visibile e testo si propongono e si chiedono.</p><p lang="en">Shape, icon, position, visible behavior and copy are proposed and asked about.</p></div>
+        <div class="rule"><h3><span lang="it">Immagini leggere</span><span lang="en">Light images</span></h3><p lang="it">Sul web un'immagine resta sotto i 500 KB e larga al massimo il triplo della misura in pagina, salvo le gallerie di fotografia.</p><p lang="en">On the web an image stays under 500 KB and at most three times as wide as it shows on the page, except photo galleries.</p></div>
       </div>
       <footer class="end">
         <span><svg viewBox="@fit-frame" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei, a.k.a. Roccobot</span>
@@ -526,45 +627,82 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 </div>
 
 <script>
-// Theme: follows the system until the viewer picks one with the button or the T key.
-// The T key wins over everything except typing in a field, as Rocco asked.
+// Theme and language. The theme follows the system until the viewer picks one with the button or
+// the T key; the page opens in Italian, and the button or the L key switches to English (a link
+// with ?lang=en opens in English). Both keys win over everything except typing in a field, as
+// Rocco asked. Author: Rocco Casadei, a.k.a. Roccobot
 (function () {
   var root = document.documentElement;
-  var btn = document.getElementById('theme');
-  var label = document.getElementById('theme-label');
+  var themeBtn = document.getElementById('theme');
+  var themeLabel = document.getElementById('theme-label');
+  var langBtn = document.getElementById('lang');
+  var langLabel = document.getElementById('lang-label');
+  var langCode = document.getElementById('lang-code');
+  var meta = document.querySelector('meta[name="description"]');
   var media = window.matchMedia('(prefers-color-scheme: dark)');
-  function current() {
+  var TEXT = {
+    it: { dark: 'Tema scuro', light: 'Tema chiaro', toDark: 'Passa al tema scuro', toLight: 'Passa al tema chiaro',
+      other: 'English', code: 'EN', toOther: 'Mostra la pagina in inglese', copied: 'Copiato', select: 'Selezionalo',
+      desc: meta.getAttribute('content') },
+    en: { dark: 'Dark theme', light: 'Light theme', toDark: 'Switch to the dark theme', toLight: 'Switch to the light theme',
+      other: 'Italiano', code: 'IT', toOther: 'Show the page in Italian', copied: 'Copied', select: 'Select it',
+      desc: "The design system of the personal brand of Rocco Casadei, a.k.a. Roccobot: colors, mark, icons, typefaces, sizes and components." }
+  };
+  var labelled = Array.prototype.slice.call(document.querySelectorAll('[data-label-en]'));
+  labelled.forEach(function (el) { el.setAttribute('data-label-it', el.getAttribute('aria-label')); });
+  function lang() { return root.getAttribute('data-lang') === 'en' ? 'en' : 'it'; }
+  function theme() {
     var t = root.getAttribute('data-theme');
     return t === 'dark' || t === 'light' ? t : (media.matches ? 'dark' : 'light');
   }
   function paint() {
-    var dark = current() === 'dark';
-    label.textContent = dark ? 'Tema chiaro' : 'Tema scuro';
-    btn.setAttribute('aria-label', dark ? 'Passa al tema chiaro' : 'Passa al tema scuro');
+    var w = TEXT[lang()], dark = theme() === 'dark';
+    themeLabel.textContent = dark ? w.light : w.dark;
+    themeBtn.setAttribute('aria-label', dark ? w.toLight : w.toDark);
+    langLabel.textContent = w.other;
+    langCode.textContent = w.code;
+    langBtn.setAttribute('aria-label', w.toOther);
+    labelled.forEach(function (el) { el.setAttribute('aria-label', el.getAttribute('data-label-' + lang())); });
+    meta.setAttribute('content', w.desc);
   }
-  function flip() {
-    root.setAttribute('data-theme', current() === 'dark' ? 'light' : 'dark');
+  function setLang(l) {
+    root.setAttribute('lang', l);
+    if (l === 'en') root.setAttribute('data-lang', 'en'); else root.removeAttribute('data-lang');
+    try {
+      var u = new URL(window.location.href);
+      if (l === 'en') u.searchParams.set('lang', 'en'); else u.searchParams.delete('lang');
+      window.history.replaceState(null, '', u.toString());
+    } catch (err) { /* a page opened from a file has no history to rewrite */ }
     paint();
   }
+  function flipTheme() {
+    root.setAttribute('data-theme', theme() === 'dark' ? 'light' : 'dark');
+    paint();
+  }
+  function flipLang() { setLang(lang() === 'en' ? 'it' : 'en'); }
   function typing(el) {
     if (!el) return false;
     var tag = el.tagName;
     return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
   }
-  btn.addEventListener('click', flip);
+  themeBtn.addEventListener('click', flipTheme);
+  langBtn.addEventListener('click', flipLang);
   window.addEventListener('keydown', function (ev) {
-    if (ev.key !== 't' && ev.key !== 'T') return;
+    var k = ev.key ? ev.key.toLowerCase() : '';
+    if (k !== 't' && k !== 'l') return;
     if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey || ev.repeat) return;
     if (typing(ev.target) || typing(document.activeElement)) return;
     ev.preventDefault();
     ev.stopImmediatePropagation();
-    flip();
+    if (k === 't') flipTheme(); else flipLang();
   }, true);
   media.addEventListener('change', paint);
   new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-  paint();
+  var asked = null;
+  try { asked = new URL(window.location.href).searchParams.get('lang'); } catch (err) { asked = null; }
+  if (asked === 'en') setLang('en'); else paint();
 
-  // Copy a hex value; the label says so for two seconds.
+  // Copy a hex value; the label says so for two seconds, in the page's language.
   document.querySelectorAll('.copy').forEach(function (b) {
     b.addEventListener('click', function () {
       var v = b.getAttribute('data-copy');
@@ -573,9 +711,9 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         setTimeout(function () { b.removeAttribute('data-done'); }, 2000);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(v).then(function () { done('Copiato'); }, function () { done('Selezionalo'); });
+        navigator.clipboard.writeText(v).then(function () { done(TEXT[lang()].copied); }, function () { done(TEXT[lang()].select); });
       } else {
-        done('Selezionalo');
+        done(TEXT[lang()].select);
       }
     });
   });

@@ -1,5 +1,6 @@
-// Checks the generated page in Chromium with the real fonts: no sideways scroll, the T key,
-// and the line breaks of every paragraph (no short word left alone at either end of a line).
+// Checks the generated page in Chromium with the real fonts, in both languages: no sideways
+// scroll, the T and L keys, and the line breaks of every paragraph (no short word left alone at
+// either end of a line).
 // Author: Rocco Casadei, a.k.a. Roccobot
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -25,8 +26,46 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       await p.goto('https://page.local/');
       await p.evaluate(() => document.fonts.ready);
       const fontsLoaded = await p.evaluate(() => [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family).filter((v, i, a) => a.indexOf(v) === i));
-      const overflow = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-      const lines = await p.evaluate(() => {
+      const mk = JSON.parse(fs.readFileSync(path.join(cache, 'mark.json'), 'utf8'));
+      const measure = async () => ({
+        overflow: await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth),
+        lines: await lineCheck(p),
+        marks: await markCheck(p, mk),
+        // the other language must be hidden everywhere: a visible element of it is a leak
+        leaks: await p.evaluate(() => {
+          const other = document.documentElement.getAttribute('data-lang') === 'en' ? 'it' : 'en';
+          return [...document.querySelectorAll(`body [lang="${other}"]`)].filter(el => el.getClientRects().length).length;
+        }),
+      });
+      const it = await measure();
+      // L key: switches to English, and does nothing while typing in a field
+      await p.keyboard.press('l');
+      const toEn = await p.evaluate(() => [document.documentElement.lang, document.getElementById('h-come').innerText.replace(/\s+/g, ' ').trim()]);
+      const en = await measure();
+      await p.evaluate(() => { const i = document.createElement('input'); i.id = 'probe-l'; document.body.prepend(i); i.focus(); });
+      await p.keyboard.press('l');
+      const lTyped = await p.evaluate(() => [document.documentElement.lang, document.getElementById('probe-l').value]);
+      await p.evaluate(() => document.getElementById('probe-l').remove());
+      await p.keyboard.press('l');
+      const back = await p.evaluate(() => document.documentElement.lang);
+      report.push({ w, scheme, fontsLoaded, errors, it, en,
+        lFlips: toEn[0] === 'en' && toEn[1] === 'One single source' && back === 'it',
+        lIgnoredInField: lTyped[0] === 'en' && lTyped[1] === 'l' });
+      const t = await themeCheck(p);
+      Object.assign(report[report.length - 1], t);
+      for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'effetti', 'componenti']) {
+        await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
+        await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
+      }
+      await ctx.close();
+    }
+  }
+  await browser.close();
+  console.log(JSON.stringify(report, null, 1));
+})();
+
+async function lineCheck(p) {
+  return p.evaluate(() => {
         const bad = [];
         const els = document.querySelectorAll('main p, main li, main figcaption, main td, main dd, main h1, main h2, main h3');
         for (const el of els) {
@@ -66,11 +105,14 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
         }
         return bad;
       });
+}
+
+async function markCheck(p, mk) {
       // Every drawn mark must sit whole inside its box (a <use> with a shifted viewBox clipped it,
       // Rocco saw it) and with the centre of its IDEAL SQUARE in the middle of the box: that is
       // his weighted centring, from his reference image. The centre is found from the drawn ink,
       // so the check does not depend on how the page frames the mark.
-      const marks = await p.evaluate(mk => {
+      return p.evaluate(mk => {
         const [ix, iy, iw, ih] = mk.ink; const [sx, sy, ss] = mk.square;
         const fx = (sx + ss / 2 - ix) / iw, fy = (sy + ss / 2 - iy) / ih;
         const bad = [];
@@ -84,7 +126,10 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
           if (out || dx > .75 || dy > .75) bad.push([u.ownerSVGElement.getAttribute('class') || u.ownerSVGElement.parentElement.className, +dx.toFixed(2), +dy.toFixed(2), out]);
         }
         return bad;
-      }, JSON.parse(fs.readFileSync(path.join(cache, 'mark.json'), 'utf8')));
+      }, mk);
+}
+
+async function themeCheck(p) {
       // T key: flips the theme, and does nothing while typing in a field
       const before = await p.evaluate(() => getComputedStyle(document.body).backgroundColor);
       await p.keyboard.press('t');
@@ -93,15 +138,6 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       await p.keyboard.press('t');
       const typed = await p.evaluate(() => [getComputedStyle(document.body).backgroundColor, document.getElementById('probe').value]);
       await p.evaluate(() => { document.getElementById('probe').remove(); document.documentElement.removeAttribute('data-theme'); });
-      await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}.png`), fullPage: false });
-      for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'componenti']) {
-        await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
-        await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
-      }
-      report.push({ w, scheme, fontsLoaded, overflow, errors, tFlips: before !== after, tIgnoredInField: typed[0] === after && typed[1] === 't', lines, marks });
-      await ctx.close();
-    }
-  }
-  await browser.close();
-  console.log(JSON.stringify(report, null, 1));
-})();
+      return { tFlips: before !== after, tIgnoredInField: typed[0] === after && typed[1] === 't' };
+}
+
