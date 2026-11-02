@@ -313,6 +313,11 @@ non montato, per niente.
   sulla bacheca e della sua sessione, e l'utente lo usa in chat al posto di `Aomidori Android`. Non
   è un altro progetto: il prodotto si chiama `Aomidori` (`Roccobot.md` § '📦 Terminologia e
   convenzioni di scambio file').
+- **Il kanji U+5929, scritto dall'utente, è il suo marchio** (regola dell'utente, 2026-11-02): in
+  un titolo per il Web, in un'interfaccia o in un elemento grafico vuol dire il glifo grafico
+  Roccobot, cioè il disegno vero e mai il carattere di un font; resta il carattere nel testo
+  semplice (nomi di file, stringhe, valori predefiniti) o quando lo dice lui. La regola completa è
+  in `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file'.
 - **'Roccobot.me' è il sito-portfolio dell'utente**, che ha una lista sua sulla bacheca e la
   sessione `Roccobot`, insieme al design del suo marchio (dal 2026-11-02). Non è RoccobotOS, il
   sito di riferimento personale.
