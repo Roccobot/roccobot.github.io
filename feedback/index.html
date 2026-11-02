@@ -25,6 +25,7 @@
     --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
     --accent: #43B59E;        /* brand-accent; the mark and the label, 4.8 on --bg */
     --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
+    --link: #4FD9BE;          /* brand-link-dark, 6.9 on --bg */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
@@ -44,6 +45,15 @@
            border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
   a.open:hover { background: #4FD9BE; }
   a.open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* Reference links: plain text links under a rule, so they read as a different kind of thing */
+  .refs { margin-top: 2.2rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+  .refs ul { gap: .5rem; }
+  .refs li { background: none; border: 0; border-radius: 0; padding: 0; display: block; }
+  .refs a { color: var(--link); font-weight: 600; text-decoration: underline; text-underline-offset: .2em;
+            text-decoration-thickness: 1px; }
+  .refs a:hover { text-decoration-thickness: 2px; }
+  .refs a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 2px; }
+  .refs span { color: var(--ink-muted); font-size: .95rem; }
 </style>
 </head>
 <body>
@@ -65,7 +75,7 @@
     </li>
     <li>
       <div class="txt">
-        <h2>Aomidori</h2>
+        <h2>Aomidori macOS</h2>
         <p>Lettore di EPUB e fumetti, macOS</p>
       </div>
       <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
@@ -78,6 +88,13 @@
       <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
     </li>
   </ul>
+  <footer class="refs">
+    <p class="meta">Riferimenti</p>
+    <ul>
+      <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener">Registro di Aomidori Flex</a> <span>· le versioni dello stile</span></li>
+      <li><a href="https://claude.ai/design" target="_blank" rel="noopener">Roccobot Design</a> <span>· il design system, in Claude Design</span></li>
+    </ul>
+  </footer>
 </main>
 </body>
 </html>
