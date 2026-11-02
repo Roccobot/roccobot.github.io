@@ -309,6 +309,13 @@ non montato, per niente.
 - Gli altri tre progetti si chiamano col nome della loro cartella o del loro repo: **userscript**,
   **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
   il `Rules.md` del repo `Roccobot/RoccobotOS`) e i **Worker di amministrazione**, in `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea`.
+- **'Aomidroid' è Aomidori per Android** (regola dell'utente, 2026-11-02): è il nome della sua lista
+  sulla bacheca e della sua sessione, e l'utente lo usa in chat al posto di `Aomidori Android`. Non
+  è un altro progetto: il prodotto si chiama `Aomidori` (`Roccobot.md` § '📦 Terminologia e
+  convenzioni di scambio file').
+- **'Roccobot.me' è il sito-portfolio dell'utente**, che ha una lista sua sulla bacheca e la
+  sessione `Roccobot`, insieme al design del suo marchio (dal 2026-11-02). Non è RoccobotOS, il
+  sito di riferimento personale.
 
 ## 🗣️ Lingua di risposta
 
