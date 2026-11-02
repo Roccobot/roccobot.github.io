@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Documenti di feedback</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&display=swap">
 <!--
@@ -47,13 +50,13 @@
   a.open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   /* Reference links: plain text links under a rule, so they read as a different kind of thing */
   .refs { margin-top: 2.2rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
-  .refs ul { gap: .5rem; }
+  .refs { text-align: center; }
+  .refs ul { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.75rem; }
   .refs li { background: none; border: 0; border-radius: 0; padding: 0; display: block; }
   .refs a { color: var(--link); font-weight: 600; text-decoration: underline; text-underline-offset: .2em;
             text-decoration-thickness: 1px; }
   .refs a:hover { text-decoration-thickness: 2px; }
   .refs a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 2px; }
-  .refs span { color: var(--ink-muted); font-size: .95rem; }
 </style>
 </head>
 <body>
@@ -91,8 +94,8 @@
   <footer class="refs">
     <p class="meta">Riferimenti</p>
     <ul>
-      <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener">Registro di Aomidori Flex</a> <span>· le versioni dello stile</span></li>
-      <li><a href="https://claude.ai/artifact/NF44gLgLtBHxhjNEux7vZi" target="_blank" rel="noopener">Roccobot Design</a> <span>· il design system</span></li>
+      <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener">Registro di Aomidori Flex</a></li>
+      <li><a href="https://claude.ai/artifact/NF44gLgLtBHxhjNEux7vZi" target="_blank" rel="noopener">Roccobot Design</a></li>
     </ul>
   </footer>
 </main>
