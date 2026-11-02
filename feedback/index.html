@@ -25,6 +25,7 @@
     --card: #3B4744;          /* one step lighter: the cards lift off the page */
     --line: #4E5B57;
     --ink: #F3F6F5;           /* 11.1 on --bg, 8.9 on --card */
+    --plat: #D9E1DE;          /* 7.3 on --card: between the name and the subtitle */
     --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
     --accent: #43B59E;        /* brand-accent; the mark and the label, 4.8 on --bg */
     --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
@@ -43,6 +44,8 @@
        display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
   h2 { font-size: 1.2rem; font-weight: 600; margin: 0; }
+  /* the platform after the app's name: same size, less white and lighter, so the name leads */
+  .plat { color: var(--plat); font-weight: 500; }
   p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
   a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
            border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
@@ -78,15 +81,15 @@
     </li>
     <li>
       <div class="txt">
-        <h2>Aomidori macOS</h2>
-        <p>Lettore di EPUB e fumetti, macOS</p>
+        <h2>Aomidori <span class="plat">macOS</span></h2>
+        <p>Lettore di EPUB, fumetti e Markdown per macOS</p>
       </div>
       <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
     </li>
     <li>
       <div class="txt">
-        <h2>Aomidori Android</h2>
-        <p>Lettore di EPUB e fumetti, Android</p>
+        <h2>Aomidori <span class="plat">Android</span></h2>
+        <p>Lettore di EPUB, fumetti e Markdown per Android</p>
       </div>
       <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
     </li>
