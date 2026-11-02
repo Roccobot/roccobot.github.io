@@ -467,10 +467,12 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
 
 - ⚠️⚠️ **QUELLO CHE PUÒ FARE SOLO LUI DIVENTA UNA CARD NELLA LISTA `ADMIN` DELLA BACHECA, E IN
   CHAT NON SI RIPETE** (`Admin-01`, sua scelta del 2026-11-02: *basta con questo sistema, non serve
-  più. Adesso c'è Trello*). Una decisione o un passo suo è una card assegnata a lui nella sua
-  colonna, che ha rinominato da `Richiede intervento` in `Admin`; in chat la si nomina una volta,
-  col collegamento, nel messaggio in cui nasce, e poi non la si ricorda più, perché tempi e ordine
-  li decide lui. ⚠️ **Il riquadro `🟠 Cosa devi fare tu` in fondo ai messaggi è tolto** (era nato
+  più. Adesso c'è Trello*). Ogni decisione da prendere, e ogni passo suo, è una card nella sua
+  colonna, che ha rinominato da `Richiede intervento` in `Admin`. ⚠️ **La card è assegnata a lui
+  solo se un'altra attività in corso è ferma ad aspettarla**, e solo allora gliela si può
+  ricordare in chat (sua precisazione dello stesso giorno); le altre restano senza assegnazione. In
+  chat una card nuova si nomina una volta, col collegamento, nel messaggio in cui nasce: tempi e
+  ordine li decide lui. ⚠️ **Il riquadro `🟠 Cosa devi fare tu` in fondo ai messaggi è tolto** (era nato
   con `Coda-01` il 2026-10-25): un messaggio finisce col suo contenuto. Il testo completo è in
   `Roccobot.md` § '💬 Stile di comunicazione'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
