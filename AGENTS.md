@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.53
+> **Versione**: 2.54
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -209,7 +209,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   (`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
 - **I lavori vivono anche sulla bacheca Trello `Roccobot`** (Worker, azione `trello`): card
   `Codice: che cosa` con l'etichetta del progetto, `In corso` quando inizia, `Admin`
-  (assegnata all'utente) per ciò che fa solo lui (`Roccobot.md` § '📌 La bacheca di lavoro').
+  per ogni sua decisione, assegnata a lui se ferma un lavoro (`Roccobot.md` § '📌 La bacheca di lavoro').
 
 ## 🧪 Verifiche e controlli
 
