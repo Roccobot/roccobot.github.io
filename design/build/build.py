@@ -5,6 +5,8 @@ agents and code read, so the page and the tokens never disagree. The template ho
 prose and the layout; this script fills its markers, ties short words so that no word is
 left alone at either end of a line (the house rule for paragraphs), and writes
 design/index.html, which GitHub Pages serves at roccobot.github.io/design/.
+The page is bilingual, Italian first: every text exists as a pair of spans, lang="it" and
+lang="en", and the page shows one language at a time (the L key and the language button switch).
 Author: Rocco Casadei, a.k.a. Roccobot
 """
 import html
@@ -118,26 +120,37 @@ def center_reference():
     lines = ''.join(
         f'<line class="cr-guide" x1="{a:.2f}" y1="{u0:.2f}" x2="{a:.2f}" y2="{u1:.2f}"/>' for a in (x, x + s)) + ''.join(
         f'<line class="cr-guide" x1="{t0:.2f}" y1="{b:.2f}" x2="{t1:.2f}" y2="{b:.2f}"/>' for b in (y, y + s))
-    return (f'<svg viewBox="{mark_frames()["tile"]}" role="img" aria-label="Il marchio col suo quadrato ideale">'
+    return (f'<svg viewBox="{mark_frames()["tile"]}" role="img" aria-label="Il marchio col suo quadrato ideale" data-label-en="The mark with its ideal square">'
             f'<rect x="{t0:.2f}" y="{u0:.2f}" width="{side:.2f}" height="{side:.2f}" fill="{raw("turchese", "light")}"/>'
             f'<g style="color:#ffffff"><use href="#tian"/></g>{lines}</svg>')
 
 
-def num(x):
-    """A ratio written the Italian way, two decimals."""
-    return f'{x:.2f}'.replace('.', ',')
+def e(s):
+    return html.escape(s, quote=True)
+
+
+def bi(it, en):
+    """A text in the two languages, as a pair of spans; the page shows one at a time."""
+    return f'<span lang="it">{it}</span><span lang="en">{en}</span>'
+
+
+def bt(it, en):
+    """Plain text in the two languages, escaped."""
+    return bi(e(it), e(en))
+
+
+def num(x, lang='it'):
+    """A ratio with two decimals: a comma in Italian, a point in English."""
+    v = f'{x:.2f}'
+    return v.replace('.', ',') if lang == 'it' else v
 
 
 def badge(r, graphic=False):
     need = 3 if graphic else 4.5
     ok = r >= need
-    label = 'AA' if ok else ('sotto soglia' if not graphic else 'sotto 3:1')
+    tag = bt('AA', 'AA') if ok else (bt('sotto 3:1', 'below 3:1') if graphic else bt('sotto soglia', 'below 4.5:1'))
     return (f'<span class="ratio{" ratio-low" if not ok else ""}">'
-            f'{num(r)}<span class="ratio-tag">{label}</span></span>')
-
-
-def e(s):
-    return html.escape(s, quote=True)
+            f'{bi(num(r), num(r, "en"))}<span class="ratio-tag">{tag}</span></span>')
 
 
 def swatch_row(name):
@@ -151,16 +164,16 @@ def swatch_row(name):
     return (f'<li class="tok{" tok-fixed" if not themed else ""}">'
             f'<div class="tok-chips">{chips}</div>'
             f'<div class="tok-text"><code class="tok-name">{e(name)}</code>'
-            f'<p>{e(t["usage"])}</p></div></li>')
+            f'<p>{bt(t["usage"], t["usage_en"])}</p></div></li>')
 
 
 GROUPS = [
-    ('Accenti', ['turchese', 'petrolio', 'accento', 'su-accento', 'testo-accento', 'marchio']),
-    ('Fondi e superfici', ['fondo', 'superficie', 'superficie-alta', 'fondo-intermedio', 'scheda-intermedia']),
-    ('Testo e linee', ['testo', 'testo-secondario', 'contorno', 'linea']),
-    ('Tavolozza di Aomidori', ['turchese-luce', 'menta-chiaro', 'ardesia', 'glifo-marchio']),
-    ('Icone e tasti', ['icona-aiv-fondo', 'icona-aiv-glifo', 'glifo-tondo-traslucido']),
-    ('Veli e aiuti', ['velo', 'velo-aiuto', 'aiuto-arancio', 'aiuto-arancio-inchiostro', 'aiuto-tasto', 'aiuto-tasto-inchiostro']),
+    (('Accenti', 'Accents'), ['turchese', 'petrolio', 'accento', 'su-accento', 'testo-accento', 'marchio']),
+    (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-alta', 'fondo-intermedio', 'scheda-intermedia']),
+    (('Testo e linee', 'Text and lines'), ['testo', 'testo-secondario', 'contorno', 'linea']),
+    (('Tavolozza di Aomidori', 'Aomidori palette'), ['turchese-luce', 'menta-chiaro', 'ardesia', 'glifo-marchio']),
+    (('Icone e tasti', 'Icons and buttons'), ['icona-aiv-fondo', 'icona-aiv-glifo', 'glifo-tondo-traslucido']),
+    (('Veli e aiuti', 'Scrims and help'), ['velo', 'velo-aiuto', 'aiuto-arancio', 'aiuto-arancio-inchiostro', 'aiuto-tasto', 'aiuto-tasto-inchiostro']),
 ]
 
 
@@ -171,7 +184,7 @@ def palette():
         sys.exit(f'colori senza gruppo nella pagina: {missing}')
     out = []
     for title, names in GROUPS:
-        out.append(f'<div class="pal-group"><h3>{e(title)}</h3><ul class="toks">'
+        out.append(f'<div class="pal-group"><h3>{bt(*title)}</h3><ul class="toks">'
                    + ''.join(swatch_row(n) for n in names) + '</ul></div>')
     return ''.join(out)
 
@@ -187,24 +200,24 @@ def pairs():
     body = []
     for fg, bg, graphic in rows:
         cells = ''.join(f'<td>{badge(ratio(raw(fg, th), raw(bg, th)), graphic)}</td>' for th in THEMES)
-        kind = 'grafica' if graphic else 'testo'
-        body.append(f'<tr><th scope="row"><code>{e(fg)}</code> su <code>{e(bg)}</code></th>'
+        kind = bt('grafica', 'graphics') if graphic else bt('testo', 'text')
+        body.append(f'<tr><th scope="row"><code>{e(fg)}</code> {bt("su", "on")} <code>{e(bg)}</code></th>'
                     f'<td class="kind">{kind}</td>{cells}</tr>')
     return ''.join(body)
 
 
-def accent_card(name, other_theme_note):
+def accent_card(name, name_en, note, note_en):
     hexv = raw(name, 'light').upper()
     on_day = ratio(raw(name, 'light'), raw('fondo', 'light'))
     on_night = ratio(raw(name, 'light'), raw('fondo', 'dark'))
     return (f'<figure class="primary primary-{e(name)}">'
-            f'<div class="primary-field"><span class="primary-name">{e(name.capitalize())}</span>'
-            f'<button class="copy" type="button" data-copy="{e(hexv)}" aria-label="Copia {e(hexv)}">'
-            f'<code>{e(hexv)}</code></button></div>'
+            f'<div class="primary-field"><span class="primary-name">{bt(name.capitalize(), name_en)}</span>'
+            f'<button class="copy" type="button" data-copy="{e(hexv)}" aria-label="Copia {e(hexv)}" '
+            f'data-label-en="Copy {e(hexv)}"><code>{e(hexv)}</code></button></div>'
             f'<figcaption><dl class="primary-facts">'
-            f'<div><dt>Sullo sfondo chiaro</dt><dd>{badge(on_day, True)}</dd></div>'
-            f'<div><dt>Sullo sfondo scuro</dt><dd>{badge(on_night, True)}</dd></div></dl>'
-            f'<p>{e(other_theme_note)}</p></figcaption></figure>')
+            f'<div><dt>{bt("Sullo sfondo chiaro", "On the light background")}</dt><dd>{badge(on_day, True)}</dd></div>'
+            f'<div><dt>{bt("Sullo sfondo scuro", "On the dark background")}</dt><dd>{badge(on_night, True)}</dd></div></dl>'
+            f'<p>{bt(note, note_en)}</p></figcaption></figure>')
 
 
 def type_specimens():
@@ -221,10 +234,10 @@ def type_specimens():
             meta = f'{s["fontSize"]} / {s["lineHeight"]} · {s["fontWeight"]}'
             rows.append(f'<li class="spec"><div class="spec-meta"><code>{e(s["name"])}</code>'
                         f'<span>{e(meta)}</span></div>'
-                        f'<p class="spec-sample" style="{e(style)}">{e(s["sample"])}</p>'
-                        f'<p class="spec-usage">{e(s["usage"])}</p></li>')
+                        f'<p class="spec-sample" style="{e(style)}">{bt(s["sample"], s["sample_en"])}</p>'
+                        f'<p class="spec-usage">{bt(s["usage"], s["usage_en"])}</p></li>')
         stack = fams[g['family']]
-        out.append(f'<div class="type-group"><h3>{e(g["name"])}</h3>'
+        out.append(f'<div class="type-group"><h3>{bt(g["name"], g["name_en"])}</h3>'
                    f'<p class="stack"><code>{e(stack)}</code></p><ul class="specs">'
                    + ''.join(rows) + '</ul></div>')
     return ''.join(out)
@@ -242,12 +255,26 @@ def scale(fam, kind):
             vis = ''
         items.append(f'<li><div class="sc-vis">{vis}</div><div class="sc-text">'
                      f'<code>{e(t["name"])}</code><span class="sc-val">{e(v)}</span>'
-                     f'<p>{e(t["usage"])}</p></div></li>')
+                     f'<p>{bt(t["usage"], t["usage_en"])}</p></div></li>')
     return '<ul class="scale scale-' + kind + '">' + ''.join(items) + '</ul>'
+
+
+def effects():
+    """Rocco's glass and blur choices: one row each, with the value, the default and the use."""
+    rows = []
+    for t in TOKENS['effetti']['tokens']:
+        on = t['default'] == 'on'
+        state = bt('accesa di fabbrica', 'on by default') if on else bt('spenta di fabbrica', 'off by default')
+        rows.append(f'<tr><th scope="row"><code>{e(t["name"])}</code>'
+                    f'<span class="fx-state{" fx-on" if on else ""}">{state}</span></th>'
+                    f'<td class="fx-val">{bt(t["value"], t["value_en"])}</td>'
+                    f'<td>{bt(t["usage"], t["usage_en"])}</td></tr>')
+    return ''.join(rows)
 
 
 SHORT = re.compile(r'(?<![\wÀ-ɏ])([\wÀ-ɏ]{1,2}|[\wÀ-ɏ]{1,2}\')( )(?=[^ ]|$)')
 UNIT = re.compile(r'(\d) (px|dp|ms|rem|em|KB|MB|%|:1)')
+PUNCT_SHORT = re.compile(r' ([\wÀ-ɏ]{1,2}[,;:)])(?= |$)')
 SKIP = re.compile(r'<(style|script|code|svg|title|textarea)\b[\s\S]*?</\1>', re.I)
 
 
@@ -256,6 +283,9 @@ def tie(text):
     def fix(seg):
         seg = SHORT.sub(lambda m: m.group(1) + NBSP, seg)
         seg = UNIT.sub(lambda m: m.group(1) + NBSP + m.group(2), seg)
+        # a short word closed by punctuation (`follows it,`, `Android dp,`) binds to the word before
+        # it, or it can end a line alone; the plain rule above only sees a short word before a space
+        seg = PUNCT_SHORT.sub(lambda m: NBSP + m.group(1), seg)
         # bind the last short group of every sentence (words already tied count as one) to
         # the word before it; only ordinary spaces separate groups here, never NBSP
         # repeated until the final group reaches 10 characters, since two tied short words
@@ -286,8 +316,12 @@ def main():
     tpl = (HERE / 'template.html').read_text(encoding='utf-8')
     fills = {
         'css': css_tokens(),
-        'turchese': accent_card('turchese', 'Sullo sfondo chiaro è grafica e superficie, su quello scuro si legge anche come testo. È il colore del marchio e del fondo dell\'icona di AIV.'),
-        'petrolio': accent_card('petrolio', 'Sullo sfondo chiaro si legge anche come testo, su quello scuro è grafica e superficie. È il fondo dell\'icona di AIV nel tema scuro.'),
+        'turchese': accent_card('turchese', 'Turquoise',
+                                'Sullo sfondo chiaro è grafica e superficie, su quello scuro si legge anche come testo. È il colore del marchio e del fondo dell\'icona di AIV.',
+                                'On the light background it is graphics and surface, on the dark one it also reads as text. It is the color of the mark and of the AIV icon background.'),
+        'petrolio': accent_card('petrolio', 'Petrol',
+                                'Sullo sfondo chiaro si legge anche come testo, su quello scuro è grafica e superficie. È il fondo dell\'icona di AIV nel tema scuro.',
+                                'On the light background it also reads as text, on the dark one it is graphics and surface. It is the AIV icon background in the dark theme.'),
         'palette': palette(),
         'pairs': pairs(),
         'type': type_specimens(),
@@ -296,6 +330,7 @@ def main():
         'misura': scale('misura', 'plain'),
         'clear': clear_space(),
         'centerref': center_reference(),
+        'effects': effects(),
     }
     for name, box in mark_frames().items():
         tpl = tpl.replace(f'@{name}-frame', box)

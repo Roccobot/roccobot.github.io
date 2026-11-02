@@ -1,0 +1,274 @@
+# Roccobot Design System
+
+The design system of the personal brand of Rocco Casadei, a.k.a. Roccobot, graphic designer and
+photographer: the AIV and Aomidori apps, the roccobot.me photography site, and the pages and
+documents that bear his name. The app rules were born in AIV, over more than 500 versions, and
+Aomidori for Android adopts them; Aomidori for Mac follows the macOS interface guidelines, and
+takes colors, mark and voice from here.
+
+This is the English version of the manual (`design/README.md` is the Italian one, and the Italian
+text wins if the two ever disagree). It goes with the page for designers,
+[Roccobot Design System](https://roccobot.github.io/design/), which is the only source of the
+design system (Rocco's choice `Unico-01`, 2026-11-02). It is a service page of the
+`Roccobot/roccobot.github.io` hub, in the `design/` folder, served by GitHub Pages since
+2026-11-02 (entry `Approdo`): until that day it was a claude.ai artifact. The same folder holds:
+
+- `design/tokens.json`, the color, type and size tokens, where the page takes every value from;
+- `design/README.md`, the manual in Italian, and `design/README.en.md`, this English version;
+- `design/components/`, the sheets of the Tondo and of the Start menu, in Italian and in English;
+- `design/assets/mark/` and `design/assets/icons/`, the files of the mark and of the AIV icon;
+- `design/build/`, the generator: `build.py` with `template.html` and `contrast.py`, `assets.py`
+  for the mark files, and the browser check `check.cjs` with `fonts.py`.
+
+Every file can also be read without cloning the hub, at the page address followed by the path
+(<https://roccobot.github.io/design/tokens.json>).
+
+- **How it changes**: edit the tokens, the manual or the template, run `design/build/build.py`
+  (and `design/build/assets.py` for the mark files), then `design/build/fonts.py` and
+  `design/build/check.cjs` for the check, and commit everything together. The page
+  (`design/index.html`) is never edited by hand.
+- The page is not in search engines (`noindex`) and not in `sitemap.xml`, like `feedback/`: it
+  opens for whoever has the link.
+- **Two languages, Italian first** (entry `Interprete`, Rocco's choices `Primaria-01`,
+  `Lingua-01` and `Inglese-01`, 2026-11-02): the page opens in Italian, and the `L` key without
+  modifiers, or the button at the top right next to the theme button, switches to English; a link
+  with `?lang=en` opens it in English. Every text of the template and of the tokens exists in both
+  languages (in the template as a pair of `lang="it"` and `lang="en"` elements, in the tokens as
+  the `usage_en`, `name_en`, `sample_en` and `value_en` fields), and the browser check measures the
+  lines in both. New text enters in both languages at once, written with `/microcopy-it` and
+  `/microcopy-en`; the English is American.
+
+## How to use it
+
+- Colors, sizes and radii are the tokens of this system: code uses the token, never a copied
+  value.
+- App rules apply to AIV and to Aomidori on Android, except where an entry says **AIV only** or
+  **Aomidori only**.
+- App sizes are in Android dp, written in px because the format asks for it: 1 px equals 1 dp.
+- An entry marked **Proposal** isn't decided by Rocco yet, and is used only after his choice.
+- A new or changed rule enters here in the same round it enters a product. Sources: the AIV rules
+  (`Rules.md` and `docs/` in its repo), the Aomidroid map (`.scratch/aomidroid/` in the Aomidori
+  repo) and the hub's `feedback/` page for the web.
+
+## The mark
+
+Roccobot's personal sign is the character U+5929, sky in Chinese and Japanese, drawn as a path
+(`design/assets/mark/`). It is always used from the original file.
+
+- **Hands off**: the path is never redrawn, rounded, distorted or matched to other glyphs, not
+  even where a product rule prescribes it for every other drawing. Only its color changes. Any
+  retouch of the sign is a proposal.
+- **Allowed colors**: `marchio` (turquoise) on the dark background, at 6.93, the main form;
+  turquoise on the light background, at 2.43, large only; `su-accento` on turquoise, at 5.19; mint
+  on petrol, at 5.46.
+- **Weighted centering** (Rocco's official reference, 2026-11-02): center the **ideal square** of
+  the sign, not the box of the drawing; some strokes stick out of it, and that is how the glyph
+  looks centered to the eye. The measures are relative, so they hold at any size:
+  - in a tile the ideal square takes **58.5% of the side**, in width and in height, and it is
+    centered, leaving 20.75% of the side clear on each edge;
+  - as a share of the ideal square's side, the drawing sticks out by 5.8% on the left, 6.2% on the
+    right and 3.1% at the bottom, and at the top it starts 1.3% below the square's edge;
+  - so the center of the drawing's box is 2.2% of the side lower than the center of the square,
+    and weighted centering moves it.
+
+  The files in `design/assets/mark/` already have their frame centered this way, and the
+  coordinates for anyone writing a `viewBox` are in the generator (`design/build/build.py`,
+  `MARK_SQUARE`).
+- **Clear space** (Rocco's choice, `Rispetto-01`): a tenth of the ideal square's height clear on
+  every side.
+- **Minimum size**: 16 px on screen; below 24 px only on full-contrast backgrounds. The only
+  exception, which Rocco wants, is a few smaller favicons, even though they read less well.
+
+## Colors
+
+The two **primary accents** are `turchese`, turquoise (`#43B59E`), and `petrolio`, petrol
+(`#00727B`), and they complete each other: turquoise reads on the dark background (6.93), petrol
+on the light one (5.50). `accento` is turquoise by day and petrol by night, and it is the color of
+the icon, by Rocco's choice.
+
+- **Text and accent**: the accent never carries body text. Accent text uses `testo-accento`
+  (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `su-accento`.
+- **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
+  and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
+  with a touch of blue and green, not a green. Single-theme service pages use `fondo-intermedio`.
+- **Text**: `testo` (16.55 and 14.21), `testo-secondario` for notes and captions, `contorno` for
+  control borders, `linea` for dividers that carry no information.
+- **Aomidori palette** named by Rocco: `turchese-luce`, `menta-chiaro`, `ardesia`.
+- **The theme chosen inside an app isn't the system one**: every color goes through the app's
+  palette.
+- **Contrast**: 4.5:1 for text, 3:1 for graphics (icons, control borders, focus rings). It is
+  measured on the component's real background and declared; Rocco approves any exception with the
+  number in front of him. The two exceptions accepted today are turquoise by day (2.43) and the AIV
+  icon by day (2.42).
+- **Color by role** (from the RoccobotOS styleguide, 2026-11-02): the accent is action, headings
+  are structure, neutral is text, and a new element takes the color of its role, not the one that
+  looks best where it happens to sit. One hue at several depths makes a scale; nearby hues
+  shouting together make noise.
+- **Color is never alone**: wherever color tells something apart (an active item, an emphasis),
+  weight or position does too.
+- **How to add a color**:
+  1. decide its role (action, structure or text);
+  2. pick the value in both themes, never looking at only one;
+  3. measure the contrast on the worst background it can land on;
+  4. check the hue distance from the colors that can sit next to it: a colored heading stays at
+     least 20 degrees away from the link hue, or it reads as a link;
+  5. if it stays below the threshold, either fix it or make it a declared exception, with the
+     number and the reason, approved by Rocco;
+  6. write it in this design system first, and only then in the code.
+
+## Iconography
+
+- **The AIV icon** is the most representative of the brand: the A with the sun disc, drawn by
+  Rocco (`design/assets/icons/`). By day mint on turquoise, by night light turquoise on petrol:
+  both layers change.
+- **Android app icons are adaptive**: a full square, with the subject in the safe zone at about
+  45% of the side, and no drawn shape; the crop is up to the phone.
+- An app drawing lives in `res/drawable/ic_<name>.xml`, and a catalog lists them all. Convex
+  corners are rounded with a radius of 0.4 on 24; Material glyphs aren't, except the ones Rocco
+  picks; the app marks and the folders Rocco drew are untouchable.
+
+## Typefaces
+
+- **Brand and web**: Archivo (Google Fonts), with `"Helvetica Neue", Arial` as fallback, like the
+  roccobot.me site. Text at 17 px with line height 1.5; uppercase kickers at 12 px with 0.08 em
+  letter spacing.
+- **App interface**: system Roboto, with the Material 3 scale, which AIV uses without overriding
+  it; the interface follows Android's font scale.
+- **Reading in Aomidori**: set by the styles (Aomidori Flex and its variants) in Roboto Flex; verse
+  and quotations in Noto Serif; code in JetBrains Mono. The `Carattere personalizzato` setting
+  (custom typeface) chooses among Literata, Noto Serif, Roboto Flex and Inter.
+- **No word is left alone at either end of a sentence** in paragraphs: it is tied with a
+  non-breaking space, on the web paragraphs use `text-wrap: pretty` and headings
+  `text-wrap: balance`, and a consequence sign (`→`, `>`, `›`) wraps together with the words next to
+  it. Where that can't be done, Rocco is told before the release.
+
+## Sizes
+
+- The base step is `passo-griglia` (8): distances are multiples of it (`spazio-2`, `spazio-3`,
+  `spazio-6`).
+- The **Tondo**: `tondo` (44) in diameter, `tondo-fianco` (24) from the side and `tondo-basso`
+  (16) from the bottom, on the side chosen in `Preferred button position`.
+- Every touch target is at least `bersaglio-minimo` (48) in the apps, 44 on the web.
+- Windows: a phone is below 600 on its short side, narrow up to 800; a dialog is at most 520 wide
+  and sits 15% below the center, with `aria-dialogo` around it.
+- On the web body text is at most `misura-testo` (40 rem) wide, cards have `raggio-scheda-web`
+  (14) and buttons are pills (`raggio-pieno`).
+
+## Motion
+
+| what | duration | curve | source |
+| --- | --- | --- | --- |
+| scrim behind panels | 800 ms | `CubicBezier(0.2, 0.6, 0.35, 1)` | `Veil.kt` |
+| menu entrance | 120 ms, from scale 0.96 | `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
+| menu exit | 75 ms | linear | `MENU_OUT_MS` |
+| Start menu opening | 110 ms, from its corner | the pill's curve | `BAR_IN_MS` |
+| pill opening and closing | 160 ms | exponential | `PILL_OPEN_MS` |
+| screen change | 180 ms | | `SCHERMO_MS` |
+| reader fade | 100 ms | | `CUT_FADE_MS` |
+| cover going back to recents | 300 ms | | Aomidori, `Gesti-07` |
+| Tondo fading while reading | after 2,000 ms, in 150 ms | | `READING_SHOW_MS` |
+| notices | 2,000 or 3,000 ms | | `NOTICE_MS` |
+
+No screen change is a hard cut. With system animations off, animations become short fades or go
+away. Android's predictive Back follows the finger.
+
+## Glass and blur
+
+Rocco's choices, with AIV's defaults (AIV's `Rules.md`, § 'Sfocatura dietro i pannelli e bordo';
+AIV's `docs/Folders.md`, the entry on the main buttons' style and § 'Il gradiente sfocato e
+l'effetto movimento'). The values are also in the tokens, family `effetti`. App blurs need Android
+12: below it, their settings stay off and grayed out. In AIV they live in `Blur effects` and in
+`Style of the main buttons`.
+
+- **Blur behind panels** (`sfocatura-pannelli`, `Effect behind menus and panels`), **on by
+  default**: behind menus, dialogs and sheets, `sfocatura-velo` (12 dp) with the `velo` scrim at
+  30%, black by day and white by night, which arrives in 800 ms. Panels are bare: they stand out
+  by the surface color alone, with no border. When off, dialogs go back to Android's scrim (60%)
+  and menus have none. The system does the blur, and it costs only while a panel is open.
+- **A blur that fades needs something leaving the scene**, or it reads as focusing: a menu exits
+  with a single 75 ms fade, panel, blur and scrim together.
+- **Translucent main buttons** (`traslucido`), **the default style** among `Solid`,
+  `Transparent` (color at 80%) and `Translucent`, for the Tondo, the pill and the bottom menu:
+  `Radius` 16 dp, `Intensity` 300%, `Opacity` 40%, `Offset` 35, which darkens on light and
+  lightens on dark. The color is the accent of the other theme, `#00727B` on light and `#43B59E`
+  on dark; the page background sits under the blurred copy, and the glyph has a fixed color
+  (`glifo-tondo-traslucido`).
+- **Top bar** (`barra-superiore`, `Top bar`), **off by default**: thumbnails and rows scroll under
+  the top bar, blurred by 20 dp and tinted at 60% with the page color, from one edge of the window
+  to the other.
+- **Animated header** (`intestazione-animata`, `Animated header`), **off by default**: as it
+  closes, the header band blurs from zero at 55% of the closing to 4 dp, with fixed values.
+- **Bottom fade** (`sfumatura-inferiore`, `Bottom fade`), **off by default**: the bottom band of
+  the grid blurs from zero, 80 dp above the bottom, to full strength on the last pixel, with a
+  square curve; the radius goes from 1 to 4 dp and is 2.6 when first turned on; it is off during
+  selection.
+- **Motion effect** (`effetto-movimento`, `Motion effect`), **AIV GitHub only, off by default**: a
+  vertical-only trail while the grid scrolls fast, from zero below 400 dp per second to the slider
+  value at 3,000; the slider goes from 1 to 24 dp and is 12 when first turned on.
+- **On the web** the glass is the same: the top bar of the design system page blurs by 12 px over
+  the background at 88%.
+
+## Components
+
+- **Tondo**: the main command of the apps, round and translucent, in the thumb's corner (see its
+  sheet).
+- **Start menu**: the commands that grow out of the Tondo, up to eight cells in rows of 2 (see its
+  sheet).
+- **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
+  object with a name, one line of explanation and a single action.
+- **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `su-accento`) for the main
+  action, one per screen, outlined for the others.
+- **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo`; with the blur off a sheet's
+  scrim is at 60%.
+- **Help overlays**: a dark scrim (`velo-aiuto`) with an orange box and the key to tap in yellow;
+  Rocco writes the text.
+- **Notices**: a single line, above the sheet or next to the Tondo, with `Undo` where it is needed.
+- **Fixed controls on the web** (from the RoccobotOS styleguide): round, above the content; they
+  appear while scrolling and disappear after 3 seconds of stillness. A control that leads nowhere
+  at that moment is hidden (there is no 'back to top' at the top), and a hidden control also leaves
+  the Tab order. Each button slides out toward its own side, glyphs carry their optical
+  correction, and on a phone the tap highlight is off (`-webkit-tap-highlight-color:
+  transparent`).
+- **Language and theme on the web**: at the top right, the language button next to the theme
+  button, with the `L` and `T` shortcuts without modifiers, which win over everything except a
+  text field. The dual theme is always there; the language button only on a bilingual page.
+- **Icons in text**: SVG in the text color (`currentColor`), so they follow the theme. They align
+  to the center of a capital letter by moving them with `translateY`, never with a margin, and
+  their footprint stays the same: a new icon never shifts the text around it. Optical correction
+  isn't computed, it is judged by eye.
+
+## Accessibility
+
+- One choice is one target: the row of a switch is announced once.
+- Sliders say their value; every icon has a spoken description.
+- The Tondo is announced as `Comandi` (Commands), and every Start menu item by its name.
+- A gesture the screen reader intercepts always has a visible alternative.
+- On the web keyboard focus is visible, and motion respects `prefers-reduced-motion`.
+
+## Voice and copy
+
+- Copy is written like a copywriter would (concise, elegant, simple, precise), in Italian and in
+  American English, with `/microcopy-it` and `/microcopy-en`, and it is validated in the feedback
+  round.
+- A feature is called by the label of its item, word for word; a notice says what happened
+  (`Saved to Downloads`).
+- Straight quotes, real accents, three dots; in app text the ellipsis is the single character. No
+  em or en dashes, guillemets or curly quotes.
+
+## Principles
+
+- **Content first**: photographs, images and books are the subject; neutral backgrounds and the
+  accent only where an action or a sign needs it.
+- **No design choice without Rocco**: shape, icon, position, visible behavior and copy are
+  proposed and asked about, even when a rule seems to be enough.
+- **Same shape, two themes**: Day and Night share the same layout and change only the colors.
+- **Two languages, one shape**: anything new first asks whether it is bilingual and which language
+  it opens in, and whether language and theme have a button or a shortcut (by default at the top
+  right, one next to the other); the dual theme is always there (Rocco's rule of 2026-11-02).
+- **The main command lives in the thumb's corner**, and the commands it opens grow around it.
+- **As few options as possible**: a setting exists only if it changes a value that applies
+  everywhere.
+- **Core and interface kept apart**: decisions are made in the core with tests, the interface
+  carries them out.
+- **Light images on the web**: under 500 KB and at most three times as wide as they show on the
+  page, except photo galleries.
