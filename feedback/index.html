@@ -25,7 +25,7 @@
     --card: #3B4744;          /* one step lighter: the cards lift off the page */
     --line: #4E5B57;
     --ink: #F3F6F5;           /* 11.1 on --bg, 8.9 on --card */
-    --plat: #D9E1DE;          /* 7.3 on --card: between the name and the subtitle */
+    --plat: #CDD6D3;          /* 6.5 on --card: between the name and the subtitle */
     --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
     --accent: #43B59E;        /* brand-accent; the mark and the label, 4.8 on --bg */
     --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
@@ -45,7 +45,7 @@
   .txt { flex: 1 1 auto; min-width: 0; }
   h2 { font-size: 1.2rem; font-weight: 600; margin: 0; }
   /* the platform after the app's name: same size, less white and lighter, so the name leads */
-  .plat { color: var(--plat); font-weight: 500; }
+  .plat { color: var(--plat); font-weight: 500; white-space: nowrap; }  /* wraps whole, never one word alone */
   p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
   a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
            border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
@@ -74,8 +74,8 @@
   <ul>
     <li>
       <div class="txt">
-        <h2>AIV</h2>
-        <p>Astonishing Image Viewer, Android</p>
+        <h2>AIV <span class="plat">Astonishing Image Viewer</span></h2>
+        <p>Gestore di immagini avanzato per Android</p>
       </div>
       <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
     </li>
@@ -95,7 +95,6 @@
     </li>
   </ul>
   <footer class="refs">
-    <p class="meta">Riferimenti</p>
     <ul>
       <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener">Registro di Aomidori Flex</a></li>
       <li><a href="https://claude.ai/artifact/NF44gLgLtBHxhjNEux7vZi" target="_blank" rel="noopener">Roccobot Design</a></li>
