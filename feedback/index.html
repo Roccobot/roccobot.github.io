@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Documenti di feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&display=swap">
+<!--
+  Service page: one link to each feedback document (DF). A single mid-tone theme, between
+  light and dark, with no theme switching and no script. Every colour and the type come from
+  the Roccobot Design system (tokens/colors.css, tokens/typography.css); the mark is its 天.
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+<style>
+  :root {
+    color-scheme: light;
+    /* Roccobot Design neutrals taken from the middle of the scale */
+    --bg: #8A9490;            /* dark-outline */
+    --card: #A9B3B0;          /* dark-ink-variant */
+    --ink: #0F1413;           /* dark-surface-lowest */
+    --ink-muted: #283130;     /* dark-surface-high */
+    --line: #79817D;          /* light-outline */
+    --accent: #43B59E;        /* brand-accent */
+    --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
+    --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--font); }
+  main { max-width: 40rem; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+  header { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.8rem; }
+  header svg { width: 2.6rem; height: auto; flex: none; }
+  h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
+  .meta { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: .25rem 0 0; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; }
+  li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem;
+       display: flex; align-items: center; gap: 1rem; }
+  .txt { flex: 1 1 auto; min-width: 0; }
+  h2 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+  p { margin: .15rem 0 0; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
+           border-radius: 999px; padding: 0 1.1rem; min-height: 44px; display: inline-flex; align-items: center; }
+  a.open:hover { outline: 2px solid var(--on-accent); outline-offset: -2px; }
+  a.open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <svg viewBox="10 8 160 145" aria-hidden="true"><path d="M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z" fill="#43b59e" fill-rule="evenodd"/></svg>
+    <div>
+      <h1>Documenti di feedback</h1>
+      <p class="meta">Pagina di servizio</p>
+    </div>
+  </header>
+  <ul>
+    <li>
+      <div class="txt">
+        <h2>AIV</h2>
+        <p>Astonishing Image Viewer, Android</p>
+      </div>
+      <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+    </li>
+    <li>
+      <div class="txt">
+        <h2>Aomidori</h2>
+        <p>Lettore di EPUB e fumetti, macOS</p>
+      </div>
+      <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+    </li>
+    <li>
+      <div class="txt">
+        <h2>Aomidori Android</h2>
+        <p>Lettore di EPUB e fumetti, Android</p>
+      </div>
+      <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
