@@ -126,6 +126,10 @@ numero per scelta dell'utente.
 - ⚠️ **La mappa elenca i soli progetti pubblici con una pagina** (Arda, Terramare, AIV, CleanSVG,
   RatioLab, 'Ma che parola è', entrata il 2026-10-16, e Aomidori): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
+- **`feedback/` è la pagina di servizio coi documenti di feedback** (richiesta dell'utente del
+  2026-11-02): un clic apre ciascun DF in una nuova scheda. Tema unico a metà fra chiaro e scuro,
+  senza script, coi valori di `Roccobot Design`; fuori dalla mappa e dall'indicizzazione (`noindex`).
+  ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 
