@@ -156,21 +156,87 @@ the icon, by Rocco's choice.
 
 ## Motion
 
-| what | duration | curve | source |
-| --- | --- | --- | --- |
-| scrim behind panels | 800 ms | `CubicBezier(0.2, 0.6, 0.35, 1)` | `Veil.kt` |
-| menu entrance | 120 ms, from scale 0.96 | `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
-| menu exit | 75 ms | linear | `MENU_OUT_MS` |
-| Start menu opening | 110 ms, from its corner | the pill's curve | `BAR_IN_MS` |
-| pill opening and closing | 160 ms | exponential | `PILL_OPEN_MS` |
-| screen change | 180 ms | | `SCHERMO_MS` |
-| reader fade | 100 ms | | `CUT_FADE_MS` |
-| cover going back to recents | 300 ms | | Aomidori, `Gesti-07` |
-| Tondo fading while reading | after 2,000 ms, in 150 ms | | `READING_SHOW_MS` |
-| notices | 2,000 or 3,000 ms | | `NOTICE_MS` |
+AIV's transitions, Back gesture and animations, which are the house rules (AIV's `Rules.md`,
+§ '🎬 Le animazioni dentro una schermata che arriva', and the comments on the constants in its
+code). The values are also in the tokens, family `movimento`, each with its constant in the
+`source` field. `FastOutSlowIn` is Compose's default curve.
 
-No screen change is a hard cut. With system animations off, animations become short fades or go
-away. Android's predictive Back follows the finger.
+| what | duration and curve | source |
+| --- | --- | --- |
+| screen change | 180 ms, `FastOutSlowIn` | `SCHERMO_MS` |
+| viewer, entrance and exit | 100 ms, `FastOutSlowIn` | `CUT_FADE_MS` |
+| Back gesture | 180 ms with the finger at the end, linear | `PredictiveBack.kt` |
+| Back into the thumbnail | 300 ms, quartic ease-out | `SWIPE_MS` |
+| Back on a menu | down to 90%; 100 ms if canceled | `BACK_SCALE` |
+| scrim behind panels | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
+| menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
+| menu exit | 75 ms, linear | `MENU_OUT_MS` |
+| bottom sheet entrance | spring with no bounce, medium-low stiffness; opaque in 110 ms | `ARRIVO_RIGIDITA` |
+| bottom sheet exit | 332 ms, the same spring read backward; scrim in 280 ms | `USCITA_MS` |
+| pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
+| Start menu, from its corner | 110 ms, the pill's curve | `BAR_IN_MS` |
+| tap on the Tondo | down in 30 ms, up in 60, to 70%; × in 90 ms, color in 55 | `RIMBALZO` |
+| Tondo leaving | 100 ms, a curve that starts fast | `VIA_MS` |
+| jump to top and bottom | 280 ms plus 0.16 ms per pixel, at most 800 | `Jump.kt` |
+| image settling, and the change of space for the info bar | 220 ms | `SNAP_MS`, `BAR_ROOM_MS` |
+| stand-in giving way | 150 ms | `THUMB_FADE_MS` |
+| header stopped halfway | after 2,000 ms, in 250 ms | `FRONT_REST_MS` |
+| Tondo while reading | after 2,000 ms, in 150 ms | `READING_SHOW_MS` |
+| cover going back to recents | 300 ms | Aomidori, `Gesti-07` |
+| notices | 2,000 or 3,000 ms on screen | `NOTICE_MS` |
+| web pages, hover | 160 ms | `design/` |
+
+### The rules of motion
+
+- **No screen change is a hard cut**: a 180 ms fade, and 100 ms only for the viewer's entrance and
+  exit.
+- **Opacities multiply.** An animation played under the screen fade shows only its tail: what must
+  be seen waits for the screen to arrive, and what arrives with the screen (a background, a band,
+  the content) stays still.
+- **Duration follows distance.** A fixed time for short steps; a spring for a sheet that travels
+  its own height, where a fixed time would be a jolt; for a long jump a duration that grows with
+  the distance, with a cap.
+- **The exit is shorter than the entrance, or its mirror image.** A menu enters in 120 ms and exits
+  in 75, with a single fade; the bottom sheet exits on the same spring read backward.
+- **No flashes between two surfaces.** The scrim does not go down while another surface is coming
+  in, and a window that opens over a scrim already on screen blurs to full at once.
+- **A stand-in gives way with a fade**, in 150 ms: the thumbnail to the full image, the copy that
+  arrives late, a video's cover to its first frame.
+- **Two crossing glyphs use an exponent below one** (0.8): with two linear opacities, halfway
+  through both glyphs are at 9% and the button looks empty.
+- **A fade of a few frames is counted in frames**, not milliseconds, so it lasts the same at 60 and
+  at 120 Hz.
+- **Where the start of a fade must be seen, the ramp is linear**: a curve that starts with zero
+  slope hides it.
+- **A tapped button answers with motion, symbol and color**, with no shadows or blur: a few points
+  of indent on an isolated tile cannot be seen.
+- **The Tondo leaves faster than the screen fade**: any longer, it would end under a scrim that lets
+  nothing show.
+- **On the web** transitions respect the system's reduced motion (`prefers-reduced-motion`):
+  without it, there is no smooth scrolling either.
+
+### The predictive Back gesture
+
+- **It is the screen-change fade, driven by the finger.** The Back button and three-button
+  navigation, which have no steps, change screen with the usual fade.
+- **Outside the viewer** the leaving screen fades in place; the arriving one comes in blurred by
+  6 dp and at 97%, and is whole at 80% of the gesture, a few frames before the end. Below
+  Android 12 there is no blur: it only fades and grows.
+- **A flick**, under 200 ms from the first step to the release, drops blur and scale within a fifth
+  of the remaining way, from the values they had, and the rest is a fade.
+- **From the viewer to the grid the photo goes back into its thumbnail**, the one tapped to open it
+  (for a comic, its cover), in 300 ms: it starts fast, slows down and stops exactly on the
+  thumbnail without shrinking further, and only there fades out in three frames. A video brings
+  its frame; if the thumbnail is no longer in view, the photo shrinks toward the center.
+- **On release the curve goes on**: the transition finishes by itself, slowing down, and canceling
+  the gesture goes back from the fraction reached.
+- **The arriving screen goes below every screen already there**, even after several gestures in a
+  row.
+- **An open menu, the pill or the Start menu fold** toward the point they came from, down to 90%
+  like the screen in Android's own animation; on release they close, and on cancel they come back
+  whole in 100 ms.
+- **What is open closes first** (a menu, the pill, the Start menu, a selection), then navigation
+  goes back one step at a time; settings are at most two levels deep.
 
 ## Glass and blur
 

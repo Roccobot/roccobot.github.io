@@ -53,7 +53,7 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
         lIgnoredInField: lTyped[0] === 'en' && lTyped[1] === 'l' });
       const t = await themeCheck(p);
       Object.assign(report[report.length - 1], t);
-      for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'effetti', 'componenti']) {
+      for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'movimento', 'effetti', 'componenti']) {
         await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
         await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
       }

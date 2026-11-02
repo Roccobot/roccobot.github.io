@@ -139,6 +139,12 @@ def bt(it, en):
     return bi(e(it), e(en))
 
 
+def bc(it, en):
+    """Like bt, with `backticks` turned into code: token texts name constants and CSS features."""
+    code = lambda s: re.sub(r'`([^`]+)`', r'<code>\1</code>', e(s))
+    return bi(code(it), code(en))
+
+
 def num(x, lang='it'):
     """A ratio with two decimals: a comma in Italian, a point in English."""
     v = f'{x:.2f}'
@@ -272,7 +278,31 @@ def effects():
     return ''.join(rows)
 
 
-SHORT = re.compile(r'(?<![\wÀ-ɏ])([\wÀ-ɏ]{1,2}|[\wÀ-ɏ]{1,2}\')( )(?=[^ ]|$)')
+def motion():
+    """AIV's transitions and animations: one row each, with the duration, the curve and the use."""
+    rows = []
+    for t in TOKENS['movimento']['tokens']:
+        rows.append(f'<tr><th scope="row">{bt(t["label"], t["label_en"])}'
+                    f'<code class="fx-state">{e(t["name"])}</code></th>'
+                    f'<td class="fx-val">{bt(t["value"], t["value_en"])}</td>'
+                    f'<td>{bc(t["usage"], t["usage_en"])}</td></tr>')
+    return ''.join(rows)
+
+
+MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto',
+          'settembre', 'ottobre', 'novembre', 'dicembre']
+MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+             'September', 'October', 'November', 'December']
+
+
+def version():
+    """The version and date in the bar, from tokens.json: the one source of the version."""
+    y, m, d = (int(x) for x in TOKENS['updated'].split('-'))
+    v = TOKENS['version']
+    return bt(f'versione {v}, {d} {MONTHS[m - 1]} {y}', f'version {v}, {MONTHS_EN[m - 1]} {d}, {y}')
+
+
+SHORT =re.compile(r'(?<![\wÀ-ɏ])([\wÀ-ɏ]{1,2}|[\wÀ-ɏ]{1,2}\')( )(?=[^ ]|$)')
 UNIT = re.compile(r'(\d) (px|dp|ms|rem|em|KB|MB|%|:1)')
 PUNCT_SHORT = re.compile(r' ([\wÀ-ɏ]{1,2}[,;:)])(?= |$)')
 SKIP = re.compile(r'<(style|script|code|svg|title|textarea)\b[\s\S]*?</\1>', re.I)
@@ -331,6 +361,8 @@ def main():
         'clear': clear_space(),
         'centerref': center_reference(),
         'effects': effects(),
+        'motion': motion(),
+        'version': version(),
     }
     for name, box in mark_frames().items():
         tpl = tpl.replace(f'@{name}-frame', box)

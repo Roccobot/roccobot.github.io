@@ -157,21 +157,86 @@ vale turchese di giorno e petrolio di notte, ed è il colore dell'icona, per sce
 
 ## Movimento
 
-| che cosa | durata | curva | fonte |
-| --- | --- | --- | --- |
-| velo dietro i pannelli | 800 ms | `CubicBezier(0.2, 0.6, 0.35, 1)` | `Veil.kt` |
-| entrata di un menu | 120 ms, da scala 0,96 | `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
-| uscita di un menu | 75 ms | lineare | `MENU_OUT_MS` |
-| apertura del menu Start | 110 ms, dal suo angolo | quella della pillola | `BAR_IN_MS` |
-| apertura e chiusura della pillola | 160 ms | esponenziale | `PILL_OPEN_MS` |
-| cambio di schermata | 180 ms | | `SCHERMO_MS` |
-| dissolvenza del lettore | 100 ms | | `CUT_FADE_MS` |
-| ritorno della copertina ai recenti | 300 ms | | Aomidori, `Gesti-07` |
-| Tondo che sparisce leggendo | dopo 2.000 ms, in 150 ms | | `READING_SHOW_MS` |
-| avvisi | 2.000 o 3.000 ms | | `NOTICE_MS` |
+Le transizioni, il gesto Indietro e le animazioni di AIV, che sono le regole di casa (`Rules.md`
+di AIV, § '🎬 Le animazioni dentro una schermata che arriva', e i commenti delle costanti nel suo
+codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua costante nel campo
+`source`. `FastOutSlowIn` è la curva di serie di Compose.
 
-Nessun cambio di schermata a taglio netto. Con le animazioni di sistema spente, le animazioni
-diventano dissolvenze brevi o spariscono. L'Indietro predittivo di Android segue il dito.
+| che cosa | durata e curva | fonte |
+| --- | --- | --- |
+| cambio di schermata | 180 ms, `FastOutSlowIn` | `SCHERMO_MS` |
+| visualizzatore, entrata e uscita | 100 ms, `FastOutSlowIn` | `CUT_FADE_MS` |
+| gesto Indietro | 180 ms col dito in fondo, lineare | `PredictiveBack.kt` |
+| Indietro verso la miniatura | 300 ms, quartica in uscita | `SWIPE_MS` |
+| Indietro su un menu | fino al 90%; 100 ms se si annulla | `BACK_SCALE` |
+| velo dietro i pannelli | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
+| entrata di un menu | 120 ms da scala 0,96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
+| uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
+| entrata della scheda in fondo | molla senza rimbalzo, rigidità medio-bassa; opaca in 110 ms | `ARRIVO_RIGIDITA` |
+| uscita della scheda in fondo | 332 ms, la stessa molla letta all'indietro; velo in 280 ms | `USCITA_MS` |
+| pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
+| menu Start, dal suo angolo | 110 ms, la curva della pillola | `BAR_IN_MS` |
+| tocco sul Tondo | giù in 30 ms, su in 60, al 70%; × in 90 ms, colore in 55 | `RIMBALZO` |
+| Tondo che se ne va | 100 ms, una curva che parte veloce | `VIA_MS` |
+| salto in cima e in fondo | 280 ms più 0,16 ms per pixel, al massimo 800 | `Jump.kt` |
+| assestamento dell'immagine, e cambio di spazio per la barra delle info | 220 ms | `SNAP_MS`, `BAR_ROOM_MS` |
+| sostituto che lascia il posto | 150 ms | `THUMB_FADE_MS` |
+| intestazione ferma a metà | dopo 2.000 ms, in 250 ms | `FRONT_REST_MS` |
+| Tondo durante la lettura | dopo 2.000 ms, in 150 ms | `READING_SHOW_MS` |
+| copertina che torna ai recenti | 300 ms | Aomidori, `Gesti-07` |
+| avvisi | 2.000 o 3.000 ms a schermo | `NOTICE_MS` |
+| pagine web, passaggio del mouse | 160 ms | `design/` |
+
+### Le regole del movimento
+
+- **Nessun cambio di schermata è un taglio netto**: 180 ms di dissolvenza, e 100 ms solo per
+  l'entrata e l'uscita del visualizzatore.
+- **Le opacità si moltiplicano.** Un'animazione giocata sotto la dissolvenza di schermata si vede
+  solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello
+  che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.
+- **La durata segue la distanza.** Un tempo fisso per i passi corti; una molla per una scheda che
+  percorre la sua altezza, dove lo stesso tempo sarebbe uno scatto; per un salto lungo una durata
+  che cresce con la corsa, con un tetto.
+- **L'uscita è più breve dell'entrata, o la sua copia speculare.** Un menu entra in 120 ms ed esce
+  in 75, con una dissolvenza sola; la scheda in fondo esce con la stessa molla letta all'indietro.
+- **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando, e
+  una finestra che si apre con un velo già in scena sfoca subito al pieno.
+- **Un sostituto lascia il posto sfumando**, in 150 ms: la miniatura all'immagine piena, la copia
+  che arriva tardi, la copertura di un video al primo fotogramma.
+- **Due glifi che si incrociano usano un esponente sotto uno** (0,8): con due opacità lineari, a
+  metà corsa i glifi sono al 9% e il tasto resta vuoto.
+- **Una dissolvenza di pochi fotogrammi si conta in fotogrammi**, non in millisecondi, così dura
+  uguale a 60 e a 120 Hz.
+- **Dove l'inizio di una dissolvenza va visto, la rampa è lineare**: una curva che parte con
+  pendenza zero lo nasconde.
+- **Un tasto toccato risponde col movimento, il simbolo e il colore**, senza ombre né sfocature: un
+  rientro di pochi punti su una piastrella isolata non si vede.
+- **Il Tondo si congeda più in fretta della dissolvenza di schermata**: più lungo, finirebbe sotto
+  un velo che non lascia vedere niente.
+- **Sul web** le transizioni rispettano il movimento ridotto del sistema
+  (`prefers-reduced-motion`): senza, non c'è nemmeno lo scorrimento morbido.
+
+### Il gesto Indietro predittivo
+
+- **È la dissolvenza del cambio di schermata, guidata dal dito.** Il pulsante Indietro e la
+  navigazione a tre tasti, che non hanno passi, cambiano schermata con la dissolvenza di sempre.
+- **Fuori dal visualizzatore** la schermata che lascia sfuma sul posto; quella che arriva entra
+  sfocata di 6 dp e al 97%, ed è intera all'80% del gesto, qualche fotogramma prima della fine.
+  Sotto Android 12 non si sfoca: sfuma e cresce soltanto.
+- **Un gesto netto**, meno di 200 ms dal primo passo al rilascio, toglie sfocatura e scala entro un
+  quinto della corsa che resta, dal valore che avevano, e il resto è una dissolvenza.
+- **Dal visualizzatore alla griglia la foto torna nella sua miniatura**, quella toccata per aprirla
+  (per un fumetto, la sua copertina), in 300 ms: parte veloce, frena e si ferma esattamente sulla
+  miniatura senza rimpicciolirsi oltre, e solo lì sfuma in tre fotogrammi. Un video porta il suo
+  fotogramma; se la miniatura non è più in vista, la foto si restringe verso il centro.
+- **Al rilascio la curva continua**: la transizione finisce da sola rallentando, e annullando il
+  gesto si torna indietro dalla frazione raggiunta.
+- **La schermata che arriva va sotto tutte quelle già in scena**, anche dopo più gesti di seguito.
+- **Un menu, la pillola o il menu Start aperti si piegano** verso il punto da cui sono nati, fino
+  al 90% come la schermata nell'animazione di Android; al rilascio si chiudono, e annullando
+  tornano interi in 100 ms.
+- **Prima si chiude quello che è aperto** (un menu, la pillola, il menu Start, una selezione), poi
+  si risale la navigazione un gradino per volta; le impostazioni hanno due livelli al massimo.
 
 ## Vetro e sfocature
 
