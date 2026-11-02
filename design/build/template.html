@@ -1,0 +1,583 @@
+<title>Roccobot Design System</title>
+<meta name="description" content="Il design system del marchio personale di Rocco Casadei, a.k.a. Roccobot: colori, marchio, icone, caratteri, misure e componenti.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='@favicon-frame'%3E%3Cpath fill='%2343b59e' fill-rule='evenodd' d='M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif:ital@1&family=Roboto+Flex:opsz,wght@8..144,400&family=Roboto:wght@400;500&display=swap">
+<style>
+/*@css*/
+/*
+  Layout: a sticky top bar with the mark, then a narrow index beside one reading column on
+  wide screens and a single column on phones. The two brand accents get the only full-bleed
+  fields of the page; everything else sits on the theme's own grounds, so the colours are
+  always seen on a real background.
+  Author: Rocco Casadei, a.k.a. Roccobot
+*/
+:root {
+  --tipo: var(--font-marchio);
+  --mono: var(--font-codice);
+  --colonna: 46rem;
+  --barra: 3.5rem;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--barra) + env(safe-area-inset-top, 0px) + 1rem); }
+body { margin: 0; background: var(--fondo); color: var(--testo); font: 400 1.0625rem/1.55 var(--tipo); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--fondo); }
+a { color: var(--testo-accento); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--testo-accento); outline-offset: 2px; border-radius: 4px; }
+code { font-family: var(--mono); font-size: .86em; white-space: nowrap; }
+.stack code, .tok-name { white-space: normal; }
+p, li, dd, figcaption, td { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+h2, h3 { margin: 0; }
+
+/* top bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--fondo) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--linea); }
+.bar-in { max-width: 76rem; margin: 0 auto; height: var(--barra); display: flex; align-items: center; gap: .75rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar-mark { width: 1.75rem; height: auto; color: var(--marchio); flex: none; }
+.bar-name { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.bar-sep { color: var(--testo-secondario); }
+.bar-ver { color: var(--testo-secondario); font-size: .875rem; white-space: nowrap; }
+.theme { margin-left: auto; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--contorno); border-radius: var(--raggio-pieno); background: var(--superficie); color: var(--testo); font: 500 .875rem/1 var(--tipo); white-space: nowrap; cursor: pointer; }
+.theme:hover { border-color: var(--testo-accento); }
+.theme kbd { font: 500 .75rem/1 var(--mono); padding: .2rem .4rem; border-radius: 4px; background: var(--superficie-alta); color: var(--testo-secondario); }
+.theme svg { width: 1.1rem; height: 1.1rem; }
+
+/* page frame */
+.frame { max-width: 76rem; margin: 0 auto; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 5rem; }
+.toc { position: sticky; top: calc(var(--barra) + env(safe-area-inset-top, 0px) + 2rem); align-self: start; padding-top: 2.5rem; }
+.toc p { margin: 0 0 .75rem; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--testo-secondario); }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .15rem; }
+.toc a { display: block; padding: .3rem 0 .3rem .75rem; border-left: 2px solid var(--linea); color: var(--testo-secondario); text-decoration: none; font-size: .9375rem; }
+.toc a:hover { color: var(--testo); border-left-color: var(--contorno); }
+main { min-width: 0; }
+section { padding-top: 4.5rem; }
+.eyebrow { margin: 0 0 .6rem; font-size: .75rem; line-height: 1rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--testo-accento); }
+h2 { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.25rem); line-height: 1.15; font-weight: 500; letter-spacing: -.02em; }
+h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
+.lead { max-width: var(--colonna); color: var(--testo-secondario); margin: 1rem 0 0; font-size: 1.125rem; }
+.prose { max-width: var(--colonna); }
+.prose p { margin: 1rem 0 0; }
+.note { margin-top: 1.25rem; max-width: var(--colonna); font-size: .9375rem; color: var(--testo-secondario); }
+
+/* hero */
+.hero { padding-top: 3.5rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2.5rem; align-items: end; }
+.hero h1 { margin: 0; font-size: clamp(2.75rem, 1.6rem + 4.6vw, 4.75rem); line-height: .98; font-weight: 500; letter-spacing: -.035em; }
+.hero h1 .h1-mark { display: inline-block; width: .95em; height: auto; margin-right: .22em; vertical-align: -.08em; color: var(--marchio); }
+.hero .lead { font-size: 1.1875rem; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-size: .9375rem; color: var(--testo-secondario); }
+.hero-meta b { color: var(--testo); font-weight: 600; }
+.hero-tile { width: 9rem; aspect-ratio: 1; border-radius: 22%; background: var(--accento); display: grid; place-items: center; }
+.hero-tile svg { display: block; width: 100%; height: 100%; color: var(--su-accento); }
+
+/* the two primaries */
+.primaries { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.primary { margin: 0; border-radius: 20px; overflow: hidden; border: 1px solid var(--linea); background: var(--superficie); }
+.primary-field { position: relative; min-height: 13rem; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; }
+.primary-turchese .primary-field { background: var(--turchese); color: #00382f; }
+.primary-petrolio .primary-field { background: var(--petrolio); color: #ffffff; }
+.primary-name { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; }
+.copy { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: var(--raggio-pieno); border: 1px solid currentColor; background: transparent; color: inherit; font: 500 1rem/1 var(--mono); cursor: pointer; }
+.copy code { font-size: 1rem; }
+.copy[data-done]::after { content: attr(data-done); margin-left: .6rem; font: 500 .8125rem/1 var(--tipo); }
+.primary figcaption { padding: 1rem 1.25rem 1.25rem; }
+.primary figcaption p { margin: .75rem 0 0; font-size: .9375rem; color: var(--testo-secondario); }
+.primary-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.primary-facts dt { font-size: .8125rem; color: var(--testo-secondario); }
+.primary-facts dd { margin: .2rem 0 0; }
+.ratio { font: 500 1rem/1.2 var(--mono); font-variant-numeric: tabular-nums; display: inline-flex; align-items: baseline; gap: .4rem; }
+.ratio-tag { font: 600 .6875rem/1 var(--tipo); letter-spacing: .06em; text-transform: uppercase; color: var(--testo-accento); }
+.ratio-low .ratio-tag { color: var(--testo-secondario); }
+.duo { margin-top: 1rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 20px; overflow: hidden; border: 1px solid var(--linea); }
+.duo div { min-height: 7rem; padding: 1rem; display: flex; align-items: flex-end; font-size: .875rem; font-weight: 500; }
+.duo .d1 { background: #fcfbf8; color: #00727b; }
+.duo .d2 { background: #00727b; color: #ebfff7; }
+.duo .d3 { background: #43b59e; color: #00382f; }
+.duo .d4 { background: #151b1a; color: #43b59e; }
+
+/* mark */
+.marks { margin-top: 2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.mk { margin: 0; }
+.mk-ground { aspect-ratio: 1; border-radius: 16px; display: grid; place-items: center; border: 1px solid var(--linea); }
+.mk-ground svg { display: block; width: 100%; height: 100%; }
+.mk figcaption { margin-top: .6rem; font-size: .875rem; color: var(--testo-secondario); }
+.mk figcaption b { display: block; color: var(--testo); font-weight: 600; }
+.mk-1 .mk-ground { background: #fcfbf8; color: #43b59e; }
+.mk-2 .mk-ground { background: #151b1a; color: #43b59e; }
+.mk-3 .mk-ground { background: #43b59e; color: #00382f; }
+.mk-4 .mk-ground { background: #00727b; color: #ebfff7; }
+.mark-rules { margin-top: 2rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.rule { padding: 1.25rem; border-radius: 16px; background: var(--superficie); border: 1px solid var(--linea); }
+.rule h3 { font-size: 1rem; }
+.rule p { margin: .5rem 0 0; font-size: .9375rem; color: var(--testo-secondario); }
+.clear { margin-top: 1rem; display: grid; place-items: center; aspect-ratio: 16 / 9; border-radius: 12px; background: var(--superficie-alta); }
+.clear-box svg { display: block; width: 6.5rem; height: auto; color: var(--marchio); overflow: visible; }
+.center-ref { margin-top: 2rem; display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: 1.5rem; align-items: center; padding: 1.25rem; border-radius: 16px; background: var(--superficie); border: 1px solid var(--linea); }
+.center-ref p { margin: .5rem 0 0; color: var(--testo-secondario); }
+.cr-tile svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.cr-guide { stroke: #bdfcf0; stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.cs-out { fill: none; stroke: var(--contorno); stroke-width: 1px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+.cs-in { fill: none; stroke: var(--testo-accento); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.sizes { margin-top: 1rem; display: flex; align-items: flex-end; gap: 1.25rem; color: var(--marchio); }
+.sizes span { display: grid; justify-items: center; gap: .35rem; font-size: .75rem; color: var(--testo-secondario); font-family: var(--mono); }
+.sizes svg { height: auto; color: var(--marchio); }
+
+/* icon */
+.icons { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.ic { margin: 0; padding: 1.5rem; border-radius: 20px; display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
+.ic-day { background: #fcfbf8; color: #1a1c1b; border: 1px solid #dad9d5; }
+.ic-night { background: #151b1a; color: #e4e9e7; border: 1px solid #3c4442; }
+.ic-shapes { display: grid; grid-template-columns: auto auto; gap: .75rem; }
+.ic svg { display: block; width: 5.5rem; height: 5.5rem; }
+.ic .sq { border-radius: 23%; }
+.ic .ci { border-radius: 50%; }
+.ic .sm { width: 2.75rem; height: 2.75rem; border-radius: 23%; align-self: end; }
+.ic figcaption b { display: block; font-size: 1.0625rem; }
+.ic figcaption p { margin: .35rem 0 0; font-size: .9375rem; opacity: .78; }
+.ic figcaption code { font-size: .8125rem; }
+
+/* palette */
+.pal-group { margin-top: 2.5rem; }
+.pal-group h3 { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); }
+.toks { list-style: none; margin: 0; padding: 0; }
+.tok { display: grid; grid-template-columns: 12.5rem minmax(0, 1fr); gap: 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--linea); align-items: start; }
+.tok-chips { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; overflow: hidden; border: 1px solid var(--linea); }
+.tok-fixed .tok-chips { grid-template-columns: 1fr; }
+.chip { position: relative; min-height: 3.5rem; display: flex; align-items: flex-end; padding: .4rem .5rem; background-image: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#c9c9c9 0 25%, #f3f3f3 0 50%); background-size: auto, 12px 12px; }
+.chip-hex { font: 500 .6875rem/1 var(--mono); padding: .2rem .35rem; border-radius: 4px; background: rgba(255, 255, 255, .86); color: #1a1c1b; }
+.chip-dark .chip-hex { background: rgba(21, 27, 26, .86); color: #e4e9e7; }
+.tok-name { font-size: .9375rem; font-weight: 500; color: var(--testo); }
+.tok-text p { margin: .3rem 0 0; font-size: .9375rem; color: var(--testo-secondario); }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .875rem; color: var(--testo-secondario); }
+.legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; margin-right: .4rem; vertical-align: -.05em; border: 1px solid var(--contorno); }
+.legend .l-day { background: #fcfbf8; }
+.legend .l-night { background: #151b1a; }
+
+/* tables */
+.tbl { margin-top: 1.5rem; overflow-x: auto; border: 1px solid var(--linea); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+th, td { text-align: left; padding: .75rem 1rem; border-bottom: 1px solid var(--linea); vertical-align: top; }
+tr:last-child th, tr:last-child td { border-bottom: 0; }
+thead th { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--testo-secondario); font-weight: 600; background: var(--superficie); }
+tbody th { font-weight: 400; }
+td.kind { color: var(--testo-secondario); }
+
+/* type */
+.type-group { margin-top: 2.5rem; }
+.stack { margin: .35rem 0 0; color: var(--testo-secondario); }
+.specs { list-style: none; margin: 1rem 0 0; padding: 0; }
+.spec { padding: 1.1rem 0; border-top: 1px solid var(--linea); display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: 1.25rem; }
+.spec-meta { display: grid; gap: .2rem; align-content: start; font-size: .8125rem; color: var(--testo-secondario); }
+.spec-meta code { font-size: .875rem; color: var(--testo); }
+.spec-sample { margin: 0; color: var(--testo); overflow-wrap: anywhere; }
+.spec-usage { grid-column: 2; margin: .4rem 0 0; font-size: .875rem; color: var(--testo-secondario); }
+
+/* scales */
+.scales { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 2.5rem; }
+.scale { list-style: none; margin: 1rem 0 0; padding: 0; }
+.scale li { display: grid; grid-template-columns: 4rem minmax(0, 1fr); gap: 1rem; padding: .85rem 0; border-top: 1px solid var(--linea); }
+.scale-plain li { grid-template-columns: minmax(0, 1fr); }
+.scale-plain .sc-vis { display: none; }
+.sc-vis { display: flex; align-items: center; }
+.sbar { display: block; height: .75rem; max-width: 4rem; border-radius: 2px; background: var(--accento); }
+.corner { display: block; width: 3rem; height: 3rem; border-top: 3px solid var(--accento); border-left: 3px solid var(--accento); }
+.sc-text code { font-size: .875rem; color: var(--testo); }
+.sc-val { margin-left: .6rem; font: 500 .8125rem/1 var(--mono); color: var(--testo-accento); }
+.sc-text p { margin: .3rem 0 0; font-size: .875rem; color: var(--testo-secondario); }
+
+/* components */
+.comps { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.comp { padding: 1.25rem; border-radius: 16px; border: 1px solid var(--linea); background: var(--superficie); min-width: 0; }
+.comp h3 { font-size: 1rem; }
+.comp > p { margin: .4rem 0 0; font-size: .9375rem; color: var(--testo-secondario); }
+.stage { margin-top: 1rem; padding: 1.25rem; border-radius: 12px; background: var(--fondo); display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; min-height: 7rem; position: relative; overflow: hidden; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25rem; border-radius: var(--raggio-pieno); font: 600 1rem/1 var(--tipo); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn-full { background: var(--accento); color: var(--su-accento); }
+.btn-line { background: transparent; color: var(--testo); border-color: var(--contorno); }
+.card { width: 100%; padding: 1rem 1.1rem; border-radius: var(--raggio-scheda-web); border: 1px solid var(--linea); background: var(--superficie); display: flex; align-items: center; gap: 1rem; }
+.card-t { flex: 1 1 auto; min-width: 0; }
+.card-t b { font-weight: 600; }
+.card-t span { color: var(--testo-secondario); font-weight: 500; }
+.card-t p { margin: .15rem 0 0; font-size: .9375rem; color: var(--testo-secondario); }
+.tondo-stage { min-height: 9rem; }
+.tondo-stage p { margin: 0; align-self: flex-start; font-size: .9375rem; color: var(--testo-secondario); }
+.tondo { position: absolute; right: var(--tondo-fianco); bottom: var(--tondo-basso); width: var(--tondo); height: var(--tondo); border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--superficie) 60%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 1px 4px rgba(0, 0, 0, .18), inset 0 0 0 1px var(--linea); }
+.tondo svg { width: 1.45rem; height: auto; color: var(--accento); }
+.tondo-zone { position: absolute; right: calc(var(--tondo-fianco) - 2px); bottom: calc(var(--tondo-basso) - 2px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); border-radius: 50%; outline: 1px dashed var(--testo-accento); }
+.links { display: grid; gap: .4rem; }
+
+/* voice */
+.voice { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.say { padding: 1.25rem; border-radius: 16px; border: 1px solid var(--linea); }
+.say h3 { font-size: .8125rem; letter-spacing: .06em; text-transform: uppercase; color: var(--testo-secondario); }
+.say ul { margin: .75rem 0 0; padding-left: 1.1rem; display: grid; gap: .5rem; }
+.say-yes { background: var(--superficie); }
+.say-yes h3 { color: var(--testo-accento); }
+
+.motion td:nth-child(2) { font-family: var(--mono); font-size: .875rem; white-space: nowrap; }
+footer.end { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: .875rem; color: var(--testo-secondario); }
+footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-align: -.2em; margin-right: .4rem; }
+
+@media (max-width: 60rem) {
+  .frame { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+  .marks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mark-rules, .comps, .voice, .icons, .scales, .center-ref { grid-template-columns: minmax(0, 1fr); }
+  .cr-tile { max-width: 14rem; }
+}
+@media (max-width: 40rem) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-tile { width: 6rem; order: -1; }
+  .primaries { grid-template-columns: minmax(0, 1fr); }
+  .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tok { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+  .spec { grid-template-columns: minmax(0, 1fr); }
+  .spec-usage { grid-column: 1; }
+  .spec-meta { grid-auto-flow: column; justify-content: start; gap: .75rem; margin-bottom: .4rem; }
+  .ic { grid-template-columns: minmax(0, 1fr); }
+  .bar-ver, .bar-sep, .theme span { display: none; }
+  section { padding-top: 3.5rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  .theme, .btn, .toc a { transition: background-color .16s, border-color .16s, color .16s; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="tian" fill="currentColor" fill-rule="evenodd" d="M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z"/>
+    <symbol id="aiv-glyph" viewBox="0 0 108 108"><g transform="translate(18.9 18.9) scale(0.65)"><path fill="currentColor" d="M30,19a10,10 0 1,0 0,20a10,10 0 1,0 0,-20z"/><path fill="currentColor" fill-rule="evenodd" d="M58.1311,27.1833 L88.1311,71.1833 A5,5 0 0 1 84,79 L24,79 A5,5 0 0 1 19.8689,71.1833 L49.8689,27.1833 A5,5 0 0 1 58.1311,27.1833 Z M56.0424,49.5583 L68.0424,66.5583 A2.5,2.5 0 0 1 66,70.5 L42,70.5 A2.5,2.5 0 0 1 39.9576,66.5583 L51.9576,49.5583 A2.5,2.5 0 0 1 56.0424,49.5583 Z"/></g></symbol>
+    <symbol id="aiv-mark" viewBox="0 0 70 60"><g transform="translate(-19 -19)"><path fill="currentColor" d="M30,19a10,10 0 1,0 0,20a10,10 0 1,0 0,-20z"/><path fill="currentColor" fill-rule="evenodd" d="M58.1311,27.1833 L88.1311,71.1833 A5,5 0 0 1 84,79 L24,79 A5,5 0 0 1 19.8689,71.1833 L49.8689,27.1833 A5,5 0 0 1 58.1311,27.1833 Z M56.0424,49.5583 L68.0424,66.5583 A2.5,2.5 0 0 1 66,70.5 L42,70.5 A2.5,2.5 0 0 1 39.9576,66.5583 L51.9576,49.5583 A2.5,2.5 0 0 1 56.0424,49.5583 Z"/></g></symbol>
+  </defs>
+</svg>
+
+<header class="bar">
+  <div class="bar-in">
+    <svg class="bar-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot"><use href="#tian"/></svg>
+    <span class="bar-name">Design System</span>
+    <span class="bar-sep" aria-hidden="true">·</span>
+    <span class="bar-ver">versione 2, 2 novembre 2026</span>
+    <button class="theme" id="theme" type="button" aria-label="Cambia tema">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+      <span id="theme-label">Tema scuro</span><kbd>T</kbd>
+    </button>
+  </div>
+</header>
+
+<div class="frame">
+  <nav class="toc" aria-label="Sezioni">
+    <p>Sezioni</p>
+    <ol>
+      <li><a href="#identita">Identità</a></li>
+      <li><a href="#accenti">I due accenti</a></li>
+      <li><a href="#marchio">Il marchio</a></li>
+      <li><a href="#icona">L'icona di AIV</a></li>
+      <li><a href="#colori">Tutti i colori</a></li>
+      <li><a href="#contrasti">Contrasti</a></li>
+      <li><a href="#caratteri">Caratteri</a></li>
+      <li><a href="#misure">Spazi e forme</a></li>
+      <li><a href="#movimento">Movimento</a></li>
+      <li><a href="#componenti">Componenti</a></li>
+      <li><a href="#voce">Voce e testi</a></li>
+      <li><a href="#principi">Principi</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section class="hero" id="identita" aria-labelledby="h-id">
+      <div>
+        <p class="eyebrow">Rocco Casadei, a.k.a. Roccobot</p>
+        <h1 id="h-id"><svg class="h1-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot"><use href="#tian"/></svg>Design System</h1>
+        <p class="lead">Le regole visive e di scrittura del marchio personale di Roccobot, graphic designer e fotografo: le app AIV e Aomidori, il sito fotografico, le pagine e i documenti che portano il suo nome.</p>
+        <ul class="hero-meta">
+          <li><b>Due accenti</b> turchese e petrolio</li>
+          <li><b>Due temi</b> Giorno e Notte</li>
+          <li><b>Un marchio</b> il carattere U+5929</li>
+        </ul>
+      </div>
+      <div class="hero-tile" aria-hidden="true"><svg viewBox="@tile-frame"><use href="#tian"/></svg></div>
+    </section>
+
+    <section aria-labelledby="h-come">
+      <p class="eyebrow">Come si usa</p>
+      <h2 id="h-come">Una fonte sola</h2>
+      <div class="prose">
+        <p>Questa pagina è l'unica fonte del design system. Accanto a lei, nella stessa cartella, ci sono i file per gli agenti e per il codice: i token (<a href="tokens.json"><code>tokens.json</code></a>), da cui la pagina prende ogni valore, il manuale (<a href="README.md"><code>README.md</code></a>), le schede dei componenti delle app, i file del marchio e dell'icona di AIV, e il generatore che costruisce la pagina. Chi disegna usa la pagina; chi scrive codice usa il token, mai il valore copiato.</p>
+        <p>La pagina segue il tema del sistema. Il tasto&nbsp;<code>T</code>&nbsp;lo inverte da qualunque punto, salvo mentre si scrive in un campo di testo: così ogni colore si vede sul suo fondo vero, di giorno e di notte.</p>
+      </div>
+    </section>
+
+    <section id="accenti" aria-labelledby="h-acc">
+      <p class="eyebrow">Colore</p>
+      <h2 id="h-acc">I due accenti primari</h2>
+      <p class="lead">Turchese e petrolio sono la firma del marchio, e si completano: il turchese si legge sullo sfondo scuro, il petrolio su quello chiaro. Insieme coprono i due temi.</p>
+      <div class="primaries">
+        <!--@turchese-->
+        <!--@petrolio-->
+      </div>
+      <div class="duo" aria-label="Le coppie di accenti sui fondi">
+        <div class="d1">Petrolio su sfondo chiaro</div>
+        <div class="d2">Menta su petrolio</div>
+        <div class="d3">Su-accento su turchese</div>
+        <div class="d4">Turchese su sfondo scuro</div>
+      </div>
+      <p class="note">Il turchese è anche il colore di Aomidori, il cui nome vuol dire turchese in giapponese, ed è quasi identico all'accento del sito roccobot.me (<code>hsl(170, 46%, 49%)</code>). Per un testo d'accento si usa sempre <code>testo-accento</code>, che vale 6,21 sullo sfondo chiaro e 9,97 su quello scuro.</p>
+    </section>
+
+    <section id="marchio" aria-labelledby="h-mar">
+      <p class="eyebrow">Marchio</p>
+      <h2 id="h-mar">Il marchio</h2>
+      <p class="lead">Il segno personale di Roccobot è il carattere U+5929, cielo in cinese e in giapponese, disegnato come tracciato. Si usa sempre dal file originale.</p>
+      <div class="marks">
+        <figure class="mk mk-1"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo chiaro"><use href="#tian"/></svg></div><figcaption><b>Turchese su chiaro</b>Solo grafica, a 2,43: si usa grande.</figcaption></figure>
+        <figure class="mk mk-2"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio turchese su fondo scuro"><use href="#tian"/></svg></div><figcaption><b>Turchese su scuro</b>La forma principale, 6,93.</figcaption></figure>
+        <figure class="mk mk-3"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio scuro su turchese"><use href="#tian"/></svg></div><figcaption><b>Su-accento su turchese</b>Per un pulsante o un riquadro pieno, 5,19.</figcaption></figure>
+        <figure class="mk mk-4"><div class="mk-ground"><svg viewBox="@tile-frame" role="img" aria-label="Marchio menta su petrolio"><use href="#tian"/></svg></div><figcaption><b>Menta su petrolio</b>Il negativo per il tema scuro, 5,46.</figcaption></figure>
+      </div>
+      <div class="center-ref">
+        <div class="cr-tile"><!--@centerref--></div>
+        <div>
+          <h3>Centratura ponderata</h3>
+          <p>Si centra il quadrato ideale del segno, e non il riquadro del disegno: alcuni tratti ne escono, ed è così che il glifo risulta centrato all'occhio. In una piastrella il quadrato ideale occupa il 58,5% del lato. È il riferimento ufficiale di Rocco, e vale per icone, piastrelle e ogni riquadro che contiene il marchio.</p>
+        </div>
+      </div>
+      <div class="mark-rules">
+        <div class="rule">
+          <h3>Non si tocca</h3>
+          <p>Il tracciato non si ridisegna, non si arrotonda, non si deforma e non si uniforma ad altri glifi. Si cambia soltanto il colore, fra quelli di questa sezione. Un ritocco al segno è sempre una proposta, e lo decide Rocco.</p>
+        </div>
+        <div class="rule">
+          <h3>Area di rispetto</h3>
+          <p>Intorno al quadrato ideale resta libero almeno un decimo della sua altezza, su tutti e quattro i lati.</p>
+          <div class="clear"><div class="clear-box"><!--@clear--></div></div>
+        </div>
+        <div class="rule">
+          <h3>Misura minima</h3>
+          <p>16 px sullo schermo; sotto i 24 px solo sui fondi a contrasto pieno. L'unica eccezione, voluta da Rocco, sono alcune favicon più piccole, anche se si leggono meno bene.</p>
+          <div class="sizes" aria-hidden="true">
+            <span><svg viewBox="@fit-frame" width="16"><use href="#tian"/></svg>16</span>
+            <span><svg viewBox="@fit-frame" width="24"><use href="#tian"/></svg>24</span>
+            <span><svg viewBox="@fit-frame" width="32"><use href="#tian"/></svg>32</span>
+            <span><svg viewBox="@fit-frame" width="48"><use href="#tian"/></svg>48</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="icona" aria-labelledby="h-ico">
+      <p class="eyebrow">Icone delle app</p>
+      <h2 id="h-ico">L'icona di AIV</h2>
+      <p class="lead">L'icona più rappresentativa del marchio: la A col disco solare, disegnata da Rocco, sui due accenti primari. Cambiano tutti e due i livelli fra i temi, glifo compreso.</p>
+      <div class="icons">
+        <figure class="ic ic-day">
+          <div class="ic-shapes">
+            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di giorno"><rect width="108" height="108" fill="#43b59e"/><g style="color:#ebfff7"><use href="#aiv-glyph"/></g></svg>
+            <svg class="ci" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" fill="#43b59e"/><g style="color:#ebfff7"><use href="#aiv-glyph"/></g></svg>
+          </div>
+          <figcaption><b>Giorno</b><p>Menta <code>#EBFFF7</code> su turchese <code>#43B59E</code>. Contrasto 2,42, sotto il 3:1 della grafica: coppia scelta da Rocco.</p></figcaption>
+        </figure>
+        <figure class="ic ic-night">
+          <div class="ic-shapes">
+            <svg class="sq" viewBox="0 0 108 108" role="img" aria-label="Icona di AIV di notte"><rect width="108" height="108" fill="#00727b"/><g style="color:#4fd9be"><use href="#aiv-glyph"/></g></svg>
+            <svg class="ci" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" fill="#00727b"/><g style="color:#4fd9be"><use href="#aiv-glyph"/></g></svg>
+          </div>
+          <figcaption><b>Notte</b><p>Turchese luce <code>#4FD9BE</code> su petrolio <code>#00727B</code>, a 3,25.</p></figcaption>
+        </figure>
+      </div>
+      <div class="prose">
+        <p>L'icona di un'app Android è adattiva: un quadrato pieno, col soggetto nella zona sicura e al 45% del lato circa, senza nessuna forma disegnata. Il ritaglio, tondo o a quadrato arrotondato come qui sopra, lo decide il telefono. Il disegno vive in <code>ic_launcher_foreground.xml</code> del repo di AIV, ed è quello di questa pagina, senza modifiche.</p>
+      </div>
+    </section>
+
+    <section id="colori" aria-labelledby="h-col">
+      <p class="eyebrow">Colore</p>
+      <h2 id="h-col">Tutti i colori</h2>
+      <p class="lead">Ogni token ha il campione di giorno e quello di notte, affiancati; un token con un campione solo vale uguale nei due temi.</p>
+      <ul class="legend"><li><i class="l-day"></i>a sinistra, Giorno</li><li><i class="l-night"></i>a destra, Notte</li></ul>
+      <!--@palette-->
+    </section>
+
+    <section id="contrasti" aria-labelledby="h-con">
+      <p class="eyebrow">Accessibilità</p>
+      <h2 id="h-con">Contrasti misurati</h2>
+      <p class="lead">Il testo vuole 4,5:1, la grafica (icone, bordi dei controlli, anelli di fuoco) 3:1. Un'eccezione la approva Rocco, col numero davanti.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th scope="col">Coppia</th><th scope="col">Uso</th><th scope="col">Giorno</th><th scope="col">Notte</th></tr></thead>
+          <tbody><!--@pairs--></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="caratteri" aria-labelledby="h-car">
+      <p class="eyebrow">Tipografia</p>
+      <h2 id="h-car">Caratteri</h2>
+      <p class="lead">Archivo per il marchio e le pagine web, Roboto per le app, Roboto Flex per la lettura, Noto Serif per versi e citazioni, JetBrains Mono per il codice. Tutti gratuiti e open source.</p>
+      <!--@type-->
+      <p class="note">Le app seguono la scala dei caratteri di Android; la pagina di Aomidori ignora la scala di sistema e ha la sua dimensione del testo, fino al triplo di quella di partenza.</p>
+    </section>
+
+    <section id="misure" aria-labelledby="h-mis">
+      <p class="eyebrow">Forma</p>
+      <h2 id="h-mis">Spazi, raggi e misure</h2>
+      <p class="lead">Il passo di base è 8: le distanze ne sono multipli. Le misure delle app sono in dp di Android, e qui 1 px vale 1 dp.</p>
+      <div class="scales">
+        <div><h3>Spazi</h3><!--@spacing--></div>
+        <div><h3>Raggi</h3><!--@radius--></div>
+        <div><h3>Misure</h3><!--@misura--></div>
+      </div>
+    </section>
+
+    <section id="movimento" aria-labelledby="h-mov">
+      <p class="eyebrow">Movimento</p>
+      <h2 id="h-mov">Movimento</h2>
+      <p class="lead">Nessun cambio di schermata a taglio netto. Con le animazioni di sistema spente, ogni animazione diventa una dissolvenza breve o sparisce.</p>
+      <div class="tbl">
+        <table class="motion">
+          <thead><tr><th scope="col">Che cosa</th><th scope="col">Durata</th><th scope="col">Curva</th></tr></thead>
+          <tbody>
+            <tr><td>Velo dietro i pannelli</td><td>800 ms</td><td><code>CubicBezier(0.2, 0.6, 0.35, 1)</code></td></tr>
+            <tr><td>Entrata di un menu, da scala 0,96</td><td>120 ms</td><td><code>CubicBezier(0.2, 0, 0, 1)</code></td></tr>
+            <tr><td>Uscita di un menu</td><td>75 ms</td><td>lineare</td></tr>
+            <tr><td>Apertura del menu Start, dal suo angolo</td><td>110 ms</td><td>quella della pillola</td></tr>
+            <tr><td>Apertura e chiusura della pillola</td><td>160 ms</td><td>esponenziale</td></tr>
+            <tr><td>Cambio di schermata</td><td>180 ms</td><td>dissolvenza</td></tr>
+            <tr><td>Tondo che sparisce leggendo, dopo 2 secondi</td><td>150 ms</td><td>dissolvenza</td></tr>
+            <tr><td>Avvisi</td><td>2.000 o 3.000 ms</td><td>a schermo</td></tr>
+            <tr><td>Pagine web: passaggio del mouse</td><td>160 ms</td><td>colori e bordi</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="componenti" aria-labelledby="h-comp">
+      <p class="eyebrow">Componenti</p>
+      <h2 id="h-comp">Componenti</h2>
+      <p class="lead">I pezzi che si ripetono nelle app e nelle pagine. Le schede complete del <a href="components/tondo/README.md">Tondo</a> e del <a href="components/start-menu/README.md">menu Start</a> sono fra i file di questa pagina.</p>
+      <div class="comps">
+        <div class="comp">
+          <h3>Pulsanti</h3>
+          <p>Il pieno per l'azione principale, uno per schermata; il contorno per le altre. A pillola e alti almeno 44 px.</p>
+          <div class="stage"><a class="btn btn-full" href="#componenti">Apri</a><a class="btn btn-line" href="#componenti">Tutte le versioni</a></div>
+        </div>
+        <div class="comp">
+          <h3>Scheda</h3>
+          <p>Un oggetto con un nome, una riga di spiegazione e una sola azione.</p>
+          <div class="stage"><div class="card"><div class="card-t"><b>AIV</b> <span>Astonishing Image Viewer</span><p>Gestore di immagini avanzato per Android</p></div><a class="btn btn-full" href="#componenti">Apri</a></div></div>
+        </div>
+        <div class="comp">
+          <h3>Tondo</h3>
+          <p>Il comando principale delle app: tondo e traslucido nell'angolo del pollice, di 44 a vista con una zona di tocco di 48.</p>
+          <div class="stage tondo-stage"><p>Zona di tocco tratteggiata</p><span class="tondo-zone" aria-hidden="true"></span><span class="tondo" role="img" aria-label="Comandi"><svg viewBox="0 0 70 60" aria-hidden="true"><use href="#aiv-mark"/></svg></span></div>
+        </div>
+        <div class="comp">
+          <h3>Collegamenti</h3>
+          <p>Nel colore <code>testo-accento</code>, sottolineati; lo spessore cresce al passaggio del mouse.</p>
+          <div class="stage"><div class="links"><a href="https://roccobot.me">roccobot.me</a><a href="https://roccobot.github.io/AIV/">La pagina di AIV</a></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="voce" aria-labelledby="h-voce">
+      <p class="eyebrow">Scrittura</p>
+      <h2 id="h-voce">Voce e testi</h2>
+      <p class="lead">I testi si scrivono da copywriter: sintesi, eleganza, semplicità, precisione. In italiano e in inglese americano.</p>
+      <div class="voice">
+        <div class="say say-yes">
+          <h3>Sì</h3>
+          <ul>
+            <li>Chiamare una funzione con l'etichetta della sua voce, alla lettera.</li>
+            <li>Dire che cosa succede: <code>Salvata in Download</code>.</li>
+            <li>Apici dritti, accenti veri, tre punti; nei testi delle app i puntini sono il carattere unico.</li>
+            <li>Legare le parole corte alla successiva, perché nessuna resti sola a un capo della riga.</li>
+          </ul>
+        </div>
+        <div class="say">
+          <h3>No</h3>
+          <ul>
+            <li>Trattini lunghi, caporali, virgolette curve.</li>
+            <li>Gergo tecnico senza spiegazione, metafore al posto del meccanismo.</li>
+            <li>Un segno come → o › a un capo della riga: va a capo con le parole vicine.</li>
+            <li>Emoji come titoli di sezione nei prodotti.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="principi" aria-labelledby="h-pri">
+      <p class="eyebrow">Principi</p>
+      <h2 id="h-pri">Principi</h2>
+      <div class="mark-rules">
+        <div class="rule"><h3>Il contenuto prima di tutto</h3><p>Fotografie, immagini e libri sono il soggetto: fondi neutri, appena verdi, e l'accento solo dove serve un'azione o un segno.</p></div>
+        <div class="rule"><h3>Il pollice decide</h3><p>Nelle app il comando principale vive nell'angolo del pollice, e i comandi che apre gli crescono intorno.</p></div>
+        <div class="rule"><h3>Meno opzioni</h3><p>Un'impostazione esiste solo se cambia un valore che vale per tutto; quello che si accende usando l'app è un comando.</p></div>
+        <div class="rule"><h3>Stessa forma, due temi</h3><p>Giorno e Notte hanno la stessa impaginazione e cambiano solo i colori: il cambio di tema non sposta niente.</p></div>
+        <div class="rule"><h3>Nessuna scelta senza Rocco</h3><p>Forma, icona, posizione, comportamento visibile e testo si propongono e si chiedono.</p></div>
+        <div class="rule"><h3>Immagini leggere</h3><p>Sul web un'immagine resta sotto i 500 KB e larga al massimo il triplo della misura in pagina, salvo le gallerie di fotografia.</p></div>
+      </div>
+      <footer class="end">
+        <span><svg viewBox="@fit-frame" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei, a.k.a. Roccobot</span>
+        <a href="https://roccobot.me">roccobot.me</a>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<script>
+// Theme: follows the system until the viewer picks one with the button or the T key.
+// The T key wins over everything except typing in a field, as Rocco asked.
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme');
+  var label = document.getElementById('theme-label');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() {
+    var t = root.getAttribute('data-theme');
+    return t === 'dark' || t === 'light' ? t : (media.matches ? 'dark' : 'light');
+  }
+  function paint() {
+    var dark = current() === 'dark';
+    label.textContent = dark ? 'Tema chiaro' : 'Tema scuro';
+    btn.setAttribute('aria-label', dark ? 'Passa al tema chiaro' : 'Passa al tema scuro');
+  }
+  function flip() {
+    root.setAttribute('data-theme', current() === 'dark' ? 'light' : 'dark');
+    paint();
+  }
+  function typing(el) {
+    if (!el) return false;
+    var tag = el.tagName;
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+  }
+  btn.addEventListener('click', flip);
+  window.addEventListener('keydown', function (ev) {
+    if (ev.key !== 't' && ev.key !== 'T') return;
+    if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey || ev.repeat) return;
+    if (typing(ev.target) || typing(document.activeElement)) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    flip();
+  }, true);
+  media.addEventListener('change', paint);
+  new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  paint();
+
+  // Copy a hex value; the label says so for two seconds.
+  document.querySelectorAll('.copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-copy');
+      function done(msg) {
+        b.setAttribute('data-done', msg);
+        setTimeout(function () { b.removeAttribute('data-done'); }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(v).then(function () { done('Copiato'); }, function () { done('Selezionalo'); });
+      } else {
+        done('Selezionalo');
+      }
+    });
+  });
+})();
+</script>
