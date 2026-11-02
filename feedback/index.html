@@ -15,33 +15,34 @@
 -->
 <style>
   :root {
-    color-scheme: light;
-    /* Roccobot Design neutrals taken from the middle of the scale */
-    --bg: #8A9490;            /* dark-outline */
-    --card: #A9B3B0;          /* dark-ink-variant */
-    --ink: #0F1413;           /* dark-surface-lowest */
-    --ink-muted: #283130;     /* dark-surface-high */
-    --line: #79817D;          /* light-outline */
-    --accent: #43B59E;        /* brand-accent */
+    color-scheme: dark;
+    /* A deep green-grey between light and dark, from the Roccobot Design neutrals, so that the
+       brand green of the mark and of the buttons stands out. Contrast measured on 2026-11-02. */
+    --bg: #2E3836;            /* between dark-surface-high and dark-surface-highest */
+    --card: #3B4744;          /* one step lighter: the cards lift off the page */
+    --line: #4E5B57;
+    --ink: #F3F6F5;           /* 11.1 on --bg, 8.9 on --card */
+    --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
+    --accent: #43B59E;        /* brand-accent; the mark and the label, 4.8 on --bg */
     --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--font); }
-  main { max-width: 40rem; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
-  header { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.8rem; }
-  header svg { width: 2.6rem; height: auto; flex: none; }
-  h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
-  .meta { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: .25rem 0 0; }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; }
-  li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem;
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
+  main { max-width: 40rem; margin: 0 auto; padding: 2.75rem 1rem 3rem; }
+  header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  header svg { width: 3rem; height: auto; flex: none; }
+  h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
+  .meta { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: .35rem 0 0; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+  li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem;
        display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
-  h2 { font-size: 1.1rem; font-weight: 600; margin: 0; }
-  p { margin: .15rem 0 0; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  h2 { font-size: 1.2rem; font-weight: 600; margin: 0; }
+  p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
   a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
-           border-radius: 999px; padding: 0 1.1rem; min-height: 44px; display: inline-flex; align-items: center; }
-  a.open:hover { outline: 2px solid var(--on-accent); outline-offset: -2px; }
+           border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
+  a.open:hover { background: #4FD9BE; }
   a.open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 </style>
 </head>
