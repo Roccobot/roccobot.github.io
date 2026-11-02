@@ -465,23 +465,14 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
     stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
 
-- ⚠️⚠️ **IL RIQUADRO `🟠 Cosa devi fare tu` CHIUDE I MESSAGGI CHE RISPONDONO A LUI E QUELLI IN CUI LE SUE
-  VOCI CAMBIANO** (`Coda-01`, sua scelta del 2026-10-25, e sua segnalazione lo stesso giorno quando il
-  riquadro è sparito: *poco fa mi hai parlato di Coda-01 e poi più niente*; il titolo era `Ti tocca`
-  con il quadrato blu, e titolo ed emoji li ha cambiati lui, l'ultima volta in 🟠). È l'ultima cosa
-  del messaggio, **anche del più breve**: al massimo tre voci, ognuna una sola azione sua con i clic
-  in ordine, oppure `Niente per te`. ⚠️ **`Coda-02`, sua scelta del 2026-10-29, toglie le notifiche**:
-  dopo lo stesso riquadro ripetuto nove volte di fila (*non mi sembra il massimo della vita una
-  conversazione in cui mi dici di fare la stessa cosa per decine di volte*), un messaggio che nasce
-  da una notifica automatica e non cambia niente per lui è di **una riga**, senza riquadro; quando una
-  voce cambia, o quando risponde a un suo messaggio, si riscrive l'elenco intero. Le voci ancora aperte
-  restano il suo promemoria, perché lui non tiene il conto della chat. ⚠️ **`Riquadro-01`, sua scelta
-  del 2026-11-02, dice che cosa ci entra**: solo decisioni, scelte aperte e passi che bloccano un
-  lavoro e che può fare solo lui; mai le azioni di routine, né i clic per farle (svuotare il Cestino,
-  riavviare un'app, Transporter, il giro in TestFlight), dopo una voce che gli spiegava il Cestino:
-  *le azioni di routine tipo 'svuota il cestino' non possono inquinare la conversazione*. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
-  non si ricarica a ogni turno: dopo una compattazione la regola non era più in scena. Il testo
-  completo è in `Roccobot.md` § '💬 Stile di comunicazione'.
+- ⚠️⚠️ **QUELLO CHE PUÒ FARE SOLO LUI DIVENTA UNA CARD NELLA LISTA `ADMIN` DELLA BACHECA, E IN
+  CHAT NON SI RIPETE** (`Admin-01`, sua scelta del 2026-11-02: *basta con questo sistema, non serve
+  più. Adesso c'è Trello*). Una decisione o un passo suo è una card assegnata a lui nella sua
+  colonna, che ha rinominato da `Richiede intervento` in `Admin`; in chat la si nomina una volta,
+  col collegamento, nel messaggio in cui nasce, e poi non la si ricorda più, perché tempi e ordine
+  li decide lui. ⚠️ **Il riquadro `🟠 Cosa devi fare tu` in fondo ai messaggi è tolto** (era nato
+  con `Coda-01` il 2026-10-25): un messaggio finisce col suo contenuto. Il testo completo è in
+  `Roccobot.md` § '💬 Stile di comunicazione'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
