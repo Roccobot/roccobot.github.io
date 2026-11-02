@@ -225,7 +225,6 @@ td.kind { color: var(--testo-secondario); }
 .say-yes { background: var(--superficie); }
 .say-yes h3 { color: var(--testo-accento); }
 
-.motion td:nth-child(2) { font-family: var(--mono); font-size: .875rem; white-space: nowrap; }
 footer.end { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: .875rem; color: var(--testo-secondario); }
 footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-align: -.2em; margin-right: .4rem; }
 
@@ -246,6 +245,14 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   .spec-usage { grid-column: 1; }
   .spec-meta { grid-auto-flow: column; justify-content: start; gap: .75rem; margin-bottom: .4rem; }
   .ic { grid-template-columns: minmax(0, 1fr); }
+  /* on a phone the three columns of the effects and motion tables would scroll sideways: every row
+     becomes a block, name first, then the values and the use */
+  .fx thead { display: none; }
+  .fx tr { display: block; padding: .85rem 1rem; border-bottom: 1px solid var(--linea); }
+  .fx tr:last-child { border-bottom: 0; }
+  .fx th, .fx td { display: block; padding: 0; border: 0; }
+  .fx .fx-val { min-width: 0; margin-top: .5rem; }
+  .fx td + td { margin-top: .35rem; }
   /* on a phone there is no keyboard to show: the controls keep their icon and the language code */
   .bar-ver, .bar-sep, .ctl-label, .ctl kbd { display: none; }
   .ctl-code { display: inline; }
@@ -271,7 +278,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     <svg class="bar-mark" viewBox="@fit-frame" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design System</span>
     <span class="bar-sep" aria-hidden="true">·</span>
-    <span class="bar-ver"><span lang="it">versione 3, 3 novembre 2026</span><span lang="en">version 3, November 3, 2026</span></span>
+    <span class="bar-ver"><!--@version--></span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label" id="lang-label">English</span><b class="ctl-code" id="lang-code">EN</b><kbd>L</kbd>
@@ -487,23 +494,59 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     <section id="movimento" aria-labelledby="h-mov">
       <p class="eyebrow"><span lang="it">Movimento</span><span lang="en">Motion</span></p>
       <h2 id="h-mov"><span lang="it">Movimento</span><span lang="en">Motion</span></h2>
-      <p class="lead" lang="it">Nessun cambio di schermata a taglio netto. Con le animazioni di sistema spente, ogni animazione diventa una dissolvenza breve o sparisce.</p>
-      <p class="lead" lang="en">No screen change is a hard cut. With system animations off, every animation becomes a short fade or goes away.</p>
+      <p class="lead" lang="it">Le transizioni, il gesto Indietro e le animazioni di AIV, che sono le regole di casa. Nessun cambio di schermata è un taglio netto, e il gesto Indietro segue il dito.</p>
+      <p class="lead" lang="en">AIV's transitions, Back gesture and animations, which are the house rules. No screen change is a hard cut, and the Back gesture follows the finger.</p>
       <div class="tbl">
-        <table class="motion">
-          <thead><tr><th scope="col"><span lang="it">Che cosa</span><span lang="en">What</span></th><th scope="col"><span lang="it">Durata</span><span lang="en">Duration</span></th><th scope="col"><span lang="it">Curva</span><span lang="en">Curve</span></th></tr></thead>
-          <tbody>
-            <tr><td><span lang="it">Velo dietro i pannelli</span><span lang="en">Scrim behind panels</span></td><td>800 ms</td><td><code>CubicBezier(0.2, 0.6, 0.35, 1)</code></td></tr>
-            <tr><td><span lang="it">Entrata di un menu, da scala 0,96</span><span lang="en">Menu entrance, from scale 0.96</span></td><td>120 ms</td><td><code>CubicBezier(0.2, 0, 0, 1)</code></td></tr>
-            <tr><td><span lang="it">Uscita di un menu</span><span lang="en">Menu exit</span></td><td>75 ms</td><td><span lang="it">lineare</span><span lang="en">linear</span></td></tr>
-            <tr><td><span lang="it">Apertura del menu Start, dal suo angolo</span><span lang="en">Start menu opening, from its corner</span></td><td>110 ms</td><td><span lang="it">quella della pillola</span><span lang="en">the pill's curve</span></td></tr>
-            <tr><td><span lang="it">Apertura e chiusura della pillola</span><span lang="en">Pill opening and closing</span></td><td>160 ms</td><td><span lang="it">esponenziale</span><span lang="en">exponential</span></td></tr>
-            <tr><td><span lang="it">Cambio di schermata</span><span lang="en">Screen change</span></td><td>180 ms</td><td><span lang="it">dissolvenza</span><span lang="en">fade</span></td></tr>
-            <tr><td><span lang="it">Tondo che sparisce leggendo, dopo 2 secondi</span><span lang="en">Tondo fading while reading, after 2 seconds</span></td><td>150 ms</td><td><span lang="it">dissolvenza</span><span lang="en">fade</span></td></tr>
-            <tr><td><span lang="it">Avvisi</span><span lang="en">Notices</span></td><td><span lang="it">2.000 o 3.000 ms</span><span lang="en">2,000 or 3,000 ms</span></td><td><span lang="it">a schermo</span><span lang="en">on screen</span></td></tr>
-            <tr><td><span lang="it">Pagine web: passaggio del mouse</span><span lang="en">Web pages: hover</span></td><td>160 ms</td><td><span lang="it">colori e bordi</span><span lang="en">colors and borders</span></td></tr>
-          </tbody>
+        <table class="fx">
+          <thead><tr><th scope="col"><span lang="it">Movimento</span><span lang="en">Motion</span></th><th scope="col"><span lang="it">Durata e curva</span><span lang="en">Duration and curve</span></th><th scope="col"><span lang="it">Come si usa</span><span lang="en">How it works</span></th></tr></thead>
+          <tbody><!--@motion--></tbody>
         </table>
+      </div>
+      <div class="pal-group">
+        <h3 id="h-mov-regole"><span lang="it">Le regole del movimento</span><span lang="en">The rules of motion</span></h3>
+      <ul class="steps" lang="it">
+        <li><strong>Le opacità si moltiplicano.</strong> Un'animazione giocata sotto la dissolvenza di schermata si vede solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.</li>
+        <li><strong>La durata segue la distanza.</strong> Un tempo fisso per i passi corti; una molla per una scheda che percorre la sua altezza; per un salto lungo una durata che cresce con la corsa, con un tetto.</li>
+        <li><strong>L'uscita è più breve dell'entrata, o la sua copia speculare.</strong> Un menu entra in 120&nbsp;ms ed esce in 75; la scheda in fondo esce con la stessa molla letta all'indietro.</li>
+        <li><strong>Fra due superfici niente lampi.</strong> Il velo non scende finché un'altra superficie sta entrando, e una finestra che si apre con un velo già in scena sfoca subito al pieno.</li>
+        <li><strong>Un sostituto lascia il posto sfumando</strong>, in 150&nbsp;ms: la miniatura all'immagine piena, la copertura di un video al primo fotogramma.</li>
+        <li><strong>Due glifi che si incrociano usano un esponente sotto uno</strong> (0,8): con due opacità lineari, a metà corsa i glifi sono al 9% e il tasto resta vuoto.</li>
+        <li><strong>Una dissolvenza di pochi fotogrammi si conta in fotogrammi</strong>, non in millisecondi, così dura uguale a 60 e a 120&nbsp;Hz.</li>
+        <li><strong>Dove l'inizio di una dissolvenza va visto, la rampa è lineare</strong>: una curva che parte con pendenza zero lo nasconde.</li>
+        <li><strong>Un tasto toccato risponde col movimento, il simbolo e il colore</strong>, senza ombre né sfocature.</li>
+      </ul>
+      <ul class="steps" lang="en">
+        <li><strong>Opacities multiply.</strong> An animation played under the screen fade shows only its tail: what must be seen waits for the screen to arrive, and what arrives with the screen (a background, a band, the content) stays still.</li>
+        <li><strong>Duration follows distance.</strong> A fixed time for short steps; a spring for a sheet that travels its own height; for a long jump a duration that grows with the distance, with a cap.</li>
+        <li><strong>The exit is shorter than the entrance, or its mirror image.</strong> A menu enters in 120&nbsp;ms and exits in 75; the bottom sheet exits on the same spring read backward.</li>
+        <li><strong>No flashes between two surfaces.</strong> The scrim does not go down while another surface is coming in, and a window that opens over a scrim already on screen blurs to full at once.</li>
+        <li><strong>A stand-in gives way with a fade</strong>, in 150&nbsp;ms: the thumbnail to the full image, a video's cover to its first frame.</li>
+        <li><strong>Two crossing glyphs use an exponent below one</strong> (0.8): with two linear opacities, halfway through both glyphs are at 9% and the button looks empty.</li>
+        <li><strong>A fade of a few frames is counted in frames</strong>, not milliseconds, so it lasts the same at 60 and at 120&nbsp;Hz.</li>
+        <li><strong>Where the start of a fade must be seen, the ramp is linear</strong>: a curve that starts with zero slope hides it.</li>
+        <li><strong>A tapped button answers with motion, symbol and color</strong>, with no shadows or blur.</li>
+      </ul>
+      </div>
+      <div class="pal-group">
+        <h3 id="h-mov-indietro"><span lang="it">Il gesto Indietro predittivo</span><span lang="en">The predictive Back gesture</span></h3>
+      <ul class="steps" lang="it">
+        <li><strong>È la dissolvenza del cambio di schermata, guidata dal dito.</strong> Il pulsante Indietro e la navigazione a tre tasti, che non hanno passi, cambiano schermata con la dissolvenza di sempre.</li>
+        <li><strong>Fuori dal visualizzatore</strong> la schermata che lascia sfuma sul posto; quella che arriva entra sfocata di 6&nbsp;dp e al 97%, ed è intera all'80% del gesto, qualche fotogramma prima della fine. Sotto Android&nbsp;12 non si sfoca: sfuma e cresce soltanto.</li>
+        <li><strong>Un gesto netto</strong>, meno di 200&nbsp;ms dal primo passo al rilascio, toglie sfocatura e scala entro un quinto della corsa che resta, dal valore che avevano, e il resto è una dissolvenza.</li>
+        <li><strong>Dal visualizzatore alla griglia la foto torna nella sua miniatura</strong>, quella toccata per aprirla (per un fumetto, la sua copertina); un video porta il suo fotogramma. Se la miniatura non è più in vista, la foto si restringe verso il centro.</li>
+        <li><strong>Al rilascio la curva continua</strong>: la transizione finisce da sola rallentando, e annullando il gesto si torna indietro dalla frazione raggiunta.</li>
+        <li><strong>La schermata che arriva va sotto tutte quelle già in scena</strong>, anche dopo più gesti di seguito.</li>
+        <li><strong>Prima si chiude quello che è aperto</strong> (un menu, la pillola, il menu Start, una selezione), poi si risale la navigazione un gradino per volta; le impostazioni hanno due livelli al massimo.</li>
+      </ul>
+      <ul class="steps" lang="en">
+        <li><strong>It is the screen-change fade, driven by the finger.</strong> The Back button and three-button navigation, which have no steps, change screen with the usual fade.</li>
+        <li><strong>Outside the viewer</strong> the leaving screen fades in place; the arriving one comes in blurred by 6&nbsp;dp and at 97%, and is whole at 80% of the gesture, a few frames before the end. Below Android&nbsp;12 there is no blur: it only fades and grows.</li>
+        <li><strong>A flick</strong>, under 200&nbsp;ms from the first step to the release, drops blur and scale within a fifth of the remaining way, from the values they had, and the rest is a fade.</li>
+        <li><strong>From the viewer to the grid the photo goes back into its thumbnail</strong>, the one tapped to open it (for a comic, its cover); a video brings its frame. If the thumbnail is no longer in view, the photo shrinks toward the center.</li>
+        <li><strong>On release the curve goes on</strong>: the transition finishes by itself, slowing down, and canceling the gesture goes back from the fraction reached.</li>
+        <li><strong>The arriving screen goes below every screen already there</strong>, even after several gestures in a row.</li>
+        <li><strong>What is open closes first</strong> (a menu, the pill, the Start menu, a selection), then navigation goes back one step at a time; settings are at most two levels deep.</li>
+      </ul>
       </div>
     </section>
 
