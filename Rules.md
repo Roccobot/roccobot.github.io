@@ -134,6 +134,18 @@ numero per scelta dell'utente.
   la posizione che l'utente ha regolato nella favicon, e non segue la centratura ponderata di
   `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file': è una pagina di servizio, e
   resta com'è fino a nuovo ordine (sua decisione del 2026-11-02).
+- **`design/` è la pagina di servizio del design system del marchio di Rocco**, 'Roccobot Design
+  System' (voce `Approdo`, sua richiesta del 2026-11-02: *se adesso la pagina di riferimento è
+  statica, perché la trovo ancora su claude.ai? A questo punto la voglio sul mio GitHub Pages*).
+  Per lui una pagina di design system è una pagina di servizio e non un progetto (*un progetto
+  significa una cosa costruita da me, con una lavorazione sostanziosa, un certo numero di file, e/o
+  delle funzioni, e/o degli asset, e una certa manutenzione necessaria*), quindi vive qui e non in un
+  repo suo, che ogni sessione dovrebbe agganciare. È l'unica fonte del design system (`Unico-01`):
+  la pagina `design/index.html` è generata da `design/build/build.py` coi token di
+  `design/tokens.json`, e non si modifica a mano; accanto ci sono il manuale (`design/README.md`), le
+  schede dei componenti e i file del marchio e dell'icona di AIV. La scrive la sessione `Roccobot`,
+  con le regole di `Roccobot.md` § '🎨 Grafica'. Pubblica, ma fuori dalla mappa e
+  dall'indicizzazione (`noindex`), come `feedback/`.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 
