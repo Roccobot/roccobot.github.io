@@ -130,6 +130,10 @@ numero per scelta dell'utente.
   2026-11-02): un clic apre ciascun DF in una nuova scheda. Tema unico a metà fra chiaro e scuro,
   senza script, coi valori di `Roccobot Design`; fuori dalla mappa e dall'indicizzazione (`noindex`).
   ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce.
+  ⚠️ **Il marchio della pagina e della sua favicon resta centrato sul riquadro del disegno**, con
+  la posizione che l'utente ha regolato nella favicon, e non segue la centratura ponderata di
+  `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file': è una pagina di servizio, e
+  resta com'è fino a nuovo ordine (sua decisione del 2026-11-02).
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 
