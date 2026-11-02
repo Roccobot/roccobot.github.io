@@ -459,7 +459,11 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   conversazione in cui mi dici di fare la stessa cosa per decine di volte*), un messaggio che nasce
   da una notifica automatica e non cambia niente per lui è di **una riga**, senza riquadro; quando una
   voce cambia, o quando risponde a un suo messaggio, si riscrive l'elenco intero. Le voci ancora aperte
-  restano il suo promemoria, perché lui non tiene il conto della chat. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
+  restano il suo promemoria, perché lui non tiene il conto della chat. ⚠️ **`Riquadro-01`, sua scelta
+  del 2026-11-02, dice che cosa ci entra**: solo decisioni, scelte aperte e passi che bloccano un
+  lavoro e che può fare solo lui; mai le azioni di routine, né i clic per farle (svuotare il Cestino,
+  riavviare un'app, Transporter, il giro in TestFlight), dopo una voce che gli spiegava il Cestino:
+  *le azioni di routine tipo 'svuota il cestino' non possono inquinare la conversazione*. ⚠️ **È qui perché la prima volta viveva solo nel brief**, che
   non si ricarica a ogni turno: dopo una compattazione la regola non era più in scena. Il testo
   completo è in `Roccobot.md` § '💬 Stile di comunicazione'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
