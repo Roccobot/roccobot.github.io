@@ -9,7 +9,7 @@ The menu that grows out of the Tondo: up to eight cells in rows of 2, close to t
   is mirrored. The longest label doesn't take the rounded corner at the bottom.
 - **It closes after every tap**, with a tap on the scrim and with Back, which pulls it back toward
   its corner following the finger.
-- **In Aomidori for Android** it is the 8-cell `Start` (`Forma-01`): book and Markdown with
+- **In Aomidori for Android** it is the 8-cell `Start`: book and Markdown with
   `Indice` (Contents) next to the ×, comic with `Vai a tavola` (Go to page). **In AIV** it exists
   only in the GitHub variant, with three columns on the home screen and two in a folder.
 - The consumer provides the items (icon, short label, action) in right-handed reading order.

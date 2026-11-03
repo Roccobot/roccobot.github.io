@@ -2,16 +2,14 @@
 
 Il design system del marchio personale di Rocco Casadei, a.k.a. Roccobot, graphic designer e
 fotografo: le app AIV e Aomidori, il sito fotografico roccobot.me, le pagine e i documenti che
-portano il suo nome. Le regole delle app nascono in AIV, in più di 500 versioni, e Aomidori per
+portano il suo nome. Le regole delle app nascono in AIV, e Aomidori per
 Android le adotta; Aomidori per Mac segue le linee guida di macOS per l'interfaccia, e da qui
 prende colori, marchio e voce.
 
 Questo manuale accompagna la pagina per chi disegna,
 [Roccobot Design System](https://roccobot.github.io/design/), che è l'unica fonte del design
-system (scelta `Unico-01` di Rocco, 2026-11-02). È una pagina di servizio dell'hub
-`Roccobot/roccobot.github.io`, nella cartella `design/`, pubblicata da GitHub Pages dal
-2026-11-02 (voce `Approdo`): fino a quel giorno era un artefatto di claude.ai. Nella stessa
-cartella ci sono:
+system. È una pagina di servizio dell'hub `Roccobot/roccobot.github.io`, nella cartella
+`design/`, pubblicata da GitHub Pages. Nella stessa cartella ci sono:
 
 - `design/tokens.json`, i token di colori, caratteri e misure, da cui la pagina prende ogni valore;
 - `design/README.md`, questo manuale, e `design/README.en.md`, la sua versione inglese;
@@ -29,8 +27,7 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
   La pagina (`design/index.html`) non si modifica mai a mano.
 - La pagina non è nei motori di ricerca (`noindex`) e non è in `sitemap.xml`, come `feedback/`:
   la apre chi ha il link.
-- **Due lingue, l'italiano per primo** (voce `Interprete`, scelte `Primaria-01`, `Lingua-01` e
-  `Inglese-01` di Rocco, 2026-11-02): la pagina si apre in italiano, e il tasto `L` senza
+- **Due lingue, l'italiano per primo**: la pagina si apre in italiano, e il tasto `L` senza
   modificatori o il pulsante in alto a destra, accanto a quello del tema, passano all'inglese; un
   collegamento con `?lang=en` la apre in inglese. Lingua e tema non si memorizzano (`Roccobot.md`
   § '🌗 Lingua e tema: le domande prima di cominciare'): niente `localStorage` né cookie, e
@@ -51,23 +48,22 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
   AIV** o **solo Aomidori**.
 - Le misure delle app sono in dp di Android, scritte in px perché il formato lo chiede: 1 px vale
   1 dp.
-- Una voce segnata **Proposta** non è ancora decisa da Rocco, e si usa solo dopo la sua scelta.
+- Una voce segnata **Proposta** non è ancora decisa, e si usa solo dopo la scelta del titolare.
 - Una regola nuova o cambiata entra qui nello stesso giro in cui entra in un prodotto. Fonti: le
   regole di AIV (`Rules.md` e `docs/` del suo repo), la mappa di Aomidroid (`.scratch/aomidroid/`
   del repo di Aomidori) e la pagina `feedback/` dell'hub per il web.
 
 ## Il marchio
 
-Il segno personale di Roccobot è il carattere U+5929, cielo in cinese e in giapponese, disegnato
-come tracciato (`design/assets/mark/`). Si usa sempre dal file originale.
+Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`). Si usa sempre dal file originale.
 
-- **Non si tocca**: il tracciato non si ridisegna, non si arrotonda, non si deforma e non si
-  uniforma ad altri glifi, nemmeno dove la regola di un prodotto lo prescrive per tutti gli altri
-  disegni. Cambia soltanto il colore. Un ritocco al segno è sempre una proposta.
+- **Non si modifica mai**: il tracciato non si ridisegna, non si arrotonda, non si deforma e non
+  si uniforma ad altri glifi, nemmeno dove la regola di un prodotto lo prescrive per tutti gli
+  altri disegni. Cambia soltanto il colore.
 - **Colori ammessi**: `marchio` (turchese) sullo sfondo scuro, a 6,93, la forma principale;
   turchese sullo sfondo chiaro, a 2,43, solo grande; `su-accento` sul turchese, a 5,19; menta su
   petrolio, a 5,46.
-- **Centratura ponderata** (riferimento ufficiale di Rocco, 2026-11-02): si centra il **quadrato
+- **Centratura ponderata** (riferimento ufficiale): si centra il **quadrato
   ideale** del segno, e non il riquadro del disegno; alcuni tratti ne escono, ed è così che il
   glifo risulta centrato all'occhio. Le misure sono relative, quindi valgono a ogni dimensione:
   - in una piastrella il quadrato ideale occupa il **58,5% del lato** ed è centrato, cioè lascia
@@ -79,17 +75,16 @@ come tracciato (`design/assets/mark/`). Si usa sempre dal file originale.
 
   I file di `design/assets/mark/` hanno già la cornice centrata così, e le coordinate per chi
   scrive un `viewBox` sono nel generatore (`design/build/build.py`, `MARK_SQUARE`).
-- **Area di rispetto** (scelta di Rocco, `Rispetto-01`): un decimo dell'altezza del quadrato
+- **Area di rispetto**: un decimo dell'altezza del quadrato
   ideale libero su tutti i lati.
 - **Misura minima**: 16 px sullo schermo; sotto i 24 px solo sui fondi a contrasto pieno.
-  L'unica eccezione, voluta da Rocco, sono alcune favicon più piccole, anche se si leggono meno
-  bene.
+  L'unica eccezione sono alcune favicon più piccole, anche se si leggono meno bene.
 
 ## Colori
 
 I due **accenti primari** sono `turchese` (`#43B59E`) e `petrolio` (`#00727B`), e si completano:
 il turchese si legge sullo sfondo scuro (6,93), il petrolio su quello chiaro (5,50). `accento`
-vale turchese di giorno e petrolio di notte, ed è il colore dell'icona, per scelta di Rocco.
+vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'icona.
 
 - **Testo e accento**: l'accento non porta mai testo corrente. Per il testo d'accento si usa
   `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `su-accento`.
@@ -98,14 +93,14 @@ vale turchese di giorno e petrolio di notte, ed è il colore dell'icona, per sce
   blu e verde, non un verde. Le pagine di servizio a tema unico usano `fondo-intermedio`.
 - **Testo**: `testo` (16,55 e 14,21), `testo-secondario` per note e didascalie, `contorno` per i
   bordi dei controlli, `linea` per i separatori che non portano informazione.
-- **Tavolozza di Aomidori** indicata da Rocco: `turchese-luce`, `menta-chiaro`, `ardesia`.
+- **Tavolozza di Aomidori**: `turchese-luce`, `menta-chiaro`, `ardesia`.
 - **Il tema scelto dentro un'app non è quello di sistema**: ogni colore passa dalla tavolozza
   dell'app.
 - **Contrasti**: 4,5:1 per il testo, 3:1 per la grafica (icone, bordi dei controlli, anelli di
-  fuoco). Si misurano sul fondo vero del componente e si dichiarano; un'eccezione la approva Rocco
-  col numero davanti. Le due eccezioni accettate oggi sono il turchese di giorno (2,43) e l'icona
-  di AIV di giorno (2,42).
-- **Il colore per ruolo** (dalla styleguide di RoccobotOS, 2026-11-02): l'accento è l'azione, i
+  fuoco). Si misurano sul fondo vero del componente e si dichiarano; un'eccezione la approva il
+  titolare, col numero dichiarato. Le due eccezioni dichiarate sono il turchese nel tema chiaro
+  (2,43) e l'icona di AIV nel tema chiaro (2,42).
+- **Il colore per ruolo**: l'accento è l'azione, i
   titoli sono la struttura, il neutro è il testo, e un elemento nuovo prende il colore del suo
   ruolo, non quello che sta meglio nel punto in cui capita. Una tinta sola a più profondità fa una
   scala; tinte vicine che gridano insieme fanno rumore.
@@ -119,19 +114,20 @@ vale turchese di giorno e petrolio di notte, ed è il colore dell'icona, per sce
      colorato resta ad almeno 20 gradi dalla tinta dei collegamenti, o si legge come un
      collegamento;
   5. se resta sotto soglia, o si corregge o diventa un'eccezione dichiarata, col numero e la
-     ragione, approvata da Rocco;
+     ragione, approvata dal titolare;
   6. si scrive in questo design system, e solo dopo nel codice.
 
 ## Iconografia
 
-- **L'icona di AIV** è la più rappresentativa del marchio: la A col disco solare, disegnata da
-  Rocco (`design/assets/icons/`). Di giorno menta su turchese, di notte turchese luce su petrolio:
+- **L'icona di AIV** è la più rappresentativa del marchio: la A col disco solare
+  (`design/assets/icons/`). Nel tema chiaro menta su turchese, in quello scuro turchese luce su
+  petrolio:
   cambiano tutti e due i livelli.
 - **Le icone delle app Android sono adattive**: un quadrato pieno, col soggetto nella zona sicura
   e al 45% del lato circa, senza nessuna forma disegnata; il ritaglio lo decide il telefono.
 - Un disegno di un'app vive in `res/drawable/ic_<nome>.xml`, e un catalogo li elenca tutti. Gli
-  angoli convessi si raccordano col raggio 0,4 su 24; i glifi di Material no, salvo quelli che
-  sceglie Rocco; i marchi delle app e le cartelle disegnate da Rocco sono intoccabili.
+  angoli convessi si raccordano col raggio 0,4 su 24; i glifi di Material no, salvo quelli
+  scelti dal titolare; i marchi delle app e le cartelle disegnate a mano sono intoccabili.
 
 ## Caratteri
 
@@ -146,7 +142,7 @@ vale turchese di giorno e petrolio di notte, ed è il colore dell'icona, per sce
 - **Nessuna parola resta sola a un capo della frase** nei paragrafi: si lega con lo spazio
   unificatore, sul web si usano `text-wrap: pretty` per i paragrafi e `text-wrap: balance` per i
   titoli, e un segno consequenziale (`→`, `>`, `›`) va a capo insieme alle parole vicine. Dove non
-  si può, si avvisa Rocco prima del rilascio.
+  si può, si avvisa il titolare prima del rilascio.
 
 ## Misure
 
@@ -188,7 +184,7 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | sostituto che lascia il posto | 150 ms | `THUMB_FADE_MS` |
 | intestazione ferma a metà | dopo 2.000 ms, in 250 ms | `FRONT_REST_MS` |
 | Tondo durante la lettura | dopo 2.000 ms, in 150 ms | `READING_SHOW_MS` |
-| copertina che torna ai recenti | 300 ms | Aomidori, `Gesti-07` |
+| copertina che torna ai recenti | 300 ms | Aomidori |
 | avvisi | 2.000 o 3.000 ms a schermo | `NOTICE_MS` |
 | pagine web, passaggio del mouse | 160 ms | `design/` |
 
@@ -245,15 +241,15 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 
 ## Vetro e sfocature
 
-Le scelte di Rocco, coi valori di fabbrica di AIV (`Rules.md` di AIV, § 'Sfocatura dietro i
+I valori di fabbrica di AIV (`Rules.md` di AIV, § 'Sfocatura dietro i
 pannelli e bordo'; `docs/Folders.md` di AIV, la voce sullo stile dei pulsanti principali e
 § 'Il gradiente sfocato e l'effetto movimento'). I valori sono anche nei token, famiglia
 `effetti`. Le sfocature delle app vogliono Android 12: sotto, le loro voci restano spente e
 grigie.
 
 - **Sfocatura dietro i pannelli** (`sfocatura-pannelli`), **accesa di fabbrica**: dietro menu,
-  dialoghi e schede, `sfocatura-velo` (12 dp) col `velo` al 30%, nero di giorno e bianco di notte,
-  che arriva in 800 ms. I pannelli sono nudi: staccano col solo colore della superficie, senza
+  dialoghi e schede, `sfocatura-velo` (12 dp) col `velo` al 30%, nero nel tema chiaro e bianco in
+  quello scuro, che arriva in 800 ms. I pannelli sono nudi: staccano col solo colore della superficie, senza
   bordo. Spenta, i dialoghi tornano al velo di Android (60%) e i menu restano senza. La esegue il
   sistema, e si paga solo a pannello aperto.
 - **Una sfocatura che cala vuole in scena qualcosa che se ne va**, o si legge come una messa a
@@ -291,14 +287,17 @@ grigie.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo`; con la sfocatura spenta il
   velo di una scheda è al 60%.
 - **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con un riquadro arancio e il tasto da toccare in
-  giallo; il testo lo scrive Rocco.
+  giallo; il testo lo scrive il titolare.
 - **Avvisi**: una voce sola, sopra la scheda o accanto al Tondo, con `Annulla` dove serve.
-- **Comandi fissi sul web** (dalla styleguide di RoccobotOS): tondi, sopra il contenuto;
+- **Comandi fissi sul web**: tondi, sopra il contenuto;
   compaiono mentre si scorre e spariscono dopo 3 secondi di quiete. Si nasconde il comando che in
   quel momento non porta da nessuna parte (in cima non c'è 'vai in cima'), e un comando invisibile
   esce anche dal giro del tasto Tab. Ogni tasto sparisce verso il suo lato, i glifi hanno la loro
   correzione ottica, e sul telefono l'evidenziazione del tocco è spenta
   (`-webkit-tap-highlight-color: transparent`).
+- **Indice delle sezioni sul web**: in una pagina lunga, dove l'indice laterale non c'è (sotto i
+  60 rem), un tasto tondo in basso a sinistra lo apre come pannello. Il tasto segue le regole dei
+  comandi fissi; una voce, un tocco fuori dal pannello o `Esc` lo chiudono.
 - **Lingua e tema sul web**: in alto a destra, il pulsante della lingua accanto a quello del
   tema, con le scorciatoie `L` e `T` senza modificatori, che vincono su tutto salvo un campo di
   testo. Il doppio tema c'è sempre; la lingua, solo in una pagina bilingue.
@@ -328,13 +327,13 @@ grigie.
 
 - **Il contenuto prima di tutto**: fotografie, immagini e libri sono il soggetto; fondi neutri e
   l'accento solo dove serve un'azione o un segno.
-- **Nessuna scelta di disegno senza Rocco**: forma, icona, posizione, comportamento visibile e
+- **Nessuna scelta di disegno senza il titolare**: forma, icona, posizione, comportamento visibile e
   testo si propongono e si chiedono, anche quando una regola sembra bastare.
-- **Stessa forma, due temi**: Giorno e Notte hanno la stessa impaginazione e cambiano solo i
-  colori.
+- **Stessa forma, due temi**: il tema chiaro e quello scuro hanno la stessa impaginazione e
+  cambiano solo i colori.
 - **Due lingue, una forma**: ogni cosa nuova chiede prima se è bilingue e quale lingua apre, e se
   lingua e tema hanno un pulsante o una scorciatoia (di serie in alto a destra, uno accanto
-  all'altro); il doppio tema c'è sempre (regola di Rocco del 2026-11-02).
+  all'altro); il doppio tema c'è sempre.
 - **Il comando principale vive nell'angolo del pollice**, e i comandi che apre gli crescono
   intorno.
 - **Meno opzioni possibile**: un'impostazione esiste solo se cambia un valore che vale per tutto.

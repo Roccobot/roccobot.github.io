@@ -54,6 +54,7 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       const t = await themeCheck(p);
       Object.assign(report[report.length - 1], t);
       Object.assign(report[report.length - 1], await stillCheck(p));
+      Object.assign(report[report.length - 1], await tocCheck(p, w));
       for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'movimento', 'effetti', 'componenti']) {
         await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
         await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
@@ -151,6 +152,51 @@ async function stillCheck(p) {
   await p.evaluate(() => document.fonts.ready);
   const afterReload = await p.evaluate(() => document.documentElement.lang);
   return { buttonsStill: seen.size === 1, labelsShown, reloadIsDefault: switched === 'en' && afterReload === 'it' };
+}
+
+async function tocCheck(p, w) {
+  // The section index, as on RoccobotOS: where the side index is hidden (60 rem and below), a round
+  // button appears while scrolling and opens it; a link closes it and goes to its section, Escape
+  // and a tap outside close it. On a wide window the side index is always there and the button
+  // does not exist.
+  const state = () => p.evaluate(() => {
+    const b = document.getElementById('toc-btn'), t = document.querySelector('nav.toc');
+    const cs = getComputedStyle(b);
+    return { btn: cs.display !== 'none' && cs.opacity === '1' && cs.pointerEvents !== 'none',
+      btnShown: cs.display !== 'none', toc: getComputedStyle(t).display !== 'none' && t.getBoundingClientRect().width > 0,
+      // the open panel reaches the bottom of the screen (as a grid child it once stopped halfway)
+      full: t.getBoundingClientRect().height >= window.innerHeight - 1,
+      y: Math.round(window.scrollY) };
+  });
+  await p.evaluate(() => window.scrollTo(0, 0));
+  await p.waitForTimeout(50);
+  if (w > 960) {
+    const s = await state();
+    return { tocWide: !s.btnShown && s.toc };
+  }
+  const still = await state();
+  await p.mouse.wheel(0, 600);
+  await p.waitForTimeout(400);
+  const moving = await state();
+  await p.click('#toc-btn');
+  const open = await state();
+  await p.click('nav.toc a[href="#movimento"]');
+  // the jump scrolls smoothly: wait until the page stops, then the section must be at the top
+  let last = -1;
+  for (let i = 0; i < 40; i++) {
+    await p.waitForTimeout(150);
+    const y = await p.evaluate(() => window.scrollY);
+    if (y === last) break;
+    last = y;
+  }
+  const went = await p.evaluate(() => Math.abs(document.getElementById('movimento').getBoundingClientRect().top) < 200);
+  const closed = await state();
+  await p.mouse.wheel(0, 200);
+  await p.waitForTimeout(300);
+  await p.click('#toc-btn');
+  await p.keyboard.press('Escape');
+  const esc = await state();
+  return { tocNarrow: !still.btn && moving.btn && open.toc && open.full && !open.btn && went && !closed.toc && !esc.toc };
 }
 
 async function themeCheck(p) {
