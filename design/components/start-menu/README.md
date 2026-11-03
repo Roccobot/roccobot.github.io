@@ -9,7 +9,7 @@ Il menu che cresce dal Tondo: fino a otto celle in file da 2, vicine al lato del
   specchiata. L'etichetta più lunga non prende l'angolo arrotondato in basso.
 - **Si chiude dopo ogni tocco**, col tocco sul velo e con l'Indietro, che lo fa rientrare verso il
   suo angolo seguendo il dito.
-- **In Aomidori per Android** è lo `Start` da 8 celle (`Forma-01`): libro e Markdown con `Indice`
+- **In Aomidori per Android** è lo `Start` da 8 celle: libro e Markdown con `Indice`
   accanto alla ×, fumetto con `Vai a tavola`. **In AIV** c'è solo nella variante GitHub, a tre
   colonne nella casa e a due in una cartella.
 - Il consumatore fornisce le voci (icona, etichetta breve, azione) nell'ordine di lettura dei
