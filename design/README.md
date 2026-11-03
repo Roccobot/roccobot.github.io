@@ -302,9 +302,10 @@ grigie.
   correzione ottica, e sul telefono l'evidenziazione del tocco è spenta
   (`-webkit-tap-highlight-color: transparent`).
 - **Indice delle sezioni sul web**: in una pagina lunga, dove l'indice laterale non c'è (sotto i
-  60 rem), un tasto tondo in basso a sinistra lo apre come pannello. Il tasto segue le regole dei
+  60 rem), un tasto tondo in basso a destra lo apre come pannello, che entra da destra. Il tasto segue le regole dei
   comandi fissi; una voce, un tocco fuori dal pannello o `Esc` lo chiudono. Il pannello è di vetro:
-  `superficie` all'80% con una sfocatura di 35 px, sopra un velo al 15%.
+  `superficie` all'80% con una sfocatura di 35 px, sopra un velo al 15%, alto quanto lo schermo con la barra del browser nascosta; a indice
+  aperto la pagina sotto non scorre.
 - **Lingua e tema sul web**: in alto a destra, il pulsante della lingua accanto a quello del
   tema, con le scorciatoie `L` e `T` senza modificatori, che vincono su tutto salvo un campo di
   testo. Il doppio tema c'è sempre; la lingua, solo in una pagina bilingue.

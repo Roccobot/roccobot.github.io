@@ -166,6 +166,9 @@ async function tocCheck(p, w) {
       btnShown: cs.display !== 'none', toc: getComputedStyle(t).display !== 'none' && t.getBoundingClientRect().width > 0,
       // the open panel reaches the bottom of the screen (as a grid child it once stopped halfway)
       full: t.getBoundingClientRect().height >= window.innerHeight - 1,
+      // on a phone the button and the panel sit on the right (the owner's choice)
+      right: Math.abs(b.getBoundingClientRect().right - (document.documentElement.clientWidth - 16)) < 2
+        && (getComputedStyle(t).display === 'none' || Math.abs(t.getBoundingClientRect().right - document.documentElement.clientWidth) < 1),
       y: Math.round(window.scrollY) };
   });
   await p.evaluate(() => window.scrollTo(0, 0));
@@ -180,6 +183,13 @@ async function tocCheck(p, w) {
   const moving = await state();
   await p.click('#toc-btn');
   const open = await state();
+  // with the index open the page underneath does not scroll: on a phone a scroll would hide or
+  // show the browser bar, and the panel would no longer cover the screen
+  const before = await p.evaluate(() => window.scrollY);
+  await p.mouse.move(380, 700);
+  await p.mouse.wheel(0, 400);
+  await p.waitForTimeout(300);
+  const locked = (await p.evaluate(() => window.scrollY)) === before;
   await p.click('nav.toc a[href="#movimento"]');
   // the jump scrolls smoothly: wait until the page stops, then the section must be at the top
   let last = -1;
@@ -196,7 +206,8 @@ async function tocCheck(p, w) {
   await p.click('#toc-btn');
   await p.keyboard.press('Escape');
   const esc = await state();
-  return { tocNarrow: !still.btn && moving.btn && open.toc && open.full && !open.btn && went && !closed.toc && !esc.toc };
+  return { tocNarrow: !still.btn && moving.btn && moving.right && open.toc && open.full && open.right && locked && !open.btn && went && !closed.toc && !esc.toc,
+    tocParts: { moving: moving.btn, right: moving.right && open.right, open: open.toc && open.full, locked, went, closed: !closed.toc && !esc.toc } };
 }
 
 async function themeCheck(p) {
