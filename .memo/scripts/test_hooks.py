@@ -81,5 +81,64 @@ class EnvironmentTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
+def load_hooks():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('hooks_under_test', SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class BoardTests(unittest.TestCase):
+    """The prompt hook's reading of the Trello board (Rocco's choices Sveglia-01, -02 and -03): his
+    comments that tag the agents, his moves into or out of Admin and Fatte, and his assignments to
+    the agents; nothing else, and nothing done by the agents. The actions are shaped as Trello
+    returns them (measured on the card emRs9DkV, 2026-11-03)."""
+
+    def setUp(self):
+        self.h = load_hooks()
+        card = {'id': 'c1', 'name': 'Censo: una domanda', 'shortLink': 'abc123'}
+        def act(tipo, data, chi=None, date='2026-11-03T16:52:36.065Z'):
+            return {'type': tipo, 'date': date, 'idMemberCreator': chi or self.h.ROCCO, 'data': {'card': card, **data}}
+        self.act = act
+
+    def lines(self, actions):
+        return self.h.azioni_di_rocco(actions, {'c1': ['Tools']})
+
+    def test_tagged_comment_is_shown_with_label_link_and_rome_time(self):
+        out = self.lines([self.act('commentCard', {'text': '@roccobot_ai va bene così'})])
+        self.assertEqual(out, ["03/11 17:52, 'Censo: una domanda' (Tools): commento: '@roccobot_ai va bene così' https://trello.com/c/abc123"])
+
+    def test_untagged_comment_is_not_shown(self):
+        self.assertEqual(self.lines([self.act('commentCard', {'text': 'una nota per me'})]), [])
+
+    def test_moves_into_or_out_of_admin_and_fatte_only(self):
+        into = self.act('updateCard', {'listBefore': {'name': 'Admin'}, 'listAfter': {'name': 'Fatte'}})
+        out_of = self.act('updateCard', {'listBefore': {'name': 'Admin'}, 'listAfter': {'name': 'Tools'}})
+        other = self.act('updateCard', {'listBefore': {'name': 'Backlog'}, 'listAfter': {'name': 'Tools'}})
+        out = self.lines([into, out_of, other])
+        self.assertEqual(len(out), 2, out)
+        self.assertIn('spostata da Admin a Fatte', out[0])
+        self.assertIn('spostata da Admin a Tools', out[1])
+
+    def test_assignment_to_the_agents_only(self):
+        to_agents = self.act('addMemberToCard', {'idMember': self.h.AGENTI})
+        to_rocco = self.act('addMemberToCard', {'idMember': self.h.ROCCO})
+        out = self.lines([to_agents, to_rocco])
+        self.assertEqual(len(out), 1, out)
+        self.assertIn('assegnata agli agenti', out[0])
+
+    def test_the_agents_own_actions_are_not_shown(self):
+        mine = self.act('commentCard', {'text': '@roccobot_ai fatto'}, chi=self.h.AGENTI)
+        self.assertEqual(self.lines([mine]), [])
+
+    def test_oldest_first_and_card_without_labels(self):
+        late = self.act('commentCard', {'text': '@roccobot_ai due'}, date='2026-11-03T18:00:00Z')
+        early = self.act('commentCard', {'text': '@roccobot_ai uno'}, date='2026-11-03T17:00:00Z')
+        out = self.h.azioni_di_rocco([late, early], {})
+        self.assertIn("'@roccobot_ai uno'", out[0])
+        self.assertIn('(senza etichetta)', out[0])
+
+
 if __name__ == '__main__':
     unittest.main()
