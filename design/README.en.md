@@ -60,7 +60,7 @@ Roccobot's personal sign, drawn as a path (`design/assets/mark/`). It is always 
 - **Never modified**: the path is never redrawn, rounded, distorted or matched to other glyphs,
   not even where a product rule prescribes it for every other drawing. Only its color changes.
 - **Allowed colors**: `marchio` (turquoise) on the dark background, at 6.93, the main form;
-  turquoise on the light background, at 2.43, large only; `su-accento` on turquoise, at 5.19; mint
+  turquoise on the light background, at 2.43, large only; `contenuto-su-accento` on turquoise, at 5.19; mint
   on petrol, at 5.46.
 - **Weighted centering** (the official reference): center the **ideal square** of
   the sign, not the box of the drawing; some strokes stick out of it, and that is how the glyph
@@ -88,7 +88,7 @@ on the light one (5.50). `accento` is turquoise in the light theme and petrol in
 is the color of the icon.
 
 - **Text and accent**: the accent never carries body text. Accent text uses `testo-accento`
-  (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `su-accento`.
+  (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `contenuto-su-accento`.
 - **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
   and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
   with a touch of blue and green, not a green. Single-theme service pages use `fondo-intermedio`.
@@ -284,7 +284,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   sheet).
 - **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
   object with a name, one line of explanation and a single action.
-- **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `su-accento`) for the main
+- **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
   action, one per screen, outlined for the others.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo`; with the blur off a sheet's
   scrim is at 60%.

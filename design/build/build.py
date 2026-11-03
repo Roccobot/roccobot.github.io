@@ -174,7 +174,7 @@ def swatch_row(name):
 
 
 GROUPS = [
-    (('Accenti', 'Accents'), ['turchese', 'petrolio', 'accento', 'su-accento', 'testo-accento', 'marchio']),
+    (('Accenti', 'Accents'), ['turchese', 'petrolio', 'accento', 'contenuto-su-accento', 'testo-accento', 'marchio']),
     (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-alta', 'fondo-intermedio', 'scheda-intermedia']),
     (('Testo e linee', 'Text and lines'), ['testo', 'testo-secondario', 'contorno', 'linea']),
     (('Tavolozza di Aomidori', 'Aomidori palette'), ['turchese-luce', 'menta-chiaro', 'ardesia', 'glifo-marchio']),
@@ -200,7 +200,7 @@ def pairs():
     rows = [
         ('testo', 'fondo', False), ('testo-secondario', 'fondo', False),
         ('testo-accento', 'fondo', False), ('testo-accento', 'superficie', False),
-        ('su-accento', 'accento', False), ('accento', 'fondo', True),
+        ('contenuto-su-accento', 'accento', False), ('accento', 'fondo', True),
         ('contorno', 'fondo', True), ('icona-aiv-glifo', 'icona-aiv-fondo', True),
     ]
     body = []
