@@ -304,9 +304,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   correction, and on a phone the tap highlight is off (`-webkit-tap-highlight-color:
   transparent`).
 - **Section index on the web**: on a long page, where there is no side index (below 60 rem), a
-  round button at the bottom left opens it as a panel. The button follows the fixed-control rules;
+  round button at the bottom right opens it as a panel, coming in from the right. The button follows the fixed-control rules;
   a link, a tap outside the panel or `Esc` closes it. The panel is glass: `superficie` at 80% with
-  a 35 px blur, over a 15% scrim.
+  a 35 px blur, over a 15% scrim, as tall as the screen with the browser bar hidden; while the
+  index is open the page underneath does not scroll.
 - **Language and theme on the web**: at the top right, the language button next to the theme
   button, with the `L` and `T` shortcuts without modifiers, which win over everything except a
   text field. The dual theme is always there; the language button only on a bilingual page.

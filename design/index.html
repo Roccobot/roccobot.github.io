@@ -333,8 +333,9 @@ td.kind { color: var(--testo-secondario); }
 footer.end { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: .875rem; color: var(--testo-secondario); }
 footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-align: -.2em; margin-right: .4rem; }
 
-/* the section index on narrow windows, as on RoccobotOS: a round button that appears while
-   scrolling opens the side index as a panel; a wide window keeps the side index and no button */
+/* the section index on narrow windows: a round button at the bottom right, which appears while
+   scrolling, opens the side index as a panel from the right; a wide window keeps the side index and
+   no button */
 .toc-btn, .toc-scrim { display: none; }
 
 @media (max-width: 60rem) {
@@ -343,13 +344,14 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   .marks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mark-rules, .comps, .voice, .icons, .scales, .center-ref { grid-template-columns: minmax(0, 1fr); }
   .cr-tile { max-width: 14rem; }
-  .toc-btn { display: grid; place-items: center; position: fixed; z-index: 15; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); padding: 0; border-radius: 50%; border: 1px solid var(--contorno); background: color-mix(in srgb, var(--superficie) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--testo); cursor: pointer; opacity: 0; transform: translateX(-1rem); pointer-events: none; }
+  .toc-btn { display: grid; place-items: center; position: fixed; z-index: 15; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); padding: 0; border-radius: 50%; border: 1px solid var(--contorno); background: color-mix(in srgb, var(--superficie) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--testo); cursor: pointer; opacity: 0; transform: translateX(1rem); pointer-events: none; }
   .toc-btn[data-on] { opacity: 1; transform: none; pointer-events: auto; }
   .toc-btn svg { width: 1.25rem; height: 1.25rem; }
   /* align-self: as a grid child the side index has align-self: start, which stops a fixed panel from
      stretching between top and bottom */
-  :root[data-toc="open"] .toc { display: block; position: fixed; z-index: 30; inset: 0 auto 0 0; align-self: stretch; width: min(20rem, 85vw); overflow-y: auto; padding: calc(env(safe-area-inset-top, 0px) + 1.5rem) 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem) max(1.25rem, env(safe-area-inset-left, 0px)); background: color-mix(in srgb, var(--superficie) 80%, transparent); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-right: 1px solid var(--linea); }
-  :root[data-toc="open"] .toc-scrim { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(0, 0, 0, .15); }
+  :root[data-toc="open"] { overflow: hidden; }
+  :root[data-toc="open"] .toc { display: block; position: fixed; z-index: 30; inset: 0 0 auto auto; height: 100vh; height: 100lvh; overscroll-behavior: contain; align-self: stretch; width: min(20rem, 85vw); overflow-y: auto; padding: calc(env(safe-area-inset-top, 0px) + 1.5rem) max(1.25rem, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 1.5rem) 1.25rem; background: color-mix(in srgb, var(--superficie) 80%, transparent); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-left: 1px solid var(--linea); }
+  :root[data-toc="open"] .toc-scrim { display: block; position: fixed; inset: 0 0 auto 0; height: 100vh; height: 100lvh; z-index: 25; background: rgba(0, 0, 0, .15); }
 }
 @media (max-width: 40rem) {
   .hero { grid-template-columns: minmax(0, 1fr); }
@@ -397,7 +399,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   <div class="bar-in">
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
-    <span class="bar-ver">v8</span>
+    <span class="bar-ver">v9</span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
@@ -778,7 +780,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <footer class="end">
         <span><svg viewBox="13.96 5.77 152.11 143.75" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei,&nbsp;a.k.a.&nbsp;Roccobot</span>
         <a href="https://roccobot.me">roccobot.me</a>
-        <span><span lang="it">Versione&nbsp;8, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;8, November&nbsp;3,&nbsp;2026</span></span>
+        <span><span lang="it">Versione&nbsp;9, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;9, November&nbsp;3,&nbsp;2026</span></span>
       </footer>
     </section>
   </main>
