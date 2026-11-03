@@ -146,6 +146,9 @@ h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
 .ic .sq { border-radius: 23%; }
 .ic .ci { border-radius: 50%; }
 .ic .sm { width: 2.75rem; height: 2.75rem; border-radius: 23%; align-self: end; }
+/* the macOS icon: the owner's file, its tile and margins drawn in it, never cropped */
+.ic .ic-mac { display: block; width: 7rem; height: 7rem; }
+.ic-head { margin-top: 2.5rem; }
 .ic figcaption b { display: block; font-size: 1.0625rem; }
 .ic figcaption p { margin: .35rem 0 0; font-size: .9375rem; opacity: .78; }
 .ic figcaption code { font-size: .8125rem; }
@@ -339,7 +342,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <li><a href="#logotipo"><span lang="it">Il logotipo</span><span lang="en">The wordmark</span></a></li>
       <li><a href="#logo-animato"><span lang="it">Il logo animato</span><span lang="en">The animated logo</span></a></li>
       <li><a href="#filigrana"><span lang="it">La filigrana</span><span lang="en">The watermark</span></a></li>
-      <li><a href="#icona"><span lang="it">L'icona di AIV</span><span lang="en">The AIV icon</span></a></li>
+      <li><a href="#icona"><span lang="it">Le icone delle app</span><span lang="en">The app icons</span></a></li>
       <li><a href="#colori"><span lang="it">Tutti i colori</span><span lang="en">All colors</span></a></li>
       <li><a href="#contrasti"><span lang="it">Contrasti</span><span lang="en">Contrast</span></a></li>
       <li><a href="#caratteri"><span lang="it">Caratteri</span><span lang="en">Typefaces</span></a></li>
@@ -501,9 +504,10 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 
     <section id="icona" aria-labelledby="h-ico">
       <p class="eyebrow"><span lang="it">Icone delle app</span><span lang="en">App icons</span></p>
-      <h2 id="h-ico"><span lang="it">L'icona di AIV</span><span lang="en">The AIV icon</span></h2>
-      <p class="lead" lang="it">L'icona più rappresentativa del marchio: la A col disco solare, sui due accenti primari. Cambiano tutti e due i livelli fra i temi, glifo compreso.</p>
-      <p class="lead" lang="en">The most representative icon of the brand: the A with the sun disc, on the two primary accents. Both layers change between themes, glyph included.</p>
+      <h2 id="h-ico"><span lang="it">Le icone delle app</span><span lang="en">The app icons</span></h2>
+      <h3 class="ic-head"><span lang="it">AIV per Android</span><span lang="en">AIV for Android</span></h3>
+      <p class="lead" lang="it">L'icona di AIV è la più rappresentativa del marchio: la A col disco solare, sui due accenti primari. Cambiano tutti e due i livelli fra i temi, glifo compreso.</p>
+      <p class="lead" lang="en">The AIV icon is the most representative of the brand: the A with the sun disc, on the two primary accents. Both layers change between themes, glyph included.</p>
       <div class="icons">
         <figure class="ic ic-day">
           <div class="ic-shapes">
@@ -523,6 +527,21 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <div class="prose">
         <p lang="it">L'icona di un'app Android è adattiva: un quadrato pieno, col soggetto nella zona sicura e al 45% del lato circa, senza nessuna forma disegnata. Il ritaglio, tondo o a quadrato arrotondato come qui sopra, lo decide il telefono. Il disegno vive in <code>ic_launcher_foreground.xml</code> del repo di AIV, ed è quello di questa pagina, senza modifiche.</p>
         <p lang="en">An Android app icon is adaptive: a full square, with the subject in the safe zone at about 45% of the side, and no drawn shape. The crop, round or a rounded square as above, is up to the phone. The drawing lives in <code>ic_launcher_foreground.xml</code> in the AIV repo, and it is the one on this page, unchanged.</p>
+      </div>
+      <h3 class="ic-head"><span lang="it">Aomidori per macOS</span><span lang="en">Aomidori for macOS</span></h3>
+      <div class="icons">
+        <figure class="ic ic-day">
+          <div class="ic-shapes"><img class="ic-mac" src="../Aomidori/assets/icon.svg" width="1024" height="1024" alt="Icona di Aomidori nel tema chiaro" aria-label="Icona di Aomidori nel tema chiaro" data-label-en="Aomidori icon in the light theme"></div>
+          <figcaption><b><span lang="it">Tema chiaro</span><span lang="en">Light theme</span></b><p lang="it">La versione che macOS mostra col tema chiaro.</p><p lang="en">The version macOS shows in the light theme.</p></figcaption>
+        </figure>
+        <figure class="ic ic-night">
+          <div class="ic-shapes"><img class="ic-mac" src="../Aomidori/assets/icon-dark.svg" width="1024" height="1024" alt="Icona di Aomidori nel tema scuro" aria-label="Icona di Aomidori nel tema scuro" data-label-en="Aomidori icon in the dark theme"></div>
+          <figcaption><b><span lang="it">Tema scuro</span><span lang="en">Dark theme</span></b><p lang="it">La versione che macOS mostra col tema scuro.</p><p lang="en">The version macOS shows in the dark theme.</p></figcaption>
+        </figure>
+      </div>
+      <div class="prose">
+        <p lang="it">L'icona di un'app per macOS è adattiva, in stile Liquid Glass: il sistema mostra la versione del tema in uso, e la forma della piastrella è disegnata nel file. Questi sono i file della pagina di download di Aomidori, in <code>Aomidori/assets/</code> dell'hub, copiati senza modifiche dal repo dell'app.</p>
+        <p lang="en">A macOS app icon is adaptive, in the Liquid Glass style: the system shows the version for the current theme, and the tile shape is drawn in the file. These are the files of the Aomidori download page, in the hub's <code>Aomidori/assets/</code>, copied unchanged from the app repo.</p>
       </div>
     </section>
 

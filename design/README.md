@@ -160,6 +160,10 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   (`design/assets/icons/`). Nel tema chiaro menta su turchese, in quello scuro turchese luce su
   petrolio:
   cambiano tutti e due i livelli.
+- **L'icona di Aomidori per macOS** è l'esempio di icona adattiva in stile Liquid Glass: il
+  sistema mostra la versione del tema in uso, e la forma della piastrella è disegnata nel file.
+  La pagina mostra i due file della pagina di download di Aomidori (`Aomidori/assets/` dell'hub),
+  copiati senza modifiche dal repo dell'app.
 - **Le icone delle app Android sono adattive**: un quadrato pieno, col soggetto nella zona sicura
   e al 45% del lato circa, senza nessuna forma disegnata; il ritaglio lo decide il telefono.
 - Un disegno di un'app vive in `res/drawable/ic_<nome>.xml`, e un catalogo li elenca tutti. Gli
