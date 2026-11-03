@@ -15,7 +15,8 @@ system. È una pagina di servizio dell'hub `Roccobot/roccobot.github.io`, nella 
 - `design/README.md`, questo manuale, e `design/README.en.md`, la sua versione inglese;
 - `design/components/`, le schede del Tondo e del menu Start, in italiano e in inglese;
 - `design/assets/`, i file del marchio: il segno (`mark/`), l'icona di Roccobot (`icon/`), il
-  logotipo (`wordmark/`), la tavola dell'identità (`identity/`) e l'icona di AIV (`icons/`);
+  logotipo (`wordmark/`), il logo animato (`logo-anim/`), la tavola dell'identità (`identity/`)
+  e l'icona di AIV (`icons/`);
 - `design/build/`, il generatore: `build.py` con `template.html` e `contrast.py`, `assets.py`
   per i file del marchio, e la prova nel browser `check.cjs` con `fonts.py`.
 
@@ -99,6 +100,12 @@ Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`)
   chiaro le lettere sono nere al 60% e il segno turchese; su scuro le lettere sono `#FCFBF8` al
   70% e il segno turchese; sul turchese le lettere sono `#FCFBF8` al 70% e il segno menta. Le
   lettere non prendono mai l'accento, e il segno non prende mai il colore delle lettere.
+- **Il logo animato** (`design/assets/logo-anim/`): il segno si disegna al centro, poi arriva il
+  nome, in 105 fotogrammi pensati per un fondo scuro. `roccobot-logo-frames.zip` contiene i
+  fotogrammi PNG trasparenti da 2048 × 480 px, come sono stati consegnati; `roccobot-logo.mp4` è
+  il video in H.264 quasi senza perdite, sul fondo `#151B1A`, coi colori convertiti in BT.709;
+  `roccobot-logo-web.mp4` è la copia leggera per le pagine, larga 1024 px. **Proposta**: 30
+  fotogrammi al secondo, cioè 3,5 secondi, finché il titolare non sceglie la frequenza.
 - **La filigrana**: una fotografia la firma la filigrana, non il marchio. È il segno col nome e
   l'anno (`ROCCOBOT '25`) o col dominio (`ROCCOBOT.ME`), in grigio `#BABABA` al 60%, mai
   nell'accento. La tavola dell'identità (`design/assets/identity/`) mette insieme il segno,

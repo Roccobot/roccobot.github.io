@@ -16,7 +16,8 @@ design system. It is a service page of the `Roccobot/roccobot.github.io` hub, in
 - `design/README.md`, the manual in Italian, and `design/README.en.md`, this English version;
 - `design/components/`, the sheets of the Tondo and of the Start menu, in Italian and in English;
 - `design/assets/`, the brand files: the sign (`mark/`), the Roccobot icon (`icon/`), the
-  wordmark (`wordmark/`), the identity sheet (`identity/`) and the AIV icon (`icons/`);
+  wordmark (`wordmark/`), the animated logo (`logo-anim/`), the identity sheet (`identity/`)
+  and the AIV icon (`icons/`);
 - `design/build/`, the generator: `build.py` with `template.html` and `contrast.py`, `assets.py`
   for the mark files, and the browser check `check.cjs` with `fonts.py`.
 
@@ -99,6 +100,12 @@ Roccobot's personal sign, drawn as a path (`design/assets/mark/`). It is always 
   versions. On light, black letters at 60% and a turquoise sign; on dark, letters in `#FCFBF8` at
   70% and a turquoise sign; on turquoise, letters in `#FCFBF8` at 70% and a mint sign. The
   letters never take the accent, and the sign never takes the color of the letters.
+- **The animated logo** (`design/assets/logo-anim/`): the sign draws itself in the center, then
+  the name arrives, in 105 frames made for a dark background. `roccobot-logo-frames.zip` holds the
+  transparent 2048 × 480 px PNG frames, as delivered; `roccobot-logo.mp4` is the near-lossless
+  H.264 video, on the `#151B1A` background, with colors converted in BT.709;
+  `roccobot-logo-web.mp4` is the light copy for pages, 1024 px wide. **Proposal**: 30 frames per
+  second, so 3.5 seconds, until the owner picks the rate.
 - **The watermark**: a photograph is signed by the watermark, not by the mark. It is the sign
   with the name and the year (`ROCCOBOT '25`) or with the domain (`ROCCOBOT.ME`), in gray
   `#BABABA` at 60%, never in the accent. The identity sheet (`design/assets/identity/`) puts
