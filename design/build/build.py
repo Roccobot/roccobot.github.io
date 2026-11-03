@@ -348,6 +348,19 @@ def _tie_text(chunk, fix):
     return ''.join(p if p.startswith('<') else fix(p).replace(NBSP, '&nbsp;') for p in parts)
 
 
+def hero_icon():
+    """The Roccobot icon at the top of the page: the owner's supercircle tile and sign, read
+    from design/assets/icon/, with the page's own colors (the tile in the accent, the sign in
+    contenuto-su-accento), so it follows the theme. Only the fills change."""
+    svg = (ROOT / 'assets' / 'icon' / 'roccobot-icon.svg').read_text(encoding='utf-8')
+    tile = re.search(r'id="Supercircle" d="([^"]+)"', svg).group(1)
+    sign = re.search(r'id="Logo" d="([^"]+)"', svg).group(1)
+    box = re.search(r'viewBox="([^"]+)"', svg).group(1)
+    return (f'<svg viewBox="{box}">'
+            f'<path class="hi-tile" d="{tile}"/>'
+            f'<path class="hi-sign" fill-rule="evenodd" d="{sign}"/></svg>')
+
+
 def main():
     tpl = (HERE / 'template.html').read_text(encoding='utf-8')
     fills = {
@@ -370,6 +383,7 @@ def main():
         'motion': motion(),
         'version': version(),
         'version-full': version_full(),
+        'hero-icon': hero_icon(),
     }
     for name, box in mark_frames().items():
         tpl = tpl.replace(f'@{name}-frame', box)
