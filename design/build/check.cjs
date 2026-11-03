@@ -70,6 +70,36 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       Object.assign(report[report.length - 1], t);
       Object.assign(report[report.length - 1], await stillCheck(p));
       Object.assign(report[report.length - 1], await tocCheck(p, w));
+      // the Roccobot icon beside the title is centered on the text group, from the top of the
+      // eyebrow to the bottom of the last line of the paragraph (only where it sits beside it)
+      // measured on the ink, as the house rules ask: the rows of the screenshot that hold text
+      // pixels in the text column, and the rows that hold the tile's pixels
+      if (w >= 1280) {
+        await p.evaluate(() => window.scrollTo(0, 0));
+        const boxes = await p.evaluate(() => {
+          const r = el => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, width: b.width, height: b.height }; };
+          return { text: r(document.querySelector('.hero > div')), tile: r(document.querySelector('.hero-tile')) };
+        });
+        const ink = async b => {
+          const shot = (await p.screenshot({ clip: b })).toString('base64');
+          return p.evaluate(async src => {
+            const img = new Image(); img.src = 'data:image/png;base64,' + src; await img.decode();
+            const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+            const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+            const d = g.getImageData(0, 0, c.width, c.height).data;
+            const bg = [d[0], d[1], d[2]];
+            const rows = [];
+            for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+              const i = (y * c.width + x) * 4;
+              if (Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]) > 60) { rows.push(y); break; }
+            }
+            return { top: rows[0] / 2, bottom: (rows[rows.length - 1] + 1) / 2 };
+          }, shot);
+        };
+        const t = await ink(boxes.text), k = await ink(boxes.tile);
+        const off = (boxes.tile.y + (k.top + k.bottom) / 2) - (boxes.text.y + (t.top + t.bottom) / 2);
+        Object.assign(report[report.length - 1], { heroCentered: Math.abs(off) <= 1, heroOffset: Math.round(off * 10) / 10 });
+      }
       for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'movimento', 'effetti', 'componenti']) {
         await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
         await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
