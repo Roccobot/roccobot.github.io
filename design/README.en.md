@@ -48,6 +48,9 @@ Every file can also be read without cloning the hub, at the page address followe
 - App rules apply to AIV and to Aomidori on Android, except where an entry says **AIV only** or
   **Aomidori only**.
 - App sizes are in Android dp, written in px because the format asks for it: 1 px equals 1 dp.
+- The design system is a reference, not the history of the work: it doesn't say who chose what,
+  when, or under which code. Where an approval is really needed, the owner gives it. The two
+  themes are light and dark, with no other names.
 - An entry marked **Proposal** isn't decided yet, and is used only after the owner's choice.
 - A new or changed rule enters here in the same round it enters a product. Sources: the AIV rules
   (`Rules.md` and `docs/` in its repo), the Aomidroid map (`.scratch/aomidroid/` in the Aomidori

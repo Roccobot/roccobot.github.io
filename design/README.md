@@ -48,6 +48,9 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
   AIV** o **solo Aomidori**.
 - Le misure delle app sono in dp di Android, scritte in px perché il formato lo chiede: 1 px vale
   1 dp.
+- Il design system è un riferimento, non la storia del lavoro: non dice chi ha scelto che cosa,
+  né quando, né con quale sigla. Dove serve davvero un'approvazione, la dà il titolare. I due temi
+  sono il chiaro e lo scuro, senza altri nomi.
 - Una voce segnata **Proposta** non è ancora decisa, e si usa solo dopo la scelta del titolare.
 - Una regola nuova o cambiata entra qui nello stesso giro in cui entra in un prodotto. Fonti: le
   regole di AIV (`Rules.md` e `docs/` del suo repo), la mappa di Aomidroid (`.scratch/aomidroid/`
