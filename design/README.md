@@ -32,7 +32,12 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
 - **Due lingue, l'italiano per primo** (voce `Interprete`, scelte `Primaria-01`, `Lingua-01` e
   `Inglese-01` di Rocco, 2026-11-02): la pagina si apre in italiano, e il tasto `L` senza
   modificatori o il pulsante in alto a destra, accanto a quello del tema, passano all'inglese; un
-  collegamento con `?lang=en` la apre in inglese. Ogni testo del modello e dei token esiste nelle
+  collegamento con `?lang=en` la apre in inglese. Lingua e tema non si memorizzano (`Roccobot.md`
+  § '🌗 Lingua e tema: le domande prima di cominciare'): niente `localStorage` né cookie, e
+  cambiando lingua l'indirizzo perde `?lang=en`, quindi un ricaricamento riapre la pagina in
+  italiano e col tema del sistema. I due pulsanti hanno la stessa larghezza in ogni lingua e tema,
+  perché ognuno contiene tutte le sue etichette sovrapposte e ne mostra una sola: cambiarli non
+  sposta niente. Ogni testo del modello e dei token esiste nelle
   due lingue (nel modello come coppia di elementi `lang="it"` e `lang="en"`, nei token coi campi
   `usage_en`, `name_en`, `sample_en` e `value_en`), e la prova nel browser misura le righe in
   tutte e due. Un testo nuovo entra nelle due lingue insieme, scritto con `/microcopy-it` e

@@ -19,7 +19,7 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, colorScheme: scheme, deviceScaleFactor: 2 });
       await ctx.route('https://fonts.googleapis.com/**', r => r.fulfill({ contentType: 'text/css', body: fontsCss }));
       await ctx.route('https://fonts.gstatic.com/local/**', r => r.fulfill({ contentType: 'font/woff2', body: fs.readFileSync(path.join(cache, 'fonts', path.basename(r.request().url()))) }));
-      await ctx.route('https://page.local/', r => r.fulfill({ contentType: 'text/html', body: doc }));
+      await ctx.route('https://page.local/**', r => r.fulfill({ contentType: 'text/html', body: doc }));
       const p = await ctx.newPage();
       const errors = [];
       p.on('pageerror', e => errors.push(e.message));
@@ -53,6 +53,7 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
         lIgnoredInField: lTyped[0] === 'en' && lTyped[1] === 'l' });
       const t = await themeCheck(p);
       Object.assign(report[report.length - 1], t);
+      Object.assign(report[report.length - 1], await stillCheck(p));
       for (const id of ['accenti', 'marchio', 'icona', 'colori', 'caratteri', 'movimento', 'effetti', 'componenti']) {
         await p.evaluate(i => { document.getElementById(i).scrollIntoView(); }, id);
         await p.screenshot({ path: path.join(cache, `shot-${w}-${scheme}-${id}.png`), fullPage: false });
@@ -127,6 +128,29 @@ async function markCheck(p, mk) {
         }
         return bad;
       }, mk);
+}
+
+async function stillCheck(p) {
+  // Rocco's rule on language and theme (Roccobot.md 5.18): the two buttons keep the same box in
+  // every language and theme, so switching moves nothing; and nothing is remembered, so a reload
+  // after the L key opens the page in its default language again.
+  const boxes = () => p.evaluate(() => ['lang', 'theme'].map(id => {
+    const r = document.getElementById(id).getBoundingClientRect();
+    return [Math.round(r.left * 10), Math.round(r.width * 10)].join(':');
+  }).join(' '));
+  // in every state each label stack shows exactly one label, and it is not empty (the build ties
+  // words with a no-break space, and a stack once showed none because of it)
+  const shown = () => p.evaluate(() => [...document.querySelectorAll('.ctl-stack')]
+    .every(s => [...s.children].filter(c => c.hasAttribute('data-on') && c.textContent.trim()).length === 1));
+  const seen = new Set([await boxes()]);
+  let labelsShown = await shown();
+  for (const k of ['t', 'l', 't', 'l']) { await p.keyboard.press(k); seen.add(await boxes()); labelsShown = labelsShown && await shown(); }
+  await p.keyboard.press('l');
+  const switched = await p.evaluate(() => document.documentElement.lang);
+  await p.reload();
+  await p.evaluate(() => document.fonts.ready);
+  const afterReload = await p.evaluate(() => document.documentElement.lang);
+  return { buttonsStill: seen.size === 1, labelsShown, reloadIsDefault: switched === 'en' && afterReload === 'it' };
 }
 
 async function themeCheck(p) {
