@@ -11,26 +11,56 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
 <!--
-  RoccoHub, a service page: the feedback documents (DF) first, then the links in daily use. A
-  single mid-tone theme, between light and dark, with no theme switching and no script. Every
-  colour and the type come from the Roccobot Design system; the mark is its 天.
+  RoccoHub, a service page: the feedback documents (DF) first, then the links in daily use. Two
+  themes, light and dark: the system's on loading, and the T key turns it over for the open page
+  only, with nothing stored. Every colour and the type come from the Roccobot Design system; the
+  mark is its 天.
   Author: Rocco Casadei, a.k.a. Roccobot
 -->
 <style>
+  /* Light theme: the Roccobot Design light neutrals. Turquoise is graphics and filled surfaces
+     only (2.43 on the background), so the text that reads as accent takes testo-accento.
+     Contrasts measured on 2026-11-03. */
   :root {
-    color-scheme: dark;
-    /* A deep green-grey between light and dark, from the Roccobot Design neutrals, so that the
-       brand green of the mark and of the buttons stands out. Contrast measured on 2026-11-02. */
-    --bg: #2E3836;            /* between dark-surface-high and dark-surface-highest */
-    --card: #3B4744;          /* one step lighter: the cards lift off the page */
-    --line: #4E5B57;
-    --ink: #F3F6F5;           /* 11.1 on --bg, 8.9 on --card */
-    --plat: #CDD6D3;          /* 6.5 on --card: between the name and the subtitle */
-    --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
-    --accent: #43B59E;        /* brand-accent; the mark and the labels, 4.8 on --bg */
-    --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
-    --link: #4FD9BE;          /* brand-link-dark, 6.9 on --bg, 5.5 on --card */
+    color-scheme: light;
+    --bg: #FCFBF8;            /* fondo */
+    --card: #FFFEFC;          /* superficie */
+    --line: #DAD9D5;          /* linea */
+    --ink: #1A1C1B;           /* testo, 17.0 on --card */
+    --plat: #6A726F;          /* 4.9 on --card: fainter than the subtitle, still readable */
+    --ink-muted: #5B6360;     /* testo-secondario, 6.0 on --bg, 6.1 on --card */
+    --accent: #43B59E;        /* turchese: the mark and the buttons */
+    --on-accent: #00382F;     /* contenuto-su-accento, 5.19 over the accent */
+    --accent-hover: #4FD9BE;  /* turchese-luce, 7.5 under --on-accent */
+    --label: #0B6B5B;         /* testo-accento, 6.2 on --bg */
+    --link: #0B6B5B;          /* testo-accento, 6.4 on --card */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  /* Dark theme: the deep green-grey between light and dark of the page's first version, so that
+     the brand green of the mark and of the buttons stands out. Contrasts measured on 2026-11-02. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #2E3836;          /* fondo-intermedio */
+      --card: #3B4744;        /* scheda-intermedia: the cards lift off the page */
+      --line: #4E5B57;
+      --ink: #F3F6F5;         /* 11.1 on --bg, 8.9 on --card */
+      --plat: #ACB7B3;        /* 4.7 on --card: fainter than the subtitle, still readable */
+      --ink-muted: #C2CDC9;   /* 7.4 on --bg, 5.9 on --card */
+      --label: #43B59E;       /* turchese, 4.8 on --bg */
+      --link: #4FD9BE;        /* turchese-luce, 6.9 on --bg, 5.5 on --card */
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #2E3836;
+    --card: #3B4744;
+    --line: #4E5B57;
+    --ink: #F3F6F5;
+    --plat: #ACB7B3;
+    --ink-muted: #C2CDC9;
+    --label: #43B59E;
+    --link: #4FD9BE;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
@@ -38,7 +68,7 @@
   header { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 2.2rem; }
   header svg { width: 3rem; height: auto; flex: none; }
   h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
-  .meta { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: .1rem 0 0; }
+  .meta { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .1rem 0 0; }
   /* Section titles: a quiet label, so the cards and the tiles stay the protagonists */
   section + section { margin-top: 2.4rem; }
   h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
@@ -50,21 +80,35 @@
            display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
   h3 { font-size: 1.2rem; font-weight: 600; margin: 0; }
-  /* the platform after the app's name: same size, less white and lighter, so the name leads */
+  /* the full name after the app's short name: same size, fainter and lighter, so the short name leads */
   .plat { color: var(--plat); font-weight: 500; white-space: nowrap; }  /* wraps whole, never one word alone */
+  /* The platform beside Apri, with the marks and the measures of the DFs' titles: Apple's two
+     marks at 0.62em, centred on what reads as each shape (the apple's body spans 5.791 to 24 of
+     its 24-unit grid, the laptop 3 to 20), and Android's head alone, 1.5227 times bigger because
+     it is alone (its ink is centred already). */
+  /* Marks and Apri side by side; on a phone, where the card has no room for both beside the text,
+     the marks go above the button. */
+  .act { flex: none; display: flex; align-items: center; gap: 1rem; }
+  @media (max-width: 30rem) { .act { flex-direction: column; gap: .5rem; } }
+  .marks { flex: none; display: inline-flex; align-items: center; gap: .12em; font-size: 2.2rem; color: var(--ink-muted); }
+  .mark { --size: calc(.62em * var(--scale, 1)); width: var(--size); height: var(--size); fill: currentColor;
+          transform: translateY(calc(var(--shift, 0) * var(--size) / 24)); }
+  .apple { --shift: -2.896; }
+  .laptop { --shift: .5; }
+  .android { --scale: 1.5227; }
   .txt p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
   a.site { display: inline-block; margin-top: .35rem; color: var(--link); font-size: .9rem; font-weight: 600;
            text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
   a.site:hover { text-decoration-thickness: 2px; }
   a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
            border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
-  a.open:hover { background: #4FD9BE; }
+  a.open:hover { background: var(--accent-hover); }
 
   /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
   .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
   .tiles a { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--card);
              border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; }
-  .tiles a:hover { border-color: var(--accent); }
+  .tiles a:hover { border-color: var(--link); }
   .name { display: block; color: var(--link); font-weight: 600; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
@@ -94,22 +138,31 @@
           <p>Gestore di immagini avanzato per Android</p>
           <a class="site" href="https://roccobot.github.io/AIV/" target="_blank" rel="noopener">Sito</a>
         </div>
-        <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        <div class="act">
+          <span class="marks" role="img" aria-label="Android"><svg class="mark android" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg></span>
+          <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        </div>
       </li>
       <li>
         <div class="txt">
-          <h3>Aomidori <span class="plat">macOS</span></h3>
+          <h3>Aomidori</h3>
           <p>Lettore di EPUB, fumetti e&nbsp;Markdown per macOS</p>
           <a class="site" href="https://roccobot.github.io/Aomidori/" target="_blank" rel="noopener">Sito</a>
         </div>
-        <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        <div class="act">
+          <span class="marks" role="img" aria-label="macOS"><svg class="mark apple" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><svg class="mark laptop" viewBox="0 -960 960 960" aria-hidden="true"><path d="M57-160q-24 0-40.5-17.5T0-220h141q-24 0-42-18t-18-42v-500q0-24 18-42t42-18h678q24 0 42 18t18 42v500q0 24-18 42t-42 18h141q0 25-17.5 42.5T900-160H57Zm423-22q14 0 24-10t10-24q0-14-10-24t-24-10q-14 0-24 10t-10 24q0 14 10 24t24 10Z"/></svg></span>
+          <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        </div>
       </li>
       <li>
         <div class="txt">
-          <h3>Aomidori <span class="plat">Android</span></h3>
+          <h3>Aomidori</h3>
           <p>Lettore di EPUB, fumetti e&nbsp;Markdown per Android</p>
         </div>
-        <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        <div class="act">
+          <span class="marks" role="img" aria-label="Android"><svg class="mark android" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg></span>
+          <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+        </div>
       </li>
     </ul>
   </section>
@@ -145,5 +198,16 @@
     </ul>
   </section>
 </main>
+<script>
+  // T turns the theme over for the open page only: nothing is stored, and a reload brings back the
+  // system's. Not while typing, and not with a modifier, so the browser's own shortcuts stay.
+  document.addEventListener('keydown', e => {
+    if (e.key !== 't' && e.key !== 'T') return;
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, textarea, [contenteditable]')) return;
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+</script>
 </body>
 </html>

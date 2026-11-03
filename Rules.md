@@ -129,10 +129,14 @@ numero per scelta dell'utente.
 - **`hub/` è RoccoHub, la pagina di servizio coi link di uso comune** (nata il 2026-11-02 in
   `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
   2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Documenti di feedback'**, un riquadro per app col pulsante
-  che apre il DF e, dove c'è, il link al mini-sito; **'Link utili'**, tessere con un titolo e una
+  che apre il DF e, accanto al pulsante, i segni della piattaforma come nel titolo dei DF (la mela e
+  il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito; su un
+  telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
-  strumenti' e in fondo 'Roccobot ABP'). Tema unico a metà fra
-  chiaro e scuro, senza script, coi valori di `Roccobot Design`; fuori dalla mappa e
+  strumenti' e in fondo 'Roccobot ABP'). Solo italiano, coi valori di `Roccobot Design`, e due temi
+  dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
+  il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
+  scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
   dall'indicizzazione (`noindex`). Il vecchio indirizzo `feedback/` resta come rimando automatico a
   `hub/`, per i segnalibri.
   ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce;
