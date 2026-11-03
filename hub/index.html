@@ -116,10 +116,18 @@
 
   /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
   .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
-  .tiles a { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--card);
+  .tiles > li > a, .tile { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--card);
              border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; }
-  .tiles a:hover { border-color: var(--link); }
-  .name { display: block; color: var(--link); font-weight: 600; }
+  .tiles > li > a:hover, .tile:hover { border-color: var(--link); }
+  .name { display: block; color: var(--link); font-weight: 600; text-decoration: none; }
+  /* A tile with a second link: the main link covers the whole tile with ::before,
+     and the second one sits above it, so neither link is nested in the other */
+  .tile { position: relative; }
+  .tile .name { display: inline; }
+  .tile .name::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  a.extra { position: relative; z-index: 1; color: var(--link); font-size: .8em;
+            text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a.extra:hover { text-decoration-thickness: 2px; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
   /* Groups inside a section: same grey as the section titles, smaller and with more room above,
@@ -181,7 +189,7 @@
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
-      <li><a href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener"><span class="name">GitHub</span><span class="note">Progetti e repo di Roccobot</span></a></li>
+      <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a> <a class="extra" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">(principali)</a><span class="note">Progetti e repo di Roccobot</span></div></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Il design system del marchio</span></a></li>
       <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener"><span class="name">Registro di Aomidori Flex</span><span class="note">Le versioni dello stile di serie</span></a></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I Worker dei DF e di rules-proxy</span></a></li>
