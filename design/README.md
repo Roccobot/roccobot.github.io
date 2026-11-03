@@ -103,9 +103,11 @@ Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`)
 - **Il logo animato** (`design/assets/logo-anim/`): il segno si disegna al centro, poi arriva il
   nome, in 105 fotogrammi pensati per un fondo scuro. `roccobot-logo-frames.zip` contiene i
   fotogrammi PNG trasparenti da 2048 × 480 px, come sono stati consegnati; `roccobot-logo.mp4` è
-  il video in H.264 quasi senza perdite, sul fondo `#151B1A`, coi colori convertiti in BT.709;
-  `roccobot-logo-web.mp4` è la copia leggera per le pagine, larga 1024 px. **Proposta**: 30
-  fotogrammi al secondo, cioè 3,5 secondi, finché il titolare non sceglie la frequenza.
+  il video in H.264 quasi senza perdite, sul fondo `#151B1A`, coi colori convertiti in BT.709,
+  perché l'H.264 non ha il canale alfa; `roccobot-logo-animated.webp` è l'animazione trasparente per
+  le pagine, una WebP animata senza perdite larga 1024 px, mostrata su una scacchiera scura appena visibile, e
+  `roccobot-logo-still.png` il suo ultimo fotogramma, per chi chiede meno movimento. Va a 24
+  fotogrammi al secondo, cioè 4,4 secondi.
 - **La filigrana**: una fotografia la firma la filigrana, non il marchio. È il segno col nome e
   l'anno (`ROCCOBOT '25`) o col dominio (`ROCCOBOT.ME`), in grigio `#BABABA` al 60%, mai
   nell'accento. La tavola dell'identità (`design/assets/identity/`) mette insieme il segno,
