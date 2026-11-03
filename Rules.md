@@ -142,6 +142,14 @@ numero per scelta dell'utente.
   ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce;
   quando un'app ha il suo mini-sito (oggi manca quello di Aomidroid), il link entra nel suo
   riquadro.
+  ⚠️⚠️ **La testa di Android accanto al pulsante si centra sulla MAIUSCOLA del pulsante, e conta
+  la sola cupola** (sua regola del 2026-11-03, col suo modello: *è solo la parte '~semicerchio' che
+  deve stare centrata in verticale con la maiuscola del pulsante*). Il centro della cupola, antenne
+  escluse (da 8,23 a 18,99 sulle 24 unità del disegno), coincide col centro dell'altezza della
+  maiuscola di `Apri`, cioè la metà fra la riga di base e la cima della `A` misurata con Archivo; le
+  antenne sporgono sopra. Il centro della scatola del disegno, o di tutta la testa, abbassa il segno
+  di circa 3 px. Si misura con la riga di base del testo e l'inchiostro della `A`, mai a occhio, e
+  si rimisura se cambiano il corpo del pulsante o quello del segno.
   ⚠️ **Il marchio della pagina e della sua favicon resta centrato sul riquadro del disegno**, con
   la posizione che l'utente ha regolato nella favicon, e non segue la centratura ponderata di
   `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file': è una pagina di servizio, e
