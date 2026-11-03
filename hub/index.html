@@ -126,9 +126,14 @@
   .tile .name::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
   /* The second link is a small pill at the end of the note line, with the colours of the Open pills */
   .tile .note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .4rem; }
-  a.extra { position: relative; z-index: 1; flex: none; text-decoration: none; font-size: .8rem; font-weight: 500;
+  a.extra { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: .3em;
+            text-decoration: none; font-size: .8rem; font-weight: 500; line-height: 1.5;
             background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: .15rem .5rem; }
-  a.extra::after { content: " \2197"; }
+  /* The arrow is drawn, not typed: Archivo has no U+2197, and the fallback font that draws it
+     has other vertical metrics, so on a Mac the line box grew and the text left the centre */
+  a.extra::after { content: ""; width: .7em; height: .7em; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
   a.extra:hover { background: var(--accent-hover); }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
