@@ -20,7 +20,7 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       await ctx.route('https://fonts.googleapis.com/**', r => r.fulfill({ contentType: 'text/css', body: fontsCss }));
       await ctx.route('https://fonts.gstatic.com/local/**', r => r.fulfill({ contentType: 'font/woff2', body: fs.readFileSync(path.join(cache, 'fonts', path.basename(r.request().url()))) }));
       // the page, and the files it links in assets/, read from design/ as Pages serves them
-      const types = { '.svg': 'image/svg+xml', '.png': 'image/png', '.mp4': 'video/mp4' };
+      const types = { '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.mp4': 'video/mp4' };
       await ctx.route('https://page.local/**', r => {
         const file = new URL(r.request().url()).pathname;
         if (!file.startsWith('/assets/')) return r.fulfill({ contentType: 'text/html', body: doc });

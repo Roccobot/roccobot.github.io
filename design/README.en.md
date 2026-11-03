@@ -103,9 +103,11 @@ Roccobot's personal sign, drawn as a path (`design/assets/mark/`). It is always 
 - **The animated logo** (`design/assets/logo-anim/`): the sign draws itself in the center, then
   the name arrives, in 105 frames made for a dark background. `roccobot-logo-frames.zip` holds the
   transparent 2048 × 480 px PNG frames, as delivered; `roccobot-logo.mp4` is the near-lossless
-  H.264 video, on the `#151B1A` background, with colors converted in BT.709;
-  `roccobot-logo-web.mp4` is the light copy for pages, 1024 px wide. **Proposal**: 30 frames per
-  second, so 3.5 seconds, until the owner picks the rate.
+  H.264 video, on the `#151B1A` background, with colors converted in BT.709, because H.264 has no
+  alpha channel; `roccobot-logo-animated.webp` is the transparent animation for pages, a lossless
+  animated WebP 1024 px wide, shown over a barely visible dark checkerboard, and `roccobot-logo-still.png`
+  its last frame, for those who ask for less motion. It runs at 24 frames per second, so 4.4
+  seconds.
 - **The watermark**: a photograph is signed by the watermark, not by the mark. It is the sign
   with the name and the year (`ROCCOBOT '25`) or with the domain (`ROCCOBOT.ME`), in gray
   `#BABABA` at 60%, never in the accent. The identity sheet (`design/assets/identity/`) puts

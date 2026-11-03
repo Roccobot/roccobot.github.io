@@ -155,7 +155,10 @@ h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
 .art-3 { grid-template-columns: minmax(0, 1fr); }
 .art figure { margin: 0; }
 .art-ground { border-radius: 20px; padding: 2rem; display: grid; place-items: center; border: 1px solid var(--linea); }
-.art-ground img, .art-video { display: block; width: 100%; height: auto; }
+.art-ground img { display: block; width: 100%; height: auto; }
+.art-ground picture { display: block; width: 100%; }
+/* a dark checkerboard, barely visible, behind an image with an alpha channel */
+.art-alpha { background: repeating-conic-gradient(#151b1a 0% 25%, #1b2221 0% 50%) 0 0 / 24px 24px; }
 .art-tile img { width: min(11rem, 100%); }
 .art-light { background: #fcfbf8; }
 .art-dark { background: #151b1a; }
@@ -472,13 +475,13 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <p class="lead" lang="it">Il segno si disegna al centro, poi arriva il nome: 105 fotogrammi, pensati per un fondo scuro.</p>
       <p class="lead" lang="en">The sign draws itself in the center, then the name arrives: 105 frames, made for a dark background.</p>
       <div class="art art-3">
-        <figure><div class="art-ground art-dark"><video class="art-video" src="assets/logo-anim/roccobot-logo-web.mp4" width="1024" height="240" autoplay muted loop playsinline aria-label="Il logo animato di Roccobot" data-label-en="The Roccobot animated logo"></video></div><figcaption><span lang="it"><b>Su fondo scuro</b>Lettere bianche al 70%, segno turchese.</span><span lang="en"><b>On a dark background</b>White letters at 70%, turquoise sign.</span></figcaption></figure>
+        <figure><div class="art-ground art-alpha"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/logo-anim/roccobot-logo-still.png"><img src="assets/logo-anim/roccobot-logo-animated.webp" width="1024" height="240" loading="lazy" alt="Il logo animato di Roccobot" aria-label="Il logo animato di Roccobot" data-label-en="The Roccobot animated logo"></picture></div><figcaption><span lang="it"><b>Trasparente</b>Lettere bianche al 70%, segno turchese, su una scacchiera scura che mostra il canale alfa.</span><span lang="en"><b>Transparent</b>White letters at 70%, turquoise sign, over a dark checkerboard that shows the alpha channel.</span></figcaption></figure>
       </div>
       <div class="prose">
-        <p lang="it">I file sono in <code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, i fotogrammi PNG trasparenti da 2048 &times; 480 px, come sono stati consegnati; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, il video in H.264 quasi senza perdite, sul fondo <code>#151B1A</code>; <code>roccobot-logo-web.mp4</code>, la copia leggera per le pagine, larga 1024 px. Sulla pagina l'animazione si ferma sull'ultimo fotogramma se il sistema chiede meno movimento.</p>
-        <p lang="en">The files are in <code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, the transparent 2048 &times; 480 px PNG frames, as delivered; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, the near-lossless H.264 video, on the <code>#151B1A</code> background; <code>roccobot-logo-web.mp4</code>, the light copy for pages, 1024 px wide. On the page, the animation stops on its last frame when the system asks for less motion.</p>
-        <p lang="it"><b>Proposta</b>: 30 fotogrammi al secondo, quindi 3,5 secondi. I fotogrammi non dicono la loro frequenza, e la sceglie il titolare.</p>
-        <p lang="en"><b>Proposal</b>: 30 frames per second, so 3.5 seconds. The frames don't state their rate, and the owner picks it.</p>
+        <p lang="it">I file sono in <code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, i fotogrammi PNG trasparenti da 2048 &times; 480 px, come sono stati consegnati; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, il video in H.264 quasi senza perdite, sul fondo <code>#151B1A</code>; <code>roccobot-logo-animated.webp</code>, l'animazione trasparente per le pagine, una WebP animata senza perdite larga 1024 px. Sulla pagina, se il sistema chiede meno movimento, resta l'ultimo fotogramma.</p>
+        <p lang="en">The files are in <code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, the transparent 2048 &times; 480 px PNG frames, as delivered; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, the near-lossless H.264 video, on the <code>#151B1A</code> background; <code>roccobot-logo-animated.webp</code>, the transparent animation for pages, a lossless animated WebP 1024 px wide. On the page, when the system asks for less motion, the last frame stays.</p>
+        <p lang="it">Va a 24 fotogrammi al secondo, quindi dura 4,4 secondi. Il video in H.264 non ha il canale alfa, e per questo ha il fondo pieno.</p>
+        <p lang="en">It runs at 24 frames per second, so it lasts 4.4 seconds. The H.264 video has no alpha channel, so it has a solid background.</p>
       </div>
     </section>
 
@@ -791,13 +794,6 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       other: 'Italiano', code: 'IT', toOther: 'Show the page in Italian', copied: 'Copied', select: 'Select it',
       desc: "The design system of the personal brand of Rocco Casadei, a.k.a. Roccobot: colors, mark, icons, typefaces, sizes and components." }
   };
-  // the animated logo: with less motion asked by the system, it stands still on its last frame
-  var anim = document.querySelector('.art-video');
-  if (anim && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    anim.removeAttribute('autoplay');
-    anim.pause();
-    anim.addEventListener('loadedmetadata', function () { anim.currentTime = anim.duration; });
-  }
   var labelled = Array.prototype.slice.call(document.querySelectorAll('[data-label-en]'));
   labelled.forEach(function (el) { el.setAttribute('data-label-it', el.getAttribute('aria-label')); });
   function lang() { return root.getAttribute('data-lang') === 'en' ? 'en' : 'it'; }

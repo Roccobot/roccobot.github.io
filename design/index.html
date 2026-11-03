@@ -258,7 +258,10 @@ h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
 .art-3 { grid-template-columns: minmax(0, 1fr); }
 .art figure { margin: 0; }
 .art-ground { border-radius: 20px; padding: 2rem; display: grid; place-items: center; border: 1px solid var(--linea); }
-.art-ground img, .art-video { display: block; width: 100%; height: auto; }
+.art-ground img { display: block; width: 100%; height: auto; }
+.art-ground picture { display: block; width: 100%; }
+/* a dark checkerboard, barely visible, behind an image with an alpha channel */
+.art-alpha { background: repeating-conic-gradient(#151b1a 0% 25%, #1b2221 0% 50%) 0 0 / 24px 24px; }
 .art-tile img { width: min(11rem, 100%); }
 .art-light { background: #fcfbf8; }
 .art-dark { background: #151b1a; }
@@ -419,7 +422,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   <div class="bar-in">
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
-    <span class="bar-ver">v14</span>
+    <span class="bar-ver">v15</span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
@@ -578,13 +581,13 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <p class="lead" lang="it">Il&nbsp;segno si&nbsp;disegna al&nbsp;centro, poi arriva il&nbsp;nome: 105 fotogrammi, pensati per un&nbsp;fondo&nbsp;scuro.</p>
       <p class="lead" lang="en">The sign draws itself in&nbsp;the center, then the name arrives: 105 frames, made for a&nbsp;dark background.</p>
       <div class="art art-3">
-        <figure><div class="art-ground art-dark"><video class="art-video" src="assets/logo-anim/roccobot-logo-web.mp4" width="1024" height="240" autoplay muted loop playsinline aria-label="Il logo animato di Roccobot" data-label-en="The Roccobot animated logo"></video></div><figcaption><span lang="it"><b>Su&nbsp;fondo&nbsp;scuro</b>Lettere bianche al&nbsp;70%, segno&nbsp;turchese.</span><span lang="en"><b>On&nbsp;a&nbsp;dark background</b>White letters at&nbsp;70%, turquoise&nbsp;sign.</span></figcaption></figure>
+        <figure><div class="art-ground art-alpha"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/logo-anim/roccobot-logo-still.png"><img src="assets/logo-anim/roccobot-logo-animated.webp" width="1024" height="240" loading="lazy" alt="Il logo animato di Roccobot" aria-label="Il logo animato di Roccobot" data-label-en="The Roccobot animated logo"></picture></div><figcaption><span lang="it"><b>Trasparente</b>Lettere bianche al&nbsp;70%, segno turchese, su&nbsp;una scacchiera scura che mostra il&nbsp;canale&nbsp;alfa.</span><span lang="en"><b>Transparent</b>White letters at&nbsp;70%, turquoise sign, over a&nbsp;dark checkerboard that shows the alpha&nbsp;channel.</span></figcaption></figure>
       </div>
       <div class="prose">
-        <p lang="it">I&nbsp;file&nbsp;sono&nbsp;in&nbsp;<code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, i&nbsp;fotogrammi PNG trasparenti da&nbsp;2048 &times; 480&nbsp;px, come sono stati consegnati; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, il&nbsp;video in&nbsp;H.264 quasi senza perdite, sul fondo <code>#151B1A</code>; <code>roccobot-logo-web.mp4</code>, la&nbsp;copia leggera per le&nbsp;pagine, larga&nbsp;1024&nbsp;px. Sulla pagina l'animazione si&nbsp;ferma sull'ultimo fotogramma se&nbsp;il&nbsp;sistema chiede meno&nbsp;movimento.</p>
-        <p lang="en">The files&nbsp;are&nbsp;in&nbsp;<code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, the transparent 2048 &times; 480&nbsp;px&nbsp;PNG frames, as&nbsp;delivered; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, the near-lossless H.264 video, on&nbsp;the <code>#151B1A</code> background; <code>roccobot-logo-web.mp4</code>, the light copy for pages, 1024&nbsp;px&nbsp;wide. On&nbsp;the page, the animation stops on&nbsp;its last frame when the system asks for less&nbsp;motion.</p>
-        <p lang="it"><b>Proposta</b>: 30&nbsp;fotogrammi al&nbsp;secondo, quindi 3,5&nbsp;secondi. I&nbsp;fotogrammi non dicono la&nbsp;loro frequenza, e&nbsp;la&nbsp;sceglie il&nbsp;titolare.</p>
-        <p lang="en"><b>Proposal</b>: 30&nbsp;frames per second, so&nbsp;3.5&nbsp;seconds. The frames don't&nbsp;state their rate, and the owner&nbsp;picks&nbsp;it.</p>
+        <p lang="it">I&nbsp;file&nbsp;sono&nbsp;in&nbsp;<code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, i&nbsp;fotogrammi PNG trasparenti da&nbsp;2048 &times; 480&nbsp;px, come sono stati consegnati; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, il&nbsp;video in&nbsp;H.264 quasi senza perdite, sul fondo <code>#151B1A</code>; <code>roccobot-logo-animated.webp</code>, l'animazione trasparente per le&nbsp;pagine, una WebP animata senza perdite larga&nbsp;1024&nbsp;px. Sulla pagina, se&nbsp;il&nbsp;sistema chiede meno movimento, resta l'ultimo fotogramma.</p>
+        <p lang="en">The files&nbsp;are&nbsp;in&nbsp;<code>design/assets/logo-anim/</code>: <a href="assets/logo-anim/roccobot-logo-frames.zip"><code>roccobot-logo-frames.zip</code></a>, the transparent 2048 &times; 480&nbsp;px&nbsp;PNG frames, as&nbsp;delivered; <a href="assets/logo-anim/roccobot-logo.mp4"><code>roccobot-logo.mp4</code></a>, the near-lossless H.264 video, on&nbsp;the <code>#151B1A</code> background; <code>roccobot-logo-animated.webp</code>, the transparent animation for pages, a&nbsp;lossless animated WebP 1024&nbsp;px&nbsp;wide. On&nbsp;the page, when the system asks for less motion, the last frame&nbsp;stays.</p>
+        <p lang="it">Va&nbsp;a&nbsp;24&nbsp;fotogrammi al&nbsp;secondo, quindi dura 4,4&nbsp;secondi. Il&nbsp;video in&nbsp;H.264 non ha&nbsp;il&nbsp;canale alfa, e&nbsp;per questo ha&nbsp;il&nbsp;fondo&nbsp;pieno.</p>
+        <p lang="en">It&nbsp;runs at&nbsp;24&nbsp;frames per second, so&nbsp;it&nbsp;lasts 4.4&nbsp;seconds. The H.264 video has no&nbsp;alpha channel, so&nbsp;it&nbsp;has a&nbsp;solid background.</p>
       </div>
     </section>
 
@@ -865,7 +868,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <footer class="end">
         <span><svg viewBox="13.96 5.77 152.11 143.75" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei,&nbsp;a.k.a.&nbsp;Roccobot</span>
         <a href="https://roccobot.me">roccobot.me</a>
-        <span><span lang="it">Versione&nbsp;14, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;14, November&nbsp;3,&nbsp;2026</span></span>
+        <span><span lang="it">Versione&nbsp;15, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;15, November&nbsp;3,&nbsp;2026</span></span>
       </footer>
     </section>
   </main>
@@ -897,13 +900,6 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       other: 'Italiano', code: 'IT', toOther: 'Show the page in Italian', copied: 'Copied', select: 'Select it',
       desc: "The design system of the personal brand of Rocco Casadei, a.k.a. Roccobot: colors, mark, icons, typefaces, sizes and components." }
   };
-  // the animated logo: with less motion asked by the system, it stands still on its last frame
-  var anim = document.querySelector('.art-video');
-  if (anim && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    anim.removeAttribute('autoplay');
-    anim.pause();
-    anim.addEventListener('loadedmetadata', function () { anim.currentTime = anim.duration; });
-  }
   var labelled = Array.prototype.slice.call(document.querySelectorAll('[data-label-en]'));
   labelled.forEach(function (el) { el.setAttribute('data-label-it', el.getAttribute('aria-label')); });
   function lang() { return root.getAttribute('data-lang') === 'en' ? 'en' : 'it'; }
