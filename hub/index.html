@@ -141,7 +141,12 @@
      so size and position make the hierarchy, not colour */
   h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
              color: var(--ink-muted); margin: 1.8rem 0 .6rem; }
-  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* The keyboard focus ring follows the shape of what is focused: the whole tile, the pill, never a
+     square box around a line of text */
+  a:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
+  .tiles > li > a:focus-visible, .tile:has(.name:focus-visible) { outline: 2px solid var(--link); outline-offset: 2px; }
+  .tile .name:focus-visible { outline: none; }
+  a.open:focus-visible, a.extra:focus-visible { border-radius: 999px; }
 </style>
 </head>
 <body>
@@ -232,6 +237,12 @@
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
+  });
+  // A link clicked with the mouse or a finger drops the focus, so coming back from the new tab
+  // shows no ring (Safari with keyboard navigation on focuses links on click). Tab still shows it.
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (a && e.detail > 0) a.blur();
   });
 </script>
 </body>
