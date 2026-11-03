@@ -96,7 +96,7 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `contenuto-su-accento`.
 - **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine, `superficie` per schede e
   pannelli, `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
-  blu e verde, non un verde. Le pagine di servizio a tema unico usano `fondo-intermedio`.
+  blu e verde, non un verde. Il tema scuro delle pagine di servizio usa `fondo-intermedio`.
 - **Testo**: `testo` (16,55 e 14,21), `testo-secondario` per note e didascalie, `contorno` per i
   bordi dei controlli, `linea` per i separatori che non portano informazione.
 - **Tavolozza di Aomidori**: `turchese-luce`, `menta-chiaro`, `ardesia`.

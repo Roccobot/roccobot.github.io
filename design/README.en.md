@@ -29,7 +29,7 @@ Every file can also be read without cloning the hub, at the page address followe
 - **The version** is a whole number, `version` in `design/tokens.json`, one more at every
   publication: it is the version of the design system and of the page together. It shows small in
   the top bar, with a `v` in front, and with its date at the bottom of the page.
-- The page is not in search engines (`noindex`) and not in `sitemap.xml`, like `feedback/`: it
+- The page is not in search engines (`noindex`) and not in `sitemap.xml`, like `hub/`: it
   opens for whoever has the link.
 - **Two languages, Italian first**: the page opens in Italian, and the `L` key without
   modifiers, or the button at the top right next to the theme button, switches to English; a link
@@ -57,7 +57,7 @@ Every file can also be read without cloning the hub, at the page address followe
 - An entry marked **Proposal** isn't decided yet, and is used only after the owner's choice.
 - A new or changed rule enters here in the same round it enters a product. Sources: the AIV rules
   (`Rules.md` and `docs/` in its repo), the Aomidroid map (`.scratch/aomidroid/` in the Aomidori
-  repo) and the hub's `feedback/` page for the web.
+  repo) and the hub's `hub/` page for the web.
 
 ## The mark
 
@@ -97,7 +97,7 @@ is the color of the icon.
   (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `contenuto-su-accento`.
 - **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
   and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
-  with a touch of blue and green, not a green. Single-theme service pages use `fondo-intermedio`.
+  with a touch of blue and green, not a green. The dark theme of service pages uses `fondo-intermedio`.
 - **Text**: `testo` (16.55 and 14.21), `testo-secondario` for notes and captions, `contorno` for
   control borders, `linea` for dividers that carry no information.
 - **Aomidori palette**: `turchese-luce`, `menta-chiaro`, `ardesia`.
