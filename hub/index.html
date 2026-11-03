@@ -18,22 +18,26 @@
   Author: Rocco Casadei, a.k.a. Roccobot
 -->
 <style>
-  /* Light theme: the Roccobot Design light neutrals. Turquoise is graphics and filled surfaces
-     only (2.43 on the background), so the text that reads as accent takes testo-accento.
-     Contrasts measured on 2026-11-03. */
+  /* Light theme: the light counterpart of the dark one, a pale green-grey page with almost white
+     cards, so the two themes read as the same page (Rocco's choice Chiaro-01, 2026-11-03: the
+     first light theme, Roccobot Design's near-white neutrals, left the cards without contrast).
+     Turquoise is graphics and filled surfaces only, so the text that reads as accent takes
+     testo-accento. Contrasts measured on 2026-11-03. */
   :root {
     color-scheme: light;
-    --bg: #FCFBF8;            /* fondo */
-    --card: #FFFEFC;          /* superficie */
-    --line: #DAD9D5;          /* linea */
-    --ink: #1A1C1B;           /* testo, 17.0 on --card */
-    --plat: #6A726F;          /* 4.9 on --card: fainter than the subtitle, still readable */
-    --ink-muted: #5B6360;     /* testo-secondario, 6.0 on --bg, 6.1 on --card */
-    --accent: #43B59E;        /* turchese: the mark and the buttons */
-    --on-accent: #00382F;     /* contenuto-su-accento, 5.19 over the accent */
-    --accent-hover: #4FD9BE;  /* turchese-luce, 7.5 under --on-accent */
-    --label: #0B6B5B;         /* testo-accento, 6.2 on --bg */
-    --link: #0B6B5B;          /* testo-accento, 6.4 on --card */
+    --bg: #E3EAE7;            /* 5.3 under testo-accento, 6.0 under --ink-muted */
+    --card: #F7FAF9;          /* the cards lift off the page */
+    --line: #C9D4D0;
+    --ink: #1A1C1B;           /* testo, 16.3 on --card */
+    --plat: #5F6B68;          /* 5.3 on --card: fainter than the subtitle, still readable */
+    --ink-muted: #4D5956;     /* 6.0 on --bg, 7.0 on --card */
+    /* The buttons: petrolio with white text (Rocco's request: white on the green pills), the
+       Roccobot Design pair of its dark theme; white on turquoise would be 2.52. */
+    --accent: #00727B;        /* petrolio, 5.4 on --card */
+    --on-accent: #FFFFFF;     /* 5.69 over the accent */
+    --accent-hover: #008577;  /* 4.54 under --on-accent */
+    --label: #0B6B5B;         /* testo-accento, 5.3 on --bg */
+    --link: #0B6B5B;          /* testo-accento, 6.1 on --card */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   /* Dark theme: the deep green-grey between light and dark of the page's first version, so that
@@ -48,6 +52,9 @@
       --plat: #ACB7B3;        /* 4.7 on --card: fainter than the subtitle, still readable */
       --ink-muted: #C2CDC9;   /* 7.4 on --bg, 5.9 on --card */
       --label: #43B59E;       /* turchese, 4.8 on --bg */
+      --accent: #43B59E;      /* turchese: on the dark cards the buttons keep it, with dark text */
+      --on-accent: #00382F;   /* contenuto-su-accento, 5.19 over the accent */
+      --accent-hover: #4FD9BE; /* turchese-luce, 7.5 under --on-accent */
       --link: #4FD9BE;        /* turchese-luce, 6.9 on --bg, 5.5 on --card */
     }
   }
@@ -60,6 +67,9 @@
     --plat: #ACB7B3;
     --ink-muted: #C2CDC9;
     --label: #43B59E;
+    --accent: #43B59E;
+    --on-accent: #00382F;
+    --accent-hover: #4FD9BE;
     --link: #4FD9BE;
   }
   * { box-sizing: border-box; }
