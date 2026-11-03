@@ -68,9 +68,10 @@
   .name { display: block; color: var(--link); font-weight: 600; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
-  /* The two Roccobot ABP lists belong together: a small label of their own, under the other tiles */
-  h3.group { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-             color: var(--accent); margin: 1.4rem 0 .6rem; }
+  /* Groups inside a section: same grey as the section titles, smaller and with more room above,
+     so size and position make the hierarchy, not colour */
+  h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+             color: var(--ink-muted); margin: 1.8rem 0 .6rem; }
   a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 </style>
 </head>
@@ -116,7 +117,7 @@
   <section aria-labelledby="t-link">
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
-      <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">La bacheca Roccobot, coi lavori di tutte le sessioni</span></a></li>
+      <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
       <li><a href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener"><span class="name">GitHub</span><span class="note">I repository di Roccobot</span></a></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Roccobot Design</span><span class="note">Il design system del marchio</span></a></li>
       <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener"><span class="name">Registro di Aomidori Flex</span><span class="note">Le versioni dello stile di serie</span></a></li>
