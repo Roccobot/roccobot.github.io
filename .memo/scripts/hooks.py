@@ -19,7 +19,8 @@ una volta sola; e il comando cerca questo file in più percorsi, così vale da q
 MODI (primo argomento; l'evento arriva in JSON su stdin):
   start     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti;
             dopo una compattazione indica invece le sezioni sul linguaggio da rileggere
-  prompt    UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot)
+  prompt    UserPromptSubmit: recupera i commit arrivati da fuori (salvataggi admin, bot), e
+            mostra le azioni di Rocco sulla bacheca Trello dopo il controllo precedente
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
             controlli prima di un `git commit`, che possono bloccarlo
@@ -258,6 +259,100 @@ def mode_start(ev):
             print(f'[catchup] ... altre {len(out) - 40} righe: lancia catchup.py per il resto')
 
 
+# ── la bacheca ────────────────────────────────────────────────────────────────
+# Rocco's actions on the Trello board, shown at the start of the turn (his choices Sveglia-01, -02
+# and -03 of 2026-11-03): no session hears from Trello by itself, so his tags, moves and
+# assignments went unseen until he wrote about them. One call per message of his, through the
+# rules-proxy Worker (route since its rev 10); every session sees everything, with the card's
+# labels, and acts only on its own area (choice Area-01).
+
+BACHECA = '6ae2176ecb8fb9cf1c9689a6'
+ROCCO = '6ae21589e5ae078f5f0a615d'
+AGENTI = '6ae3acdf8660d605eb672abe'          # the agents' account, roccobot_ai
+TAG_AGENTI = '@roccobot_ai'
+LISTE_DI_RITORNO = {'Admin', 'Fatte'}       # his decisions: a card into or out of these lists
+FILTRO_AZIONI = 'commentCard,updateCard:idList,addMemberToCard'
+SEGNO_BACHECA = Path.home() / '.claude' / 'trello-since'
+WORKER = 'https://rules-proxy.roccobot-b90.workers.dev/'
+
+
+def azioni_di_rocco(azioni, etichette):
+    """The lines to show for Trello's actions: Rocco's comments that tag the agents, his moves of a
+    card into or out of Admin and Fatte, and the cards he assigns to the agents; oldest first, the
+    time in Rome's zone. `etichette` maps a card's id to the names of its labels."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    righe = []
+    for a in sorted(azioni or [], key=lambda a: a.get('date', '')):
+        if a.get('idMemberCreator') != ROCCO:
+            continue
+        d, tipo = a.get('data') or {}, a.get('type')
+        card = d.get('card') or {}
+        if tipo == 'commentCard' and TAG_AGENTI in (d.get('text') or ''):
+            testo = ' '.join((d.get('text') or '').split())
+            cosa = f"commento: '{testo[:300]}{'...' if len(testo) > 300 else ''}'"
+        elif tipo == 'updateCard' and 'listAfter' in d:
+            prima, dopo = (d.get('listBefore') or {}).get('name'), (d.get('listAfter') or {}).get('name')
+            if not {prima, dopo} & LISTE_DI_RITORNO:
+                continue
+            cosa = f'spostata da {prima} a {dopo}'
+        elif tipo == 'addMemberToCard' and AGENTI in (d.get('idMember'), (d.get('member') or {}).get('id')):
+            cosa = 'assegnata agli agenti'
+        else:
+            continue
+        try:
+            ora = datetime.fromisoformat(a['date'].replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Rome'))
+            quando = ora.strftime('%d/%m %H:%M')
+        except (KeyError, ValueError):
+            quando = '?'
+        nomi = ', '.join(etichette.get(card.get('id'), [])) or 'senza etichetta'
+        righe.append(f"{quando}, '{card.get('name', '?')}' ({nomi}): {cosa} "
+                     f"https://trello.com/c/{card.get('shortLink', '')}")
+    return righe
+
+
+def trello_get(path, query):
+    """One GET to Trello through the Worker; None on any failure, so a slow Trello never blocks."""
+    import urllib.request
+    parola = os.environ.get('RULES_PASSWORD')
+    if not parola:
+        return None
+    corpo = json.dumps({'action': 'trello', 'password': parola, 'method': 'GET',
+                        'path': path, 'query': query}).encode()
+    req = urllib.request.Request(WORKER, data=corpo, method='POST', headers={
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/120 Safari/537.36'})
+    try:
+        with urllib.request.urlopen(req, timeout=6) as r:
+            risposta = json.load(r)
+    except Exception:
+        return None
+    return risposta.get('data') if isinstance(risposta, dict) and 'data' in risposta else None
+
+
+def avvisi_bacheca():
+    from datetime import datetime, timedelta, timezone
+    adesso = datetime.now(timezone.utc)
+    try:
+        dal = SEGNO_BACHECA.read_text().strip()
+    except OSError:
+        dal = (adesso - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')   # a new container
+    azioni = trello_get(f'/boards/{BACHECA}/actions', {'filter': FILTRO_AZIONI, 'since': dal, 'limit': '100'})
+    if azioni is None:
+        return []                   # the mark stays where it was: the next message asks again
+    try:
+        SEGNO_BACHECA.parent.mkdir(parents=True, exist_ok=True)
+        SEGNO_BACHECA.write_text(adesso.strftime('%Y-%m-%dT%H:%M:%SZ'))
+    except OSError:
+        pass
+    if not azioni_di_rocco(azioni, {}):
+        return []                   # the labels cost two more calls: only when there is news
+    carte = trello_get(f'/boards/{BACHECA}/cards', {'fields': 'idLabels'}) or []
+    nomi = {e.get('id'): e.get('name') for e in (trello_get(f'/boards/{BACHECA}/labels', {'fields': 'name'}) or [])}
+    etichette = {c.get('id'): [nomi[i] for i in c.get('idLabels', []) if nomi.get(i)] for c in carte}
+    return azioni_di_rocco(azioni, etichette)
+
+
 # ── turno ─────────────────────────────────────────────────────────────────────
 
 def mode_prompt(ev):
@@ -288,9 +383,16 @@ def mode_prompt(ev):
         return f'{repo.name}: ATTENZIONE, {dietro} commit dietro origin/{ramo} e {perche}: riallinea a mano prima di toccare quei file'
 
     with ThreadPoolExecutor(8) as ex:
+        bacheca = ex.submit(avvisi_bacheca)
         for r in ex.map(uno, repos()):
             if r:
                 print(f'[prompt] {r}')
+        righe = bacheca.result()
+    if righe:
+        print('[bacheca] Azioni di Rocco sulla bacheca dopo il controllo precedente. Una card della '
+              'tua area la lavori tu; quelle di un\'altra area le lasci alla sua titolare.')
+        for riga in righe:
+            print(f'[bacheca] {riga}')
 
 
 # ── modifica ──────────────────────────────────────────────────────────────────
