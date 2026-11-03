@@ -160,6 +160,10 @@ is the color of the icon.
   (`design/assets/icons/`). In the light theme mint on turquoise, in the dark one light turquoise
   on petrol:
   both layers change.
+- **The Aomidori icon for macOS** is the example of an adaptive icon in the Liquid Glass style:
+  the system shows the version for the current theme, and the tile shape is drawn in the file.
+  The page shows the two files of the Aomidori download page (the hub's `Aomidori/assets/`),
+  copied unchanged from the app repo.
 - **Android app icons are adaptive**: a full square, with the subject in the safe zone at about
   45% of the side, and no drawn shape; the crop is up to the phone.
 - An app drawing lives in `res/drawable/ic_<name>.xml`, and a catalog lists them all. Convex

@@ -23,8 +23,12 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       const types = { '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.mp4': 'video/mp4' };
       await ctx.route('https://page.local/**', r => {
         const file = new URL(r.request().url()).pathname;
-        if (!file.startsWith('/assets/')) return r.fulfill({ contentType: 'text/html', body: doc });
-        const local = path.join(__dirname, '..', decodeURIComponent(file));
+        // design/assets/ for the page's own files, and the hub root for a file of another page
+        // that the design system shows as it is (the Aomidori icon)
+        const base = file.startsWith('/assets/') ? path.join(__dirname, '..')
+          : file.startsWith('/Aomidori/') ? path.join(__dirname, '..', '..') : null;
+        if (!base) return r.fulfill({ contentType: 'text/html', body: doc });
+        const local = path.join(base, decodeURIComponent(file));
         if (!fs.existsSync(local)) return r.fulfill({ status: 404, body: '' });
         return r.fulfill({ contentType: types[path.extname(local)] || 'application/octet-stream', body: fs.readFileSync(local) });
       });
