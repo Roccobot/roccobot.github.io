@@ -130,7 +130,8 @@ numero per scelta dell'utente.
   `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
   2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Documenti di feedback'**, un riquadro per app col pulsante
   che apre il DF e, dove c'è, il link al mini-sito; **'Link utili'**, tessere con un titolo e una
-  riga di spiegazione, e in fondo il gruppo delle due liste di Roccobot ABP. Tema unico a metà fra
+  riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
+  strumenti' e in fondo 'Roccobot ABP'). Tema unico a metà fra
   chiaro e scuro, senza script, coi valori di `Roccobot Design`; fuori dalla mappa e
   dall'indicizzazione (`noindex`). Il vecchio indirizzo `feedback/` resta come rimando automatico a
   `hub/`, per i segnalibri.
