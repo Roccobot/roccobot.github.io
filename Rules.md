@@ -126,10 +126,17 @@ numero per scelta dell'utente.
 - ⚠️ **La mappa elenca i soli progetti pubblici con una pagina** (Arda, Terramare, AIV, CleanSVG,
   RatioLab, 'Ma che parola è', entrata il 2026-10-16, e Aomidori): RoccobotOS, il sito di riferimento personale, resta fuori finché l'utente non dice
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
-- **`feedback/` è la pagina di servizio coi documenti di feedback** (richiesta dell'utente del
-  2026-11-02): un clic apre ciascun DF in una nuova scheda. Tema unico a metà fra chiaro e scuro,
-  senza script, coi valori di `Roccobot Design`; fuori dalla mappa e dall'indicizzazione (`noindex`).
-  ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce.
+- **`hub/` è RoccoHub, la pagina di servizio coi link di uso comune** (nata il 2026-11-02 in
+  `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
+  2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Documenti di feedback'**, un riquadro per app col pulsante
+  che apre il DF e, dove c'è, il link al mini-sito; **'Link utili'**, tessere con un titolo e una
+  riga di spiegazione, e in fondo il gruppo delle due liste di Roccobot ABP. Tema unico a metà fra
+  chiaro e scuro, senza script, coi valori di `Roccobot Design`; fuori dalla mappa e
+  dall'indicizzazione (`noindex`). Il vecchio indirizzo `feedback/` resta come rimando automatico a
+  `hub/`, per i segnalibri.
+  ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce;
+  quando un'app ha il suo mini-sito (oggi manca quello di Aomidroid), il link entra nel suo
+  riquadro.
   ⚠️ **Il marchio della pagina e della sua favicon resta centrato sul riquadro del disegno**, con
   la posizione che l'utente ha regolato nella favicon, e non segue la centratura ponderata di
   `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file': è una pagina di servizio, e
@@ -145,7 +152,7 @@ numero per scelta dell'utente.
   `design/tokens.json`, e non si modifica a mano; accanto ci sono il manuale (`design/README.md`), le
   schede dei componenti e i file del marchio e dell'icona di AIV. La scrive la sessione `Roccobot`,
   con le regole di `Roccobot.md` § '🎨 Grafica'. Pubblica, ma fuori dalla mappa e
-  dall'indicizzazione (`noindex`), come `feedback/`.
+  dall'indicizzazione (`noindex`), come `hub/`.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 

@@ -1,5 +1,5 @@
 """Write the brand assets as SVG 1.1, copying the paths byte for byte from their sources:
-the mark from feedback/index.html of the hub, the AIV glyph from ic_launcher_foreground.xml.
+the mark from hub/index.html of the hub, the AIV glyph from ic_launcher_foreground.xml.
 Only the fill changes, as the rules allow. The AIV repo is private: its clone is read from
 the AIV_REPO variable, or from an 'aiv' folder beside the hub clone.
 Author: Rocco Casadei, a.k.a. Roccobot"""
@@ -12,7 +12,7 @@ HERE = Path(__file__).parent
 ROOT = HERE.parent  # design/
 HUB = ROOT.parent
 AIV = Path(os.environ.get('AIV_REPO', HUB.parent / 'aiv'))
-hub = (HUB / 'feedback' / 'index.html').read_text(encoding='utf-8')
+hub = (HUB / 'hub' / 'index.html').read_text(encoding='utf-8')
 mark = re.search(r'<svg viewBox="10 8 160 145"[^>]*><path d="([^"]+)"', hub).group(1)
 xml = (AIV / 'app' / 'src' / 'main' / 'res' / 'drawable' / 'ic_launcher_foreground.xml').read_text(encoding='utf-8')
 paths = re.findall(r'android:fillType="(\w+)"\s+android:pathData="([^"]+)"', xml)

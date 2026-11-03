@@ -28,7 +28,7 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
 - **La versione** è un numero intero, `version` in `design/tokens.json`, uno in più a ogni
   pubblicazione: è la versione del design system e della pagina insieme. Si legge piccola nella
   barra in alto, con una `v` davanti, e con la data in fondo alla pagina.
-- La pagina non è nei motori di ricerca (`noindex`) e non è in `sitemap.xml`, come `feedback/`:
+- La pagina non è nei motori di ricerca (`noindex`) e non è in `sitemap.xml`, come `hub/`:
   la apre chi ha il link.
 - **Due lingue, l'italiano per primo**: la pagina si apre in italiano, e il tasto `L` senza
   modificatori o il pulsante in alto a destra, accanto a quello del tema, passano all'inglese; un
@@ -57,7 +57,7 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
 - Una voce segnata **Proposta** non è ancora decisa, e si usa solo dopo la scelta del titolare.
 - Una regola nuova o cambiata entra qui nello stesso giro in cui entra in un prodotto. Fonti: le
   regole di AIV (`Rules.md` e `docs/` del suo repo), la mappa di Aomidroid (`.scratch/aomidroid/`
-  del repo di Aomidori) e la pagina `feedback/` dell'hub per il web.
+  del repo di Aomidori) e la pagina `hub/` dell'hub per il web.
 
 ## Il marchio
 

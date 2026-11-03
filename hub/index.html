@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>RoccoHub</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
+<!--
+  RoccoHub, a service page: the feedback documents (DF) first, then the links in daily use. A
+  single mid-tone theme, between light and dark, with no theme switching and no script. Every
+  colour and the type come from the Roccobot Design system; the mark is its 天.
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+<style>
+  :root {
+    color-scheme: dark;
+    /* A deep green-grey between light and dark, from the Roccobot Design neutrals, so that the
+       brand green of the mark and of the buttons stands out. Contrast measured on 2026-11-02. */
+    --bg: #2E3836;            /* between dark-surface-high and dark-surface-highest */
+    --card: #3B4744;          /* one step lighter: the cards lift off the page */
+    --line: #4E5B57;
+    --ink: #F3F6F5;           /* 11.1 on --bg, 8.9 on --card */
+    --plat: #CDD6D3;          /* 6.5 on --card: between the name and the subtitle */
+    --ink-muted: #C2CDC9;     /* 7.4 on --bg, 5.9 on --card */
+    --accent: #43B59E;        /* brand-accent; the mark and the labels, 4.8 on --bg */
+    --on-accent: #00382F;     /* brand-on-accent, 5.19 over the accent */
+    --link: #4FD9BE;          /* brand-link-dark, 6.9 on --bg, 5.5 on --card */
+    --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
+  main { max-width: 40rem; margin: 0 auto; padding: 2.75rem 1rem 3rem; }
+  header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.2rem; }
+  header svg { width: 3rem; height: auto; flex: none; }
+  h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
+  .meta { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: .35rem 0 0; }
+  /* Section titles: a quiet label, so the cards and the tiles stay the protagonists */
+  section + section { margin-top: 2.4rem; }
+  h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+       color: var(--ink-muted); margin: 0 0 .8rem; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+
+  /* Feedback documents: one card per app, with the button that opens its DF */
+  .df li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem;
+           display: flex; align-items: center; gap: 1rem; }
+  .txt { flex: 1 1 auto; min-width: 0; }
+  h3 { font-size: 1.2rem; font-weight: 600; margin: 0; }
+  /* the platform after the app's name: same size, less white and lighter, so the name leads */
+  .plat { color: var(--plat); font-weight: 500; white-space: nowrap; }  /* wraps whole, never one word alone */
+  .txt p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
+  a.site { display: inline-block; margin-top: .35rem; color: var(--link); font-size: .9rem; font-weight: 600;
+           text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a.site:hover { text-decoration-thickness: 2px; }
+  a.open { flex: none; text-decoration: none; font-weight: 600; background: var(--accent); color: var(--on-accent);
+           border-radius: 999px; padding: 0 1.25rem; min-height: 44px; display: inline-flex; align-items: center; }
+  a.open:hover { background: #4FD9BE; }
+
+  /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
+  .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
+  .tiles a { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--card);
+             border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; }
+  .tiles a:hover { border-color: var(--accent); }
+  .name { display: block; color: var(--link); font-weight: 600; }
+  .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
+  .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  /* The two Roccobot ABP lists belong together: a small label of their own, under the other tiles */
+  h3.group { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+             color: var(--accent); margin: 1.4rem 0 .6rem; }
+  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <svg viewBox="10 8 160 145" aria-hidden="true"><path d="M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z" fill="#43b59e" fill-rule="evenodd"/></svg>
+    <div>
+      <h1>RoccoHub</h1>
+      <p class="meta">Pagina di servizio</p>
+    </div>
+  </header>
+
+  <section class="df" aria-labelledby="t-df">
+    <h2 id="t-df">Documenti di feedback</h2>
+    <ul>
+      <li>
+        <div class="txt">
+          <h3>AIV <span class="plat">Astonishing Image Viewer</span></h3>
+          <p>Gestore di immagini avanzato per Android</p>
+          <a class="site" href="https://roccobot.github.io/AIV/" target="_blank" rel="noopener">Sito</a>
+        </div>
+        <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+      </li>
+      <li>
+        <div class="txt">
+          <h3>Aomidori <span class="plat">macOS</span></h3>
+          <p>Lettore di EPUB, fumetti e&nbsp;Markdown per macOS</p>
+          <a class="site" href="https://roccobot.github.io/Aomidori/" target="_blank" rel="noopener">Sito</a>
+        </div>
+        <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+      </li>
+      <li>
+        <div class="txt">
+          <h3>Aomidori <span class="plat">Android</span></h3>
+          <p>Lettore di EPUB, fumetti e&nbsp;Markdown per Android</p>
+        </div>
+        <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-link">
+    <h2 id="t-link">Link utili</h2>
+    <ul class="tiles">
+      <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Bacheca Roccobot</span><span class="note">I lavori di tutte le sessioni, su Trello</span></a></li>
+      <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Roccobot Design</span><span class="note">Il design system del marchio</span></a></li>
+      <li><a href="https://roccobot.github.io/RoccobotOS/" target="_blank" rel="noopener"><span class="name">RoccobotOS</span><span class="note">Scorciatoie, formati, caratteri e DNS</span></a></li>
+      <li><a href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener"><span class="name">Registro di Aomidori Flex</span><span class="note">Le versioni dello stile di serie</span></a></li>
+    </ul>
+    <h3 class="group">Roccobot ABP</h3>
+    <ul class="tiles">
+      <li><a href="https://roccobot.github.io/ABP/RoccobotFilters.txt" target="_blank" rel="noopener"><span class="name">Lista di blocco</span><span class="note">RoccobotFilters.txt</span></a></li>
+      <li><a href="https://roccobot.github.io/ABP/RoccobotWhitelist.txt" target="_blank" rel="noopener"><span class="name">Lista delle eccezioni</span><span class="note">RoccobotWhitelist.txt</span></a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
