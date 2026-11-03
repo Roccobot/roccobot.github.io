@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.54
+> **Versione**: 2.55
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -266,8 +266,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - ⚠️⚠️ **Nucleo e interfaccia separati, inderogabile**: le decisioni nascono nel nucleo con le
   prove, l'interfaccia le esegue (`Roccobot.md` § '🏛️ Nucleo funzionale e interfaccia separati,
   sempre').
-- **Immagini per il Web leggere**: mai oltre 500 KB, larghe al massimo il triplo della misura in
-  pagina (`Roccobot.md` § '🪶 Le immagini per il Web sono leggere').
+- **Immagini per il Web leggere**: mai oltre 500 KB, salvo le animate, larghe al massimo il
+  triplo della misura in pagina (`Roccobot.md` § '🪶 Le immagini per il Web sono leggere').
 - **Qualità**: un modo solo per ogni cosa, un valore in un posto solo, le note che dicono il
   perché, niente codice morto (`Roccobot.md` § '🏅 Codice di altissima qualità').
 - **L'aggiornamento non si chiede, si fa**: ultime versioni e pratica raccomandata dalla
