@@ -296,10 +296,16 @@ MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Au
 
 
 def version():
-    """The version and date in the bar, from tokens.json: the one source of the version."""
+    """The small version number in the bar, from tokens.json: the one source of the version.
+    A whole number, one more at every publication of the page; it is the design system's version."""
+    return f'v{TOKENS["version"]}'
+
+
+def version_full():
+    """The version with its date, for the footer."""
     y, m, d = (int(x) for x in TOKENS['updated'].split('-'))
     v = TOKENS['version']
-    return bt(f'versione {v}, {d} {MONTHS[m - 1]} {y}', f'version {v}, {MONTHS_EN[m - 1]} {d}, {y}')
+    return bt(f'Versione {v}, {d} {MONTHS[m - 1]} {y}', f'Version {v}, {MONTHS_EN[m - 1]} {d}, {y}')
 
 
 SHORT =re.compile(r'(?<![\wÀ-ɏ])([\wÀ-ɏ]{1,2}|[\wÀ-ɏ]{1,2}\')( )(?=[^ ]|$)')
@@ -363,6 +369,7 @@ def main():
         'effects': effects(),
         'motion': motion(),
         'version': version(),
+        'version-full': version_full(),
     }
     for name, box in mark_frames().items():
         tpl = tpl.replace(f'@{name}-frame', box)
