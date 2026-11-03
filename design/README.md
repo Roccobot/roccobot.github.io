@@ -61,7 +61,7 @@ Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`)
   si uniforma ad altri glifi, nemmeno dove la regola di un prodotto lo prescrive per tutti gli
   altri disegni. Cambia soltanto il colore.
 - **Colori ammessi**: `marchio` (turchese) sullo sfondo scuro, a 6,93, la forma principale;
-  turchese sullo sfondo chiaro, a 2,43, solo grande; `su-accento` sul turchese, a 5,19; menta su
+  turchese sullo sfondo chiaro, a 2,43, solo grande; `contenuto-su-accento` sul turchese, a 5,19; menta su
   petrolio, a 5,46.
 - **Centratura ponderata** (riferimento ufficiale): si centra il **quadrato
   ideale** del segno, e non il riquadro del disegno; alcuni tratti ne escono, ed è così che il
@@ -87,7 +87,7 @@ il turchese si legge sullo sfondo scuro (6,93), il petrolio su quello chiaro (5,
 vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'icona.
 
 - **Testo e accento**: l'accento non porta mai testo corrente. Per il testo d'accento si usa
-  `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `su-accento`.
+  `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `contenuto-su-accento`.
 - **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine, `superficie` per schede e
   pannelli, `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
   blu e verde, non un verde. Le pagine di servizio a tema unico usano `fondo-intermedio`.
@@ -282,7 +282,7 @@ grigie.
   scheda).
 - **Scheda**: nelle app un pannello che sale dal basso, con la molla di AIV; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
-- **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `su-accento`) per l'azione
+- **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
   principale, uno per schermata, il contorno per le altre.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo`; con la sfocatura spenta il
   velo di una scheda è al 60%.
