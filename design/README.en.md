@@ -26,6 +26,9 @@ Every file can also be read without cloning the hub, at the page address followe
   (and `design/build/assets.py` for the mark files), then `design/build/fonts.py` and
   `design/build/check.cjs` for the check, and commit everything together. The page
   (`design/index.html`) is never edited by hand.
+- **The version** is a whole number, `version` in `design/tokens.json`, one more at every
+  publication: it is the version of the design system and of the page together. It shows small in
+  the top bar, with a `v` in front, and with its date at the bottom of the page.
 - The page is not in search engines (`noindex`) and not in `sitemap.xml`, like `feedback/`: it
   opens for whoever has the link.
 - **Two languages, Italian first**: the page opens in Italian, and the `L` key without
@@ -302,7 +305,8 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   transparent`).
 - **Section index on the web**: on a long page, where there is no side index (below 60 rem), a
   round button at the bottom left opens it as a panel. The button follows the fixed-control rules;
-  a link, a tap outside the panel or `Esc` closes it.
+  a link, a tap outside the panel or `Esc` closes it. The panel is glass: `superficie` at 80% with
+  a 35 px blur, over a 15% scrim.
 - **Language and theme on the web**: at the top right, the language button next to the theme
   button, with the `L` and `T` shortcuts without modifiers, which win over everything except a
   text field. The dual theme is always there; the language button only on a bilingual page.

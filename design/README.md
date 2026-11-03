@@ -25,6 +25,9 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
   `design/build/build.py` (e `design/build/assets.py` per i file del marchio), poi
   `design/build/fonts.py` e `design/build/check.cjs` per la prova, e si committa tutto insieme.
   La pagina (`design/index.html`) non si modifica mai a mano.
+- **La versione** è un numero intero, `version` in `design/tokens.json`, uno in più a ogni
+  pubblicazione: è la versione del design system e della pagina insieme. Si legge piccola nella
+  barra in alto, con una `v` davanti, e con la data in fondo alla pagina.
 - La pagina non è nei motori di ricerca (`noindex`) e non è in `sitemap.xml`, come `feedback/`:
   la apre chi ha il link.
 - **Due lingue, l'italiano per primo**: la pagina si apre in italiano, e il tasto `L` senza
@@ -300,7 +303,8 @@ grigie.
   (`-webkit-tap-highlight-color: transparent`).
 - **Indice delle sezioni sul web**: in una pagina lunga, dove l'indice laterale non c'è (sotto i
   60 rem), un tasto tondo in basso a sinistra lo apre come pannello. Il tasto segue le regole dei
-  comandi fissi; una voce, un tocco fuori dal pannello o `Esc` lo chiudono.
+  comandi fissi; una voce, un tocco fuori dal pannello o `Esc` lo chiudono. Il pannello è di vetro:
+  `superficie` all'80% con una sfocatura di 35 px, sopra un velo al 15%.
 - **Lingua e tema sul web**: in alto a destra, il pulsante della lingua accanto a quello del
   tema, con le scorciatoie `L` e `T` senza modificatori, che vincono su tutto salvo un campo di
   testo. Il doppio tema c'è sempre; la lingua, solo in una pagina bilingue.
