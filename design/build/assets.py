@@ -38,4 +38,15 @@ for name, bg, fg in (('aiv-giorno', '#43b59e', '#ebfff7'), ('aiv-notte', '#00727
         f'<g transform="translate({shift} {shift}) scale({scale})">'
         f'<path fill="{fg}" d="{disc}"/><path fill="{fg}" fill-rule="evenodd" d="{a}"/></g></svg>\n',
         encoding='utf-8')
+# the owner's artwork lives in icon/, wordmark/ and identity/ (brandcheck.py checks its paths);
+# its other cuts are the same file with other fills, so they are derived here and never by hand
+icon = (out / 'icon' / 'roccobot-icon.svg').read_text(encoding='utf-8')
+swap = {'#43b59e': '#ebfff7', '#ebfff7': '#43b59e'}
+(out / 'icon' / 'roccobot-icon-inverse.svg').write_text(
+    re.sub(r'fill="(#43b59e|#ebfff7)"', lambda m: f'fill="{swap[m.group(1)]}"', icon), encoding='utf-8')
+word = (out / 'wordmark' / 'roccobot-wordmark.svg').read_text(encoding='utf-8')
+on_dark = word.replace('<g id="Roccobot_Titolo" opacity=".6">', '<g id="Roccobot_Titolo" fill="#fcfbf8" opacity=".7">')
+(out / 'wordmark' / 'roccobot-wordmark-reverse.svg').write_text(on_dark, encoding='utf-8')
+(out / 'wordmark' / 'roccobot-wordmark-oncolor.svg').write_text(
+    on_dark.replace('fill="#43b59e" fill-rule="evenodd"', 'fill="#ebfff7" fill-rule="evenodd"'), encoding='utf-8')
 print('scala', scale, 'traslazione', shift, 'tracciato del marchio', len(mark), 'caratteri')
