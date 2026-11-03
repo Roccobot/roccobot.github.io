@@ -148,6 +148,11 @@ h2, h3 { margin: 0; }
 .ctl:hover { border-color: var(--testo-accento); }
 .ctl kbd { font: 500 .75rem/1 var(--mono); padding: .2rem .4rem; border-radius: 4px; background: var(--superficie-alta); color: var(--testo-secondario); }
 .ctl svg { width: 1.1rem; height: 1.1rem; }
+/* every label a button can show sits in one grid cell, and only the current one is visible: the
+   button is as wide as its longest label in every language and theme, so switching moves nothing */
+.ctl-stack { display: inline-grid; }
+.ctl-stack > span { grid-area: 1 / 1; visibility: hidden; }
+.ctl-stack > span[data-on] { visibility: visible; }
 .ctl-code { display: none; font-weight: 600; }
 
 /* page frame */
@@ -356,7 +361,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   .fx td + td { margin-top: .35rem; }
   /* on a phone there is no keyboard to show: the controls keep their icon and the language code */
   .bar-ver, .bar-sep, .ctl-label, .ctl kbd { display: none; }
-  .ctl-code { display: inline; }
+  .ctl-code { display: inline-grid; }
   .ctl { padding: 0 .75rem; }
   section { padding-top: 3.5rem; }
 }
@@ -382,14 +387,14 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
     <span class="bar-sep" aria-hidden="true">·</span>
-    <span class="bar-ver"><span lang="it">versione&nbsp;4, 3&nbsp;novembre&nbsp;2026</span><span lang="en">version&nbsp;4, November&nbsp;3,&nbsp;2026</span></span>
+    <span class="bar-ver"><span lang="it">versione&nbsp;5, 3&nbsp;novembre&nbsp;2026</span><span lang="en">version&nbsp;5, November&nbsp;3,&nbsp;2026</span></span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-      <span class="ctl-label" id="lang-label">English</span><b class="ctl-code" id="lang-code">EN</b><kbd>L</kbd>
+      <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
     </button>
     <button class="ctl theme" id="theme" type="button" aria-label="Cambia tema">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-      <span class="ctl-label" id="theme-label">Tema&nbsp;scuro</span><kbd>T</kbd>
+      <span class="ctl-label ctl-stack" id="theme-label"><span>Tema&nbsp;scuro</span><span>Tema&nbsp;chiaro</span><span>Dark&nbsp;theme</span><span>Light&nbsp;theme</span></span><kbd>T</kbd>
     </button>
   </div>
 </header>
@@ -802,12 +807,17 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     var t = root.getAttribute('data-theme');
     return t === 'dark' || t === 'light' ? t : (media.matches ? 'dark' : 'light');
   }
+  // shows the label of a stack whose text is `text`, and hides the others in place
+  function show(stack, text) {
+    // the build ties short words with a no-break space, so the comparison reads it as a space
+    Array.prototype.forEach.call(stack.children, function (c) { c.toggleAttribute('data-on', c.textContent.replace(/\u00a0/g, ' ') === text); });
+  }
   function paint() {
     var w = TEXT[lang()], dark = theme() === 'dark';
-    themeLabel.textContent = dark ? w.light : w.dark;
+    show(themeLabel, dark ? w.light : w.dark);
     themeBtn.setAttribute('aria-label', dark ? w.toLight : w.toDark);
-    langLabel.textContent = w.other;
-    langCode.textContent = w.code;
+    show(langLabel, w.other);
+    show(langCode, w.code);
     langBtn.setAttribute('aria-label', w.toOther);
     labelled.forEach(function (el) { el.setAttribute('aria-label', el.getAttribute('data-label-' + lang())); });
     meta.setAttribute('content', w.desc);
@@ -815,18 +825,23 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   function setLang(l) {
     root.setAttribute('lang', l);
     if (l === 'en') root.setAttribute('data-lang', 'en'); else root.removeAttribute('data-lang');
+    paint();
+  }
+  // Nothing is remembered (Rocco's rule, Roccobot.md 5.18): a link with ?lang=en opens English, and
+  // switching the language drops the parameter, so a reload goes back to the default, Italian.
+  function forget() {
     try {
       var u = new URL(window.location.href);
-      if (l === 'en') u.searchParams.set('lang', 'en'); else u.searchParams.delete('lang');
+      if (!u.searchParams.has('lang')) return;
+      u.searchParams.delete('lang');
       window.history.replaceState(null, '', u.toString());
     } catch (err) { /* a page opened from a file has no history to rewrite */ }
-    paint();
   }
   function flipTheme() {
     root.setAttribute('data-theme', theme() === 'dark' ? 'light' : 'dark');
     paint();
   }
-  function flipLang() { setLang(lang() === 'en' ? 'it' : 'en'); }
+  function flipLang() { forget(); setLang(lang() === 'en' ? 'it' : 'en'); }
   function typing(el) {
     if (!el) return false;
     var tag = el.tagName;

@@ -32,7 +32,12 @@ Every file can also be read without cloning the hub, at the page address followe
 - **Two languages, Italian first** (entry `Interprete`, Rocco's choices `Primaria-01`,
   `Lingua-01` and `Inglese-01`, 2026-11-02): the page opens in Italian, and the `L` key without
   modifiers, or the button at the top right next to the theme button, switches to English; a link
-  with `?lang=en` opens it in English. Every text of the template and of the tokens exists in both
+  with `?lang=en` opens it in English. Language and theme are not remembered (`Roccobot.md`
+  § '🌗 Lingua e tema: le domande prima di cominciare'): no `localStorage` and no cookies, and
+  switching the language drops `?lang=en` from the address, so a reload opens the page in Italian
+  with the system theme again. The two buttons keep the same width in every language and theme,
+  because each holds all its labels stacked and shows only one: switching moves nothing. Every
+  text of the template and of the tokens exists in both
   languages (in the template as a pair of `lang="it"` and `lang="en"` elements, in the tokens as
   the `usage_en`, `name_en`, `sample_en` and `value_en` fields), and the browser check measures the
   lines in both. New text enters in both languages at once, written with `/microcopy-it` and
