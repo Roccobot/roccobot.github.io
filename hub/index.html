@@ -105,7 +105,9 @@
           transform: translateY(calc(var(--shift, 0) * var(--size) / 24)); }
   .apple { --shift: -2.896; }
   .laptop { --shift: .5; }
-  .android { --scale: 1.5227; }
+  /* The dome alone (antennas excluded, y 8.23 to 18.99 of 24) is centred on the cap height of the
+     button label: measured against the baseline and the ink of 'A' in Archivo 600 */
+  .android { --scale: 1.5227; --shift: -2.152; }
   .txt p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
   a.site { display: inline-block; margin-top: .35rem; color: var(--link); font-size: .9rem; font-weight: 600;
            text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
