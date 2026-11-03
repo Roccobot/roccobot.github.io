@@ -19,7 +19,15 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, colorScheme: scheme, deviceScaleFactor: 2 });
       await ctx.route('https://fonts.googleapis.com/**', r => r.fulfill({ contentType: 'text/css', body: fontsCss }));
       await ctx.route('https://fonts.gstatic.com/local/**', r => r.fulfill({ contentType: 'font/woff2', body: fs.readFileSync(path.join(cache, 'fonts', path.basename(r.request().url()))) }));
-      await ctx.route('https://page.local/**', r => r.fulfill({ contentType: 'text/html', body: doc }));
+      // the page, and the files it links in assets/, read from design/ as Pages serves them
+      const types = { '.svg': 'image/svg+xml', '.png': 'image/png', '.mp4': 'video/mp4' };
+      await ctx.route('https://page.local/**', r => {
+        const file = new URL(r.request().url()).pathname;
+        if (!file.startsWith('/assets/')) return r.fulfill({ contentType: 'text/html', body: doc });
+        const local = path.join(__dirname, '..', decodeURIComponent(file));
+        if (!fs.existsSync(local)) return r.fulfill({ status: 404, body: '' });
+        return r.fulfill({ contentType: types[path.extname(local)] || 'application/octet-stream', body: fs.readFileSync(local) });
+      });
       const p = await ctx.newPage();
       const errors = [];
       p.on('pageerror', e => errors.push(e.message));
@@ -48,7 +56,14 @@ const fontsCss = fs.readFileSync(path.join(cache, 'fonts', 'fonts.css'), 'utf8')
       await p.evaluate(() => document.getElementById('probe-l').remove());
       await p.keyboard.press('l');
       const back = await p.evaluate(() => document.documentElement.lang);
-      report.push({ w, scheme, fontsLoaded, errors, it, en,
+      // every image of the page (the owner's files in assets/) is loaded and drawn
+      const imagesLoaded = await p.evaluate(async () => {
+        const imgs = [...document.images];
+        imgs.forEach(i => { i.loading = 'eager'; });
+        await Promise.all(imgs.map(i => i.decode().catch(() => {})));
+        return imgs.length > 0 && imgs.every(i => i.complete && i.naturalWidth > 0);
+      });
+      report.push({ w, scheme, fontsLoaded, errors, it, en, imagesLoaded,
         lFlips: toEn[0] === 'en' && toEn[1] === 'One single source' && back === 'it',
         lIgnoredInField: lTyped[0] === 'en' && lTyped[1] === 'l' });
       const t = await themeCheck(p);

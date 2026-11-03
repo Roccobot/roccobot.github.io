@@ -15,7 +15,8 @@ design system. It is a service page of the `Roccobot/roccobot.github.io` hub, in
 - `design/tokens.json`, the color, type and size tokens, where the page takes every value from;
 - `design/README.md`, the manual in Italian, and `design/README.en.md`, this English version;
 - `design/components/`, the sheets of the Tondo and of the Start menu, in Italian and in English;
-- `design/assets/mark/` and `design/assets/icons/`, the files of the mark and of the AIV icon;
+- `design/assets/`, the brand files: the sign (`mark/`), the Roccobot icon (`icon/`), the
+  wordmark (`wordmark/`), the identity sheet (`identity/`) and the AIV icon (`icons/`);
 - `design/build/`, the generator: `build.py` with `template.html` and `contrast.py`, `assets.py`
   for the mark files, and the browser check `check.cjs` with `fonts.py`.
 
@@ -25,7 +26,9 @@ Every file can also be read without cloning the hub, at the page address followe
 - **How it changes**: edit the tokens, the manual or the template, run `design/build/build.py`
   (and `design/build/assets.py` for the mark files), then `design/build/fonts.py` and
   `design/build/check.cjs` for the check, and commit everything together. The page
-  (`design/index.html`) is never edited by hand.
+  (`design/index.html`) is never edited by hand. `design/build/brandcheck.py` compares the
+  paths of the icon, the wordmark and the sheet with the other copies of the same drawing, and
+  runs after every change to those files.
 - **The version** is a whole number, `version` in `design/tokens.json`, one more at every
   publication: it is the version of the design system and of the page together. It shows small in
   the top bar, with a `v` in front, and with its date at the bottom of the page.
@@ -86,6 +89,23 @@ Roccobot's personal sign, drawn as a path (`design/assets/mark/`). It is always 
 - **Minimum size**: 16 px on screen; below 24 px only on full-contrast backgrounds. The only
   exception is a few smaller favicons, even though they read less well.
 
+## The icon, the wordmark and the watermark
+
+- **The Roccobot icon** (`design/assets/icon/`): the sign on the supercircle tile, mint
+  `#EBFFF7` on turquoise `#43B59E`, and the inverse, with the two colors swapped. The tile is a
+  supercircle drawn in the file, not a square with rounded corners: never rebuild it with a
+  `border-radius`, and never crop it.
+- **The wordmark** (`design/assets/wordmark/`): the sign followed by the name, in three
+  versions. On light, black letters at 60% and a turquoise sign; on dark, letters in `#FCFBF8` at
+  70% and a turquoise sign; on turquoise, letters in `#FCFBF8` at 70% and a mint sign. The
+  letters never take the accent, and the sign never takes the color of the letters.
+- **The watermark**: a photograph is signed by the watermark, not by the mark. It is the sign
+  with the name and the year (`ROCCOBOT '25`) or with the domain (`ROCCOBOT.ME`), in gray
+  `#BABABA` at 60%, never in the accent. The identity sheet (`design/assets/identity/`) puts
+  together the sign, the icon, the wordmark and the two watermarks.
+- These are the owner's vector files: `assets.py` writes the other versions by changing the
+  colors only, and the paths are never touched.
+
 ## Colors
 
 The two **primary accents** are `turchese`, turquoise (`#43B59E`), and `petrolio`, petrol
@@ -95,6 +115,8 @@ is the color of the icon.
 
 - **Text and accent**: the accent never carries body text. Accent text uses `testo-accento`
   (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `contenuto-su-accento`.
+- **The checkerboard**: behind a transparent image there is a checkerboard of `scacchiera` (12)
+  squares, because in a viewer transparency is information.
 - **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
   and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
   with a touch of blue and green, not a green. The dark theme of service pages uses `fondo-intermedio`.
@@ -319,6 +341,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 ## Accessibility
 
 - One choice is one target: the row of a switch is announced once.
+- **An off command stays in place**: at `comando-spento` opacity (0.38), never hidden, so the
+  others don't move under the thumb.
+- **A long press vibrates once** (`HapticFeedbackType.LongPress`) and is announced to the screen
+  reader, which says what it does (`onLongClickLabel`).
 - Sliders say their value; every icon has a spoken description.
 - The Tondo is announced as `Comandi` (Commands), and every Start menu item by its name.
 - A gesture the screen reader intercepts always has a visible alternative.

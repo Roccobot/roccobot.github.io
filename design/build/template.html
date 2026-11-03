@@ -146,6 +146,19 @@ h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
 .ic figcaption p { margin: .35rem 0 0; font-size: .9375rem; opacity: .78; }
 .ic figcaption code { font-size: .8125rem; }
 
+/* Roccobot icon, wordmark, watermark: the owner's files, shown as images */
+.art { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.art-3 { grid-template-columns: minmax(0, 1fr); }
+.art figure { margin: 0; }
+.art-ground { border-radius: 20px; padding: 2rem; display: grid; place-items: center; border: 1px solid var(--linea); }
+.art-ground img { display: block; width: 100%; height: auto; }
+.art-tile img { width: min(11rem, 100%); }
+.art-light { background: #fcfbf8; }
+.art-dark { background: #151b1a; }
+.art-accent { background: #43b59e; }
+.art figcaption { margin-top: .6rem; font-size: .875rem; color: var(--testo-secondario); }
+.art figcaption b { display: block; color: var(--testo); font-weight: 600; }
+
 /* palette */
 .pal-group { margin-top: 2.5rem; }
 .pal-group h3 { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); }
@@ -240,7 +253,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 @media (max-width: 60rem) {
   .frame { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .toc { display: none; }
-  .marks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .marks, .art { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .art-3 { grid-template-columns: minmax(0, 1fr); }
   .mark-rules, .comps, .voice, .icons, .scales, .center-ref { grid-template-columns: minmax(0, 1fr); }
   .cr-tile { max-width: 14rem; }
   .toc-btn { display: grid; place-items: center; position: fixed; z-index: 15; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); padding: 0; border-radius: 50%; border: 1px solid var(--contorno); background: color-mix(in srgb, var(--superficie) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--testo); cursor: pointer; opacity: 0; transform: translateX(1rem); pointer-events: none; }
@@ -314,6 +328,9 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <li><a href="#identita"><span lang="it">Identità</span><span lang="en">Identity</span></a></li>
       <li><a href="#accenti"><span lang="it">I due accenti</span><span lang="en">The two accents</span></a></li>
       <li><a href="#marchio"><span lang="it">Il marchio</span><span lang="en">The mark</span></a></li>
+      <li><a href="#icona-roccobot"><span lang="it">L'icona di Roccobot</span><span lang="en">The Roccobot icon</span></a></li>
+      <li><a href="#logotipo"><span lang="it">Il logotipo</span><span lang="en">The wordmark</span></a></li>
+      <li><a href="#filigrana"><span lang="it">La filigrana</span><span lang="en">The watermark</span></a></li>
       <li><a href="#icona"><span lang="it">L'icona di AIV</span><span lang="en">The AIV icon</span></a></li>
       <li><a href="#colori"><span lang="it">Tutti i colori</span><span lang="en">All colors</span></a></li>
       <li><a href="#contrasti"><span lang="it">Contrasti</span><span lang="en">Contrast</span></a></li>
@@ -410,6 +427,51 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
             <span><svg viewBox="@fit-frame" width="48"><use href="#tian"/></svg>48</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="icona-roccobot" aria-labelledby="h-icr">
+      <p class="eyebrow"><span lang="it">Icona</span><span lang="en">Icon</span></p>
+      <h2 id="h-icr"><span lang="it">L'icona di Roccobot</span><span lang="en">The Roccobot icon</span></h2>
+      <p class="lead" lang="it">Il segno sulla piastrella a supercerchio, in due versioni: menta su turchese, e l'inversa, turchese su menta. Si usa sempre dal file originale.</p>
+      <p class="lead" lang="en">The sign on the supercircle tile, in two versions: mint on turquoise, and the inverse, turquoise on mint. Always use it from the original file.</p>
+      <div class="art">
+        <figure><div class="art-ground art-tile art-light"><img src="assets/icon/roccobot-icon.svg" alt="L'icona di Roccobot" aria-label="L'icona di Roccobot" data-label-en="The Roccobot icon" width="1024" height="1024"></div><figcaption><span lang="it"><b>Positiva</b>Menta <code>#EBFFF7</code> su turchese <code>#43B59E</code>.</span><span lang="en"><b>Positive</b>Mint <code>#EBFFF7</code> on turquoise <code>#43B59E</code>.</span></figcaption></figure>
+        <figure><div class="art-ground art-tile art-dark"><img src="assets/icon/roccobot-icon-inverse.svg" alt="L'icona di Roccobot, inversa" aria-label="L'icona di Roccobot, inversa" data-label-en="The Roccobot icon, inverse" width="1024" height="1024"></div><figcaption><span lang="it"><b>Inversa</b>Gli stessi due colori, scambiati.</span><span lang="en"><b>Inverse</b>The same two colors, swapped.</span></figcaption></figure>
+      </div>
+      <div class="prose">
+        <p lang="it">La piastrella è un supercerchio disegnato nel file, e non un quadrato con gli angoli arrotondati: non si rifà con un <code>border-radius</code> e non si ritaglia. L'inversa scambia i due colori e nient'altro. I file sono in <code>design/assets/icon/</code>.</p>
+        <p lang="en">The tile is a supercircle drawn in the file, not a square with rounded corners: never rebuild it with a <code>border-radius</code>, and never crop it. The inverse swaps the two colors and nothing else. The files are in <code>design/assets/icon/</code>.</p>
+      </div>
+    </section>
+
+    <section id="logotipo" aria-labelledby="h-log">
+      <p class="eyebrow"><span lang="it">Logotipo</span><span lang="en">Wordmark</span></p>
+      <h2 id="h-log"><span lang="it">Il logotipo</span><span lang="en">The wordmark</span></h2>
+      <p class="lead" lang="it">Il segno seguito dal nome, disegnato come tracciato, in tre versioni: per il fondo chiaro, per quello scuro e per il turchese.</p>
+      <p class="lead" lang="en">The sign followed by the name, drawn as a path, in three versions: for the light background, for the dark one and for turquoise.</p>
+      <div class="art art-3">
+        <figure><div class="art-ground art-light"><img src="assets/wordmark/roccobot-wordmark.svg" alt="Il logotipo di Roccobot su fondo chiaro" aria-label="Il logotipo di Roccobot su fondo chiaro" data-label-en="The Roccobot wordmark on a light background" width="1380" height="160"></div><figcaption><span lang="it"><b>Su chiaro</b>Lettere nere al 60%, segno turchese.</span><span lang="en"><b>On light</b>Black letters at 60%, turquoise sign.</span></figcaption></figure>
+        <figure><div class="art-ground art-dark"><img src="assets/wordmark/roccobot-wordmark-reverse.svg" alt="Il logotipo di Roccobot su fondo scuro" aria-label="Il logotipo di Roccobot su fondo scuro" data-label-en="The Roccobot wordmark on a dark background" width="1380" height="160"></div><figcaption><span lang="it"><b>Su scuro</b>Lettere <code>#FCFBF8</code> al 70%, segno turchese.</span><span lang="en"><b>On dark</b>Letters in <code>#FCFBF8</code> at 70%, turquoise sign.</span></figcaption></figure>
+        <figure><div class="art-ground art-accent"><img src="assets/wordmark/roccobot-wordmark-oncolor.svg" alt="Il logotipo di Roccobot sul turchese" aria-label="Il logotipo di Roccobot sul turchese" data-label-en="The Roccobot wordmark on turquoise" width="1380" height="160"></div><figcaption><span lang="it"><b>Sul turchese</b>Lettere <code>#FCFBF8</code> al 70%, segno menta.</span><span lang="en"><b>On turquoise</b>Letters in <code>#FCFBF8</code> at 70%, mint sign.</span></figcaption></figure>
+      </div>
+      <div class="prose">
+        <p lang="it">Le lettere non prendono mai l'accento, e il segno non prende mai il colore delle lettere. I file sono in <code>design/assets/wordmark/</code>.</p>
+        <p lang="en">The letters never take the accent, and the sign never takes the color of the letters. The files are in <code>design/assets/wordmark/</code>.</p>
+      </div>
+    </section>
+
+    <section id="filigrana" aria-labelledby="h-fil">
+      <p class="eyebrow"><span lang="it">Filigrana</span><span lang="en">Watermark</span></p>
+      <h2 id="h-fil"><span lang="it">La filigrana</span><span lang="en">The watermark</span></h2>
+      <p class="lead" lang="it">Una fotografia la firma la filigrana, non il marchio: il segno col nome e l'anno, o col dominio, in grigio <code>#BABABA</code> al 60%, mai nell'accento.</p>
+      <p class="lead" lang="en">A photograph is signed by the watermark, not by the mark: the sign with the name and the year, or with the domain, in gray <code>#BABABA</code> at 60%, never in the accent.</p>
+      <div class="art art-3">
+        <figure><div class="art-ground art-light"><img src="assets/identity/brand-identity.svg" alt="La tavola dell'identità di Roccobot" aria-label="La tavola dell'identità di Roccobot" data-label-en="The Roccobot identity sheet" width="1476" height="768"></div><figcaption><span lang="it"><b>La tavola dell'identità</b>Il segno, l'icona, il logotipo e le due filigrane, <code>ROCCOBOT '25</code> e <code>ROCCOBOT.ME</code>.</span><span lang="en"><b>The identity sheet</b>The sign, the icon, the wordmark and the two watermarks, <code>ROCCOBOT '25</code> and <code>ROCCOBOT.ME</code>.</span></figcaption></figure>
+      </div>
+      <div class="prose">
+        <p lang="it">Il file è in <code>design/assets/identity/</code>.</p>
+        <p lang="en">The file is in <code>design/assets/identity/</code>.</p>
       </div>
     </section>
 

@@ -14,7 +14,8 @@ system. È una pagina di servizio dell'hub `Roccobot/roccobot.github.io`, nella 
 - `design/tokens.json`, i token di colori, caratteri e misure, da cui la pagina prende ogni valore;
 - `design/README.md`, questo manuale, e `design/README.en.md`, la sua versione inglese;
 - `design/components/`, le schede del Tondo e del menu Start, in italiano e in inglese;
-- `design/assets/mark/` e `design/assets/icons/`, i file del marchio e dell'icona di AIV;
+- `design/assets/`, i file del marchio: il segno (`mark/`), l'icona di Roccobot (`icon/`), il
+  logotipo (`wordmark/`), la tavola dell'identità (`identity/`) e l'icona di AIV (`icons/`);
 - `design/build/`, il generatore: `build.py` con `template.html` e `contrast.py`, `assets.py`
   per i file del marchio, e la prova nel browser `check.cjs` con `fonts.py`.
 
@@ -24,6 +25,8 @@ Ogni file si legge anche senza clonare l'hub, all'indirizzo della pagina seguito
 - **Come si cambia**: si modificano i token, questo manuale o il modello, si lancia
   `design/build/build.py` (e `design/build/assets.py` per i file del marchio), poi
   `design/build/fonts.py` e `design/build/check.cjs` per la prova, e si committa tutto insieme.
+  `design/build/brandcheck.py` confronta i tracciati dell'icona, del logotipo e della tavola con
+  le altre copie dello stesso disegno, e si lancia a ogni modifica di quei file.
   La pagina (`design/index.html`) non si modifica mai a mano.
 - **La versione** è un numero intero, `version` in `design/tokens.json`, uno in più a ogni
   pubblicazione: è la versione del design system e della pagina insieme. Si legge piccola nella
@@ -86,6 +89,23 @@ Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`)
 - **Misura minima**: 16 px sullo schermo; sotto i 24 px solo sui fondi a contrasto pieno.
   L'unica eccezione sono alcune favicon più piccole, anche se si leggono meno bene.
 
+## L'icona, il logotipo e la filigrana
+
+- **L'icona di Roccobot** (`design/assets/icon/`): il segno sulla piastrella a supercerchio,
+  menta `#EBFFF7` su turchese `#43B59E`, e l'inversa, coi due colori scambiati. La piastrella è
+  un supercerchio disegnato nel file, e non un quadrato con gli angoli arrotondati: non si rifà
+  con un `border-radius` e non si ritaglia.
+- **Il logotipo** (`design/assets/wordmark/`): il segno seguito dal nome, in tre versioni. Su
+  chiaro le lettere sono nere al 60% e il segno turchese; su scuro le lettere sono `#FCFBF8` al
+  70% e il segno turchese; sul turchese le lettere sono `#FCFBF8` al 70% e il segno menta. Le
+  lettere non prendono mai l'accento, e il segno non prende mai il colore delle lettere.
+- **La filigrana**: una fotografia la firma la filigrana, non il marchio. È il segno col nome e
+  l'anno (`ROCCOBOT '25`) o col dominio (`ROCCOBOT.ME`), in grigio `#BABABA` al 60%, mai
+  nell'accento. La tavola dell'identità (`design/assets/identity/`) mette insieme il segno,
+  l'icona, il logotipo e le due filigrane.
+- Sono i file vettoriali del titolare: le altre versioni le scrive `assets.py` cambiando solo i
+  colori, e i tracciati non si toccano mai.
+
 ## Colori
 
 I due **accenti primari** sono `turchese` (`#43B59E`) e `petrolio` (`#00727B`), e si completano:
@@ -94,6 +114,8 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
 
 - **Testo e accento**: l'accento non porta mai testo corrente. Per il testo d'accento si usa
   `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `contenuto-su-accento`.
+- **La scacchiera**: dietro un'immagine trasparente c'è una scacchiera di quadretti da
+  `scacchiera` (12), perché in un visualizzatore la trasparenza è un'informazione.
 - **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine, `superficie` per schede e
   pannelli, `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
   blu e verde, non un verde. Il tema scuro delle pagine di servizio usa `fondo-intermedio`.
@@ -317,6 +339,10 @@ grigie.
 ## Accessibilità
 
 - Una scelta è un bersaglio solo: la riga di un interruttore si annuncia una volta.
+- **Un comando spento resta al suo posto**: a opacità `comando-spento` (0,38), mai nascosto, così
+  gli altri non si spostano sotto il pollice.
+- **Un tocco lungo vibra una volta** (`HapticFeedbackType.LongPress`) e si annuncia al lettore di
+  schermo, che dice che cosa fa (`onLongClickLabel`).
 - I cursori dicono il loro valore; ogni icona ha una descrizione parlata.
 - Il Tondo si annuncia come `Comandi`, e ogni voce del menu Start col suo nome.
 - Un gesto che il lettore di schermo intercetta ha sempre un'alternativa visibile.
