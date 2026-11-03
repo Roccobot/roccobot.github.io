@@ -148,6 +148,10 @@ h3 { font-size: 1.125rem; line-height: 1.35; font-weight: 600; }
 .ic .sm { width: 2.75rem; height: 2.75rem; border-radius: 23%; align-self: end; }
 /* the macOS icon: the owner's file, its tile and margins drawn in it, never cropped */
 .ic .ic-mac { display: block; width: 7rem; height: 7rem; }
+/* the dark icon would vanish on the dark card: a faint, very gradual glow follows the tile's own
+   shape (drop-shadow reads the alpha), moves nothing around it, and the card clips it */
+.ic-night { overflow: hidden; }
+.ic-night .ic-mac { filter: drop-shadow(0 0 1.25rem rgba(235, 255, 247, .07)) drop-shadow(0 0 3rem rgba(235, 255, 247, .06)); }
 .ic-head { margin-top: 2.5rem; }
 .ic figcaption b { display: block; font-size: 1.0625rem; }
 .ic figcaption p { margin: .35rem 0 0; font-size: .9375rem; opacity: .78; }
