@@ -7,7 +7,9 @@
 #
 # The script prints one line per dependency, `NEW` for a newer version than the one read, `STALE`
 # for one whose latest version is more than a year old (since Linfa, 2026-10-25: an abandoned
-# library never has a newer version), and exits 1 when there is either. Then the issue 'Dipendenze
+# library never has a newer version), and exits 1 when there is either; since Soglia (2026-11-04)
+# a newer version that changes only the third number is a `PATCH` line, which waits and opens
+# nothing unless it fixes a security flaw or the version in use is three months old. Then the issue 'Dipendenze
 # da leggere' is opened, or, when its list
 # changed, updated with a comment, which notifies the owner; when everything is current again,
 # the issue is closed. A script that fails for another reason (a source that does not answer)

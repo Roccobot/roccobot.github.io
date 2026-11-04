@@ -25,7 +25,12 @@ version is older than STALE_DAYS is marked STALE, with the date of that version,
 appears or the register accepts it with `stale_accepted` (the date and the reason, written after
 reading what is behind it). Fonts have no date here: a typeface is a finished drawing, and a year
 without a release says nothing about its upkeep.
-Exits 1 when something is newer or stale, 0 when everything is current.
+Since Soglia (2026-11-04, Rocco's choice Soglia-01) a newer version that changes only the third
+number (15.0.2 to 15.0.3) is marked PATCH and waits: it is not worth a session of its own. It turns
+NEW when it fixes a security flaw (`npm audit` on the manifest's lock for npm packages, the words of
+a GitHub release's notes elsewhere) or when the version in use is more than PATCH_WAIT_DAYS old, so
+patches are brought in at most every three months, or with the next newer version.
+Exits 1 when something is newer or stale, 0 when everything is current or only patches wait.
 Author: Rocco Casadei, a.k.a. Roccobot
 """
 import base64
@@ -41,6 +46,30 @@ from pathlib import Path
 ROOT = (Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()).resolve()
 # A year without a release: Rocco's threshold for a library that may have been left behind.
 STALE_DAYS = 365
+# Soglia (2026-11-04, Rocco's choice Soglia-01): a version that changes only the third number waits,
+# unless it fixes a security flaw, until the version in use is this old; then it is read with the rest.
+PATCH_WAIT_DAYS = 90
+SECURITY = re.compile(r'\bsecurity\b|vulnerab|\bCVE-\d', re.IGNORECASE)
+
+
+def is_patch(current, published):
+    """True when only the third number changes (15.0.2 to 15.0.3), on numbers of three parts or more."""
+    a, b = current.lstrip('v').split('.'), published.lstrip('v').split('.')
+    return (len(a) >= 3 and len(b) >= 3 and all(p.isdigit() for p in a + b)
+            and a[:2] == b[:2] and a != b)
+
+
+def mark(current, published, latest_date, current_date, security, stale_accepted, now):
+    """The line's mark: NEW, PATCH (a patch that waits), STALE or ok. Dates may be None."""
+    if current != published:
+        if is_patch(current, published) and not security:
+            since = current_date or latest_date
+            if since is None or (now - since).days <= PATCH_WAIT_DAYS:
+                return 'PATCH'
+        return 'NEW'
+    if latest_date is not None and (now - latest_date).days > STALE_DAYS and not stale_accepted:
+        return 'STALE'
+    return 'ok'
 
 
 def iso(text):
@@ -51,11 +80,51 @@ def gh(path):
     return json.loads(subprocess.run(['gh', 'api', path], capture_output=True, text=True, check=True).stdout)
 
 
-def npm_latest(package):
+def npm_view(package):
     # npm, not urllib: the python.org builds of Python on macOS have no certificates of their own.
-    view = json.loads(subprocess.run(['npm', 'view', package, 'version', 'time', '--json'],
+    return json.loads(subprocess.run(['npm', 'view', package, 'version', 'time', '--json'],
                                      capture_output=True, text=True, check=True).stdout)
+
+
+def npm_latest(package):
+    view = npm_view(package)
     return view['version'], iso(view['time'][view['version']])
+
+
+def npm_flawed(manifest):
+    """The packages `npm audit` reports for a manifest, read from its lock file alone."""
+    folder = (ROOT / manifest).parent
+    if not (folder / 'package-lock.json').exists():
+        return set()
+    done = subprocess.run(['npm', 'audit', '--package-lock-only', '--json'], cwd=folder,
+                          capture_output=True, text=True)
+    try:
+        return set(json.loads(done.stdout).get('vulnerabilities', {}))
+    except json.JSONDecodeError:
+        return set()
+
+
+def released(dependency, version):
+    """When the version in use came out, where a source says it cheaply; None elsewhere."""
+    try:
+        if dependency['source'] == 'npm':
+            return iso(npm_view(dependency['package'])['time'][version])
+        if dependency['source'] == 'github-release':
+            for tag in (f'v{version}', version):
+                try:
+                    return iso(gh(f"repos/{dependency['repo']}/releases/tags/{tag}")['published_at'])
+                except subprocess.CalledProcessError:
+                    continue
+    except (KeyError, subprocess.CalledProcessError):
+        pass
+    return None
+
+
+def release_mentions_security(dependency):
+    """Whether the latest GitHub release's notes speak of a security fix."""
+    if dependency['source'] != 'github-release':
+        return False
+    return bool(SECURITY.search(gh(f"repos/{dependency['repo']}/releases/latest").get('body') or ''))
 
 
 def last_commit_date(repo, path):
@@ -178,30 +247,42 @@ def main():
     manifests = {d['manifest']: json.loads((ROOT / d['manifest']).read_text()) for d in register if 'manifest' in d}
     pins = json.loads((ROOT / 'Package.resolved').read_text())['pins'] if (ROOT / 'Package.resolved').exists() else []
     resolved = {pin['identity']: pin['state'].get('version', '') for pin in pins}
+    flawed = {}
     now = datetime.now(timezone.utc)
-    newer, stale = [], []
+    newer, waiting, stale = [], [], []
     for dependency in register:
         current, (published, date) = in_use(dependency, manifests, resolved), latest(dependency)
-        aged = date is not None and (now - date).days > STALE_DAYS
+        patch = current != published and is_patch(current, published)
+        security, current_date = False, None
+        if patch:
+            if dependency['source'] == 'npm':
+                if dependency['manifest'] not in flawed:
+                    flawed[dependency['manifest']] = npm_flawed(dependency['manifest'])
+                security = dependency['package'] in flawed[dependency['manifest']]
+            else:
+                security = release_mentions_security(dependency)
+            current_date = released(dependency, current)
+        found = mark(current, published, date, current_date, security, 'stale_accepted' in dependency, now)
         when = f', {date:%Y-%m-%d}' if date else ''
         note = ''
-        if current != published:
-            mark = 'NEW'
-            newer.append(dependency['name'])
-        elif aged and 'stale_accepted' not in dependency:
-            mark = 'STALE'
+        if found == 'NEW':
+            newer.append(dependency['name'] + (' (security)' if security else ''))
+        elif found == 'PATCH':
+            waiting.append(dependency['name'])
+        elif found == 'STALE':
             stale.append(dependency['name'])
-        else:
-            mark = 'ok'
-            if aged:
-                note = f"  [stale, accepted: {dependency['stale_accepted']}]"
-        print(f"{mark:5} {dependency['name']}: {current} -> {published}{when}  ({dependency['into']}){note}")
+        elif date is not None and (now - date).days > STALE_DAYS:
+            note = f"  [stale, accepted: {dependency['stale_accepted']}]"
+        print(f"{found:5} {dependency['name']}: {current} -> {published}{when}  ({dependency['into']}){note}")
     if newer:
         print('\nTo read for what is worth bringing in: ' + ', '.join(newer))
+    if waiting:
+        print(f'\nPatches that wait (no security fix, version in use under {PATCH_WAIT_DAYS} days old): ' + ', '.join(waiting))
     if stale:
         print(f'\nNo release for more than {STALE_DAYS} days, to read for whether they are still kept: ' + ', '.join(stale))
     if newer or stale:
         sys.exit(1)
 
 
-main()
+if __name__ == '__main__':
+    main()

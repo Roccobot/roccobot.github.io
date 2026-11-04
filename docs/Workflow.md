@@ -198,6 +198,13 @@
   - ⚠️ **Lo script esce 1 anche quando va in errore**, non solo quando trova una versione nuova:
     il workflow distingue i due casi dalle righe `NEW` e `STALE` dell'uscita, e un errore senza
     quelle righe fa rossa la run invece di aprire una issue vuota.
+  - ⚠️ **Dal 2026-11-04 (`Soglia`) una patch aspetta**: una versione che cambia solo il terzo
+    numero esce con una riga `PATCH`, che non apre la issue e non fa uscire 1 lo script. Diventa
+    `NEW` se corregge una falla di sicurezza (`npm audit` sul lock, per i pacchetti npm; le note di
+    una release di GitHub per le altre) o se la versione in uso ha più di 90 giorni
+    (`PATCH_WAIT_DAYS`). La regola è in `Roccobot.md` § '🔗 Le dipendenze si seguono: ogni versione
+    nuova si legge'; le prove sono in `.memo/scripts/test_check_dependencies.py`, e le lancia
+    `rules-check` a ogni push di questo repo.
   - ⚠️⚠️ **Dal 2026-10-25 (`Linfa`) segnala anche le dipendenze ferme**, con una riga `STALE`:
     quelle la cui ultima versione ha più di un anno (`STALE_DAYS`, 365). Il confronto delle sole
     versioni le dava sempre a posto, perché una libreria abbandonata non ha mai una versione nuova

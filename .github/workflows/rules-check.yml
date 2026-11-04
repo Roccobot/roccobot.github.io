@@ -67,3 +67,6 @@ jobs:
 
       - name: Prove della chiusura di una card (Contromisura-03)
         run: python3 roccobot.github.io/.memo/scripts/test_closecard.py
+
+      - name: Prove della soglia delle patch delle dipendenze (Soglia-01)
+        run: python3 roccobot.github.io/.memo/scripts/test_check_dependencies.py
