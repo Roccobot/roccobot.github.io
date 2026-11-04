@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.56
+> **Versione**: 2.57
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -108,8 +108,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   (`git -C`), mai `&&` né heredoc (testi e script in un file)
   (`Roccobot.md` § '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio, ogni richiesta di autorizzazione è approvata**, nel
-  cloud e in locale; in locale `caffeinate` parte da sé prima del lavoro, e si dice per quanto
-  (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
+  cloud e in locale; in locale `caffeinate` parte da sé, si dice per quanto, e a fine lavoro
+  si ferma (`Roccobot.md` § '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata' e
   § '☕ Le sessioni locali e `caffeinate`'). Restano i divieti di sicurezza.
 - **Un passo che può fare solo l'utente**: si prepara il resto e gli si scrivono i clic in ordine,
   col modo di verificare; finché il clic manca, la cosa non è fatta.
@@ -228,10 +228,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Una misura di layout vale solo col font reale caricato.**
 - **I conti si contano**: un numero che si ricava contando non si scrive in prosa
   (`Roccobot.md` § '🔢 I conti si contano, non si scrivono').
-- **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce dell'elenco di partenza si
-  confronta con il codice del ramo principale, non coi messaggi dei commit, e ha un esito
-  dichiarato (fatta, lasciata con la ragione, da fare o da chiedere) (`Roccobot.md` § '🧾 Il
-  bilancio di chiusura: alla fine di un lavoro si confronta l'elenco con il codice').
+- **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce dell'elenco si confronta
+  col codice del ramo principale, non coi commit, e ha un esito dichiarato (fatta, lasciata con
+  la ragione, da fare o da chiedere); e si ferma ciò che resta acceso in sottofondo, `caffeinate`
+  per primo (`Roccobot.md` § '🧾 Il bilancio di chiusura').
 
 ## 🔁 Il collaudo
 
