@@ -370,6 +370,23 @@ grigie.
 - Apici dritti, accenti veri, tre punti; nei testi delle app i puntini di sospensione sono il
   carattere unico. Niente trattini lunghi, caporali o virgolette curve.
 
+## Piattaforme
+
+- **Il nuovo, subito**: ogni framework grafico, paradigma di design, norma di UI e UX e strumento
+  per costruire interfacce entra appena esce, anche in anteprima: su Android l'ultima versione di
+  Material Design e Compose, su macOS Liquid Glass e le icone che si adattano a ogni stile del
+  sistema.
+- **Il marchio quanto il sistema consente**: dove il sistema lascia spazio allo stile, come
+  Android, entrano più elementi distintivi del design system; dove è più chiuso, come macOS, le
+  sue regole grafiche vengono prima, anche a costo di un'app meno personale, e l'identità del
+  marchio entra comunque in tutto quello che resta libero.
+- **Nucleo comune, interfaccia nativa**: un'app su più piattaforme condivide il più possibile il
+  nucleo operativo (Swift per Android, iOS e macOS; Rust per le app che girano ovunque), e
+  l'interfaccia si scrive sempre col linguaggio e gli strumenti nativi di ogni piattaforma (Swift
+  su macOS, Kotlin su Android).
+- **Il futuro conta quanto la funzione**: tenere interfaccia ed esperienza pronte per le versioni
+  future del sistema ha la stessa priorità delle funzioni e dell'efficienza.
+
 ## Principi
 
 - **Il contenuto prima di tutto**: fotografie, immagini e libri sono il soggetto; fondi neutri e
