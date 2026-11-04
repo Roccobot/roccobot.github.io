@@ -389,6 +389,35 @@ class BriefDoneTests(unittest.TestCase):
         self.assertEqual(difetti, [])
         self.assertIn('brief lungo', nota)
 
+    # Contromisura-01, 2026-11-04: titles that declare the entry closed were left for days.
+    def test_closed_title_is_rejected(self):
+        testo = ('## In sospeso\n'
+                 '### Tutti i repo: `Dieta`, le note: FATTA su dodici repo\n'
+                 '### `Tools`: `Glossa`, proposta RITIRATA\n'
+                 '### Tutti i repo: `Bacheca`: ADOTTATO Trello\n')
+        difetti, _ = self.check(testo)
+        self.assertEqual([n for _, n, _ in difetti], [2, 3, 4])
+
+    def test_lowercase_words_and_open_titles_pass(self):
+        testo = ('### `Argine`, la voce chiusa si toglie, IN CORSO\n'
+                 '- la card è chiusa e fatta\n')
+        difetti, _ = self.check(testo)
+        self.assertEqual(difetti, [])
+
+    def test_old_decisions_are_only_a_warning(self):
+        testo = ("## Decisioni dell'utente\n"
+                 '- **2026-11-03** (Tools): recente\n'
+                 '- **2026-10-20** (Tools): vecchia\n'
+                 '## Allegati\n'
+                 '- **2026-01-01** fuori dalla sezione\n')
+        with tempfile.TemporaryDirectory() as cartella:
+            path = Path(cartella) / 'LATEST.md'
+            path.write_text(testo, encoding='utf-8')
+            difetti, nota = refcheck.check_brief_evase(path, oggi=refcheck.datetime.date(2026, 11, 4))
+        self.assertEqual(difetti, [])
+        self.assertIn('più vecchie di 7 giorni: 1', nota)
+        self.assertIn('2026-10-20', nota)
+
 
 class SymbolTests(unittest.TestCase):
     """Arrows are symbols the rules use, whatever block they are in.

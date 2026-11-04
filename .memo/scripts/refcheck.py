@@ -24,7 +24,9 @@ Otto controlli:
   4. titoli VOLATILI              -> nessun titolo contiene date o versioni
   5. CARATTERI                    -> niente omografi, niente caratteri vietati fuori dal codice
   6. riquadro del brief           -> la copia in LATEST.md combacia con la sorgente nella skill
-  7. voci evase nel brief         -> niente segno di spunta né 'fatta e pubblicata'
+  7. voci evase nel brief         -> niente segno di spunta né 'fatta e pubblicata', né titoli
+                                     FATTA, ADOTTATA, RITIRATA o CHIUSA; avviso sulle decisioni
+                                     più vecchie di sette giorni
   8. card della bacheca           -> ogni lavoro in sospeso col nome in codice ha la sua card
 
 Il controllo 3 è permissivo per scelta: verifica che il titolo esista da
@@ -35,6 +37,7 @@ ogni rimando che lo cita resta indietro (caso reale: il protocollo di avvio ha
 cambiato titolo due volte in un giorno). I controlli 5 e 6 sono del 2026-07-30 e
 hanno la loro spiegazione accanto al codice, che è dove serve leggerla.
 """
+import datetime
 import html as htmllib
 import os
 import json
@@ -1249,12 +1252,23 @@ def check_intro():
 EVASA = re.compile(r"✅|\bfatt[aoie] e pubblicat[aoie]\b", re.IGNORECASE)
 # Oltre questa lunghezza il brief non si blocca, ma lo si dice: è il sintomo che arriva prima.
 BRIEF_RIGHE_AVVISO = 400
+# Il titolo di una voce che dichiara il lavoro chiuso (`Contromisura-01`, 2026-11-04). Il
+# confronto fra brief e bacheca di quel giorno ha trovato voci intitolate 'FATTA su dodici repo',
+# 'ADOTTATO Trello', 'proposta RITIRATA', con la card in `Fatte` da giorni: la spunta e la formula
+# di sopra non le vedevano. Il criterio è il maiuscolo, che nei titoli del brief segna lo stato
+# della voce (`IN CORSO`, `IN ATTESA`): in minuscolo le stesse parole descrivono la cosa.
+TITOLO_CHIUSO = re.compile(r"\b(?:FATT|ADOTTAT|RITIRAT|CHIUS)[AOIE]\b")
+# Le decisioni dell'utente restano nel brief solo finché non vivono nelle regole: oltre questa
+# età si avvisa, perché nessuno le potava e il 2026-11-04 ce n'erano di tre settimane prima.
+DECISIONE_GIORNI = 7
+RE_DECISIONE = re.compile(r"^- \*\*(\d{4}-\d{2}-\d{2})\*\*")
 
 
-def check_brief_evase(path=None):
+def check_brief_evase(path=None, oggi=None):
     """Cerca nel brief le voci marcate come fatte, che vanno cancellate.
 
-    Rende (difetti, nota): i difetti bloccano, la nota avvisa di un brief troppo lungo.
+    Rende (difetti, nota): i difetti bloccano, la nota avvisa di un brief troppo lungo e delle
+    decisioni dell'utente più vecchie di `DECISIONE_GIORNI` giorni.
     """
     path = path or INTRO_COPIA
     if not path.exists():
@@ -1262,9 +1276,30 @@ def check_brief_evase(path=None):
     righe = path.read_text(encoding="utf-8").splitlines()
     difetti = [(path, n, f"voce marcata come fatta: {r.strip()[:80]}")
                for n, r in enumerate(righe, 1) if EVASA.search(r)]
-    nota = (f"brief lungo {len(righe)} righe (soglia {BRIEF_RIGHE_AVVISO}): cerca le voci "
-            "evase da cancellare" if len(righe) > BRIEF_RIGHE_AVVISO else None)
-    return (difetti, nota)
+    difetti += [(path, n, f"titolo di una voce chiusa, che si cancella: {r.strip()[:80]}")
+                for n, r in enumerate(righe, 1)
+                if r.startswith("### ") and TITOLO_CHIUSO.search(r)]
+    note = []
+    if len(righe) > BRIEF_RIGHE_AVVISO:
+        note.append(f"brief lungo {len(righe)} righe (soglia {BRIEF_RIGHE_AVVISO}): cerca le voci "
+                    "evase da cancellare")
+    oggi = oggi or datetime.date.today()
+    vecchie, in_decisioni = [], False
+    for r in righe:
+        if r.startswith("## "):
+            in_decisioni = r.strip() == "## Decisioni dell'utente"
+        elif in_decisioni and (m := RE_DECISIONE.match(r)):
+            try:
+                giorno = datetime.date.fromisoformat(m.group(1))
+            except ValueError:
+                continue
+            if (oggi - giorno).days > DECISIONE_GIORNI:
+                vecchie.append(m.group(1))
+    if vecchie:
+        note.append(f"decisioni dell'utente più vecchie di {DECISIONE_GIORNI} giorni: {len(vecchie)} "
+                    f"(la più vecchia del {min(vecchie)}); se vivono nelle regole o sono superate, "
+                    "si tolgono")
+    return (difetti, "; ".join(note) or None)
 
 
 # ── Ogni lavoro col nome in codice ha la sua card sulla bacheca ──

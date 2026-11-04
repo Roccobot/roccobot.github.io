@@ -426,6 +426,9 @@ c'è niente in sospeso, scrivi 'niente' e non inventare lavoro.
 - **Una versione col tag pubblicato lascia solo le voci aperte che ne nascono**: niente digest,
   byte, SHA, conti delle prove, che vivono nel tag, nel codice o nelle regole. È la causa per cui
   il brief del 2026-10-16 era arrivato a 514 righe.
+- **Una card si cita solo col nome e il collegamento**, mai con la sua lista o il suo stato, che
+  vivono sulla card; le card in `Backlog` non entrano, e una voce che cambia si riscrive invece di
+  ricevere una riga in coda (`Roccobot.md` § '📌 La bacheca di lavoro (Trello)').
 - **Un lavoro a metà fra più turni vive su un branch pushato** (`claude/<nome>`) o in un `git
   bundle` fra gli allegati, citato nella voce: lo scratchpad muore col container, e il brief
   protegge la descrizione, non il codice.
