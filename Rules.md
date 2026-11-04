@@ -133,7 +133,7 @@ numero per scelta dell'utente.
   il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito; su un
   telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
-  strumenti' e in fondo 'Roccobot ABP'). Solo italiano, coi valori di `Roccobot Design`, e due temi
+  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). Solo italiano, coi valori di `Roccobot Design`, e due temi
   dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
   il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
   scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
