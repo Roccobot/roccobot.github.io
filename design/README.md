@@ -377,7 +377,7 @@ grigie.
 ## Piattaforme
 
 - **Il nuovo, subito**: ogni framework grafico, paradigma di design, norma di UI e UX e strumento
-  per costruire interfacce entra appena esce, anche in anteprima: su Android l'ultima versione di
+  per costruire interfacce va adottato appena disponibile, anche in anteprima: su Android l'ultima versione di
   Material Design e Compose, su macOS Liquid Glass e le icone che si adattano a ogni stile del
   sistema.
 - **Il marchio quanto il sistema consente**: dove il sistema lascia spazio allo stile, come
