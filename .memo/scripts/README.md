@@ -20,6 +20,8 @@
 | `githook.py` | i controlli degli hook di git e dell'Action `rules-check`, per tutti gli agenti; prima di un commit di solo testo avvisa dei flussi di prove che farebbe partire (`Freno`) |
 | `test_githook.py` | le prove dell'avviso `Freno`: un filtro per esclusione si sveglia su `.scratch/`, uno per inclusione no |
 | `catchup.py` | che cosa è arrivato dopo il timbro `Last turn` del brief, e il timbro stesso (`--stamp`) |
+| `closecard.py` | chiude una card della bacheca in un comando solo: in cima a `Fatte`, spuntata, senza l'assegnazione all'utente e col commento dell'esito (`Contromisura-03`) |
+| `test_closecard.py` | le prove delle scelte di `closecard.py`, senza chiamare Trello |
 | `checkjs.py` | la sintassi dello script finale di un documento generato |
 | `fixcomments.py` | gli accenti scritti con l'apostrofo, corretti solo dentro i commenti di un sorgente |
 | `testpage.py` | la prova di una pagina HTML prima di pubblicarla: sintassi e disegno |

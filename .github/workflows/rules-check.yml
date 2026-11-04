@@ -64,3 +64,6 @@ jobs:
 
       - name: Prove dell'avviso sui flussi che partono da soli (Freno)
         run: python3 roccobot.github.io/.memo/scripts/test_githook.py
+
+      - name: Prove della chiusura di una card (Contromisura-03)
+        run: python3 roccobot.github.io/.memo/scripts/test_closecard.py

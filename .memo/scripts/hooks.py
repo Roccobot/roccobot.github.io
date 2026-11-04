@@ -276,10 +276,12 @@ SEGNO_BACHECA = Path.home() / '.claude' / 'trello-since'
 WORKER = 'https://rules-proxy.roccobot-b90.workers.dev/'
 
 
-def azioni_di_rocco(azioni, etichette):
+def azioni_di_rocco(azioni, etichette, brief=''):
     """The lines to show for Trello's actions: Rocco's comments that tag the agents, his moves of a
     card into or out of Admin and Fatte, and the cards he assigns to the agents; oldest first, the
-    time in Rome's zone. `etichette` maps a card's id to the names of its labels."""
+    time in Rome's zone. `etichette` maps a card's id to the names of its labels; `brief` is the
+    text of the brief, and a card he moves into Fatte that the brief cites says so (Contromisura-04,
+    2026-11-04: closed cards stayed in the brief as open work for days)."""
     from datetime import datetime
     from zoneinfo import ZoneInfo
     righe = []
@@ -296,6 +298,8 @@ def azioni_di_rocco(azioni, etichette):
             if not {prima, dopo} & LISTE_DI_RITORNO:
                 continue
             cosa = f'spostata da {prima} a {dopo}'
+            if dopo == 'Fatte' and card.get('shortLink') and f"trello.com/c/{card['shortLink']}" in brief:
+                cosa += '; il brief la cita: togli o riscrivi la sua voce in questo turno'
         elif tipo == 'addMemberToCard' and AGENTI in (d.get('idMember'), (d.get('member') or {}).get('id')):
             cosa = 'assegnata agli agenti'
         else:
@@ -350,7 +354,11 @@ def avvisi_bacheca():
     carte = trello_get(f'/boards/{BACHECA}/cards', {'fields': 'idLabels'}) or []
     nomi = {e.get('id'): e.get('name') for e in (trello_get(f'/boards/{BACHECA}/labels', {'fields': 'name'}) or [])}
     etichette = {c.get('id'): [nomi[i] for i in c.get('idLabels', []) if nomi.get(i)] for c in carte}
-    return azioni_di_rocco(azioni, etichette)
+    try:
+        brief = (BASE / 'tools' / '.memo' / 'LATEST.md').read_text(encoding='utf-8')
+    except OSError:
+        brief = ''                  # tools not cloned: the move is shown without the reminder
+    return azioni_di_rocco(azioni, etichette, brief)
 
 
 # ── turno ─────────────────────────────────────────────────────────────────────

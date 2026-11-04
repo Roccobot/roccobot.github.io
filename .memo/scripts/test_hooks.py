@@ -132,6 +132,17 @@ class BoardTests(unittest.TestCase):
         mine = self.act('commentCard', {'text': '@roccobot_ai fatto'}, chi=self.h.AGENTI)
         self.assertEqual(self.lines([mine]), [])
 
+    def test_a_card_into_fatte_cited_by_the_brief_says_so(self):
+        # Contromisura-04, 2026-11-04: closed cards stayed in the brief as open work for days.
+        into = self.act('updateCard', {'listBefore': {'name': 'Tools'}, 'listAfter': {'name': 'Fatte'}})
+        cited = self.h.azioni_di_rocco([into], {}, brief='Card: [Censo](https://trello.com/c/abc123)')
+        self.assertIn('il brief la cita', cited[0])
+        not_cited = self.h.azioni_di_rocco([into], {}, brief='nessuna card qui')
+        self.assertNotIn('il brief la cita', not_cited[0])
+        out_of = self.act('updateCard', {'listBefore': {'name': 'Fatte'}, 'listAfter': {'name': 'Tools'}})
+        back = self.h.azioni_di_rocco([out_of], {}, brief='https://trello.com/c/abc123')
+        self.assertNotIn('il brief la cita', back[0])
+
     def test_oldest_first_and_card_without_labels(self):
         late = self.act('commentCard', {'text': '@roccobot_ai due'}, date='2026-11-03T18:00:00Z')
         early = self.act('commentCard', {'text': '@roccobot_ai uno'}, date='2026-11-03T17:00:00Z')

@@ -133,7 +133,7 @@ numero per scelta dell'utente.
   il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito; su un
   telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
-  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). Solo italiano, coi valori di `Roccobot Design`, e due temi
+  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). Solo italiano, coi valori del design system di `design/`, e due temi
   dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
   il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
   scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
@@ -688,31 +688,11 @@ sessione:
        dell'ambiente** (via 1), che gira prima che la sessione parta: la riga da incollare là è
        questo stesso comando, e quando la lista cambia all'utente si ridà. ⚠️ **Non si promette
        che la sessione dopo non chiederà**: senza lo script, chiederà.
-   - ⚠️⚠️ **E NELLO STESSO PASSO SI CONTROLLA CLAUDE DESIGN, che dalla richiesta dell'utente
-     del 2026-09-02 va agganciato SEMPRE** (*aggiorna le routine delle nuove sessioni in modo
-     che sia sempre agganciato anche Claude Design*). Là vive il **design system** dei
-     progetti, e senza quell'aggancio una sessione riscrive a mano colori, misure e frasi che
-     esistono già.
-     - **Il controllo costa una chiamata** e non si chiede niente all'utente: `DesignSync` in
-       modo `list_projects`. Se risponde con l'elenco, è agganciato e si tira avanti.
-     - ⚠️⚠️ **SE NON È AUTORIZZATO, IL COMANDO DA CHIEDERE È `/design-consent`**, e si chiede
-       una volta sola perché il consenso è **dell'account** e non della sessione (si revoca
-       con `/design revoke`). ⚠️ **NON è `/design-login`**, che è quello che l'errore dello
-       strumento suggerisce: quel comando esiste nel Claude Code **da terminale** e in una
-       sessione remota **non esiste affatto** (provato dall'utente il 2026-09-02: *a quanto
-       pare il comando /design-login non esiste*). Chi ripete il suggerimento dell'errore
-       manda l'utente a sbattere.
-     - ⚠️ **Le letture non chiedono niente, le scritture sì**: `list_projects`, `list_files` e
-       `get_file` girano senza prompt appena il consenso c'è; una scrittura passa da
-       `finalize_plan` e da un'autorizzazione a sé. Per questo `DesignSync` **non** è nella
-       lista `allow` del passo 0: metterlo là pre-autorizzerebbe anche le modifiche al design
-       system, che è un'altra cosa da quello che serve all'avvio.
-     - **Che cosa si raggiunge e che cosa no**, misurato il 2026-09-02: i **progetti di design
-       system** sì (il suo `Roccobot Design`, due suoi progetti di prova, e due condivisi del
-       lavoro che **non si toccano**); i **documenti** `.dc.html` che vivono fuori da un
-       progetto **no**, e quello è il buco che ha bloccato la paginetta di download di AIV.
-       Il dettaglio completo, coi contenuti di `Roccobot Design`, vive in `Roccobot.md`,
-       § '🎨 Grafica' → '🎨 Claude Design, dove vive il design system'.
+   - ⚠️ **Claude Design all'avvio non si controlla più** (dal 2026-11-04, scelta `Design-01`
+     dell'utente). Fino al 2026-11-03 questo passo chiedeva di verificare l'aggancio di
+     `DesignSync`, perché là viveva il design system; il progetto `Roccobot Design` l'ha eliminato
+     l'utente quel giorno, e la fonte unica è la pagina `design/` di questo repo
+     (`Roccobot.md` § '🎨 Grafica' → '🎨 Il design system, dove vive').
 1. **Di `rules/Roccobot.md` si leggono subito, e senza chiedere niente, le sole sezioni sul
    linguaggio**: '💬 Stile di comunicazione' fino a '🙂 Formule da non usare' compresa,
    'Caratteri' e '⌨️ Comandi da terminale (richieste all'utente)'. Le righe esatte le stampa il
