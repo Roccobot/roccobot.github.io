@@ -327,11 +327,15 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
   action, one per screen, outlined for the others.
+  The bottom sheet has 28 top corners (`raggio-scheda`), a 24 inset and the close button next to
+  the title.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo`; with the blur off a sheet's
-  scrim is at 60%.
-- **Help overlays**: a dark scrim (`velo-aiuto`) with an orange box and the key to tap in yellow;
-  the owner writes the text.
-- **Notices**: a single line, above the sheet or next to the Tondo, with `Undo` where it is needed.
+  scrim is at 60%. The panel stands out by its surface color alone, with no border.
+- **Help overlays**: a dark scrim (`velo-aiuto`) with the sentence in white, at most 260 wide; what
+  it explains is marked in orange and the key to tap is yellow, and any tap closes it; the owner
+  writes the text.
+- **Notices**: a single line, above the sheet or next to the Tondo, 12 from the edges, with 14
+  corners; with `Undo`, a 3-pt line along the bottom shortens with the time left.
 - **Fixed controls on the web**: round, above the content; they
   appear while scrolling and disappear after 3 seconds of stillness. A control that leads nowhere
   at that moment is hidden (there is no 'back to top' at the top), and a hidden control also leaves

@@ -325,11 +325,15 @@ grigie.
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
   principale, uno per schermata, il contorno per le altre.
+  La scheda dal basso ha gli angoli in alto di 28 (`raggio-scheda`), un rientro di 24 e il tasto di
+  chiusura accanto al titolo.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo`; con la sfocatura spenta il
-  velo di una scheda è al 60%.
-- **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con un riquadro arancio e il tasto da toccare in
-  giallo; il testo lo scrive il titolare.
-- **Avvisi**: una voce sola, sopra la scheda o accanto al Tondo, con `Annulla` dove serve.
+  velo di una scheda è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.
+- **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con la frase in bianco, larga al massimo 260;
+  quello che spiega è segnato in arancio, il tasto da toccare è giallo, e un tocco qualunque lo
+  chiude; il testo lo scrive il titolare.
+- **Avvisi**: una voce sola, sopra la scheda o accanto al Tondo, a 12 dai bordi e con angoli di
+  14; con `Annulla`, una riga di 3 punti in fondo si accorcia col tempo che resta.
 - **Comandi fissi sul web**: tondi, sopra il contenuto;
   compaiono mentre si scorre e spariscono dopo 3 secondi di quiete. Si nasconde il comando che in
   quel momento non porta da nessuna parte (in cima non c'è 'vai in cima'), e un comando invisibile

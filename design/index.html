@@ -349,6 +349,29 @@ td.kind { color: var(--testo-secondario); }
 .tondo-stage p { margin: 0; align-self: flex-start; font-size: .9375rem; color: var(--testo-secondario); }
 .tondo { position: absolute; right: var(--tondo-fianco); bottom: var(--tondo-basso); width: var(--tondo); height: var(--tondo); border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--superficie) 60%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 1px 4px rgba(0, 0, 0, .18), inset 0 0 0 1px var(--linea); }
 .tondo svg { width: 1.45rem; height: auto; color: var(--accento); }
+/* app mock-ups: a phone screen cut to its bottom part, with a grid of thumbnails behind the panel */
+.mock-stage { padding: 0; min-height: 0; }
+.mock { position: relative; width: 100%; height: 13rem; overflow: hidden; background: var(--fondo); }
+.mock-grid { position: absolute; inset: .5rem; display: grid; grid-template-columns: repeat(4, 1fr); align-content: start; gap: .3rem; }
+.mock-grid i { aspect-ratio: 1; border-radius: var(--raggio-miniatura); background: color-mix(in srgb, var(--accento) 30%, var(--superficie)); }
+.mock-grid i:nth-child(3n) { background: color-mix(in srgb, var(--testo) 22%, var(--superficie)); }
+.mock-grid i:nth-child(4n+2) { background: color-mix(in srgb, var(--accento) 55%, var(--superficie)); }
+.mock-veil { position: absolute; inset: 0; background: var(--velo); backdrop-filter: blur(var(--sfocatura-velo)); -webkit-backdrop-filter: blur(var(--sfocatura-velo)); }
+.mock-bar { display: block; height: .5rem; border-radius: .25rem; background: color-mix(in srgb, var(--testo) 14%, transparent); }
+.mock-sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: .75rem 1.5rem 1.5rem; display: grid; gap: .75rem; background: var(--superficie); border-radius: var(--raggio-scheda) var(--raggio-scheda) 0 0; }
+.mock-sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.mock-sheet-head .mock-bar { width: 40%; height: .7rem; background: color-mix(in srgb, var(--testo) 45%, transparent); }
+.mock-sheet-head svg { width: 1.25rem; height: 1.25rem; color: var(--testo); }
+.mock-menu { position: absolute; right: .75rem; bottom: .75rem; width: 55%; padding: .9rem; display: grid; gap: .7rem; border-radius: 20px; background: var(--superficie); }
+.mock-hint { position: absolute; inset: 0; padding: 1rem; display: flex; flex-direction: column; justify-content: flex-end; gap: .9rem; background: var(--velo-aiuto); }
+.mock-hint p { margin: 0; max-width: 16rem; color: #fff; font-size: .9375rem; font-weight: 500; line-height: 1.35; }
+.mock-hint-row { display: flex; gap: .6rem; align-items: center; }
+.mock-hint-row i { width: 1.6rem; height: 1.6rem; border-radius: 50%; border: 3px solid var(--aiuto-arancio); }
+.mock-hint-key { margin-left: auto; padding: .35rem .8rem; border-radius: 12px; background: var(--aiuto-tasto); color: var(--aiuto-tasto-inchiostro); font-size: .8125rem; font-weight: 600; }
+.mock-notice { position: absolute; left: .75rem; right: .75rem; bottom: .75rem; padding: .7rem .75rem .7rem 1rem; display: flex; align-items: center; gap: 1rem; overflow: hidden; border-radius: 14px; background: color-mix(in srgb, var(--testo) 12%, var(--superficie)); color: var(--testo); font-size: .875rem; }
+.mock-notice span:first-child { flex: 1 1 auto; }
+.mock-notice b { color: var(--testo-accento); font-weight: 600; }
+.mock-notice::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 62%; background: var(--accento); }
 .tondo-zone { position: absolute; right: calc(var(--tondo-fianco) - 2px); bottom: calc(var(--tondo-basso) - 2px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); border-radius: 50%; outline: 1px dashed var(--testo-accento); }
 .links { display: grid; gap: .4rem; }
 
@@ -430,7 +453,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   <div class="bar-in">
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
-    <span class="bar-ver">v19</span>
+    <span class="bar-ver">v20</span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
@@ -813,6 +836,30 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
           <div class="stage"><div class="card"><div class="card-t"><b>AIV</b> <span>Astonishing Image&nbsp;Viewer</span><p><span lang="it">Gestore di&nbsp;immagini avanzato per&nbsp;Android</span><span lang="en">Advanced image manager for&nbsp;Android</span></p></div><a class="btn btn-full" href="#componenti"><span lang="it">Apri</span><span lang="en">Open</span></a></div></div>
         </div>
         <div class="comp">
+          <h3><span lang="it">Scheda&nbsp;dal&nbsp;basso</span><span lang="en">Bottom&nbsp;sheet</span></h3>
+          <p lang="it">Nelle app sale dal basso con una molla, sopra il&nbsp;velo: angoli in&nbsp;alto di&nbsp;28, un&nbsp;rientro di&nbsp;24&nbsp;e&nbsp;il&nbsp;tasto di&nbsp;chiusura accanto&nbsp;al&nbsp;titolo.</p>
+          <p lang="en">In&nbsp;the apps it&nbsp;rises from the bottom on&nbsp;a&nbsp;spring, above the scrim: 28&nbsp;top corners, a&nbsp;24&nbsp;inset and the close button next to&nbsp;the&nbsp;title.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-sheet"><div class="mock-sheet-head"><span class="mock-bar"></span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></div><span class="mock-bar"></span><span class="mock-bar" style="width:70%"></span></div></div></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Velo</span><span lang="en">Scrim</span></h3>
+          <p lang="it">Dietro ogni pannello, al&nbsp;30% con 12&nbsp;di&nbsp;sfocatura: nero nel tema chiaro, bianco in&nbsp;quello&nbsp;scuro. Il&nbsp;pannello si&nbsp;stacca col solo colore della superficie; con la&nbsp;sfocatura spenta, il&nbsp;velo di&nbsp;una scheda sale&nbsp;al&nbsp;60%.</p>
+          <p lang="en">Behind every panel, at&nbsp;30% with a&nbsp;12&nbsp;blur: black in&nbsp;the light theme, white in&nbsp;the&nbsp;dark&nbsp;one. The panel stands out by&nbsp;its surface color alone; with the blur off, a&nbsp;sheet's&nbsp;scrim goes&nbsp;up&nbsp;to&nbsp;60%.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-menu"><span class="mock-bar"></span><span class="mock-bar" style="width:80%"></span><span class="mock-bar" style="width:60%"></span></div></div></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Veli&nbsp;d'aiuto</span><span lang="en">Help&nbsp;overlays</span></h3>
+          <p lang="it">Un&nbsp;velo nero al&nbsp;70% con la&nbsp;frase in&nbsp;bianco, larga al&nbsp;massimo 260: quello che spiega è&nbsp;segnato in&nbsp;arancio, il&nbsp;tasto da&nbsp;toccare è&nbsp;giallo, e&nbsp;un&nbsp;tocco qualunque&nbsp;lo&nbsp;chiude. Il&nbsp;testo lo&nbsp;scrive il&nbsp;titolare.</p>
+          <p lang="en">A&nbsp;black scrim at&nbsp;70% with the sentence in&nbsp;white, at&nbsp;most 260 wide: what it&nbsp;explains is&nbsp;marked in&nbsp;orange, the key to&nbsp;tap is&nbsp;yellow, and any tap&nbsp;closes&nbsp;it. The owner writes&nbsp;the&nbsp;text.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-hint"><p lang="it">Scorri le&nbsp;icone per avere accesso a&nbsp;tutti i&nbsp;moduli di&nbsp;modifica. Premi a&nbsp;lungo l'icona di&nbsp;un&nbsp;modulo per azzerare solo le&nbsp;sue&nbsp;modifiche.</p><p lang="en">Swipe the icons to&nbsp;reach every editing&nbsp;module. Long-press a&nbsp;module icon to&nbsp;reset only its&nbsp;changes.</p><div class="mock-hint-row"><i></i><i></i><i></i><i></i><span class="mock-hint-key"><span lang="it">Salva</span><span lang="en">Save</span></span></div></div></div></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Avvisi</span><span lang="en">Notices</span></h3>
+          <p lang="it">Una riga sola in&nbsp;basso, a&nbsp;12&nbsp;dai bordi e&nbsp;con angoli&nbsp;di&nbsp;14. Resta 2&nbsp;secondi, o&nbsp;3&nbsp;quando offre <code>Annulla</code>: allora una riga sottile in&nbsp;fondo si&nbsp;accorcia col tempo&nbsp;che&nbsp;resta.</p>
+          <p lang="en">A&nbsp;single line at&nbsp;the bottom, 12&nbsp;from the edges, with 14&nbsp;corners. It&nbsp;stays 2&nbsp;seconds, or&nbsp;3&nbsp;when it&nbsp;offers <code>Undo</code>: then a&nbsp;thin line along the bottom shortens with the&nbsp;time&nbsp;left.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-notice"><span><span lang="it">Nessun file selezionato.</span><span lang="en">No&nbsp;files&nbsp;selected.</span></span><b><span lang="it">Annulla</span><span lang="en">Undo</span></b></div></div></div>
+        </div>
+        <div class="comp">
           <h3>Tondo</h3>
           <p lang="it">Il&nbsp;comando principale delle app: tondo e&nbsp;traslucido nell'angolo del pollice, di&nbsp;44&nbsp;a&nbsp;vista con una zona di&nbsp;tocco&nbsp;di&nbsp;48.</p>
           <p lang="en">The main command of&nbsp;the apps: round and translucent in&nbsp;the thumb's&nbsp;corner, 44&nbsp;to&nbsp;the eye with a&nbsp;touch area&nbsp;of&nbsp;48.</p>
@@ -904,7 +951,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <footer class="end">
         <span><svg viewBox="13.96 5.77 152.11 143.75" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei,&nbsp;a.k.a.&nbsp;Roccobot</span>
         <a href="https://roccobot.me">roccobot.me</a>
-        <span><span lang="it">Versione&nbsp;19, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;19, November&nbsp;3,&nbsp;2026</span></span>
+        <span><span lang="it">Versione&nbsp;20, 3&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;20, November&nbsp;3,&nbsp;2026</span></span>
       </footer>
     </section>
   </main>
