@@ -373,6 +373,22 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - Straight quotes, real accents, three dots; in app text the ellipsis is the single character. No
   em or en dashes, guillemets or curly quotes.
 
+## Platforms
+
+- **New, right away**: every new graphics framework, design paradigm, UI and UX guideline and
+  interface tool goes in as soon as it ships, even in preview: on Android the latest Material
+  Design and Compose, on macOS Liquid Glass and icons that adapt to every system style.
+- **As much brand as the system allows**: where the system leaves room for style, as Android does,
+  more of the design system's distinctive elements go in; where it is stricter, as macOS is, its
+  visual guidelines come first, even if the app feels less personal, and the brand identity still
+  goes into everything left open.
+- **Shared core, native interface**: an app on several platforms shares as much of its core as
+  possible (Swift for Android, iOS and macOS; Rust for apps that run everywhere), and the interface
+  is always built with each platform's native language and tools (Swift on macOS, Kotlin on
+  Android).
+- **The future matters as much as function**: keeping the interface and the experience ready for
+  future system versions has the same priority as features and efficiency.
+
 ## Principles
 
 - **Content first**: photographs, images and books are the subject; neutral backgrounds and the
