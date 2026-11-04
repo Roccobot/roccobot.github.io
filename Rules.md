@@ -507,6 +507,12 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   ordine li decide lui. ⚠️ **Il riquadro `🟠 Cosa devi fare tu` in fondo ai messaggi è tolto** (era nato
   con `Coda-01` il 2026-10-25): un messaggio finisce col suo contenuto. Il testo completo è in
   `Roccobot.md` § '💬 Stile di comunicazione'.
+- ⚠️⚠️ **`CAFFEINATE` SI DICE QUANDO PARTE, E SI FERMA A LAVORO FINITO** (sua regola del 2026-11-04,
+  dopo una sessione che l'aveva lanciato per tre ore senza dirlo e lasciato acceso a card chiuse:
+  *non dev'essere solo nella tua memoria: dev'essere una regola permanente*). All'avvio si scrive in
+  chat per quanto; nel bilancio di chiusura, prima del resoconto, si ferma `caffeinate` con ogni
+  altro comando rimasto in sottofondo, e lo si dice. Il testo completo è in `Roccobot.md`
+  § '🧾 Il bilancio di chiusura' e § '☕ Le sessioni locali e `caffeinate`'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
