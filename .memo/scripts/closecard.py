@@ -10,17 +10,20 @@ call at a time they were left half done: on 2026-11-04 a check of the board foun
 `Fatte` without the tick and one still assigned to him (choice `Contromisura-03`).
 
 The decisions live in `close_plan()`, a pure function the tests exercise; `main()` only reads the
-board and sends the two calls through the rules-proxy Worker, with `RULES_PASSWORD` read at run
-time and never printed.
+board and sends the two calls through the rules-proxy Worker, with the rules password read at run
+time (rules_password.py: the file on Rocco's Mac first, `RULES_PASSWORD` otherwise) and never printed.
 
 Author: Rocco Casadei, a.k.a. Roccobot
 """
 import json
-import os
 import re
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import rules_password  # noqa: E402
 
 WORKER = "https://rules-proxy.roccobot-b90.workers.dev/"
 BOARD = "6ae2176ecb8fb9cf1c9689a6"
@@ -55,8 +58,10 @@ def close_plan(card, done_list_id, comment):
 
 
 def call(method, path, query=None, body=None):
-    payload = {"action": "trello", "password": os.environ["RULES_PASSWORD"],
-               "method": method, "path": path}
+    password = rules_password.read()
+    if not password:
+        raise SystemExit("manca la parola delle regole: né ~/.config/roccobot/rules-password né RULES_PASSWORD")
+    payload = {"action": "trello", "password": password, "method": method, "path": path}
     if query:
         payload["query"] = query
     if body is not None:

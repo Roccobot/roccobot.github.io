@@ -318,7 +318,9 @@ def azioni_di_rocco(azioni, etichette, brief=''):
 def trello_get(path, query):
     """One GET to Trello through the Worker; None on any failure, so a slow Trello never blocks."""
     import urllib.request
-    parola = os.environ.get('RULES_PASSWORD')
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import rules_password
+    parola = rules_password.read()
     if not parola:
         return None
     corpo = json.dumps({'action': 'trello', 'password': parola, 'method': 'GET',

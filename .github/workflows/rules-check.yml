@@ -70,3 +70,6 @@ jobs:
 
       - name: Prove della soglia delle patch delle dipendenze (Soglia-01)
         run: python3 roccobot.github.io/.memo/scripts/test_check_dependencies.py
+
+      - name: Prove della parola delle regole, prima il file (Parola-01)
+        run: python3 roccobot.github.io/.memo/scripts/test_rules_password.py
