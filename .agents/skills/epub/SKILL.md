@@ -126,22 +126,22 @@ sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md`
    - la cartella dei font con le loro licenze,
      <https://github.com/Roccobot/roccobot.github.io/tree/master/styles/AomidoriFlex>.
 
-   Le copie si cercano in due posti:
-   - **in una sessione sul Mac dell'utente**,
-     `~/Library/Application Support/Aomidori/Styles/AomidoriFlex.css`;
-   - **in ogni sessione**, `styles/AomidoriFlex.css` di questo repo, l'archivio degli stili di
-     Aomidori, che la sessione di Aomidori tiene allineato all'ultima versione (`Rules.md`
-     § '🗂️ I progetti e i loro file di regole'). Senza l'hub clonato si scarica dal percorso
-     GitHub qui sopra, o dal sito, <https://roccobot.github.io/styles/AomidoriFlex.css>; non dal
-     repo di Aomidori, che è privato dal 2026-10-15 e quindi non risponde.
+   ⚠️⚠️ **Fa fede solo l'archivio su GitHub** (regola dell'utente del 2026-11-06, scelta
+   `Fonte-01`), cioè `styles/AomidoriFlex.css` di questo repo, che la sessione di Aomidori tiene
+   allineato all'ultima versione (`Rules.md` § '🗂️ I progetti e i loro file di regole'): dal
+   clone dell'hub dopo l'allineamento al remoto, o scaricato dal percorso qui sopra. Le copie del
+   Mac non si cercano più:
+   - l'app installata dallo Store tiene gli stili nel suo contenitore,
+     `~/Library/Containers/com.roccobot.aomidori/Data/Library/Application Support/Aomidori/Styles/`,
+     che macOS non lascia leggere alle sessioni (`Operation not permitted`, provato il
+     2026-11-06);
+   - `~/Library/Application Support/Aomidori/Styles/`, fuori dal contenitore, è un residuo delle
+     copie di prova e di quelle di GitHub: il 2026-11-06 aveva la 1.56 mentre l'archivio era alla
+     1.60, e la skill di allora l'avrebbe potuta prendere per buona.
 
-   ⚠️ **Il nome del file è `AomidoriFlex.css`, senza spazio** (precisazione dell'utente,
-   2026-10-12: *Aomidori Flex* è il nome colloquiale). Il 2026-10-12 il codice di Aomidori
-   installava ancora `Aomidori Flex.css`, con lo spazio (`AppPaths.bundledStyleNames`), quindi il
-   file si riconosce anche dal **commento in testa**, che comincia con `Aomidori Flex` seguito dal
-   numero di versione (`Aomidori Flex 1.2`). Fra le copie trovate vince il numero più alto; a
-   numero uguale vince quella del Mac, che può contenere le sue modifiche. Nel resoconto si dice
-   quale copia è entrata e con quale numero.
+   Non dal repo di Aomidori, che è privato dal 2026-10-15. Il nome del file è `AomidoriFlex.css`,
+   senza spazio (*Aomidori Flex* è il nome colloquiale), e il numero di versione è nel commento
+   in testa (`#VERSION: 1.60`): nel resoconto si dice quale numero è entrato.
 
 Il foglio allegato e la Flex, quando entrano, lo script li riceve con `--css` e lo scrive in `Styles/style.css`. Le regole
 che il testo porta in un `<style>` si accodano in fondo, dopo un commento che lo dichiara: il
@@ -153,8 +153,8 @@ dell'utente): la Flex chiama i suoi due font come `AomidoriFlex/RobotoFlex.ttf` 
 con la licenza OFL che ciascuno ha accanto (`<nome>-OFL.txt`), dichiarati nel manifesto. Senza, il
 libro si vede bene solo in Aomidori, che i font li ha già, e altrove compaiono dei ripieghi
 generici. Quindi il foglio si passa **dalla sua cartella**, con la cartella dei font accanto:
-`styles/AomidoriFlex.css` dell'hub li ha; se entra la copia del Mac, si mette accanto a lei una
-copia di `styles/AomidoriFlex/` dell'hub. Un font citato e non trovato è una riga ⚠️ del
+`styles/AomidoriFlex.css` dell'hub li ha, in `styles/AomidoriFlex/`; scaricando da GitHub, si
+scarica anche quella cartella e la si mette accanto al foglio. Un font citato e non trovato è una riga ⚠️ del
 resoconto. Vale per ogni foglio, non solo per la Flex.
 
 ## ⚓ Gli ancoraggi
