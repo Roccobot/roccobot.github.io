@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.61
+#VERSION: 1.62
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -324,8 +324,11 @@ Reference rule with expanded letter spacing.
   margin-top: 0;
 }
 
+/* An inset block, its lines all starting together since 1.62 (Rocco's choice Margine-01,
+   2026-11-06, on the list of the Masters of Roke: up to 1.61 a hanging indent, the first line 1em
+   left of the others, which looked like the wrapped lines were indented). */
 .neg {
-  text-indent: -1em;
+  text-indent: 0;
   margin-left: 3em;
   margin-right: 2em;
   margin-top: 0.5em;

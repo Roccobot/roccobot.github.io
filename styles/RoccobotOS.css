@@ -1,11 +1,11 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.61
+#VERSION: 1.62
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.61: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.62: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -327,8 +327,11 @@ Reference rule with expanded letter spacing.
   margin-top: 0;
 }
 
+/* An inset block, its lines all starting together since 1.62 (Rocco's choice Margine-01,
+   2026-11-06, on the list of the Masters of Roke: up to 1.61 a hanging indent, the first line 1em
+   left of the others, which looked like the wrapped lines were indented). */
 .neg {
-  text-indent: -1em;
+  text-indent: 0;
   margin-left: 3em;
   margin-right: 2em;
   margin-top: 0.5em;
