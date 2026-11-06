@@ -64,6 +64,18 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    - **lingua incerta**: si guarda il testo e si ripassa `--lang`;
    - **attributi `style` rimasti**: ognuno si sposta a mano in una classe del CSS, o si toglie
      se è un residuo dell'editor (`mso-*`, `tab-interval`);
+   - ⚠️ **il maiuscoletto finto si riscrive col maiuscoletto vero** (regola dell'utente del
+     2026-11-06): un maiuscoletto imitato con le maiuscole rimpicciolite, come
+     `<b>P<span style="font-size: smaller">RIMA DEL FAR</span></b>`, diventa il testo in
+     minuscolo, con l'iniziale maiuscola che aveva, dentro la classe `small-caps`:
+     `<b class="small-caps">Prima del far</b>`. Così le lettere le disegna il carattere, col
+     suo maiuscoletto (`font-variant-caps: small-caps`), e non una maiuscola ridotta, più
+     sottile e più chiara del testo intorno. La Flex ha già la classe; con un altro foglio si
+     accoda `.small-caps { font-variant-caps: small-caps; }` se manca. Si cerca anche quando lo
+     script non segnala niente, perché lo stesso finto può arrivare già come classe (`smaller`,
+     `sc`) o come `<small>`. È l'unica modifica alle lettere del testo che la skill fa: nel
+     confronto parola per parola compare come differenza di maiuscole in quelle sole parole,
+     e lo si dice nel resoconto. Il caso da cui nasce: l'apertura di *La figlia di Odren*;
    - **immagini nel testo**: il libro contiene solo la copertina, quindi si chiede all'utente
      se vanno incluse, e lo script per ora non lo fa;
    - **titolo dedotto, autore non trovato**: si ripassano con `--title` e `--author`.
