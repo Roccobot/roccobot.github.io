@@ -310,6 +310,14 @@ def clean(source, lang_override=None):
     if moved_css:
         report.append(f'{len(moved_css)} blocchi <style> spostati nel CSS')
 
+    # Small capitals, counted so the skill can ask the user, for every book, whether to keep
+    # them or turn them into bold (user's rule of 2026-11-06): the `small-caps` class, and a
+    # `font-variant` written in a style attribute.
+    small_caps = sum(1 for n in body.iter()
+                     if 'small-caps' in (n.attrs.get('class') or '').split()
+                     or 'small-caps' in (n.attrs.get('style') or ''))
+    report.append(f'maiuscoletti: {small_caps}' + (' (chiedi se tenerli o farne grassetti)' if small_caps else ''))
+
     # Elements without a place in the book: Word and editor leftovers.
     for n in list(body.iter()):
         if n.tag in ('meta', 'link', 'base', 'font') or ':' in n.tag:

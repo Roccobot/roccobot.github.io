@@ -76,6 +76,15 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
      `sc`) o come `<small>`. È l'unica modifica alle lettere del testo che la skill fa: nel
      confronto parola per parola compare come differenza di maiuscole in quelle sole parole,
      e lo si dice nel resoconto. Il caso da cui nasce: l'apertura di *La figlia di Odren*;
+   - ⚠️ **i maiuscoletti si contano e si chiede che cosa farne, a ogni EPUB** (regola
+     dell'utente del 2026-11-06): lo script stampa `maiuscoletti: N` (la classe `small-caps` e
+     il `font-variant` scritto in un attributo `style`), a cui si aggiungono a mano quelli fatti
+     con un'altra classe del foglio (`sc`) o col finto qui sopra. Prima della consegna si dice
+     all'utente quanti sono e dove, e gli si chiede con la scelta multipla se **tenerli** o
+     **sostituirli con un grassetto** (`<b>`); se il testo chiede un'enfasi diversa (un corsivo
+     per un titolo d'opera, per esempio) la si propone come terza voce, col perché. Il caso da
+     cui nasce: i nomi dei nove Maestri di Roke in *Una descrizione di Terramare*, che l'utente
+     ha voluto in grassetto;
    - **immagini nel testo**: il libro contiene solo la copertina, quindi si chiede all'utente
      se vanno incluse, e lo script per ora non lo fa;
    - **titolo dedotto, autore non trovato**: si ripassano con `--title` e `--author`.
