@@ -86,6 +86,14 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
 - Toglie i metadati dell'editor d'origine (`generator`, `ProgId`, i `<link>` di Word), i
   `<script>`, gli elementi con prefisso (`o:p`) e gli attributi di presentazione (`align`,
   `bgcolor`, `width` fuori da immagini e tabelle).
+- Dà a ogni pagina una testata nuova, con la sola codifica e il titolo: i `<meta>` con un nome
+  della testata d'origine (`author`, `description`, `keywords`...) non passano nelle pagine.
+  Quelli che descrivono il libro entrano nella scheda, `package.opf`, che è da dove le app di
+  lettura li prendono: l'autore come `dc:creator`, col nome da mostrare, e con `file-as`, la
+  forma col cognome davanti che serve solo a ordinare. Ogni `meta` tolto è una riga del
+  resoconto, con dove è andato il suo valore, e la riga si riporta all'utente alla consegna
+  (sua scelta del 2026-11-06, `Autrice-03`: nella *Descrizione di Terramare* il
+  `meta name="author"` delle pagine era sparito senza che il resoconto lo dicesse).
 - Sposta ogni `<style>` in fondo al CSS, una regola per riga, con un commento che lo dichiara.
 - Chiude i paragrafi lasciati aperti, toglie gli `<span>` senza attributi, scioglie i `<font>`,
   e normalizza gli spazi tenendo gli spazi unificatori, che sono contenuto.

@@ -281,12 +281,25 @@ def clean(source, lang_override=None):
     title_node = find(head, 'title') if head else None
     title = re.sub(r'\s+', ' ', title_node.text()).strip() if title_node else ''
 
-    # Metadata that the old head may carry, kept for the package document.
+    # Metadata that the old head may carry, kept for the package document. The pages get a new
+    # head with only the charset and the title, so every named <meta> of the old one is left
+    # out of them, and the report says so, with where its value went (user's choice of
+    # 2026-11-06, Autrice-03: the book's metadata live in the package document).
     found = {}
+    where = {'author': 'l\'autore è nella scheda del libro (package.opf)',
+             'dc.creator': 'l\'autore è nella scheda del libro (package.opf)',
+             'dc.title': 'il titolo è nella scheda del libro (package.opf)',
+             'description': 'va nella scheda del libro, salvo una --description'}
     if head:
         for m in head.iter():
-            if m.tag == 'meta' and m.attrs.get('name', '').lower() in ('author', 'description', 'keywords', 'dc.creator', 'dc.title'):
-                found[m.attrs['name'].lower()] = m.attrs.get('content', '').strip()
+            name = m.attrs.get('name', '').lower() if m.tag == 'meta' else ''
+            if not name or name == 'viewport':
+                continue
+            content = m.attrs.get('content', '').strip()
+            if name in ('author', 'description', 'keywords', 'dc.creator', 'dc.title'):
+                found[name] = content
+            report.append(f'meta tolto dalla testata delle pagine: {name} "{content}", '
+                          + where.get(name, 'non riportato altrove'))
 
     # <style> blocks move to the stylesheet.
     moved_css = []
