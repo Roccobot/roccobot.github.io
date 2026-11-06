@@ -4,7 +4,8 @@ Build a standard EPUB 3.3 book from a cover image, an HTML text and a stylesheet
 file can have any name and any of the usual extensions (`.html`, `.htm`, `.xhtml`): it is
 parsed as HTML either way, so an XHTML declaration or namespace does no harm. The stylesheet
 is the one given with `--css`, copied as it is to `Styles/style.css`: the skill passes the one
-that comes with the files, or the latest Aomidori Flex when none does.
+that comes with the files or, when none does and the user says yes, the latest Aomidori Flex.
+Without `--css` the book carries no stylesheet of its own.
 
 The book has two spine items and nothing else: the cover, which is a page holding only the
 image, and the text. The cover is a landmark, not a chapter: the table of contents lists the
@@ -18,7 +19,7 @@ publisher) is passed on the command line: the skill that drives this script read
 and decides. Everything the script decided on its own is printed in the final report.
 
 Usage:
-    build_epub.py --cover Cover.jpg --text Text.html --css style.css --out Book.epub
+    build_epub.py --cover Cover.jpg --text Text.html [--css style.css] --out Book.epub
                   [--title T] [--author A] [--author-file-as "Surname, Name"]
                   [--lang it] [--identifier urn:isbn:...] [--publisher P] [--date YYYY]
                   [--description D] [--subject S ...] [--series S --series-index N] [--no-guide]
@@ -486,10 +487,14 @@ def build(args):
     cover = Path(args.cover).read_bytes()
     source = Path(args.text).read_bytes().decode('utf-8', errors='replace')
     # The stylesheet goes in as it is; only the text's own <style> rules are appended below it.
-    css = Path(args.css).read_text(encoding='utf-8')
+    # Without one (the user declined Aomidori Flex) the book has no style.css unless the text
+    # brings <style> rules, and the reader's own style applies.
+    css = Path(args.css).read_text(encoding='utf-8') if args.css else ''
     body, lang, title, found, moved, toc, report = clean(source, args.lang)
     labels = LABELS.get(lang, LABELS['en'])
-    fonts = css_fonts(css, Path(args.css).resolve().parent, report)
+    fonts = css_fonts(css, Path(args.css).resolve().parent, report) if args.css else []
+    if not args.css:
+        report.append('nessun foglio di stile: vale quello del lettore')
     title = args.title or found.get('dc.title') or title or 'Senza titolo'
     author = args.author or found.get('dc.creator') or found.get('author') or ''
     if not args.title:
@@ -524,7 +529,7 @@ def build(args):
     cover_css = ('/* Cover page: full-screen geometry only, no background, so the reader shows its own. */\n'
                  'html, body { margin: 0; padding: 0; width: 100%; height: 100%; }\n'
                  'svg { display: block; width: 100%; height: 100%; }\n')
-    text_page = xhtml_page(title, lang, serialise(body), '../Styles/style.css')
+    text_page = xhtml_page(title, lang, serialise(body), '../Styles/style.css' if css else None)
 
     def toc_list(items, start=0, depth=0):
         out, i = [], start
@@ -599,7 +604,7 @@ def build(args):
            f'    <item id="cover-image" href="Images/{cover_name}" media-type="{media}" properties="cover-image"/>\n'
            f'    <item id="cover" href="Text/cover.xhtml" media-type="application/xhtml+xml" properties="svg"/>\n'
            f'    <item id="text" href="Text/text.xhtml" media-type="application/xhtml+xml"/>\n'
-           f'    <item id="css" href="Styles/style.css" media-type="text/css"/>\n'
+           + ('    <item id="css" href="Styles/style.css" media-type="text/css"/>\n' if css else '') +
            f'    <item id="cover-css" href="Styles/cover.css" media-type="text/css"/>\n'
            + ''.join(f'    <item id="font-{i}" href="Styles/{esc_attr(name)}" media-type="{kind}"/>\n'
                      for i, (name, _, kind) in enumerate(fonts, 1)) +
@@ -621,7 +626,8 @@ def build(args):
         z.writestr(f'EPUB/Images/{cover_name}', cover, compress_type=zipfile.ZIP_STORED)
         z.writestr('EPUB/Text/cover.xhtml', cover_page, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Text/text.xhtml', text_page, compress_type=zipfile.ZIP_DEFLATED)
-        z.writestr('EPUB/Styles/style.css', css, compress_type=zipfile.ZIP_DEFLATED)
+        if css:
+            z.writestr('EPUB/Styles/style.css', css, compress_type=zipfile.ZIP_DEFLATED)
         z.writestr('EPUB/Styles/cover.css', cover_css, compress_type=zipfile.ZIP_DEFLATED)
         for name, path, _ in fonts:
             z.write(path, f'EPUB/Styles/{name}', compress_type=zipfile.ZIP_DEFLATED)
@@ -635,7 +641,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     p.add_argument('--cover', required=True)
     p.add_argument('--text', required=True)
-    p.add_argument('--css', required=True)
+    p.add_argument('--css')
     p.add_argument('--out', required=True)
     p.add_argument('--title')
     p.add_argument('--author')

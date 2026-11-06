@@ -1,6 +1,6 @@
 ---
 name: epub
-description: Costruisce un EPUB 3.3 standard, di solito da due file (una copertina e un testo HTML) e da un insieme diverso deducendone la struttura o chiedendo, col foglio di stile allegato o, senza, con l'ultima versione di Aomidori Flex, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
+description: Costruisce un EPUB 3.3 standard, di solito da due file (una copertina e un testo HTML) e da un insieme diverso deducendone la struttura o chiedendo, col foglio di stile allegato o, senza, con l'ultima versione di Aomidori Flex se l'utente risponde di sì alla domanda che si fa ogni volta, ripulendo l'XHTML, deducendo i metadati dal contenuto e validando il risultato con epubcheck. Invocala quando l'utente chiede di creare o rifare un EPUB (`/epub`, 'fammi un EPUB', 'impagina questo testo come ebook').
 ---
 
 # `/epub`: un EPUB standard da copertina e testo
@@ -24,8 +24,8 @@ riceve con `--cover` e `--text` e legge l'XHTML come l'HTML (provato il 2026-10-
 `.xhtml`, dichiarazione XML e namespace compresi, e uno in `.htm`: epubcheck a 0 errori e 0
 avvisi in tutti e due i casi).
 
-🎨 **Il foglio di stile: quello allegato, o l'ultima versione di Aomidori Flex** (sezione
-'🎨 Il foglio di stile' qui sotto). Non si chiede.
+🎨 **Il foglio di stile: quello allegato; senza, si chiede ogni volta se includere l'ultima
+versione di Aomidori Flex** (sezione '🎨 Il foglio di stile' qui sotto).
 
 ⚠️ **È la struttura più comune, non l'unica** (precisazione dell'utente, 2026-10-08). Se arriva
 un insieme diverso (più file HTML, immagini dentro il testo, la copertina mancante) la struttura si **deduce** dai file quando è univoca: per esempio più
@@ -43,8 +43,10 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    il testo attesta: un dato che non c'è resta fuori, e nel resoconto si dice che manca.
 2. **Lancia lo script**, che vive accanto a questo file:
    ```
-   python3 -I <skill>/build_epub.py --cover <copertina> --text <testo> --css <foglio di stile> --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
+   python3 -I <skill>/build_epub.py --cover <copertina> --text <testo> [--css <foglio di stile>] --out "<Titolo>.epub" --title "..." --author "..." --author-file-as "Cognome, Nome" [--lang it] [--publisher ...] [--date AAAA] [--description ...] [--subject ...]
    ```
+   Senza un CSS arrivato coi file, prima di lanciarlo si fa la domanda sulla Flex (sezione
+   '🎨 Il foglio di stile'): con un no, `--css` non si passa.
    Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
    `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
    - **Un libro che fa parte di una serie** prende `--series "<nome>"` e, se c'è, `--series-index
@@ -98,15 +100,32 @@ sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md`
 
 1. **Se con i file arriva un CSS, il libro usa quello**, copiato così com'è in `Styles/style.css`.
    Non si corregge e non si fonde con un altro foglio.
-2. **Se non arriva nessun CSS, il libro usa l'ultima versione di Aomidori Flex**, il foglio di
-   stile di Aomidori, il lettore dell'utente. Si cerca in due posti:
+2. **Se non arriva nessun CSS, si chiede ogni volta, per ogni EPUB, se includere l'ultima
+   versione di Aomidori Flex**, il foglio di stile di Aomidori, il lettore dell'utente (sua
+   regola del 2026-11-06, scelta `Flex-03`: prima la Flex entrava senza chiedere). La domanda
+   si fa con lo strumento a scelta multipla, prima di lanciare lo script, e dice da dove viene
+   il foglio:
+   - **sì**: il libro usa la Flex, coi suoi font;
+   - **no**: il libro non ha un foglio di stile suo, e vale quello del lettore; lo script si
+     lancia senza `--css`, e scrive `Styles/style.css` solo se il testo porta delle regole in
+     un `<style>`.
+
+   **Dove si prende l'ultima versione**, su GitHub, nel repo dell'hub `Roccobot/roccobot.github.io`
+   (pubblico), ramo `master`:
+   - il foglio, <https://github.com/Roccobot/roccobot.github.io/blob/master/styles/AomidoriFlex.css>,
+     da scaricare grezzo da
+     <https://raw.githubusercontent.com/Roccobot/roccobot.github.io/master/styles/AomidoriFlex.css>;
+   - la cartella dei font con le loro licenze,
+     <https://github.com/Roccobot/roccobot.github.io/tree/master/styles/AomidoriFlex>.
+
+   Le copie si cercano in due posti:
    - **in una sessione sul Mac dell'utente**,
      `~/Library/Application Support/Aomidori/Styles/AomidoriFlex.css`;
    - **in ogni sessione**, `styles/AomidoriFlex.css` di questo repo, l'archivio degli stili di
      Aomidori, che la sessione di Aomidori tiene allineato all'ultima versione (`Rules.md`
-     § '🗂️ I progetti e i loro file di regole'). Senza l'hub clonato si legge dal sito,
-     <https://roccobot.github.io/styles/AomidoriFlex.css>: il repo di Aomidori è privato dal
-     2026-10-15, quindi il suo raw di GitHub non risponde.
+     § '🗂️ I progetti e i loro file di regole'). Senza l'hub clonato si scarica dal percorso
+     GitHub qui sopra, o dal sito, <https://roccobot.github.io/styles/AomidoriFlex.css>; non dal
+     repo di Aomidori, che è privato dal 2026-10-15 e quindi non risponde.
 
    ⚠️ **Il nome del file è `AomidoriFlex.css`, senza spazio** (precisazione dell'utente,
    2026-10-12: *Aomidori Flex* è il nome colloquiale). Il 2026-10-12 il codice di Aomidori
@@ -116,7 +135,7 @@ sempre `Roccobot.css`*: quel foglio non c'è più, dettagli in `docs/Removed.md`
    numero uguale vince quella del Mac, che può contenere le sue modifiche. Nel resoconto si dice
    quale copia è entrata e con quale numero.
 
-In tutti e due i casi lo script lo riceve con `--css` e lo scrive in `Styles/style.css`. Le regole
+Il foglio allegato e la Flex, quando entrano, lo script li riceve con `--css` e lo scrive in `Styles/style.css`. Le regole
 che il testo porta in un `<style>` si accodano in fondo, dopo un commento che lo dichiara: il
 foglio sopra resta intatto. La copertina ha il suo `Styles/cover.css`, con la sola geometria.
 
