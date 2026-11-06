@@ -47,6 +47,17 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
    ```
    Il nome del file d'uscita è il titolo del libro. Un ISBN che il testo riporta va in
    `--identifier urn:isbn:...`; senza, lo script genera un `urn:uuid`.
+   - **Un libro che fa parte di una serie** prende `--series "<nome>"` e, se c'è, `--series-index
+     <numero>`: lo script scrive la serie di EPUB 3 (`belongs-to-collection`) e i due meta di
+     Calibre, che molti lettori mostrano ancora. Come ogni metadato, la serie entra solo se il
+     libro o la sua fonte la attestano.
+   - **Un EPUB che l'utente ha scompattato e ritoccato** si rifà dai suoi file: la copertina, il
+     testo e il suo foglio di stile, che è il CSS che arriva coi file. Si tiene il suo
+     identificatore (`--identifier`), così i lettori lo riconoscono come lo stesso libro e ne
+     conservano posizione e segnalibri, e si riportano i metadati del suo `.opf` (autore, serie);
+     prima della consegna si confronta il testo del libro nuovo con quello della cartella, parola
+     per parola. Il caso da cui nasce, 2026-11-06: *La figlia di Odren* e *Una descrizione di
+     Terramare*, nati prima delle regole di oggi della skill.
 3. **Leggi il resoconto** che lo script stampa. Le righe con ⚠️ chiedono una decisione:
    - **lingua incerta**: si guarda il testo e si ripassa `--lang`;
    - **attributi `style` rimasti**: ognuno si sposta a mano in una classe del CSS, o si toglie

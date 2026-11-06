@@ -21,7 +21,7 @@ Usage:
     build_epub.py --cover Cover.jpg --text Text.html --css style.css --out Book.epub
                   [--title T] [--author A] [--author-file-as "Surname, Name"]
                   [--lang it] [--identifier urn:isbn:...] [--publisher P] [--date YYYY]
-                  [--description D] [--subject S ...] [--no-guide]
+                  [--description D] [--subject S ...] [--series S --series-index N] [--no-guide]
 
 Author: Rocco Casadei, a.k.a. Roccobot
 """
@@ -569,6 +569,14 @@ def build(args):
             meta.append(f'<{tag}>{esc_text(value)}</{tag}>')
     for s in args.subject or []:
         meta.append(f'<dc:subject>{esc_text(s)}</dc:subject>')
+    # A series in EPUB 3's own form, and Calibre's two metas, which many readers still show.
+    if args.series:
+        meta += [f'<meta property="belongs-to-collection" id="series">{esc_text(args.series)}</meta>',
+                 '<meta refines="#series" property="collection-type">series</meta>',
+                 f'<meta name="calibre:series" content="{esc_attr(args.series)}"/>']
+        if args.series_index:
+            meta += [f'<meta refines="#series" property="group-position">{esc_text(args.series_index)}</meta>',
+                     f'<meta name="calibre:series_index" content="{esc_attr(args.series_index)}"/>']
     meta.append(f'<meta name="cover" content="cover-image"/>')
     # Accessibility metadata, which EPUB 3.3 recommends for every publication.
     meta += ['<meta property="schema:accessMode">textual</meta>',
@@ -638,6 +646,8 @@ def main():
     p.add_argument('--date')
     p.add_argument('--description')
     p.add_argument('--subject', action='append')
+    p.add_argument('--series')
+    p.add_argument('--series-index')
     p.add_argument('--no-guide', action='store_true')
     build(p.parse_args())
 
