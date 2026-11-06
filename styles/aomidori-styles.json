@@ -4,26 +4,26 @@
     {
       "file": "AomidoriFlex.css",
       "title": "Aomidori Flex",
-      "version": "1.60",
+      "version": "1.61",
       "minApp": "2.80",
-      "size": 30597,
-      "sha256": "9531455ea13622b0b61785935696fd86ec1160f13349ff03bb039371f6044f6d"
+      "size": 31877,
+      "sha256": "3ef15b0cbc2b2113467a076689c2edebf81d353e393e9079fab3464bf023d87b"
     },
     {
       "file": "AomidoriMenta.css",
       "title": "Aomidori Menta",
-      "version": "1.60",
+      "version": "1.61",
       "minApp": "2.80",
-      "size": 30787,
-      "sha256": "aea972e83ff7b1cc7501aa7a11e86d4e2785b3338ac0a6752826f0a2241f0f54"
+      "size": 32067,
+      "sha256": "b4f27df9105257446979ce01dad7012b5584cae894b53bec4c7fd7352babf624"
     },
     {
       "file": "RoccobotOS.css",
       "title": "RoccobotOS",
-      "version": "1.60",
+      "version": "1.61",
       "minApp": "2.80",
-      "size": 30869,
-      "sha256": "0b51b286794e541d9fd2403e3aacada93db33c92bfa07e99d25770d0e49d37f2"
+      "size": 32149,
+      "sha256": "536972c50e4a07785bdb764540b62ad63e434a85e4e1ec9418f9dfdd610a8455"
     }
   ]
 }

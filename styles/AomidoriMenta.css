@@ -1,11 +1,11 @@
 /*
 #NAME: Aomidori Menta
-#VERSION: 1.60
+#VERSION: 1.61
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.71 and its code.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; mint tables, coloured headings, code in the text's font.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.60: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.61: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -77,6 +77,8 @@
   --pre-padding: 1em;
   --pre-radius: 0.5em;
   --pre-leading: 1.45;
+  /* Small capitals: the grade that thickens them to the weight of the text's capitals (1.61). */
+  --small-caps-grade: 75;
 }
 
 html {
@@ -255,9 +257,22 @@ h3 + h4, h3 + .subheading, h3 + .titoletto {
   text-align: left;
 }
 
-/* Use small capitals with the shared heading spacing. */
-.small-caps {
-  font-variant-caps: small-caps;
+/* Small capitals since 1.61 (Rocco's choice C, 2026-11-06, from previews: the small letters were
+   *unwatchable*): every letter a capital at 80% of the text, thickened with Roboto Flex's grade.
+   Roboto Flex has no small capitals of its own (no `smcp`), so up to 1.60 the browser made them by
+   shrinking the capitals to 70%: lower than the lowercase and with strokes 30% thinner than the
+   capitals beside them. The grade gives the stems back, measured in WebKit on 2026-11-06 on an H at
+   weight 360 (800px against 640px): a capital's stem 39px, a 1.60 small capital's 27px, 80% at grade
+   75 39px; in dark the capital 45px, 80% at grade 125 44px (150 gave 48px). The price, accepted: the
+   initials are no longer told apart. Headings keep their own rule above (capitals at full size),
+   and nothing shrinks twice. */
+.small-caps:not(:is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto),
+                :is(h1, h2, h3, h4, h5, h6, .subheading, .titoletto, .small-caps) *) {
+  font-variant-caps: normal;
+  text-transform: uppercase;
+  font-size: 80%;
+  letter-spacing: 0.04em;
+  font-variation-settings: 'GRAD' var(--small-caps-grade);
 }
 
 /*
@@ -747,6 +762,8 @@ html.cover-page img {
     --selection-ground: #43B59E;
     --selection-ink: var(--ink);
     --brano-fondo: #242c29;
+    /* The text's grade (50, below) plus the light theme's 75 for small capitals. */
+    --small-caps-grade: 125;
     --h1-ink: #c0ffe5;
     --h2-ink: #ceb285;
     --h3-ink: #acbabd;

@@ -100,6 +100,15 @@
   <p class="lead">Lo stile predefinito di <a href="https://roccobot.github.io/Aomidori/">Aomidori</a>: tutte le versioni, dalla più recente, con le modifiche di ciascuna. Il file dell'ultima versione è <a href="AomidoriFlex.css">AomidoriFlex.css</a>.</p>
 
   <section>
+    <h2>1.61 <time datetime="2026-11-06">6 novembre 2026</time></h2>
+    <ul>
+      <li>Il maiuscoletto (la classe <code>small-caps</code>) è nuovo: tutte le lettere sono maiuscole all'80% del testo, con lo spessore delle maiuscole vere. Roboto Flex non ha un maiuscoletto suo, e fino alla 1.60 il browser lo fabbricava rimpicciolendo le maiuscole al 70%: le lettere piccole erano più basse delle minuscole e avevano le aste più sottili di quasi un terzo.</li>
+      <li>Lo spessore viene dall'asse GRADE di Roboto Flex, che ingrossa le aste senza allargare le lettere: 75 nel tema chiaro e 125 in quello scuro, misurati in WebKit perché l'asta del maiuscoletto sia quella di una maiuscola del testo.</li>
+      <li>Le iniziali non si distinguono più dal resto della parola: è il prezzo scelto per avere lettere più alte e più piene. Nei titoli il maiuscoletto resta maiuscolo pieno, alla misura del titolo.</li>
+    </ul>
+  </section>
+
+  <section>
     <h2>1.60 <time datetime="2026-10-31">31 ottobre 2026</time></h2>
     <ul>
       <li>Una formula a blocco ha spazio sopra e sotto per quello che esce dalla sua riga: le cifre tonde sotto la linea di base e gli esponenti. Fino alla 1.59 il blocco li tagliava, e in una frazione si perdeva il fondo di 0, 6 e 8 e la cima dell'esponente.</li>
