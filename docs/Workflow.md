@@ -136,6 +136,10 @@
     italiane. Claude allora riscrive in italiano; una seconda volta nello stesso giro non blocca
     (`stop_hook_active`), così non può girare in tondo. Misurato su 5.386 testi di una sessione
     lunga: 155 fermati, e le frasi lette erano tutte inglesi. Le prove sono in `StopTests`.
+    ⚠️ **Il blocco arriva dopo che Rocco ha letto il messaggio, e la riscrittura costa token**:
+    per questo, sua scelta Prevenzione-01 dello stesso giorno, il modo `prompt` stampa a ogni suo
+    messaggio una riga di promemoria sulla lingua (`PROMEMORIA_LINGUA`), che agisce prima della
+    scrittura; il controllo di fine turno resta come rete. Prova in `PromptReminderTests`.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
     compresi, e non il diff vuoto dello stage.

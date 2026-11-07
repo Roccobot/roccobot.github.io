@@ -208,5 +208,23 @@ class StopTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
 
 
+class PromptReminderTests(unittest.TestCase):
+    """Rocco's choice Prevenzione-01, 2026-11-07: the language reminder on every prompt, before
+    the writing; repos and board are replaced so the test fetches nothing."""
+
+    def test_every_prompt_carries_the_italian_reminder(self):
+        import contextlib
+        import io
+        h = load_hooks()
+        h.repos = lambda: []
+        h.avvisi_bacheca = lambda: []
+        for prompt in ('ciao', '\\\\ dopo', ''):
+            with self.subTest(prompt=prompt):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    h.mode_prompt({'prompt': prompt})
+                self.assertIn('SOLO in italiano', out.getvalue())
+
+
 if __name__ == '__main__':
     unittest.main()

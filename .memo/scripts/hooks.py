@@ -367,7 +367,16 @@ def avvisi_bacheca():
 
 # ── turno ─────────────────────────────────────────────────────────────────────
 
+PROMEMORIA_LINGUA = ("[prompt] Scrivi a Rocco SOLO in italiano: ogni frase, anche quelle brevi fra "
+                     "un comando e l'altro e il resoconto finale. Commit, commenti al codice e note "
+                     "di rilascio seguono le regole del repo.")
+
+
 def mode_prompt(ev):
+    # Rocco's choice Prevenzione-01, 2026-11-07: the end-of-turn check (mode_stop) only catches
+    # English after he has read it, and the rewrite costs tokens; a reminder on every prompt acts
+    # before the writing, when the rule read at start-up is far back in the context.
+    print(PROMEMORIA_LINGUA)
     # ⚠️ A message that opens with ‼ (U+203C, with or without U+FE0E) or with two backslashes
     # is QUEUED, not urgent: rule in rules/Roccobot.md § "L'operatore ‼︎", which holds with
     # the /desc skill active too. The reminder is printed because the rule alone fell on
