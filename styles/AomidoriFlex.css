@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.63
+#VERSION: 1.64
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -325,6 +325,12 @@ Reference rule with expanded letter spacing.
    verse of a quotation from the others on Rocco's phone. A margin of -1px is not zero, so it keeps
    them together there; elsewhere the two backgrounds share the same colour, and the 1px is not seen. */
 .vv + .vv {
+  margin-top: -1px;
+}
+
+/* The first verse too (1.64), or Episteme gives it the 1.2em of `p + p` and the first verse is
+   still unlike the others there; the space above the group comes from the paragraph before it. */
+p + p.vv {
   margin-top: -1px;
 }
 
@@ -843,7 +849,13 @@ p.vv i, p.vv em {
   font-weight: inherit;
 }
 
-p.vv:not(p.vv + p.vv) {
+/* The first verse of a group, written so that Episteme (Android) does not match it (1.64): its
+   parser, Jsoup, matched `p.vv:not(p.vv + p.vv)`, gave the first verse alone the top padding,
+   margin and corners, and so drew it in a box of its own, apart from the others (measured on
+   2026-11-07 by building Episteme 1.0.59's parser and feeding it this sheet). Jsoup does not
+   understand `:has(+ ...)`, so the selector below never matches there and every verse looks the
+   same; WebKit reads it as before, with the same specificity. */
+:is(:not(p.vv):has(+ p.vv) + p.vv, p.vv:first-child) {
   padding-top: 0.65em;
   border-radius: var(--brano-raggio) var(--brano-raggio) 0 0;
 }
@@ -880,7 +892,8 @@ p.vv > :is(i, em):only-child {
   isolation: isolate;
 }
 
-p.vv:not(p.vv + p.vv) > :is(i, em):only-child {
+/* The first verse of a group: see the note on the first one above (1.64). */
+:is(:not(p.vv):has(+ p.vv) + p.vv, p.vv:first-child) > :is(i, em):only-child {
   margin-top: 1.2em;
   padding-top: 0.65em;
   border-top-left-radius: var(--brano-raggio);
@@ -912,7 +925,7 @@ p.vv > :is(i, em):only-child::before {
 
 /* Round only the outside corners of an unwrapped verse sequence. */
 p.vv > :is(i, em):only-child::before { border-radius: 0; }
-p.vv:not(p.vv + p.vv) > :is(i, em):only-child::before {
+:is(:not(p.vv):has(+ p.vv) + p.vv, p.vv:first-child) > :is(i, em):only-child::before {
   border-top-left-radius: var(--brano-raggio);
   border-top-right-radius: var(--brano-raggio);
 }
