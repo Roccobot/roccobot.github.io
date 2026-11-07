@@ -1,11 +1,11 @@
 /*
 #NAME: RoccobotOS
-#VERSION: 1.64
+#VERSION: 1.65
 #NOTE: Aomidori Flex with the colours of RoccobotOS 1.40: the default style of Markdown documents.
 #COMMENT: Same layout, type and spacing as Aomidori Flex; neutral page, teal headings and coloured code.
 */
 
-/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.64: edit the Flex, then run it
+/* Made by scripts/make-flex-variants.py from Aomidori Flex 1.65: edit the Flex, then run it
    again. Everything is the Flex's but the values of the variables in its two :root blocks. */
 
 /* Since 1.50: the Flex's own fonts, loaded from the folder next to it (AomidoriFlex/, in the app
@@ -794,6 +794,22 @@ html.cover-page img {
   .task-list-item input[type='checkbox']:checked {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2343b59e' d='M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z'/%3E%3C/svg%3E");
   }
+}
+
+/* Bold and heavy bold since 1.65 (Rocco's rules of 2026-11-07). A book marks them with the most
+   generic tags: bold is <b>, heavy bold (his 'black') is <strong>. With a variable font, Roboto Flex
+   included, bold is weight 540 and heavy bold 700, the same in both themes, and in the dark one they
+   keep the text's grade (his choice Grado-02). A static font, which has as a rule only a regular and
+   a bold face, draws both at its bold, 700: for a weight it lacks above 500 the browser takes the next
+   heavier face. The constraint is his: every line breaks in the dark theme where it does in the light
+   one; a bold may move a line's breaks against the plain text, and that is accepted. Up to 1.64 both
+   were the browser's bold, 700. */
+b {
+  font-weight: 540;
+}
+
+strong {
+  font-weight: 700;
 }
 
 /* Georgia italics for verses, quotations and epigraphs, the system's (1.54, Rocco's choice: none of

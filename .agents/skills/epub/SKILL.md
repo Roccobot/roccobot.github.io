@@ -115,6 +115,12 @@ all'utente prima di cominciare, proponendo la lettura che sembra più probabile.
   resoconto, con dove è andato il suo valore, e la riga si riporta all'utente alla consegna
   (sua scelta del 2026-11-06, `Autrice-03`: nella *Descrizione di Terramare* il
   `meta name="author"` delle pagine era sparito senza che il resoconto lo dicesse).
+- ⚠️ **Le enfasi chieste dall'utente si scrivono coi segni più generici** (sue regole del
+  2026-11-07): 'in corsivo' è `<i>`, 'in grassetto' è `<b>`, 'in grassetto spesso' (il suo *black*) è
+  `<strong>`. Come si vedono lo decide il foglio di stile: la Flex, dalla 1.65, disegna `<b>` a peso
+  540 e `<strong>` a 700, uguali nei due temi, e un carattere statico li disegna tutti e due a 700. Il
+  solo vincolo della Flex sulle righe è che vadano a capo negli stessi punti in tema chiaro e in tema
+  scuro (`Rules.md` di Aomidori): un'enfasi può spostarle rispetto al testo normale.
 - Sposta ogni `<style>` in fondo al CSS, una regola per riga, con un commento che lo dichiara.
 - Chiude i paragrafi lasciati aperti, toglie gli `<span>` senza attributi, scioglie i `<font>`,
   e normalizza gli spazi tenendo gli spazi unificatori, che sono contenuto.
