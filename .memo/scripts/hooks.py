@@ -25,6 +25,8 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
   bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
             controlli prima di un `git commit`, che possono bloccarlo
   text      PreToolUse su PR, commenti, domande e artefatti: i caratteri del testo composto
+  stop      Stop: blocca la fine del turno se i messaggi del turno a Rocco hanno frasi in inglese
+            (dal 2026-11-07, sua scelta Italiano-01)
   compact   PreCompact: il promemoria del brief
   (Fino al 2026-09-27 si chiamavano avvio, turno, modifica, testo e compatta; dal 2026-09-28
   quei nomi non sono più accettati, perché nessuna installazione li usa.)
@@ -689,6 +691,80 @@ def mode_text(ev):
                f'di commit passa da un file e si controlla da sé; questo testo no, per questo c\'è il gancio.\n{out}')
 
 
+# ── fine turno ────────────────────────────────────────────────────────────────
+
+# The chat is the one place no other check reads, and on 2026-11-07 the user found, for the fourth
+# time, whole sentences in English between two tool calls and in reports, after work on English
+# commits, comments and code (his choice Italiano-01: a machine, since rereading had not held).
+# A sentence counts as English when it has at least two English function words and more of them
+# than Italian ones: none of these words exists in Italian, and technical words (commit, push,
+# file) are neither, so Italian with them passes. Two and not three: 'Everything is green and
+# published.', one of the sentences of that day, has two.
+INGLESI = frozenset('the and is are was were with this that it i\'m i\'ll it\'s now then not for be have has '
+                    'will can you your we done both which they there from by of to at an into all but after '
+                    'before still here what when its these those been would should could'.split())
+ITALIANE = frozenset('il lo la gli le di che è e per con non un una del della dei delle nel nella sono ho '
+                     'si come anche ma più già questo questa quello quella al alla dal dalla su sul'.split())
+
+
+def frasi_inglesi(testo):
+    """The sentences of a message that read as English: code blocks, inline code, links' targets
+    and quoted lines (the user's words, or a file's) are not prose and stay out."""
+    testo = re.sub(r'```.*?```', ' ', testo, flags=re.S)
+    righe = [r for r in testo.splitlines() if not r.lstrip().startswith('>')]
+    testo = re.sub(r'`[^`]*`', ' ', '\n'.join(righe))
+    testo = re.sub(r'\]\([^)]*\)', ']', testo)
+    testo = re.sub(r'https?://\S+', ' ', testo)
+    trovate = []
+    for frase in re.split(r'(?<=[.!?:;])\s+|\n+', testo):
+        parole = re.findall(r"[a-zàèéìòù']+", frase.lower())
+        en = sum(p in INGLESI for p in parole)
+        it = sum(p in ITALIANE for p in parole)
+        if en >= 2 and en > it:
+            trovate.append(frase.strip())
+    return trovate
+
+
+def testi_ultimo_turno(percorso):
+    """The text blocks Claude wrote after the user's last message (tool results are not his)."""
+    voci = []
+    with open(percorso, encoding='utf-8') as f:
+        for riga in f:
+            try:
+                voci.append(json.loads(riga))
+            except ValueError:
+                continue
+    testi = []
+    for v in voci:
+        m = v.get('message') or {}
+        contenuto = m.get('content')
+        if v.get('type') == 'user':
+            dell_utente = isinstance(contenuto, str) or any(
+                isinstance(c, dict) and c.get('type') == 'text' for c in (contenuto or []))
+            if dell_utente:
+                testi = []
+        elif v.get('type') == 'assistant' and isinstance(contenuto, list):
+            testi += [c.get('text', '') for c in contenuto if isinstance(c, dict) and c.get('type') == 'text']
+    return testi
+
+
+def mode_stop(ev):
+    percorso = ev.get('transcript_path') or ''
+    if not percorso or not os.path.isfile(percorso):
+        return
+    trovate = [f for t in testi_ultimo_turno(percorso) for f in frasi_inglesi(t)]
+    if not trovate:
+        return
+    elenco = '\n'.join(f'- {f}' for f in trovate[:8])
+    if ev.get('stop_hook_active'):
+        # Already continuing for this hook: blocking again could loop, so it only warns.
+        print(f'[stop] Restano frasi in inglese:\n{elenco}', file=sys.stderr)
+        return
+    blocca('Fine turno bloccata: nel messaggio a Rocco ci sono frasi in inglese, e la comunicazione con '
+           "lui è sempre in italiano (non derogabile del nucleo). Riscrivi in italiano, in un messaggio "
+           f'breve, le frasi qui sotto, scusandoti una volta sola:\n{elenco}')
+
+
 # ── compatta ──────────────────────────────────────────────────────────────────
 
 def mode_compact(_ev):
@@ -711,7 +787,7 @@ def mode_compact(_ev):
 
 
 MODI = {'start': mode_start, 'prompt': mode_prompt, 'edit': mode_edit,
-        'bash': mode_bash, 'text': mode_text, 'compact': mode_compact}
+        'bash': mode_bash, 'text': mode_text, 'stop': mode_stop, 'compact': mode_compact}
 
 if __name__ == '__main__':
     modo = sys.argv[1] if len(sys.argv) > 1 else ''

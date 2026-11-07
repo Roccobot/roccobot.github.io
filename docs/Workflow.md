@@ -129,6 +129,13 @@
     `RULES_PASSWORD` nella trascrizione della sessione. Una variabile si legge per nome
     (`printenv LANG`), e un segreto si usa senza stamparlo (`curl -d "$RULES_PASSWORD"` passa).
     Le prove sono in `.memo/scripts/test_hooks.py`, e girano anche nell'Action `rules-check`.
+  - ⚠️⚠️ **Alla fine di ogni turno blocca i messaggi a Rocco con frasi in inglese** (modo `stop`,
+    dal 2026-11-07, sua scelta Italiano-01, dopo quattro ricadute in un mese): legge dalla
+    trascrizione i testi del turno, toglie blocchi di codice, citazioni, codice in linea e
+    indirizzi, e ferma una frase con almeno due parole funzionali inglesi e più inglesi che
+    italiane. Claude allora riscrive in italiano; una seconda volta nello stesso giro non blocca
+    (`stop_hook_active`), così non può girare in tondo. Misurato su 5.386 testi di una sessione
+    lunga: 155 fermati, e le frasi lette erano tutte inglesi. Le prove sono in `StopTests`.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
     compresi, e non il diff vuoto dello stage.
