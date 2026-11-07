@@ -100,6 +100,14 @@
   <p class="lead">Lo stile predefinito di <a href="https://roccobot.github.io/Aomidori/">Aomidori</a>: tutte le versioni, dalla più recente, con le modifiche di ciascuna. Il file dell'ultima versione è <a href="AomidoriFlex.css">AomidoriFlex.css</a>.</p>
 
   <section>
+    <h2>1.67 <time datetime="2026-11-07">7 novembre 2026</time></h2>
+    <ul>
+      <li>In Episteme i versi sugli schermi touch perdono davvero il riquadro e il rientro. Episteme ignorava gli azzeramenti della 1.66: unendo due regole tiene il padding della seconda solo se non è zero, e non riconosce <code>background: none</code> come un colore. Ora il padding è di un centesimo di pixel e il fondo è <code>transparent</code>.</li>
+      <li>In Aomidori, su Mac e su Android, non cambia niente: misurata riga per riga sulla <em>Descrizione di Terramare</em>, l'impaginazione è identica alla 1.66.</li>
+    </ul>
+  </section>
+
+  <section>
     <h2>1.66 <time datetime="2026-11-07">7 novembre 2026</time></h2>
     <ul>
       <li>Sugli schermi touch, come quelli dei telefoni, i versi non hanno più il riquadro, il rientro e lo spazio in più: sono righe allineate al testo, al 90% della sua misura, e un gruppo di versi è distanziato dal resto come un paragrafo. Su Mac i versi restano nel riquadro.</li>

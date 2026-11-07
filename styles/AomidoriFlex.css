@@ -1,6 +1,6 @@
 /*
 #NAME: Aomidori Flex
-#VERSION: 1.66
+#VERSION: 1.67
 #NOTE: The default style of Aomidori.
 #COMMENT: Reading style for EPUB and Markdown documents.
 */
@@ -998,7 +998,11 @@ p.vv:not(:has(+ p.vv)) > :is(i, em):only-child::before {
    know, like this one, it applies, as a phone's browser does; a Mac's pointer is fine, so Aomidori
    on the Mac keeps the box. The selectors repeat those of the rules above, so that each one is
    undone with the same specificity. Consecutive verses keep their -1px (1.63): Episteme reads a
-   zero margin as missing and would space them like paragraphs. */
+   zero margin as missing and would space them like paragraphs.
+   Two more of Episteme's readings (1.67, read in 1.0.59's code after Rocco saw 1.66 unchanged
+   there): merging two rules on one element, it keeps a later padding only when it is not zero
+   (BlockStyle.merge), hence 0.01px; and `background: none` is no colour to it, so the box stayed,
+   hence `transparent`. In WebKit both look as before. */
 @media (pointer: coarse) {
   p.vv,
   p.vv:has(> :is(i, em):only-child),
@@ -1011,9 +1015,9 @@ p.vv:not(:has(+ p.vv)) > :is(i, em):only-child::before {
   :is(div, section):has(> p.vv):not(:has(> :not(p.vv))) > p.vv {
     display: block;
     width: auto;
-    padding: 0;
+    padding: 0.01px;
     text-indent: 0;
-    background: none;
+    background: transparent;
     border-radius: 0;
   }
 
