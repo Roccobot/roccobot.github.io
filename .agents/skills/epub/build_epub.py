@@ -22,7 +22,7 @@ Usage:
     build_epub.py --cover Cover.jpg --text Text.html [--css style.css] --out Book.epub
                   [--title T] [--author A] [--author-file-as "Surname, Name"]
                   [--lang it] [--identifier urn:isbn:...] [--publisher P] [--date YYYY]
-                  [--description D] [--subject S ...] [--series S --series-index N] [--no-guide]
+                  [--description D] [--subject S ...] [--series S --series-index N] [--no-guide] [--no-fonts]
 
 Author: Rocco Casadei, a.k.a. Roccobot
 """
@@ -504,6 +504,27 @@ def css_fonts(css, folder, report):
     return files
 
 
+def strip_font_faces(css, report):
+    """The stylesheet without the @font-face rules that load a font file next to it, for a book
+    without its own fonts (--no-fonts, the user's choice for each book since 2026-11-07): the
+    families they declared fall back to the generic ones of the sheet, and no rule is left
+    naming a file the book does not carry, which epubcheck would reject."""
+    removed = 0
+
+    def drop(match):
+        nonlocal removed
+        sources = re.findall(r'url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)', match.group(0))
+        if sources and all(not s.strip().startswith(('data:', 'http:', 'https:')) for s in sources):
+            removed += 1
+            return ''
+        return match.group(0)
+
+    css = re.sub(r'@font-face\s*\{[^}]*\}\s*', drop, css)
+    if removed:
+        report.append(f'font non inclusi: tolte {removed} regole @font-face, valgono i ripieghi del foglio')
+    return css
+
+
 def build(args):
     cover = Path(args.cover).read_bytes()
     source = Path(args.text).read_bytes().decode('utf-8', errors='replace')
@@ -513,6 +534,8 @@ def build(args):
     css = Path(args.css).read_text(encoding='utf-8') if args.css else ''
     body, lang, title, found, moved, toc, report = clean(source, args.lang)
     labels = LABELS.get(lang, LABELS['en'])
+    if args.css and args.no_fonts:
+        css = strip_font_faces(css, report)
     fonts = css_fonts(css, Path(args.css).resolve().parent, report) if args.css else []
     if not args.css:
         report.append('nessun foglio di stile: vale quello del lettore')
@@ -676,6 +699,7 @@ def main():
     p.add_argument('--series')
     p.add_argument('--series-index')
     p.add_argument('--no-guide', action='store_true')
+    p.add_argument('--no-fonts', action='store_true')
     build(p.parse_args())
 
 

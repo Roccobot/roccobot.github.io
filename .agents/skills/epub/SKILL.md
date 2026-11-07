@@ -168,8 +168,16 @@ Il foglio allegato e la Flex, quando entrano, lo script li riceve con `--css` e 
 che il testo porta in un `<style>` si accodano in fondo, dopo un commento che lo dichiara: il
 foglio sopra resta intatto. La copertina ha il suo `Styles/cover.css`, con la sola geometria.
 
+⚠️⚠️ **Se includere i font si chiede ogni volta, per ogni EPUB** (regola dell'utente del 2026-11-07:
+*chiedimi sempre se voglio includere i font*), con la scelta multipla e prima di lanciare lo script,
+quando il foglio cita dei font col percorso relativo. Con un no lo script si lancia con
+`--no-fonts`: toglie dal foglio le regole `@font-face` che caricano un file accanto a lui, così le
+famiglie che dichiaravano lasciano il posto ai ripieghi generici del foglio e nessuna regola cita
+un file che il libro non ha (epubcheck lo rifiuterebbe), e lo dice nel resoconto. Con un sì vale il
+paragrafo qui sotto.
+
 ⚠️ **I font che il foglio cita col percorso relativo entrano nel libro** (dal 2026-10-27, richiesta
-dell'utente): la Flex chiama i suoi due font come `AomidoriFlex/RobotoFlex.ttf` e
+dell'utente, se a quel libro dice di sì): la Flex chiama i suoi due font come `AomidoriFlex/RobotoFlex.ttf` e
 `AomidoriFlex/JetBrainsMono.ttf`, accanto al foglio, e lo script li copia in `Styles/AomidoriFlex/`
 con la licenza OFL che ciascuno ha accanto (`<nome>-OFL.txt`), dichiarati nel manifesto. Senza, il
 libro si vede bene solo in Aomidori, che i font li ha già, e altrove compaiono dei ripieghi
