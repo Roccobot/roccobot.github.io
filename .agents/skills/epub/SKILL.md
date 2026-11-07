@@ -242,6 +242,27 @@ resoconto. Vale per ogni foglio, non solo per la Flex.
     codice). Il libro non può scavalcarlo: provato dall'utente il 2026-10-08, la copertina appare
     intera e col fondo trasparente, ma più piccola e in alto. Aomidori invece la adatta alla
     finestra. Non si rincorre con CSS o misure diverse.
+  - ⚠️⚠️ **Come Episteme legge il CSS**, letto nel codice della 1.0.59 (`CssParser.kt`,
+    `PaginatedReaderData.kt`) e provato da Rocco sul telefono il 2026-11-07, Flex 1.63-1.67.
+    Vale per ogni regola che la skill scrive a mano (un attributo `style` spostato in una
+    classe, la regola dei maiuscoletti accodata):
+    - **zero e `none` non annullano niente**: un margine zero lo legge come assente e ci mette la
+      sua spaziatura, e quando due regole valgono sullo stesso elemento tiene margine, padding e
+      raggi della seconda solo se non sono zero; `background: none` non è un colore, e il fondo
+      di prima resta. Per annullare si scrive un valore minimo non zero (`0.01px`, o `-1px` fra
+      due blocchi che devono toccarsi) e `transparent`: nei browser non cambia niente;
+    - **ogni selettore di un elenco vale da sé**: quelli che non capisce (`:has`, `:only-child`)
+      non fermano gli altri della stessa regola;
+    - **`@media`**: applica quelle che non conosce, come `(pointer: coarse)`, e confronta
+      `max-width` coi pixel fisici dello schermo, quindi le condizioni sulla larghezza non sono
+      affidabili;
+    - **un riquadro spezzato in due in Episteme** è il suo separatore di pagine, quando il
+      blocco cade fra due pagine: non è un difetto del libro né della Flex (verifica di Rocco).
+  - **I versi** si scrivono un `<p class="vv">` per verso (in corsivo, se il testo li ha in
+    corsivo, `<p class="vv"><i>...</i></p>`), senza segni in più: dalla Flex 1.67 sugli schermi
+    touch sono righe semplici al 90%, senza riquadro né rientro, e su Mac restano nel riquadro.
+    Una classe in più per un passo solo (mai un ID, che è unico nel file) si scrive solo se
+    l'utente vuole un trattamento diverso per quel passo, e la classe va prima nella Flex.
   - ⚠️ **Il prezzo**, dichiarato: i lettori molto vecchi (Adobe Digital Editions 2 e simili)
     conoscono solo `xlink:href`. Fra loro e i lettori dell'utente si è scelto quelli dell'utente.
 - **Lo spine contiene due voci**, copertina e testo, perché la pagina della copertina va
