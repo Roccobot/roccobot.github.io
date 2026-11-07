@@ -32,6 +32,11 @@
 | `test-site-search.js` | il banco della ricerca del sito dal tocco lungo sul FAB, sui due siti |
 | `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` e cancella quelle che gli autori hanno ritirato (`RIMOSSA`, salvo un pacchetto fallito); una skill ferma ma ancora fornita si rivaluta ogni sei mesi (scelta dell'utente, 2026-10-26); i controlli sui caratteri non guardano quei file, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`) |
 | `check-dependencies.py` | confronta il registro `docs/Dependencies.json` di un repo con le ultime versioni pubblicate; lo lancia ogni lunedì il workflow `dependencies.yml` |
+| `browser.py` | il Chromium degli strumenti che aprono una pagina, cercato da tutti nello stesso modo; lo caricano i controlli dei DF di AIV e di Aomidori e `og-image.py` di AIV, dall'hub clonato accanto o, su GitHub, da `.roccobot-hub` (dalla `Attrezzi`, 2026-11-07) |
+| `android_project.py` | il repo di un'app Android che i tre controlli qui sotto guardano: `--repo DIR`, e le parti proprie dell'app in `android-checks.json` alla sua radice (cartella delle risorse, disegni intoccabili, chiavi uguali di proposito) |
+| `icon-check.py` | le icone vettoriali di un'app Android: grammatica dei tracciati, vincoli di Android, e la resa con Chromium (linee guida Material, avvolgimento, cucitura) |
+| `icon-round.py` | gli spigoli vivi delle icone di un'app Android, col raggio da usare; esclude i disegni intoccabili, i glifi di Material e i disegni dell'utente entrati senza toccarli |
+| `i18n-check.py` | le traduzioni di un'app Android contro l'inglese: chiavi, segnaposto, plurali, caratteri vietati, apostrofi e chiavi mai tradotte; lo lancia il banco di AIV su GitHub |
 
 Il perché di ognuno vive nell'intestazione del file.
 
