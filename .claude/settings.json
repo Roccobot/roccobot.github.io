@@ -93,17 +93,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" stop",
-            "timeout": 30
-          }
-        ]
-      }
     ]
   }
 }

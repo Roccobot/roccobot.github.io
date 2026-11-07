@@ -151,63 +151,6 @@ class BoardTests(unittest.TestCase):
         self.assertIn('(senza etichetta)', out[0])
 
 
-def run_stop(entries, active=False):
-    """Runs the `stop` mode on a transcript made of the given (role, content) entries."""
-    import tempfile
-    lines = []
-    for role, content in entries:
-        lines.append(json.dumps({'type': role, 'message': {'role': role, 'content': content}}))
-    with tempfile.NamedTemporaryFile('w', suffix='.jsonl', delete=False, encoding='utf-8') as f:
-        f.write('\n'.join(lines))
-    event = {'transcript_path': f.name, 'stop_hook_active': active}
-    return subprocess.run([sys.executable, str(SCRIPT), 'stop'], input=json.dumps(event),
-                          text=True, capture_output=True, timeout=60)
-
-
-def text(t):
-    return [{'type': 'text', 'text': t}]
-
-
-class StopTests(unittest.TestCase):
-    """The user's choice Italiano-01, 2026-11-07: after four relapses, whole sentences in English
-    between two tool calls and in reports, a check at the end of every turn."""
-
-    def test_english_sentence_blocks(self):
-        r = run_stop([('user', 'rifai i libri'),
-                      ('assistant', text('Ora controllo i libri.')),
-                      ('assistant', [{'type': 'tool_use', 'id': 't1', 'name': 'Bash', 'input': {}}]),
-                      ('user', [{'type': 'tool_result', 'tool_use_id': 't1', 'content': 'ok'}]),
-                      ('assistant', text('Everything is green and published. I close the card and update the brief.'))])
-        self.assertEqual(r.returncode, 2, r.stderr)
-        self.assertIn('Everything is green', r.stderr)
-
-    def test_italian_with_technical_words_passes(self):
-        r = run_stop([('user', 'pubblica'),
-                      ('assistant', text('Il commit `d7421fa` è su `main`: il push fa partire il controllo '
-                                         'delle regole, e la Flex 1.65 è online con il grassetto a 540.'))])
-        self.assertEqual(r.returncode, 0, r.stderr)
-
-    def test_code_and_quotes_are_not_prose(self):
-        r = run_stop([('user', 'mostrami'),
-                      ('assistant', text('Ecco il messaggio di commit:\n```text\nfeat: the bold is now at 540 '
-                                         'and the heavy bold at 700\n```\nE la frase che hai citato:\n'
-                                         '> Everything is green and published\n'
-                                         'Nel codice `this is the fix for it` resta in inglese.'))])
-        self.assertEqual(r.returncode, 0, r.stderr)
-
-    def test_only_the_last_turn_counts(self):
-        r = run_stop([('user', 'prima'),
-                      ('assistant', text('The books are in Downloads and they are both valid.')),
-                      ('user', 'poi'),
-                      ('assistant', text('Ho rifatto i due libri, e sono tutti e due validi.'))])
-        self.assertEqual(r.returncode, 0, r.stderr)
-
-    def test_no_second_block_while_already_continuing(self):
-        # A hook that blocks again while Claude is already continuing for it could loop.
-        r = run_stop([('user', 'x'), ('assistant', text('This is the report and it is in English.'))], active=True)
-        self.assertEqual(r.returncode, 0, r.stderr)
-
-
 class PromptReminderTests(unittest.TestCase):
     """Rocco's choice Prevenzione-01, 2026-11-07: the language reminder on every prompt, before
     the writing; repos and board are replaced so the test fetches nothing."""
