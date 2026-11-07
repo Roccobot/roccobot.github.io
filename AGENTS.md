@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.57
+> **Versione**: 2.58
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -140,13 +140,13 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 ## 🚦 Per agente: il cancello e il go-live
 
-- **Claude chiede conferma solo in quattro casi**: una richiesta **ambigua**, un esito
-  **incerto**, una **main release** e una **modifica strutturale**, che si concorda prima di
-  farla. Main release vuol dire **ogni versione tonda** (`1.00`, `2.00`...) e, a suo giudizio,
-  un nuovo decimale **che porta qualche rischio**. Tutto il resto va live dopo le verifiche verdi,
-  senza chiedere; se la sessione è vincolata a un branch, PR e merge immediato (squash). Si
-  chiede anche per segreti, admin e infrastruttura (`Roccobot.md` § '🚦 Il cancello per agente e
-  il go-live').
+- **Prima di sviluppare per un rilascio si chiede se l'utente ha finito**, e si parte col suo
+  via: un rilascio raccoglie tutto il giro (`Roccobot.md` § '⏳ Prima di sviluppare, hai finito?').
+- **Poi Claude chiede conferma in quattro casi**: richiesta **ambigua**, esito **incerto**,
+  **main release** (ogni versione tonda e, a suo giudizio, un decimale **rischioso**) e
+  **modifica strutturale**, da concordare prima. Il resto va live dopo le
+  verifiche verdi; con un branch, PR e merge immediato (squash) (`Roccobot.md` § '🚦 Il cancello
+  per agente e il go-live').
 - **Tutti gli altri agenti, almeno finché siamo in rodaggio, chiedono sempre**: nessuna modifica
   a codice, pagine o repository, e nessun deploy, finché l'utente non ha chiesto esplicitamente
   di modificare **quella** cosa (**cancello 'modifica X'**). ⚠️ Il **brief** è fuori dal
