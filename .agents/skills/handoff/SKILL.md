@@ -210,7 +210,8 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   documento di feedback sul Worker `aiv-feedback`. **Aomidori**, il lettore per macOS, vive in
   `Roccobot/Aomidori`, privato, col documento di feedback sul Worker `aomidori-feedback`; la sua
   pagina di download, l'appcast e l'archivio degli stili vivono nell'hub (`Aomidori/` e
-  `styles/`), e le release in `Roccobot/Aomidori-releases`.
+  `styles/`), e le release in `Roccobot/Aomidori-releases`. Il sito nuovo di **Roccobot.me**, il
+  portfolio di Rocco, vive in `Roccobot/rocco.bot` (dal 2026-11-08, ancora da costruire).
   ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: di serie SlimVer (`x.xx`),
   con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di `RoccobotOS.js`
   per RoccobotOS e in `versionName` per AIV, che si pubblica come release e non come deploy;

@@ -89,7 +89,7 @@ def _clone(nome):
 AIV = _clone("AIV")
 PROGETTI = {nome: _clone(nome) for nome in (
     "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
-    "cheparolae", "Aomidori")}
+    "cheparolae", "Aomidori", "rocco.bot")}
 
 RULEFILES = [
     SITO / "CLAUDE.md",

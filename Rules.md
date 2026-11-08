@@ -28,6 +28,7 @@
 | **'Ma che parola è'**, la pagina delle parole in colonna (dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo `/cheparolae/`; prima nella cartella `Parole/` di questo repo) | repo `Roccobot/cheparolae` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | l'`AGENTS.md` e il `Rules.md` di quella cartella |
 | **AIV**, l'app Android 'Astonishing Image Viewer' (repo **privato** dal 2026-10-19, passo 5 di `Serratura`; la paginetta di download e l'informativa vivono qui, in `AIV/`, copiate da `publish/` del suo repo, e le release nel repo pubblico `Roccobot/AIV-releases`) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **Roccobot.me**, il sito-portfolio di Rocco, rifatto da zero (repo nato il 2026-11-08, pubblico e ancora da costruire; il sito di oggi è su Squarespace) | repo `Roccobot/rocco.bot` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
