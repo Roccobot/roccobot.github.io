@@ -123,10 +123,13 @@
   a:hover{text-decoration:underline}
   :focus-visible{outline:2px solid var(--text-link); outline-offset:2px}
 
-  /* The feature cards' grid, shared with the screenshot's place (see .schermata). */
+  /* The page's content width, shared by the sheet and the footer: 1000 px since Rocco's note of
+     2026-11-08 (too much empty room on a desktop; up to then 912 px, with 840 px of cards), so
+     that the screenshot can grow (see .schermata). */
+  :root{--contenuto:1000px}
   .foglio{
-    max-width:960px; width:100%; margin:0 auto; padding:24px 24px 0;
-    --fatti-larghezza:840px; --fatti-spazio:40px; --glifo:24px; --glifo-spazio:14px;
+    max-width:calc(var(--contenuto) + 48px); width:100%; margin:0 auto; padding:24px 24px 0;
+    --fatti-spazio:40px; --glifo:24px; --glifo-spazio:14px;
   }
   .testa{display:grid; grid-template-columns:minmax(0,1fr); gap:40px; --icona:108px}
   .alto{display:grid; grid-template-columns:auto 1fr; gap:20px 24px; align-items:center}
@@ -151,9 +154,13 @@
      room. Without an address (the app is not on Google Play yet) it is an <a> with no href, so
      neither a link nor focusable, and it is only a quiet line with its glyph: as a switched-off
      button of full size it made the column a stack of three boxes (Rocco, 2026-11-08). */
-  /* The same width for the two buttons, in both languages (the longest label, 'Get it for
-     Android', fits in 16.5 em with its glyph and padding, measured in WebKit on 2026-11-08). */
-  .scarica{min-width:16.5em; justify-content:center}
+  /* One width for every button of the column, Mac, Android and giveaway, in both languages
+     (Rocco, 2026-11-08): in one column 16.5 em of the Mac button's text, 264 px at 16 px and
+     297 px at 18 px on a phone, which holds the longest label, 'Get it for Android', with its
+     glyph and padding (measured in WebKit on 2026-11-08); next to the screenshot, the whole
+     column (see .schermata). */
+  .parole{--tasto:264px}
+  .scarica{min-width:var(--tasto); justify-content:center}
   .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor; margin-top:6px}
   .scarica.contorno[href]:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
   .scarica.contorno:not([href]){
@@ -175,6 +182,7 @@
     display:inline-flex; align-items:center; gap:10px; cursor:pointer;
     font:inherit; font-size:15px; font-weight:600; color:var(--text-link);
     background:none; border:1.5px solid currentColor; padding:11px 20px; border-radius:12px;
+    min-width:var(--tasto); justify-content:center;
   }
   .regalo-tasto:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
   .regalo-tasto:disabled{opacity:0.6; cursor:default}
@@ -194,12 +202,11 @@
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
      as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.webp
      and -dark.webp, a landscape window of 1600 x 1176 since the owner's choice
-     Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns its
-     place comes from the feature cards below: it starts at the left edge of the right cards'
-     glyphs (the owner's request, 2026-10-27; up to then at their text), and ends where it did,
-     at the far edge of the right cards' column: 440 px wide, 323.4 px tall, 28 px below the left
-     column, which is 295 px with the same text in both languages (measured on 2026-10-27); its
-     top is on the icon's tile.
+     Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns it
+     takes all the room the words leave (Rocco's note of 2026-11-08: bigger, anchored at the top
+     right, closer to the words): its top is on the icon's tile and its right edge on the cards'.
+     Up to then it was 440 px wide, lined up with the right cards' glyphs, and ended 92 px above
+     the words once the giveaway and the Android line were there.
      The shadow is AIV's: a soft shadow on light, and on dark (where black would not show) a
      shadow plus a glow in the accent colour. It is a drop-shadow, which follows the window's
      rounded corners and takes no room: only the picture lines up with the column's edges. */
@@ -212,24 +219,26 @@
   .schermata[hidden]{display:none}
   .schermata img{display:block; width:100%; height:auto; filter:var(--ombra-schermata)}
   @media (min-width:1000px){
-    /* Two columns: words on the left, as wide as the column (the opening text included), and
-       the screenshot on the right, lined up with the feature cards (see above), its top on the
-       icon's tile (the canvas has 100 px of margin in 1024, as in .icona). */
+    /* Two columns: the words on the left, as narrow as the one-line subtitle under the icon's
+       row allows (min-content), and the screenshot on the right, in the rest (see above), its top
+       on the icon's tile (the canvas has 100 px of margin in 1024, as in .icona). */
     .con-schermata .testa{
-      --colonna-fatti:calc((var(--fatti-larghezza) - var(--fatti-spazio)) / 2);
-      --schermata-larghezza:calc(var(--colonna-fatti) + var(--fatti-spazio));
-      --schermata-inizio:calc(var(--colonna-fatti) + var(--fatti-spazio));
-      grid-template-columns:minmax(0,1fr) var(--schermata-larghezza); gap:56px; align-items:start;
-      max-width:calc(var(--schermata-inizio) + var(--schermata-larghezza));
+      grid-template-columns:min-content minmax(0,1fr); gap:32px; align-items:start;
     }
     .con-schermata .parole{max-width:none}
+    /* The buttons as wide as the column, so they end 32 px from the screenshot: at 264 px they
+       left 170 px of empty room under the subtitle's width (Rocco, 2026-11-08). The Android line,
+       while it is not a button, keeps its own width. */
+    .con-schermata .parole{--tasto:100%}
+    .con-schermata .blocco-scarica,.con-schermata .regalo{align-items:stretch}
+    .con-schermata .scarica.contorno:not([href]){align-self:flex-start}
     /* The subtitle on one line (Rocco's note on 2.10-13: books and comics, short; from 2.00 to 2.10
        it named the documents too and wrapped in two balanced lines). */
     .con-schermata .sottotitolo{white-space:nowrap}
     .con-schermata .schermata{margin-top:calc(var(--icona) * 100 / 1024)}
   }
 
-  .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px var(--fatti-spazio); padding:56px 0 0; max-width:var(--fatti-larghezza)}
+  .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px var(--fatti-spazio); padding:56px 0 0}
   .fatto{
     display:flex; gap:var(--glifo-spazio); align-items:flex-start;
     --titolo-corpo:15px; --titolo-interlinea:1.2;
@@ -246,7 +255,7 @@
   .fatto .corpo{font-size:14px; line-height:1.5; color:var(--text-muted)}
 
   footer > nav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 16px;margin-bottom:20px;font-size:15px}
-  footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
+  footer{max-width:calc(var(--contenuto) + 48px); width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
     border-top:1px solid var(--outline-variant); padding-top:18px;
     display:flex; flex-wrap:nowrap; gap:12px 24px; align-items:center; justify-content:space-between;
@@ -264,6 +273,7 @@
   @media (max-width:880px){
     .testa{--icona:88px}
     h1{font-size:30px}
+    .parole{--tasto:297px}
     .scarica{font-size:18px; padding:16px 30px; border-radius:14px; align-self:center}
     .blocco-scarica{align-items:stretch}
     .tecnica, .solo-mac{text-align:center}
