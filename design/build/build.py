@@ -361,8 +361,66 @@ def hero_icon():
             f'<path class="hi-sign" fill-rule="evenodd" d="{sign}"/></svg>')
 
 
+# ── The Start menu spacing diagram ──
+# Rocco's sketch of 2026-11-08 turned into a figure: magenta for the optical margin (to the icon, and
+# at the bottom to the label), yellow for the two pitches, a dashed square for the icon place the
+# close key is centered on. Every length comes from the tokens, so the figure follows them.
+def start_spacing_svg():
+    m = {t['name']: float(t['value'][:-2]) for t in TOKENS['misura']['tokens'] if t['value'].endswith('px')}
+    rad = float(next(t for t in TOKENS['radius']['tokens'] if t['name'] == 'raggio-start')['value'].rstrip('px'))
+    M, I, P, PR = m['margine-start'], m['icona-start'], m['cella-start-larghezza'], m['passo-start-righe']
+    G, L, LW = m['etichetta-start-spazio'], m['etichetta-start-riga'], m['etichetta-start-max']
+    cols = rows = 3
+    pw, ph = 2 * M + (cols - 1) * P + I, 2 * M + (rows - 1) * PR + I + G + L
+    pad = 24
+    ox, oy = pad, pad
+    legend_y = oy + ph + pad + 14
+    W, H = pw + 2 * pad, legend_y + 3 * 20
+    cx = lambda c: ox + M + c * P + I / 2
+    cy = lambda r: oy + M + r * PR + I / 2
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:g} {H:g}" width="{W * 2:g}" height="{H * 2:g}" '
+           'font-family="Archivo, Helvetica, Arial, sans-serif">',
+           f'<rect width="{W:g}" height="{H:g}" fill="#8FA59F"/>',
+           f'<rect x="{ox:g}" y="{oy:g}" width="{pw:g}" height="{ph:g}" rx="{rad:g}" fill="#FFFEFC"/>']
+    pitch_x, pitch_y = '#EBD83A', '#F2E88C'
+    for r in range(rows):  # horizontal pitches, center to center, behind the icons
+        last = cols - 1 if r < rows - 1 else cols - 2
+        if last > 0:
+            out.append(f'<line x1="{cx(0):g}" y1="{cy(r):g}" x2="{cx(last):g}" y2="{cy(r):g}" stroke="{pitch_x}" stroke-width="3"/>')
+    for c in range(cols):  # vertical pitches
+        last = rows - 1 if c < cols - 1 else rows - 2
+        out.append(f'<line x1="{cx(c):g}" y1="{cy(0):g}" x2="{cx(c):g}" y2="{cy(last):g}" stroke="{pitch_y}" stroke-width="3"/>')
+    for r in range(rows):
+        for c in range(cols):
+            x, y = cx(c) - I / 2, cy(r) - I / 2
+            if (r, c) == (rows - 1, cols - 1):
+                out.append(f'<rect x="{x:g}" y="{y:g}" width="{I:g}" height="{I:g}" rx="6" fill="none" '
+                           'stroke="#9AA8A4" stroke-width="1" stroke-dasharray="3 2"/>')
+                k = I * .22
+                out.append(f'<path d="M{cx(c) - k:g} {cy(r) - k:g}L{cx(c) + k:g} {cy(r) + k:g}M{cx(c) + k:g} {cy(r) - k:g}L{cx(c) - k:g} {cy(r) + k:g}" '
+                           'stroke="#1E2523" stroke-width="2" stroke-linecap="round"/>')
+                continue
+            w = LW - (22 if (r + c) % 2 else 14)  # typical labels; the token is the maximum
+            out.append(f'<rect x="{x:g}" y="{y:g}" width="{I:g}" height="{I:g}" rx="7" fill="#7FCBBB"/>')
+            out.append(f'<rect x="{cx(c) - w / 2:g}" y="{y + I + G + L - 4:g}" width="{w:g}" height="4" rx="2" fill="#B3B3B3"/>')
+    mg = '#E6007E'  # the four margins, on the middle column and the middle row
+    out += [f'<line x1="{cx(1):g}" y1="{oy:g}" x2="{cx(1):g}" y2="{oy + M:g}" stroke="{mg}" stroke-width="3"/>',
+            f'<line x1="{cx(1):g}" y1="{oy + ph - M:g}" x2="{cx(1):g}" y2="{oy + ph:g}" stroke="{mg}" stroke-width="3"/>',
+            f'<line x1="{ox:g}" y1="{cy(1):g}" x2="{ox + M:g}" y2="{cy(1):g}" stroke="{mg}" stroke-width="3"/>',
+            f'<line x1="{ox + pw - M:g}" y1="{cy(1):g}" x2="{ox + pw:g}" y2="{cy(1):g}" stroke="{mg}" stroke-width="3"/>']
+    legend = [(mg, f'margine-start  {M:g}'), (pitch_x, f'cella-start-larghezza  {P:g}'),
+              (pitch_y, f'passo-start-righe  {PR:g}')]
+    for i, (col, text) in enumerate(legend):
+        y = legend_y + i * 20
+        out.append(f'<rect x="{pad:g}" y="{y - 9:g}" width="18" height="4" rx="2" fill="{col}"/>')
+        out.append(f'<text x="{pad + 26:g}" y="{y - 3:g}" font-size="11" fill="#1E2523">{text}</text>')
+    out.append('</svg>\n')
+    return '\n'.join(out)
+
+
 def main():
     tpl = (HERE / 'template.html').read_text(encoding='utf-8')
+    (ROOT / 'components' / 'start-menu' / 'spacing.svg').write_text(start_spacing_svg(), encoding='utf-8')
     fills = {
         'css': css_tokens(),
         'turchese': accent_card('turchese', 'Turquoise',
