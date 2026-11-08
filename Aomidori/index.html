@@ -157,8 +157,8 @@
   /* One width for every button of the column, Mac, Android and giveaway, in both languages
      (Rocco, 2026-11-08): in one column 16.5 em of the Mac button's text, 264 px at 16 px and
      297 px at 18 px on a phone, which holds the longest label, 'Get it for Android', with its
-     glyph and padding (measured in WebKit on 2026-11-08); next to the screenshot, the whole
-     column (see .schermata). */
+     glyph and padding (measured in WebKit on 2026-11-08); next to the screenshot, 340 px (see
+     .schermata). */
   .parole{--tasto:264px}
   .scarica{min-width:var(--tasto); justify-content:center}
   .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor; margin-top:6px}
@@ -226,12 +226,10 @@
       grid-template-columns:min-content minmax(0,1fr); gap:32px; align-items:start;
     }
     .con-schermata .parole{max-width:none}
-    /* The buttons as wide as the column, so they end 32 px from the screenshot: at 264 px they
-       left 170 px of empty room under the subtitle's width (Rocco, 2026-11-08). The Android line,
-       while it is not a button, keeps its own width. */
-    .con-schermata .parole{--tasto:100%}
-    .con-schermata .blocco-scarica,.con-schermata .regalo{align-items:stretch}
-    .con-schermata .scarica.contorno:not([href]){align-self:flex-start}
+    /* Wider buttons next to the screenshot (Rocco, 2026-11-08): at 264 px they left 170 px of
+       empty room before it, under the subtitle's width; as wide as the column (402 px) they were
+       too much. At 340 px they end 94 px from it. */
+    .con-schermata .parole{--tasto:340px}
     /* The subtitle on one line (Rocco's note on 2.10-13: books and comics, short; from 2.00 to 2.10
        it named the documents too and wrapped in two balanced lines). */
     .con-schermata .sottotitolo{white-space:nowrap}
