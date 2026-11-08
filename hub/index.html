@@ -128,29 +128,24 @@
      and the second one sits above it, so neither link is nested in the other */
   .tile { position: relative; }
   .tile .name::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-  /* The second link is a small pill at the end of the note line, with the colours of the Open pills */
-  .tile .note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .4rem; }
-  a.extra { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: .3em;
-            text-decoration: none; font-size: .8rem; font-weight: 500; line-height: 1.5;
-            background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: .15rem .5rem; }
-  /* The arrow is drawn, not typed: Archivo has no U+2197, and the fallback font that draws it
-     has other vertical metrics, so on a Mac the line box grew and the text left the centre */
-  a.extra::after { content: ""; width: .7em; height: .7em; background: currentColor;
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
-  a.extra:hover { background: var(--accent-hover); }
+  /* The second link is a line of its own under the note, plain text with an underline, above
+     the main link's ::before so it stays clickable */
+  a.sub { position: relative; z-index: 1; display: block; width: fit-content; margin-top: .1rem;
+          color: var(--ink-muted); font-size: .9rem; text-decoration: underline;
+          text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a.sub:hover { color: var(--link); text-decoration-thickness: 2px; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
   /* Groups inside a section: same grey as the section titles, smaller and with more room above,
      so size and position make the hierarchy, not colour */
   h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
              color: var(--ink-muted); margin: 1.8rem 0 .6rem; }
-  /* The keyboard focus ring follows the shape of what is focused: the whole tile, the pill, never a
+  /* The keyboard focus ring follows the shape of what is focused: the whole tile or the pill, never a
      square box around a line of text */
   a:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
   .tiles > li > a:focus-visible, .tile:has(.name:focus-visible) { outline: 2px solid var(--link); outline-offset: 2px; }
   .tile .name:focus-visible { outline: none; }
-  a.open:focus-visible, a.extra:focus-visible { border-radius: 999px; }
+  a.open:focus-visible { border-radius: 999px; }
 </style>
 </head>
 <body>
@@ -205,13 +200,12 @@
   <section aria-labelledby="t-link">
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
-      <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note"><span>Progetti e repo di Roccobot</span><a class="extra" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Principali</a></span></div></li>
+      <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note">Progetti e repo di Roccobot</span><a class="sub" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Repo principali</a></div></li>
       <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last" hidden></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Il design system del marchio</span></a></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I Worker dei DF e di rules-proxy</span></a></li>
-      <li><a href="https://supabase.com/dashboard/" target="_blank" rel="noopener"><span class="name">Supabase</span><span class="note">Il database e i file dei DF</span></a></li>
     </ul>
     <h3 class="group">Pubblicazione</h3>
     <ul class="tiles">
