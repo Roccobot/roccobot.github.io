@@ -38,7 +38,10 @@
     --accent-hover: #008577;  /* 4.54 under --on-accent */
     --label: #0B6B5B;         /* testo-accento, 5.3 on --bg */
     --link: #0B6B5B;          /* testo-accento, 6.1 on --card */
-    --paid: #9B4A45;          /* a dull dark red for the money spent, 5.8 on --card */
+    /* The shares used up of the Actions tile, all above 4.5 on --card */
+    --warn: #9A5800;          /* orange, 5.3 */
+    --alert: #9B4A45;         /* dull dark red, 5.8 */
+    --alarm: #B3261E;         /* deep red, 6.2 */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   /* Dark theme: the deep green-grey between light and dark of the page's first version, so that
@@ -57,7 +60,9 @@
       --on-accent: #00382F;   /* contenuto-su-accento, 5.19 over the accent */
       --accent-hover: #4FD9BE; /* turchese-luce, 7.5 under --on-accent */
       --link: #4FD9BE;        /* turchese-luce, 6.9 on --bg, 5.5 on --card */
-      --paid: #DEACA6;        /* the same dull red, lighter: 4.9 on --card */
+      --warn: #F0B060;        /* orange, 5.1 on --card */
+      --alert: #DEACA6;       /* dull red, 4.9 */
+      --alarm: #FF9A90;       /* deep red, 4.7 */
     }
   }
   :root[data-theme="dark"] {
@@ -73,7 +78,9 @@
     --on-accent: #00382F;
     --accent-hover: #4FD9BE;
     --link: #4FD9BE;
-    --paid: #DEACA6;
+    --warn: #F0B060;
+    --alert: #DEACA6;
+    --alarm: #FF9A90;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
@@ -139,8 +146,10 @@
   a.sub:hover { color: var(--link); text-decoration-thickness: 2px; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
-  /* The money paid beyond the quota, after the free minutes on the same line; it wraps whole */
-  .note .paid { color: var(--paid); white-space: nowrap; }
+  /* A share of the quota or of the budget used up: orange from 50%, red from 70%, deep red from 90% */
+  .note[data-level="warn"] { color: var(--warn); }
+  .note[data-level="alert"] { color: var(--alert); }
+  .note[data-level="alarm"] { color: var(--alarm); }
   /* Groups inside a section: same grey as the section titles, smaller and with more room above,
      so size and position make the hierarchy, not colour */
   h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
@@ -243,13 +252,36 @@
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
   });
-  // The GitHub Actions tile: the minutes of the month, of the latest run and the money paid, from the
-  // rules-proxy Worker (GET /actions, public, cached five minutes there). Numbers only;
-  // the text is set with textContent.
+  // The GitHub Actions tile, from the rules-proxy Worker (GET /actions, public, cached five
+  // minutes there). The decisions live in actionsLines(), a pure function; the code below it only
+  // fetches and writes, with textContent.
+  // Rocco's spending limit beyond the free quota, in euros (his answer Quota-01, 2026-11-08).
+  const BUDGET_EUR = 25;
+  // The colour of a share used up: none under 50%, then orange, red and deep red (his thresholds).
+  const level = (pct) => pct >= 90 ? 'alarm' : pct >= 70 ? 'alert' : pct >= 50 ? 'warn' : '';
+  const n = (v) => Number(v).toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
+  /* The lines for the month: the free minutes used and their share of the quota; once the quota is
+     used up, the extra minutes and their share of the budget. GitHub bills in US dollars, so the
+     share needs the day's rate (eurPerUsd); without it the extra line has no share. */
+  function actionsLines(d, eurPerUsd) {
+    if (!d.included) return [{ text: `${n(d.counted)} minuti usati nel mese`, level: '' }];
+    const used = Math.min(d.counted, d.included);
+    const pct = Math.round(used / d.included * 100);
+    const lines = [{ text: `${n(used)} minuti gratuiti usati (${pct}%)`, level: level(pct) }];
+    if (d.counted >= d.included) {
+      const extra = Math.round(d.counted - d.included);
+      if (typeof eurPerUsd === 'number' && typeof d.paid === 'number') {
+        const share = Math.round(d.paid * eurPerUsd / BUDGET_EUR * 100);
+        lines.push({ text: `Minuti extra: ${n(extra)} (${share}% del budget)`, level: level(share) });
+      } else {
+        lines.push({ text: `Minuti extra: ${n(extra)}`, level: 'alarm' });
+      }
+    }
+    return lines;
+  }
   (async () => {
     const note = document.getElementById('actions-note');
     const last = document.getElementById('actions-last');
-    const n = (v) => Number(v).toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
     try {
       const r = await fetch('https://rules-proxy.roccobot-b90.workers.dev/actions');
       const d = await r.json();
@@ -257,27 +289,29 @@
         note.textContent = d.error === 'billing-config' ? 'Contatore non ancora collegato' : 'Minuti non disponibili ora';
         return;
       }
-      note.textContent = d.included
-        ? `${n(d.remaining)} minuti liberi su ${n(d.included)}`
-        : `${n(d.counted)} minuti usati nel mese`;
+      let rate = null;
+      if (d.included && d.counted >= d.included) {
+        // The ECB rate of the day, from Frankfurter (api v2), only when there are extra minutes.
+        try {
+          rate = (await (await fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=EUR')).json())[0].rate;
+        } catch {}
+      }
+      const [first, ...more] = actionsLines(d, rate);
+      note.textContent = first.text;
+      if (first.level) note.dataset.level = first.level;
+      let after = note;
+      for (const line of more) {
+        const el = document.createElement('span');
+        el.className = 'note';
+        el.textContent = line.text;
+        if (line.level) el.dataset.level = line.level;
+        after.after(el);
+        after = el;
+      }
       const run = (d.runs || [])[0];
       if (run) {
-        last.textContent = `Ultima corsa: ${run.repo}, ${n(run.weighted)} min`;
+        last.textContent = `Ultima corsa: ${run.repo}, ${n(run.weighted)} min`;
         last.hidden = false;
-      }
-      // What the month cost beyond the quota (rev 13), after the free minutes. GitHub bills in US
-      // dollars: the euros come from the day's ECB rate, read from Frankfurter; without it the
-      // amount stays in dollars, with their sign.
-      if (typeof d.paid === 'number') {
-        let amount = d.paid, sign = '$';
-        try {
-          const rate = (await (await fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=EUR')).json())[0].rate;
-          if (typeof rate === 'number') { amount = d.paid * rate; sign = '€'; }
-        } catch {}
-        const paid = document.createElement('span');
-        paid.className = 'paid';
-        paid.textContent = `Extra: ${amount.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${sign}`;
-        note.append(' · ', paid);
       }
     } catch {
       note.textContent = 'Minuti non disponibili ora';
