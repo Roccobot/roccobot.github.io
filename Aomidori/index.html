@@ -146,20 +146,24 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.18);
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
-  /* The Android button (Android-01, 2026-11-08): the Mac button's shape and size with an outline
-     instead of the fill, drawn as an inset shadow so it takes no room. Without an address (the
-     app is not on Google Play yet) it is an <a> with no href, so neither a link nor focusable,
-     and it looks switched off. */
-  /* The same width for the two buttons, in both languages (the longest label, 'Coming soon to
-     Android', is about 16.3 em with its glyph and padding, measured in WebKit on 2026-11-08). */
+  /* The Android button (Android-01, 2026-11-08), under the Mac button's note: the Mac button's
+     shape and size with an outline instead of the fill, drawn as an inset shadow so it takes no
+     room. Without an address (the app is not on Google Play yet) it is an <a> with no href, so
+     neither a link nor focusable, and it is only a quiet line with its glyph: as a switched-off
+     button of full size it made the column a stack of three boxes (Rocco, 2026-11-08). */
+  /* The same width for the two buttons, in both languages (the longest label, 'Get it for
+     Android', fits in 16.5 em with its glyph and padding, measured in WebKit on 2026-11-08). */
   .scarica{min-width:16.5em; justify-content:center}
-  .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor}
-  .scarica.contorno:not([href]){opacity:0.6; cursor:default}
-  .scarica.contorno:not([href]):hover{filter:none}
+  .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor; margin-top:6px}
   .scarica.contorno[href]:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
-  /* On an Android phone the Android button comes first, right after the opening text. */
-  .su-android .claim{order:-2}
-  .su-android .blocco-android{order:-1}
+  .scarica.contorno:not([href]){
+    min-width:0; padding:0; margin:0; box-shadow:none; gap:6px; cursor:default;
+    font-size:13px; font-weight:400; color:var(--text-muted); opacity:0.72;
+  }
+  .scarica.contorno:not([href]) svg{width:15px; height:15px}
+  .scarica.contorno:not([href]):hover{filter:none}
+  /* On an Android phone the Android button comes first in its block, above the Mac's. */
+  .su-android #scarica-android{order:-1}
   .tecnica{font-size:13px; color:var(--text-muted); opacity:0.72; margin:0}
   .solo-mac{font-size:14px; color:var(--text-body); margin:0}
   .solo-mac[hidden]{display:none}
@@ -296,6 +300,16 @@
           <span id="scarica-testo">Download Aomidori</span>
         </a>
         <p class="tecnica" id="tecnica">macOS 27 or later, Apple Silicon only</p>
+        <!-- Android-01 (2026-11-08): for everyone, a quiet line until the app is on Google Play,
+             then a button (ANDROID_URL in the script). -->
+        <a class="scarica contorno" id="scarica-android">
+          <!-- A phone. -->
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <rect x="6.4" y="2.8" width="11.2" height="18.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect>
+            <path d="M10.6 17.8h2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          <span id="scarica-android-testo">Coming soon to Android</span>
+        </a>
       </div>
       <!-- Regalo (2026-11-01): the promo code giveaway. Hidden until aomidori-codes answers, so
            without JavaScript, or once the block is removed from the Worker, nothing shows. -->
@@ -310,18 +324,6 @@
           <button type="button" class="regalo-copia" id="regalo-copia"></button>
         </div>
         <p class="regalo-nota" id="regalo-nota" aria-live="polite"></p>
-      </div>
-      <!-- Android-01 (2026-11-08): a button for everyone, switched off until the app is on Google
-           Play (ANDROID_URL in the script). After the giveaway, whose codes are for the Mac. -->
-      <div class="blocco-scarica blocco-android">
-        <a class="scarica contorno" id="scarica-android">
-          <!-- A phone. -->
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <rect x="6.4" y="2.8" width="11.2" height="18.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect>
-            <path d="M10.6 17.8h2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-          </svg>
-          <span id="scarica-android-testo">Coming soon to Android</span>
-        </a>
       </div>
     </div>
   </div>
