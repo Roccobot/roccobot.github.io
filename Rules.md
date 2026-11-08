@@ -135,11 +135,13 @@ numero per scelta dell'utente.
   telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
   strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). La tessera `GitHub
-  Actions` (voce `Contatore`, dal 2026-11-08) mostra i minuti liberi del mese e, sulla stessa
-  riga in rosso spento, `Extra: <x> €`, i minuti extra pagati nel mese (sua richiesta `Quota-01`:
-  piano gratuito con un limite di spesa di 25 euro da non toccare); GitHub fattura in dollari, e
-  la pagina li converte col cambio del giorno della BCE letto da Frankfurter (senza cambio resta il
-  dollaro, col suo segno). Sotto, l'ultima corsa. I dati arrivano da
+  Actions` (voce `Contatore`, dal 2026-11-08) mostra `<x> minuti gratuiti usati (<y>%)`
+  e, solo a quota esaurita, `Minuti extra: <x> (<y>% del budget)`, dove il budget è il limite di
+  spesa di 25 euro (sua richiesta `Quota-01`: piano gratuito, limite da non toccare). Ogni riga ha
+  il colore della sua percentuale, sue soglie: quello di serie sotto il 50%, arancione dal 50%, rosso
+  dal 70%, rosso intenso dal 90%. GitHub fattura in dollari, e la quota del budget si calcola col
+  cambio del giorno della BCE letto da Frankfurter (senza cambio la riga dice i soli minuti, in
+  rosso intenso). Sotto, l'ultima corsa. I dati arrivano da
   `GET /actions` del Worker `rules-proxy` (`Rules.md` di `tools`, `rev` 11-13). Solo italiano, coi valori del design system di `design/`, e due temi
   dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
   il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
