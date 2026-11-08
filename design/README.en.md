@@ -323,7 +323,8 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   sheet).
 - **Start menu**: the commands that grow out of the Tondo, in two shapes: 9 keys, three by three,
   and 8 keys, in four rows of 2. The same optical margin on all four sides, an equal pitch between
-  icon centers, the × centered on an icon's place (see its sheet, with the spacing diagram).
+  icon centers, the × centered on an icon's place. These are ideal values, adapted in three cases
+  the owner decides (see its sheet, with the spacing diagram and the examples).
 - **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
