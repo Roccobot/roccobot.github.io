@@ -27,6 +27,20 @@ The menu that grows out of the Tondo, close to the thumb's side, with the × in 
   label line. The 9-key menu is 216 x 231, the 8-key one 144 x 303.
 - **`build/build.py` draws the diagram from the tokens**, like the page: it isn't edited by hand.
 
+### ✏️ Ideal values, and when they adapt
+
+These sizes are the **ideal values**: early proposals and mockups use them. A real menu can depart
+from them, mainly in three ways:
+
+| | when | how | example |
+|---|---|---|---|
+| ⬜ | the menu is **almost square** | make it fully square | 9-key menu: 224 x 224 instead of 216 x 231 |
+| ↔️ | a **long label** needs room | widen the side margin, equally on both sides | 8-key menu: 158 x 303 instead of 144 x 303 |
+| 👍 | the menu is meant for **one-handed use** | tighten the spacing, mostly vertically | 8-key menu: 144 x 280 instead of 144 x 303 |
+
+- **The owner decides exceptions to spacing and centering**: whoever designs a menu starts from the
+  ideal values and proposes the departure, rather than applying it on their own.
+
 ## 🧭 Behavior
 
 - **Order**: rows fill from the bottom, so the first item sits next to the ×, in the most

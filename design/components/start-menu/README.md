@@ -27,6 +27,20 @@ Il menu che cresce dal Tondo, vicino al lato del pollice, con la × al posto del
   spazio + riga dell'etichetta. Il menu da 9 misura 216 x 231, quello da 8 144 x 303.
 - **Lo schema lo genera `build/build.py` dai token**, come la pagina: non si modifica a mano.
 
+### ✏️ Valori ideali, e quando si adattano
+
+Queste misure sono i **valori ideali**: le proposte preliminari e i mockup si fanno con loro. Un menu
+vero può scostarsene, soprattutto in tre modi:
+
+| | quando | come | esempio |
+|---|---|---|---|
+| ⬜ | il menu è **quasi quadrato** | lo si rende quadrato del tutto | menu da 9: 224 x 224 al posto di 216 x 231 |
+| ↔️ | un'**etichetta lunga** chiede spazio | si allarga il margine laterale, uguale sui due lati | menu da 8: 158 x 303 al posto di 144 x 303 |
+| 👍 | il menu è pensato per l'**uso a una mano** | si stringono le spaziature, soprattutto in verticale | menu da 8: 144 x 280 al posto di 144 x 303 |
+
+- **Le eccezioni a spaziature e centrature le decide il titolare**: chi disegna un menu parte dai
+  valori ideali e propone lo scostamento, non lo applica da sé.
+
 ## 🧭 Comportamento
 
 - **Ordine**: le file si riempiono dal basso, quindi la prima voce è accanto alla ×, nel punto più

@@ -321,7 +321,8 @@ grigie.
   la sua scheda).
 - **Menu Start**: i comandi che crescono dal Tondo, in due forme: da 9, tre per tre, e da 8, in
   quattro file da 2. Margine ottico uguale sui quattro lati, passo uguale fra i centri delle
-  icone, × centrata sul posto di un'icona (vedi la sua scheda, con lo schema delle distanze).
+  icone, × centrata sul posto di un'icona. Sono valori ideali, che si adattano in tre casi decisi
+  dal titolare (vedi la sua scheda, con lo schema delle distanze e gli esempi).
 - **Scheda**: nelle app un pannello che sale dal basso, con la molla di AIV; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
