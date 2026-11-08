@@ -206,6 +206,7 @@
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
+      <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last" hidden></span></a></li>
       <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note"><span>Progetti e repo di Roccobot</span><a class="extra" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Principali</a></span></div></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Il design system del marchio</span></a></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
@@ -243,6 +244,32 @@
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
   });
+  // The GitHub Actions tile: the minutes of the month and of the latest run, from the
+  // rules-proxy Worker (GET /actions, public, cached five minutes there). Numbers only;
+  // the text is set with textContent.
+  (async () => {
+    const note = document.getElementById('actions-note');
+    const last = document.getElementById('actions-last');
+    const n = (v) => Number(v).toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
+    try {
+      const r = await fetch('https://rules-proxy.roccobot-b90.workers.dev/actions');
+      const d = await r.json();
+      if (!d.ok) {
+        note.textContent = d.error === 'billing-config' ? 'Contatore non ancora collegato' : 'Minuti non disponibili ora';
+        return;
+      }
+      note.textContent = d.included
+        ? `${n(d.remaining)} minuti liberi su ${n(d.included)}`
+        : `${n(d.counted)} minuti usati nel mese`;
+      const run = (d.runs || [])[0];
+      if (run) {
+        last.textContent = `Ultima corsa: ${run.repo}, ${n(run.weighted)} min`;
+        last.hidden = false;
+      }
+    } catch {
+      note.textContent = 'Minuti non disponibili ora';
+    }
+  })();
   // A link clicked with the mouse or a finger drops the focus, so coming back from the new tab
   // shows no ring (Safari with keyboard navigation on focuses links on click). Tab still shows it.
   document.addEventListener('click', e => {
