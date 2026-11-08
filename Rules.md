@@ -53,7 +53,8 @@ repo di AIV.
 - **È una copia, e la fonte resta `publish/` del repo di AIV**: la sessione che cambia la pagina,
   l'informativa o le immagini là, nello stesso giro ricopia qui i file che servono al sito, cioè
   quelli che fino a `Serratura` copiava `pages.yml` di AIV: `index.html`, `privacy.html`,
-  `anteprima.jpg`, `schermate/` e, in `assets/`, `Roboto.ttf` e `Roboto-license.txt`. Il resto di
+  `favicon.svg` (dal 2026-11-08), `anteprima.jpg`, `schermate/` e, in `assets/`, `Roboto.ttf` e
+  `Roboto-license.txt`. Il resto di
   `publish/` (il documento di feedback, i prototipi) qui non entra. La regola vive anche nel
   `Rules.md` di AIV, § '🚀 Che cosa produce un rilascio'.
 - ⚠️ **L'APK non c'è**: il pulsante di download punta all'asset dell'ultima release del repo
