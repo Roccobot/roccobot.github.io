@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.58
+> **Versione**: 2.59
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -228,10 +228,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Una misura di layout vale solo col font reale caricato.**
 - **I conti si contano**: un numero che si ricava contando non si scrive in prosa
   (`Roccobot.md` § '🔢 I conti si contano, non si scrivono').
-- **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce dell'elenco si confronta
-  col codice del ramo principale, non coi commit, e ha un esito dichiarato (fatta, lasciata con
-  la ragione, da fare o da chiedere); e si ferma ciò che resta acceso in sottofondo, `caffeinate`
-  per primo (`Roccobot.md` § '🧾 Il bilancio di chiusura').
+- **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce si confronta col codice
+  del ramo principale e ha un esito dichiarato; **brief e bacheca si aggiornano**, anche per un
+  lavoro fatto subito; si ferma ciò che resta acceso in sottofondo, `caffeinate` per primo
+  (`Roccobot.md` § '🧾 Il bilancio di chiusura').
 
 ## 🔁 Il collaudo
 
