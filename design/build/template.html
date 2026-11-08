@@ -269,14 +269,15 @@ td.kind { color: var(--testo-secondario); }
 .mock-notice span:first-child { flex: 1 1 auto; }
 .mock-notice b { color: var(--testo-accento); font-weight: 600; }
 .mock-notice::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 62%; background: var(--accento); }
-/* Start menu at half scale (AIV BottomMenu.kt): 72 wide columns, 68 tall rows, 6 toward the edge, 4 below,
-   --head above (14 in the 3 x 3, 10 in the four rows of two); the bottom right cell holds the close key */
-.mock-start { --s: .5; position: absolute; right: .5rem; bottom: .5rem; display: grid; grid-template-columns: repeat(var(--cols), calc(var(--cella-start-larghezza) * var(--s))); grid-auto-rows: calc(68px * var(--s)); padding: calc(var(--head) * var(--s)) calc(6px * var(--s)) calc(4px * var(--s)) 0; border-radius: calc(var(--raggio-start) * var(--s)); background: var(--superficie); }
-.mock-start span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
-.mock-start i { width: 14px; height: 14px; border-radius: 4px; background: color-mix(in srgb, var(--accento) 70%, var(--superficie)); }
-.mock-start span::after { content: ""; width: 20px; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--testo) 35%, transparent); }
-.mock-start span:last-child::after { content: none; }
-.mock-start svg { width: 14px; height: 14px; color: var(--testo); }
+/* Start menu at half scale, from the Start tokens: the grid columns are as wide as the icon and the
+   gaps make the pitch (center to center), so the panel padding is the optical margin itself; at the
+   bottom the margin is measured to the label. The close key sits in the icon's place, its label empty. */
+.mock-start { --s: .5; --i: calc(var(--icona-start) * var(--s)); --block: calc((var(--icona-start) + var(--etichetta-start-spazio) + var(--etichetta-start-riga)) * var(--s)); position: absolute; right: .5rem; bottom: .5rem; display: grid; grid-template-columns: repeat(var(--cols), var(--i)); grid-auto-rows: var(--block); column-gap: calc((var(--cella-start-larghezza) - var(--icona-start)) * var(--s)); row-gap: calc(var(--passo-start-righe) * var(--s) - var(--block)); padding: calc(var(--margine-start) * var(--s)); border-radius: calc(var(--raggio-start) * var(--s)); background: var(--superficie); }
+.mock-start span { display: flex; flex-direction: column; align-items: center; gap: calc(var(--etichetta-start-spazio) * var(--s)); }
+.mock-start i, .mock-start svg { flex: none; width: var(--i); height: var(--i); }
+.mock-start i { border-radius: 4px; background: color-mix(in srgb, var(--accento) 70%, var(--superficie)); }
+.mock-start b { flex: none; width: calc(var(--w, 44px) * var(--s)); height: calc(var(--etichetta-start-riga) * var(--s)); background: linear-gradient(color-mix(in srgb, var(--testo) 35%, transparent), color-mix(in srgb, var(--testo) 35%, transparent)) bottom / 100% 3px no-repeat; }
+.mock-start svg { color: var(--testo); }
 .tondo-zone { position: absolute; right: calc(var(--tondo-fianco) - 2px); bottom: calc(var(--tondo-basso) - 2px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); border-radius: 50%; outline: 1px dashed var(--testo-accento); }
 .links { display: grid; gap: .4rem; }
 
@@ -769,15 +770,15 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Menu Start da 9</span><span lang="en">Start menu, 9 keys</span></h3>
-          <p lang="it">Cresce dal Tondo in 110 ms: tre colonne larghe 72 e righe alte 68, un quadrato ancorato in basso. Le file si riempiono dal basso, e la × prende il posto del Tondo.</p>
-          <p lang="en">It grows from the Tondo in 110 ms: three 72-wide columns and 68-tall rows, a square anchored at the bottom. Rows fill from the bottom, and the × takes the Tondo's place.</p>
-          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:3;--head:14px"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
+          <p lang="it">Cresce dal Tondo in 110 ms, tre per tre. Le icone distano 72 da centro a centro, e il pannello ha lo stesso margine ottico di 22 sui quattro lati: fino all'icona, e in basso fino all'etichetta. La × prende il posto di un'icona.</p>
+          <p lang="en">It grows from the Tondo in 110 ms, three by three. Icons sit 72 apart, center to center, and the panel has the same optical margin of 22 on all four sides: to the icon, and at the bottom to the label. The × takes an icon's place.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:3"><span><i></i><b style="--w:42px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:38px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:42px"></b></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
         </div>
         <div class="comp">
           <h3><span lang="it">Menu Start da 8</span><span lang="en">Start menu, 8 keys</span></h3>
-          <p lang="it">Quattro file da due, ognuna alta 68 come in un 2 x 2, e il pannello cresce verso l'alto. È il menu del Tondo di Aomidori per Android e della casa di AIV Play.</p>
-          <p lang="en">Four rows of two, each 68 tall as in a 2 x 2, and the panel grows upward. It is the Tondo menu of Aomidori for Android and the home menu of AIV Play.</p>
-          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:2;--head:10px"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
+          <p lang="it">Quattro file da due, con lo stesso passo e lo stesso margine del menu da 9, e il pannello cresce verso l'alto. È il menu del Tondo di Aomidori per Android e della casa di AIV Play.</p>
+          <p lang="en">Four rows of two, with the same pitch and margin as the 9-key menu, and the panel grows upward. It is the Tondo menu of Aomidori for Android and the home menu of AIV Play.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:2"><span><i></i><b style="--w:42px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:38px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:36px"></b></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
         </div>
         <div class="comp">
           <h3><span lang="it">Collegamenti</span><span lang="en">Links</span></h3>

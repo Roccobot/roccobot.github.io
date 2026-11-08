@@ -322,7 +322,8 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - **Tondo**: the main command of the apps, round and translucent, in the thumb's corner (see its
   sheet).
 - **Start menu**: the commands that grow out of the Tondo, in two shapes: 9 keys, three by three,
-  and 8 keys, in four rows of 2 (see its sheet).
+  and 8 keys, in four rows of 2. The same optical margin on all four sides, an equal pitch between
+  icon centers, the × centered on an icon's place (see its sheet, with the spacing diagram).
 - **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
