@@ -38,6 +38,7 @@
     --accent-hover: #008577;  /* 4.54 under --on-accent */
     --label: #0B6B5B;         /* testo-accento, 5.3 on --bg */
     --link: #0B6B5B;          /* testo-accento, 6.1 on --card */
+    --paid: #9B4A45;          /* a dull dark red for the money spent, 5.8 on --card */
     --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   /* Dark theme: the deep green-grey between light and dark of the page's first version, so that
@@ -56,6 +57,7 @@
       --on-accent: #00382F;   /* contenuto-su-accento, 5.19 over the accent */
       --accent-hover: #4FD9BE; /* turchese-luce, 7.5 under --on-accent */
       --link: #4FD9BE;        /* turchese-luce, 6.9 on --bg, 5.5 on --card */
+      --paid: #DEACA6;        /* the same dull red, lighter: 4.9 on --card */
     }
   }
   :root[data-theme="dark"] {
@@ -71,6 +73,7 @@
     --on-accent: #00382F;
     --accent-hover: #4FD9BE;
     --link: #4FD9BE;
+    --paid: #DEACA6;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
@@ -136,6 +139,7 @@
   a.sub:hover { color: var(--link); text-decoration-thickness: 2px; }
   .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  .note.paid { color: var(--paid); }
   /* Groups inside a section: same grey as the section titles, smaller and with more room above,
      so size and position make the hierarchy, not colour */
   h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
@@ -201,7 +205,7 @@
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
       <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note">Progetti e repo di Roccobot</span><a class="sub" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Repo principali</a></div></li>
-      <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last" hidden></span></a></li>
+      <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last" hidden></span><span class="note paid" id="actions-paid" hidden></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Il design system del marchio</span></a></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
@@ -238,7 +242,7 @@
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
   });
-  // The GitHub Actions tile: the minutes of the month and of the latest run, from the
+  // The GitHub Actions tile: the minutes of the month, of the latest run and the money paid, from the
   // rules-proxy Worker (GET /actions, public, cached five minutes there). Numbers only;
   // the text is set with textContent.
   (async () => {
@@ -259,6 +263,12 @@
       if (run) {
         last.textContent = `Ultima corsa: ${run.repo}, ${n(run.weighted)} min`;
         last.hidden = false;
+      }
+      // What the month cost beyond the quota (rev 13): GitHub bills in US dollars.
+      if (typeof d.paid === 'number') {
+        const paid = document.getElementById('actions-paid');
+        paid.textContent = `Minuti extra pagati: ${d.paid.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
+        paid.hidden = false;
       }
     } catch {
       note.textContent = 'Minuti non disponibili ora';
