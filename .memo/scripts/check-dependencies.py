@@ -14,7 +14,8 @@ The version in use comes from where it is set: scripts/markdown/package.json for
 packages, Package.resolved for the Swift packages, what an `in_use` entry names (a pattern in
 a file, such as a version catalogue, or a font file's own version), the register itself for
 what was ported or followed. GitHub is read with `gh` (authenticated), npm with `npm view`, and
-Google Fonts, the font files, Maven (Google and Central) and Gradle with `curl`. Nothing is changed:
+Google Fonts, the font files, Maven (Google and Central), Gradle and swift.org's list of Swift
+releases (source `swift`) with `curl`. Nothing is changed:
 after reading a newer version, its number goes in the register (or the manifest) by hand, in
 the commit that brings in what was worth taking.
 
@@ -204,6 +205,14 @@ def maven_latest(dependency):
     return versions[-1], last_modified(f'{base}/{versions[-1]}/{artifact}-{versions[-1]}.pom')
 
 
+def swift_latest(releases):
+    """The newest Swift release in swift.org's list and its date. Since Vedetta-Swift (2026-11-08):
+    the toolchain and its SDK for Android have no GitHub release to read, and their tag
+    (swift-6.4.2-RELEASE) is not the bare number the register keeps, which is the list's `name`."""
+    newest = max(releases, key=lambda release: release['date'])
+    return newest['name'], iso(newest['date'] + 'T00:00:00Z')
+
+
 def in_use(dependency, manifests, resolved):
     if 'font' in dependency.get('in_use', {}):
         return font_version((ROOT / dependency['in_use']['font']).read_bytes())
@@ -239,6 +248,8 @@ def latest(dependency):
     if source == 'gradle':
         current = json.loads(fetch('https://services.gradle.org/versions/current'))
         return current['version'], datetime.strptime(current['buildTime'], '%Y%m%d%H%M%S%z')
+    if source == 'swift':
+        return swift_latest(json.loads(fetch('https://www.swift.org/api/v1/install/releases.json')))
     raise SystemExit(f'unknown source: {source}')
 
 

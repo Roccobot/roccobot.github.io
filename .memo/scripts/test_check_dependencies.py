@@ -61,5 +61,18 @@ class StaleTests(unittest.TestCase):
         self.assertEqual(check.mark('v50', 'v50', None, None, False, False, NOW), 'ok')
 
 
+class SwiftTests(unittest.TestCase):
+    """The 'swift' source (Vedetta-Swift, 2026-11-08): swift.org's list of releases, whose `name`
+    is the bare number the register keeps (the GitHub tag reads swift-6.4.2-RELEASE)."""
+
+    def test_the_newest_release_by_date_with_its_bare_number(self):
+        releases = [{'name': '6.4.2', 'tag': 'swift-6.4.2-RELEASE', 'date': '2026-10-29'},
+                    {'name': '2.2', 'tag': 'swift-2.2-RELEASE', 'date': '2016-03-21'},
+                    {'name': '6.4.1', 'tag': 'swift-6.4.1-RELEASE', 'date': '2026-09-15'}]
+        version, when = check.swift_latest(releases)
+        self.assertEqual(version, '6.4.2')
+        self.assertEqual(when, datetime(2026, 10, 29, tzinfo=timezone.utc))
+
+
 if __name__ == '__main__':
     unittest.main()
