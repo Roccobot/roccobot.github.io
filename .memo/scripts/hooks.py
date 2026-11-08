@@ -20,8 +20,10 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
   start     SessionStart: riallinea i repo puliti, confronta badge e datiVersion dei siti;
             dopo una compattazione indica invece le sezioni sul linguaggio da rileggere
   prompt    UserPromptSubmit: il promemoria sulla lingua (dal 2026-11-07, sua scelta
-            Prevenzione-01), recupera i commit arrivati da fuori (salvataggi admin, bot), e
-            mostra le azioni di Rocco sulla bacheca Trello dopo il controllo precedente
+            Prevenzione-01), recupera i commit arrivati da fuori (salvataggi admin, bot), al
+            primo messaggio del giorno di ogni sessione esegue il passo 0 del protocollo di
+            avvio (dal 2026-11-08), e mostra le azioni di Rocco sulla bacheca Trello dopo il
+            controllo precedente
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
             controlli prima di un `git commit`, che possono bloccarlo
@@ -366,6 +368,62 @@ def avvisi_bacheca():
 
 # ── turno ─────────────────────────────────────────────────────────────────────
 
+# Rocco's rule of 2026-11-08: every day, at the first request he makes to each session, the session
+# runs step 0 of the start protocol, which writes the permissions and brings the hook entries of the
+# user settings up to date. The command has one source, the hub's Rules.md (§ '🚀 Protocollo di
+# avvio'), read after the repos are realigned; the state file keeps the day each session ran it.
+# Settings written inside a session count from the next one (measured on 2026-09-25).
+PASSO0_STATO = Path.home() / '.claude' / 'roccobot-passo0.json'
+PASSO0_TITOLO = '0. ⚠️⚠️ **PRIMA DI TUTTO'
+IMPOSTAZIONI = Path.home() / '.claude' / 'settings.json'
+
+
+def comando_passo_zero(testo):
+    """The step-0 command: the first code block after the title of step 0 in the hub's Rules.md."""
+    i = testo.find(PASSO0_TITOLO)
+    if i < 0:
+        return None
+    m = re.search(r'```\n\s*(python3 -c .+?)\n\s*```', testo[i:], re.S)
+    return m.group(1).strip() if m else None
+
+
+def passo_zero_giornaliero(ev, oggi=None):
+    """Run step 0 if this session has not run it today; return the lines to show."""
+    sessione = ev.get('session_id') or 'senza-id'
+    oggi = oggi or date.today().isoformat()
+    try:
+        stato = json.loads(PASSO0_STATO.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        stato = {}
+    if stato.get(sessione) == oggi:
+        return []
+    try:
+        comando = comando_passo_zero((HUB / 'Rules.md').read_text(encoding='utf-8'))
+    except OSError:
+        comando = None
+    if not comando:
+        return ["passo 0 NON eseguito: il comando non si trova in Rules.md dell'hub, § '🚀 Protocollo di avvio'"]
+    prima = IMPOSTAZIONI.read_bytes() if IMPOSTAZIONI.exists() else b''
+    try:
+        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True, timeout=30)
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return [f'passo 0 NON riuscito: {e}']
+    if r.returncode:
+        return [f'passo 0 NON riuscito: {(r.stderr or r.stdout).strip()[:200]}']
+    dopo = IMPOSTAZIONI.read_bytes() if IMPOSTAZIONI.exists() else b''
+    stato = {k: v for k, v in stato.items() if v == oggi}
+    stato[sessione] = oggi
+    try:
+        PASSO0_STATO.parent.mkdir(parents=True, exist_ok=True)
+        PASSO0_STATO.write_text(json.dumps(stato), encoding='utf-8')
+    except OSError:
+        pass
+    if dopo != prima:
+        return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook aggiornati nelle '
+                'impostazioni utente, validi dalla sessione dopo; il codice degli hook è quello appena riallineato']
+    return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook già aggiornati']
+
+
 PROMEMORIA_LINGUA = ("[prompt] Scrivi a Rocco SOLO in italiano: ogni frase, anche quelle brevi fra "
                      "un comando e l'altro e il resoconto finale. Commit, commenti al codice e note "
                      "di rilascio seguono le regole del repo.")
@@ -409,6 +467,8 @@ def mode_prompt(ev):
             if r:
                 print(f'[prompt] {r}')
         righe = bacheca.result()
+    for r in passo_zero_giornaliero(ev):
+        print(f'[prompt] {r}')
     if righe:
         print('[bacheca] Azioni di Rocco sulla bacheca dopo il controllo precedente. Una card della '
               'tua area la lavori tu; quelle di un\'altra area le lasci alla sua titolare.')

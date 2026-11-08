@@ -697,6 +697,14 @@ sessione:
        dell'ambiente** (via 1), che gira prima che la sessione parta: la riga da incollare là è
        questo stesso comando, e quando la lista cambia all'utente si ridà. ⚠️ **Non si promette
        che la sessione dopo non chiederà**: senza lo script, chiederà.
+   - ⚠️⚠️ **E SI RIFÀ OGNI GIORNO, al primo messaggio di Rocco a ciascuna sessione** (sua regola
+     del 2026-11-08: *ogni giorno, alla prima attività che chiedo ad ogni sessione, questa deve
+     eseguire il passo 0 del protocollo di avvio e verificare che gli hook siano aggiornati*). Lo fa
+     il gancio del turno di `hooks.py` (modo `prompt`): legge il comando da questo passo, che resta la
+     fonte unica, dopo aver riallineato i repo, lo esegue e dice se le impostazioni sono cambiate; il
+     giorno di ogni sessione vive in `~/.claude/roccobot-passo0.json`. Dove gli hook non girano, la
+     sessione lancia il comando a mano. ⚠️ Un'impostazione scritta dentro la sessione vale dalla
+     sessione dopo (voce qui sotto).
    - ⚠️ **Claude Design all'avvio non si controlla più** (dal 2026-11-04, scelta `Design-01`
      dell'utente). Fino al 2026-11-03 questo passo chiedeva di verificare l'aggancio di
      `DesignSync`, perché là viveva il design system; il progetto `Roccobot Design` l'ha eliminato

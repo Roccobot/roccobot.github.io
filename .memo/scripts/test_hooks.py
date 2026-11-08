@@ -161,12 +161,57 @@ class PromptReminderTests(unittest.TestCase):
         h = load_hooks()
         h.repos = lambda: []
         h.avvisi_bacheca = lambda: []
+        h.passo_zero_giornaliero = lambda ev: []
         for prompt in ('ciao', '\\\\ dopo', ''):
             with self.subTest(prompt=prompt):
                 out = io.StringIO()
                 with contextlib.redirect_stdout(out):
                     h.mode_prompt({'prompt': prompt})
                 self.assertIn('SOLO in italiano', out.getvalue())
+
+
+class DailyStepZeroTests(unittest.TestCase):
+    """Rocco's rule of 2026-11-08: every day, at the first request he makes to each session, the
+    session runs step 0 of the start protocol, which also brings the hooks up to date. The command
+    comes from the hub's Rules.md; the test gives it a harmless one and its own state file."""
+
+    def setUp(self):
+        import tempfile
+        self.h = load_hooks()
+        self.tmp = Path(tempfile.mkdtemp())
+        self.h.HUB = self.tmp
+        self.h.PASSO0_STATO = self.tmp / 'stato.json'
+        self.h.IMPOSTAZIONI = self.tmp / 'settings.json'
+        self.segno = self.tmp / 'eseguito'
+        (self.tmp / 'Rules.md').write_text(
+            '0. ⚠️⚠️ **PRIMA DI TUTTO, i permessi\n   ```\n   python3 -c \'open("%s", "a").write("x")\'\n   ```\n'
+            % self.segno, encoding='utf-8')
+
+    def runs(self, sessione, giorno):
+        before = self.segno.read_text() if self.segno.exists() else ''
+        out = self.h.passo_zero_giornaliero({'session_id': sessione}, giorno)
+        after = self.segno.read_text() if self.segno.exists() else ''
+        return after != before, out
+
+    def test_the_real_rules_carry_the_command(self):
+        testo = (SCRIPT.parents[2] / 'Rules.md').read_text(encoding='utf-8')
+        comando = self.h.comando_passo_zero(testo)
+        self.assertTrue(comando.startswith("python3 -c '"), comando)
+        self.assertIn('hooks.py', comando)
+
+    def test_once_a_day_for_each_session(self):
+        ran, out = self.runs('s1', '2026-11-08')
+        self.assertTrue(ran)
+        self.assertIn('passo 0 eseguito', out[0])
+        self.assertFalse(self.runs('s1', '2026-11-08')[0])
+        self.assertTrue(self.runs('s2', '2026-11-08')[0])
+        self.assertTrue(self.runs('s1', '2026-11-09')[0])
+
+    def test_without_the_command_it_says_so(self):
+        (self.tmp / 'Rules.md').write_text('niente', encoding='utf-8')
+        ran, out = self.runs('s1', '2026-11-08')
+        self.assertFalse(ran)
+        self.assertIn('NON eseguito', out[0])
 
 
 if __name__ == '__main__':
