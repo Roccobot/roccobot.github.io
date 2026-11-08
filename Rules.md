@@ -136,7 +136,8 @@ numero per scelta dell'utente.
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
   strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). La tessera `GitHub
   Actions` (voce `Contatore`, dal 2026-11-08) mostra `<x> minuti gratuiti usati (<y>%)`
-  e, solo a quota esaurita, `Minuti extra: <x> (<y>% del budget)`, dove il budget è il limite di
+  e, a quota esaurita, al suo posto e sulla stessa riga, `Minuti extra: <x> (<y>% del budget)`
+  (sua precisazione: leggere i minuti extra dice già che i gratuiti sono finiti), dove il budget è il limite di
   spesa di 25 euro (sua richiesta `Quota-01`: piano gratuito, limite da non toccare). Ogni riga ha
   il colore della sua percentuale, sue soglie: quello di serie sotto il 50%, arancione dal 50%, rosso
   dal 70%, rosso intenso dal 90%. GitHub fattura in dollari, e la quota del budget si calcola col

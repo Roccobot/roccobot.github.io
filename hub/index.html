@@ -260,24 +260,22 @@
   // The colour of a share used up: none under 50%, then orange, red and deep red (his thresholds).
   const level = (pct) => pct >= 90 ? 'alarm' : pct >= 70 ? 'alert' : pct >= 50 ? 'warn' : '';
   const n = (v) => Number(v).toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
-  /* The lines for the month: the free minutes used and their share of the quota; once the quota is
-     used up, the extra minutes and their share of the budget. GitHub bills in US dollars, so the
-     share needs the day's rate (eurPerUsd); without it the extra line has no share. */
+  /* The line for the month: the free minutes used and their share of the quota; once the quota is
+     used up, the extra minutes and their share of the budget take its place (reading them already
+     says the free ones are gone, Rocco's precision). GitHub bills in US dollars, so the share needs
+     the day's rate (eurPerUsd); without it the line has no share. */
   function actionsLines(d, eurPerUsd) {
     if (!d.included) return [{ text: `${n(d.counted)} minuti usati nel mese`, level: '' }];
-    const used = Math.min(d.counted, d.included);
-    const pct = Math.round(used / d.included * 100);
-    const lines = [{ text: `${n(used)} minuti gratuiti usati (${pct}%)`, level: level(pct) }];
-    if (d.counted >= d.included) {
-      const extra = Math.round(d.counted - d.included);
-      if (typeof eurPerUsd === 'number' && typeof d.paid === 'number') {
-        const share = Math.round(d.paid * eurPerUsd / BUDGET_EUR * 100);
-        lines.push({ text: `Minuti extra: ${n(extra)} (${share}% del budget)`, level: level(share) });
-      } else {
-        lines.push({ text: `Minuti extra: ${n(extra)}`, level: 'alarm' });
-      }
+    if (d.counted < d.included) {
+      const pct = Math.round(d.counted / d.included * 100);
+      return [{ text: `${n(d.counted)} minuti gratuiti usati (${pct}%)`, level: level(pct) }];
     }
-    return lines;
+    const extra = Math.round(d.counted - d.included);
+    if (typeof eurPerUsd === 'number' && typeof d.paid === 'number') {
+      const share = Math.round(d.paid * eurPerUsd / BUDGET_EUR * 100);
+      return [{ text: `Minuti extra: ${n(extra)} (${share}% del budget)`, level: level(share) }];
+    }
+    return [{ text: `Minuti extra: ${n(extra)}`, level: 'alarm' }];
   }
   (async () => {
     const note = document.getElementById('actions-note');
