@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.63
+> **Versione**: 2.64
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -25,8 +25,8 @@
 - **Ordine di lettura**: questo nucleo, poi le regole del repo (il resto di `AGENTS.md`), poi il
   brief, e le sezioni di `rules/Roccobot.md` quando il lavoro le tocca.
 - Senza `Roccobot/tools` clonato, regole e brief si leggono dal Worker `rules-proxy`
-  (<https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md> e
-  <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>), con uno User-Agent da browser.
+  (<https://rules-proxy.roccobot-b90.workers.dev/> più `rules/Roccobot.md` o `.memo/LATEST.md`),
+  con uno User-Agent da browser.
 - Un file di regole si legge **per intero e in grezzo**, mai con uno strumento che riassume, e si
   controlla che contenga la riga `> **Versione**:` (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - I canoni si leggono quando il tema li tocca: `rules/JRRT.md` per Tolkien, `rules/Earthsea.md`
@@ -49,8 +49,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 ## 🔒 Non derogabili, a nessun livello
 
 - **Segreti solo lato server**: mai password, token o PAT nel sorgente, nel client, nel
-  `localStorage`, in base64 o in chat; le validazioni si fanno sul server (`Roccobot.md`
-  § '🔐 Sicurezza'). `RULES_PASSWORD` si legge a runtime e non si stampa mai.
+  `localStorage`, in base64 o in chat; validazioni sul server (`Roccobot.md` § '🔐 Sicurezza').
+  `RULES_PASSWORD` si legge a runtime e non si stampa mai. Una chiave di firma nuova va subito a
+  Rocco in uno ZIP.
 - **Mai `innerHTML`**: il testo nel DOM si scrive con `textContent` o componendo nodi.
 - **Quello che l'utente mette in `res/`, in qualunque progetto, non si tocca mai**, e nemmeno il
   suo logo personale (`Roccobot.md` § '🧹 Bonifica e ottimizzazione degli asset').
