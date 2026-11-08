@@ -135,8 +135,10 @@ numero per scelta dell'utente.
   telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
   strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). La tessera `GitHub
-  Actions` (voce `Contatore`, dal 2026-11-08) mostra i minuti liberi del mese e l'ultima corsa,
-  letti da `GET /actions` del Worker `rules-proxy` (`Rules.md` di `tools`, `rev` 11). Solo italiano, coi valori del design system di `design/`, e due temi
+  Actions` (voce `Contatore`, dal 2026-11-08) mostra i minuti liberi del mese, l'ultima corsa e,
+  in una riga rosso spento, i minuti extra pagati nel mese, in dollari come li fattura GitHub (sua
+  richiesta `Quota-01`: piano gratuito con un limite di spesa di 25 euro da non toccare), letti da
+  `GET /actions` del Worker `rules-proxy` (`Rules.md` di `tools`, `rev` 11-13). Solo italiano, coi valori del design system di `design/`, e due temi
   dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
   il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
   scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
