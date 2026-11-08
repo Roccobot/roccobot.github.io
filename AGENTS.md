@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.60
+> **Versione**: 2.61
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -120,8 +120,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   lavoro di una squadra si salva man mano').
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
-- **GitHub Actions: avviso e stima prima di partire** (quale flusso, che macchina, quanti minuti),
-  anche per un push, e su macOS (10x) si aspetta il suo via; le prove partono solo dal codice
+- **GitHub Actions: prima il container**, poi avviso e stima (flusso, macchina, minuti), anche per
+  un push, e su macOS (10x) si aspetta il suo via; le prove partono solo dal codice
   (`Roccobot.md` § '💸 GitHub Actions: avviso e stima prima di partire').
 - **Prima di ogni lavoro si consigliano modello e sforzo**, perché solo l'utente li imposta: una
   riga in apertura, poi si aspetta il suo via (`Roccobot.md` § '🤖 Modello da usare').
@@ -272,7 +272,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   perché, niente codice morto (`Roccobot.md` § '🏅 Codice di altissima qualità').
 - **L'aggiornamento non si chiede, si fa**: ultime versioni e pratica raccomandata dalla
   piattaforma sono il valore di serie, anche se solo consigliata, e gli effetti collaterali si
-  dichiarano nel collaudo (`Roccobot.md` § '🏅 Codice di altissima qualità').
+  dichiarano nel collaudo; strumenti controllati ogni 24 ore (`Roccobot.md` § '🏅 Codice di
+  altissima qualità').
 - Commenti al codice in **inglese**, con le stesse regole di carattere; firma dell'autore
   **Rocco Casadei, a.k.a. Roccobot** (`Roccobot.md` § '🧑‍💻 Codice e artefatti generati').
 - I **nomi dei file** sono in inglese, e un nome che esiste già non si cambia mai (una cartella con la maiuscola si corregge una volta; **le cartelle sono minuscole**); il
@@ -281,7 +282,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Le dipendenze si seguono**: ogni progetto tiene il registro delle dipendenze, e ogni
   versione nuova si legge prima di una release (una patch: per sicurezza, o dopo tre mesi)
   (`Roccobot.md` § '🔗 Le dipendenze si seguono: ogni versione nuova si legge').
-- Mobile vuol dire **Android**, desktop vuol dire **macOS**.
+- Mobile è **Android**, desktop è **macOS**.
 
 <!-- core:end -->
 
