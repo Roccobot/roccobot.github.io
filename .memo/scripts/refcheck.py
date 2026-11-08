@@ -394,8 +394,12 @@ VIETATI = {
 # Il blocco 27F0-27FF, Supplemental Arrows-A, è ammesso dal 2026-10-16: le frecce circolari delle
 # voci di rotazione di Aomidori (U+27F2, U+27F3) sono frecce come le altre, e nessuna regola le
 # vieta; mancava solo l'intervallo, e il brief le aveva respinte.
+# U+20AC EURO SIGN si ammette da solo dal 2026-11-08: la tessera di RoccoHub scrive `Extra: <x> €`
+# per sua richiesta, e la prosa che la descrive deve poterlo scrivere. Non il blocco Currency
+# Symbols intero, che a questo repo non serve.
 SIMBOLI_OK = [
     (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7), (0xFF0B, 0xFF0B), (0x2423, 0x2423),
+    (0x20AC, 0x20AC),
     (0x2000, 0x206F), (0x2139, 0x2139), (0x2150, 0x218F), (0x2190, 0x21FF),
     (0x2200, 0x22FF), (0x2300, 0x23FF), (0x2460, 0x24FF), (0x2500, 0x257F),
     (0x25A0, 0x25FF), (0x2600, 0x27BF), (0x27F0, 0x27FF), (0x2900, 0x297F), (0x2B00, 0x2BFF),
