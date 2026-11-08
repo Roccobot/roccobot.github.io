@@ -500,6 +500,11 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     arrivata in chat dopo una compattazione, cioè quando quel file non era più in scena. È la
     stessa dinamica dei due divieti del 2026-09-03 (voce qui sotto).
 
+- ⚠️⚠️ **E A LUI NON SI SCRIVE CHE UNA PROVA 'SI È VISTA FALLIRE'** (sua regola, 2026-11-08: *ogni
+  volta che a colpo d'occhio leggo 'fallire' mi sembra che qualcosa sia andato storto, e inoltre la
+  frase non mi fornisce info utili*). Il passo resta obbligatorio; in chat si dice che cosa controlla
+  la prova e l'esito di tutte, e 'fallire' resta per un guasto vero. La regola completa vive in
+  `Roccobot.md` § '🙂 Formule da non usare'.
 - ⚠️⚠️ **QUELLO CHE PUÒ FARE SOLO LUI DIVENTA UNA CARD NELLA LISTA `ADMIN` DELLA BACHECA, E IN
   CHAT NON SI RIPETE** (`Admin-01`, sua scelta del 2026-11-02: *basta con questo sistema, non serve
   più. Adesso c'è Trello*). Ogni decisione da prendere, e ogni passo suo, è una card nella sua
