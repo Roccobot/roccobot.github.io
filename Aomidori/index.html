@@ -146,6 +146,20 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.18);
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
+  /* The Android button (Android-01, 2026-11-08): the Mac button's shape and size with an outline
+     instead of the fill, drawn as an inset shadow so it takes no room. Without an address (the
+     app is not on Google Play yet) it is an <a> with no href, so neither a link nor focusable,
+     and it looks switched off. */
+  /* The same width for the two buttons, in both languages (the longest label, 'Coming soon to
+     Android', is about 16.3 em with its glyph and padding, measured in WebKit on 2026-11-08). */
+  .scarica{min-width:16.5em; justify-content:center}
+  .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor}
+  .scarica.contorno:not([href]){opacity:0.6; cursor:default}
+  .scarica.contorno:not([href]):hover{filter:none}
+  .scarica.contorno[href]:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
+  /* On an Android phone the Android button comes first, right after the opening text. */
+  .su-android .claim{order:-2}
+  .su-android .blocco-android{order:-1}
   .tecnica{font-size:13px; color:var(--text-muted); opacity:0.72; margin:0}
   .solo-mac{font-size:14px; color:var(--text-body); margin:0}
   .solo-mac[hidden]{display:none}
@@ -297,6 +311,18 @@
         </div>
         <p class="regalo-nota" id="regalo-nota" aria-live="polite"></p>
       </div>
+      <!-- Android-01 (2026-11-08): a button for everyone, switched off until the app is on Google
+           Play (ANDROID_URL in the script). After the giveaway, whose codes are for the Mac. -->
+      <div class="blocco-scarica blocco-android">
+        <a class="scarica contorno" id="scarica-android">
+          <!-- A phone. -->
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <rect x="6.4" y="2.8" width="11.2" height="18.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect>
+            <path d="M10.6 17.8h2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          <span id="scarica-android-testo">Coming soon to Android</span>
+        </a>
+      </div>
     </div>
   </div>
   <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1320" height="970" alt=""></figure>
@@ -392,6 +418,7 @@
       scarica: 'Scarica Aomidori',
       sistema: 'macOS 27 o successivo, solo Apple Silicon',
       soloMac: 'Aomidori è un\'app per Mac: scaricala da un Mac con Apple Silicon.',
+      android: 'In arrivo su Android', scaricaAndroid: 'Scarica per Android',
       schermata: 'Aomidori con un libro aperto',
       fatti: [
         ['Un capitolo, una pagina', 'Ogni capitolo di un libro scorre in verticale come una pagina web, e le frecce cambiano capitolo. Niente impaginazione.'],
@@ -427,6 +454,7 @@
       scarica: 'Download Aomidori',
       sistema: 'macOS 27 or later, Apple Silicon only',
       soloMac: 'Aomidori is an app for the Mac: download it on a Mac with Apple Silicon.',
+      android: 'Coming soon to Android', scaricaAndroid: 'Get it for Android',
       schermata: 'Aomidori with a book open',
       fatti: [
         ['One chapter, one page', 'Each chapter of a book scrolls vertically like a web page, and the arrow keys change chapter. No pagination.'],
@@ -490,8 +518,17 @@
   if (mqScuro.addEventListener) mqScuro.addEventListener('change', alSistema);
   else if (mqScuro.addListener) mqScuro.addListener(alSistema);
 
-  // A visitor on a phone or on Windows learns at once that this is an app for the Mac.
+  // A visitor on a phone or on Windows learns at once that this is an app for the Mac; on an
+  // Android phone the Android button comes first instead, and the note is not needed.
   var suMac = /Macintosh|Mac OS X/.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1);
+  var suAndroid = /Android/i.test(navigator.userAgent);
+  if (suAndroid) document.body.classList.add('su-android');
+
+  // The Android app's address on Google Play: null until it is published, and the button stays
+  // switched off. Once it is set, the button becomes a link, and the titles should name Android
+  // too (the owner's choice Android-01, 2026-11-08).
+  var ANDROID_URL = null;
+  if (ANDROID_URL) el('scarica-android').href = ANDROID_URL;
 
   function disegna() {
     var T = TESTI[stato.lingua];
@@ -506,9 +543,10 @@
     el('claim').textContent = lega(T.claim);
     var soloMac = el('solo-mac');
     soloMac.textContent = lega(T.soloMac);
-    soloMac.hidden = suMac;
+    soloMac.hidden = suMac || suAndroid;
     mostraSchermata(T);
     el('scarica-testo').textContent = T.scarica;
+    el('scarica-android-testo').textContent = ANDROID_URL ? T.scaricaAndroid : T.android;
     el('tecnica').textContent = T.sistema;
     disegnaRegalo(T.regalo);
 
