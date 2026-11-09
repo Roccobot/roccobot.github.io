@@ -334,7 +334,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   enters the gesture bar or its fade, and an ideal value gives way when it has to.
 - **Start menu**: the commands that grow out of the Tondo, in two shapes: 9 keys, three by three,
   and 8 keys, in four rows of 2. A pitch of 68 between icon centers, 28 at the sides to the icon,
-  19 above and below on the ink, so the top edge falls on the optical center of the content; the ×
+  on the ink 22.7 above and 19 below; the ×
   is centered on the Tondo it replaces. These are ideal values, adapted in three cases the owner
   decides (see its sheet, with the spacing diagram and the examples).
 - **Card**: in the apps a panel that rises from the bottom, with AIV's Fluido curve; on the web one

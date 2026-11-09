@@ -331,8 +331,8 @@ grigie.
 - 🚧 **La norma che viene prima di ogni misura**: un pannello che si apre dal basso non entra mai
   nella barra dei gesti né nella sua sfumatura, e se serve un valore ideale cede.
 - **Menu Start**: i comandi che crescono dal Tondo, in due forme: da 9, tre per tre, e da 8, in
-  quattro file da 2. Passo di 68 fra i centri delle icone, 28 ai lati fino all'icona, 19 sopra e
-  sotto sull'inchiostro, così il bordo alto cade sul centro ottico del contenuto; la × si centra
+  quattro file da 2. Passo di 68 fra i centri delle icone, 28 ai lati fino all'icona, sull'inchiostro 22,7
+  sopra e 19 sotto; la × si centra
   sul Tondo che sostituisce. Sono valori ideali, che si adattano in tre casi decisi dal titolare
   (vedi la sua scheda, con lo schema delle distanze e gli esempi).
 - **Scheda**: nelle app un pannello che sale dal basso, con la curva Fluido di AIV; sul web un oggetto
