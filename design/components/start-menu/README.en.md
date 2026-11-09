@@ -21,15 +21,16 @@ into the bar or the fade, the value gives way.
 | | rule | token | value |
 |---|---|---|---|
 | 🟥 | **Side margin**, the same on the left and right, from the edge to the icon | `margine-start-lati` | 28 |
-| 🩷 | **Vertical margin**, the same above and below and measured on the ink: at the top to the icon, at the bottom to the label, the lowest piece. So the top edge falls on the optical center of the content | `margine-start-verticale` | 19 |
+| 🩷 | **Top margin**, measured on the ink: from the edge to the icons of the first row | `margine-start-alto` | 22.7 |
+| 🟪 | **Bottom margin**, measured on the ink: from the labels of the last row, the lowest piece, to the edge | `margine-start-basso` | 19 |
 | 🟨 | **Horizontal pitch**: the distance between the centers of two neighboring icons, equal across all columns | `passo-start-colonne` | 68 |
 | 🟨 | **Vertical pitch**: the same distance between two rows, equal across all rows; ideally it matches the horizontal one | `passo-start-righe` | 68 |
 | ✖️ | **The × is centered on the center of the Tondo** it replaces. The rule 'on the center of an icon's place' holds only when the two centers coincide, as in mockups | `icona-start` | 28 |
 | 🏷️ | **The label** is centered under the icon, 3 below it, on a 12-tall line, at most 56 wide; its ink ends 9.3 below the icon | `etichetta-start-spazio`, `etichetta-start-riga`, `etichetta-start-max`, `etichetta-start-inchiostro` | 3, 12, 56, 9.3 |
 
 - **The panel size follows from the tokens** and isn't written separately: width = 2 side margins +
-  (columns - 1) pitches + icon; height = 2 vertical margins + (rows - 1) vertical pitches + icon +
-  label ink. The 9-key menu is 220 x 211.3, the 8-key one 152 x 279.3, a 2 x 2 152 x 143.3.
+  (columns - 1) pitches + icon; height = top margin + bottom margin + (rows - 1) vertical pitches +
+  icon + label ink. The 9-key menu is 220 x 215, the 8-key one 152 x 283, a 2 x 2 152 x 147.
 - **`build/build.py` draws the diagram from the tokens**, like the page: it isn't edited by hand.
 
 ### ✏️ Ideal values, and when they adapt
@@ -39,9 +40,9 @@ from them, always within the gesture bar rule, mainly in three ways:
 
 | | when | how | example |
 |---|---|---|---|
-| ⬜ | the menu is **almost square** | make it fully square | 9-key menu: 220 x 220 instead of 220 x 211.3 |
-| ↔️ | a **long label** needs room | widen the side margin, equally on both sides | 8-key menu: 166 x 279.3 instead of 152 x 279.3 |
-| 👍 | the menu is meant for **one-handed use** | tighten the spacing, mostly vertically | 8-key menu: 152 x 256.3 instead of 152 x 279.3 |
+| ⬜ | the menu is **almost square** | make it fully square | 9-key menu: 220 x 220 instead of 220 x 215 |
+| ↔️ | a **long label** needs room | widen the side margin, equally on both sides | 8-key menu: 166 x 283 instead of 152 x 283 |
+| 👍 | the menu is meant for **one-handed use** | tighten the spacing, mostly vertically | 8-key menu: 152 x 260 instead of 152 x 283 |
 
 - **The owner decides exceptions to spacing and centering**: whoever designs a menu starts from the
   ideal values and proposes the departure, rather than applying it on their own.

@@ -434,22 +434,22 @@ def hero_icon():
 
 # ── The Start menu spacing diagram ──
 # Rocco's sketch of 2026-11-08 turned into a figure: magenta for the margins (to the icon, and at the
-# bottom to the label's ink), darker at the sides and lighter above and below, yellow for the two
+# bottom to the label's ink), one shade each for the sides, the top and the bottom, yellow for the two
 # pitches, a dashed square for the icon place the close key takes in a mockup. Every length comes from
 # the tokens, so the figure follows them.
 def start_spacing_svg():
     m = {t['name']: float(t['value'][:-2]) for t in TOKENS['misura']['tokens'] if t['value'].endswith('px')}
     rad = float(next(t for t in TOKENS['radius']['tokens'] if t['name'] == 'raggio-start')['value'].rstrip('px'))
-    MX, MY, I = m['margine-start-lati'], m['margine-start-verticale'], m['icona-start']
+    MX, MT, MB, I = m['margine-start-lati'], m['margine-start-alto'], m['margine-start-basso'], m['icona-start']
     P, PR, INK, LW = m['passo-start-colonne'], m['passo-start-righe'], m['etichetta-start-inchiostro'], m['etichetta-start-max']
     cols = rows = 3
-    pw, ph = 2 * MX + (cols - 1) * P + I, 2 * MY + (rows - 1) * PR + I + INK
+    pw, ph = 2 * MX + (cols - 1) * P + I, MT + MB + (rows - 1) * PR + I + INK
     pad = 24
     ox, oy = pad, pad
     legend_y = oy + ph + pad + 14
-    W, H = pw + 2 * pad, legend_y + 4 * 20
+    W, H = pw + 2 * pad, legend_y + 5 * 20
     cx = lambda c: ox + MX + c * P + I / 2
-    cy = lambda r: oy + MY + r * PR + I / 2
+    cy = lambda r: oy + MT + r * PR + I / 2
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:g} {H:g}" width="{W * 2:g}" height="{H * 2:g}" '
            'font-family="Archivo, Helvetica, Arial, sans-serif">',
            f'<rect width="{W:g}" height="{H:g}" fill="#8FA59F"/>',
@@ -475,12 +475,12 @@ def start_spacing_svg():
             w = LW - (22 if (r + c) % 2 else 14)  # typical labels; the token is the maximum
             out.append(f'<rect x="{x:g}" y="{y:g}" width="{I:g}" height="{I:g}" rx="7" fill="#7FCBBB"/>')
             out.append(f'<rect x="{cx(c) - w / 2:g}" y="{y + I + INK - 4:g}" width="{w:g}" height="4" rx="2" fill="#B3B3B3"/>')
-    mx, my = '#E6007E', '#F47CBC'  # the margins, on the middle column and the middle row
-    out += [f'<line x1="{cx(1):g}" y1="{oy:g}" x2="{cx(1):g}" y2="{oy + MY:g}" stroke="{my}" stroke-width="3"/>',
-            f'<line x1="{cx(1):g}" y1="{oy + ph - MY:g}" x2="{cx(1):g}" y2="{oy + ph:g}" stroke="{my}" stroke-width="3"/>',
+    mx, mt, mb = '#E6007E', '#F47CBC', '#B0306F'  # the margins, on the middle column and the middle row
+    out += [f'<line x1="{cx(1):g}" y1="{oy:g}" x2="{cx(1):g}" y2="{oy + MT:g}" stroke="{mt}" stroke-width="3"/>',
+            f'<line x1="{cx(1):g}" y1="{oy + ph - MB:g}" x2="{cx(1):g}" y2="{oy + ph:g}" stroke="{mb}" stroke-width="3"/>',
             f'<line x1="{ox:g}" y1="{cy(1):g}" x2="{ox + MX:g}" y2="{cy(1):g}" stroke="{mx}" stroke-width="3"/>',
             f'<line x1="{ox + pw - MX:g}" y1="{cy(1):g}" x2="{ox + pw:g}" y2="{cy(1):g}" stroke="{mx}" stroke-width="3"/>']
-    legend = [(mx, f'margine-start-lati  {MX:g}'), (my, f'margine-start-verticale  {MY:g}'),
+    legend = [(mx, f'margine-start-lati  {MX:g}'), (mt, f'margine-start-alto  {MT:g}'), (mb, f'margine-start-basso  {MB:g}'),
               (pitch_x, f'passo-start-colonne  {P:g}'), (pitch_y, f'passo-start-righe  {PR:g}')]
     for i, (col, text) in enumerate(legend):
         y = legend_y + i * 20

@@ -21,16 +21,17 @@ pannello nella barra o nella sfumatura, il valore cede.
 | | regola | token | valore |
 |---|---|---|---|
 | 🟥 | **Margine laterale**, uguale a sinistra e a destra, dal bordo all'icona | `margine-start-lati` | 28 |
-| 🩷 | **Margine verticale**, uguale sopra e sotto e misurato sull'inchiostro: in alto fino all'icona, in basso fino all'etichetta, che è il pezzo più in basso. Così il bordo alto cade sul centro ottico del contenuto | `margine-start-verticale` | 19 |
+| 🩷 | **Margine in alto**, misurato sull'inchiostro: dal bordo alle icone della prima fila | `margine-start-alto` | 22,7 |
+| 🟪 | **Margine in basso**, misurato sull'inchiostro: dalle etichette dell'ultima fila, il pezzo più in basso, al bordo | `margine-start-basso` | 19 |
 | 🟨 | **Passo orizzontale**: la distanza fra i centri di due icone vicine, uguale fra tutte le colonne | `passo-start-colonne` | 68 |
 | 🟨 | **Passo verticale**: la stessa distanza fra due righe, uguale fra tutte le righe; l'ideale è che sia uguale a quello orizzontale | `passo-start-righe` | 68 |
 | ✖️ | **La × si centra sul centro del Tondo** che sostituisce. La regola 'sul centro del posto di un'icona' vale solo quando i due centri coincidono, come nei mockup | `icona-start` | 28 |
 | 🏷️ | **L'etichetta** è centrata sotto l'icona, a 3 da lei, su una riga alta 12, larga al massimo 56; il suo inchiostro finisce 9,3 sotto l'icona | `etichetta-start-spazio`, `etichetta-start-riga`, `etichetta-start-max`, `etichetta-start-inchiostro` | 3, 12, 56, 9,3 |
 
 - **Le dimensioni del pannello si ricavano dai token**, e non si scrivono a parte: larghezza = 2
-  margini laterali + (colonne - 1) passi + icona; altezza = 2 margini verticali + (righe - 1) passi
-  verticali + icona + inchiostro dell'etichetta. Il menu da 9 misura 220 x 211,3, quello da 8
-  152 x 279,3, un 2 x 2 152 x 143,3.
+  margini laterali + (colonne - 1) passi + icona; altezza = margine in alto + margine in basso +
+  (righe - 1) passi verticali + icona + inchiostro dell'etichetta. Il menu da 9 misura 220 x 215,
+  quello da 8 152 x 283, un 2 x 2 152 x 147.
 - **Lo schema lo genera `build/build.py` dai token**, come la pagina: non si modifica a mano.
 
 ### ✏️ Valori ideali, e quando si adattano
@@ -40,9 +41,9 @@ vero può scostarsene, sempre dentro la norma della barra dei gesti, soprattutto
 
 | | quando | come | esempio |
 |---|---|---|---|
-| ⬜ | il menu è **quasi quadrato** | lo si rende quadrato del tutto | menu da 9: 220 x 220 al posto di 220 x 211,3 |
-| ↔️ | un'**etichetta lunga** chiede spazio | si allarga il margine laterale, uguale sui due lati | menu da 8: 166 x 279,3 al posto di 152 x 279,3 |
-| 👍 | il menu è pensato per l'**uso a una mano** | si stringono le spaziature, soprattutto in verticale | menu da 8: 152 x 256,3 al posto di 152 x 279,3 |
+| ⬜ | il menu è **quasi quadrato** | lo si rende quadrato del tutto | menu da 9: 220 x 220 al posto di 220 x 215 |
+| ↔️ | un'**etichetta lunga** chiede spazio | si allarga il margine laterale, uguale sui due lati | menu da 8: 166 x 283 al posto di 152 x 283 |
+| 👍 | il menu è pensato per l'**uso a una mano** | si stringono le spaziature, soprattutto in verticale | menu da 8: 152 x 260 al posto di 152 x 283 |
 
 - **Le eccezioni a spaziature e centrature le decide il titolare**: chi disegna un menu parte dai
   valori ideali e propone lo scostamento, non lo applica da sé.
