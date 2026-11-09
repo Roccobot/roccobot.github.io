@@ -221,14 +221,16 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | velo dietro i pannelli | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
 | entrata di un menu | 120 ms da scala 0,96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
-| entrata della scheda in fondo | molla senza rimbalzo, rigidità medio-bassa; opaca in 110 ms | `ARRIVO_RIGIDITA` |
-| uscita della scheda in fondo | 332 ms, la stessa molla letta all'indietro; velo in 280 ms | `USCITA_MS` |
+| curva Fluido, i movimenti senza dito | `cubic-bezier(0.25, 1, 1, 1)`; all'indietro per le uscite | `GENTLE`, `ACCELERA` |
+| entrata della scheda in fondo | 332 ms, la curva Fluido; opaca in 110 ms | `SALITA_MS` |
+| uscita della scheda in fondo | 332 ms, la curva Fluido letta all'indietro; velo in 280 ms | `ACCELERA`, `VEIL_FADE_MS` |
+| finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
 | menu Start, dal suo angolo | 110 ms, la curva della pillola | `BAR_IN_MS` |
 | tocco sul Tondo | giù in 30 ms, su in 60, al 70%; × in 90 ms, colore in 55 | `RIMBALZO` |
 | Tondo che se ne va | 100 ms, una curva che parte veloce | `VIA_MS` |
 | salto in cima e in fondo | 280 ms più 0,16 ms per pixel, al massimo 800 | `Jump.kt` |
-| assestamento dell'immagine, e cambio di spazio per la barra delle info | 220 ms | `SNAP_MS`, `BAR_ROOM_MS` |
+| strisciata e assestamento dell'immagine, e cambio di spazio per la barra delle info | 220 ms; col dito fermo la curva Fluido, col dito in movimento `cubic-bezier(0.3, 0.3 x v, 0.3, 1)`, con v la velocità del dito divisa per quella media, fra 0 e 3 | `SNAP_MS`, `BAR_ROOM_MS`, `releaseEasing` |
 | sostituto che lascia il posto | 150 ms | `THUMB_FADE_MS` |
 | intestazione ferma a metà | dopo 2.000 ms, in 250 ms | `FRONT_REST_MS` |
 | Tondo durante la lettura | dopo 2.000 ms, in 150 ms | `READING_SHOW_MS` |
@@ -243,11 +245,11 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 - **Le opacità si moltiplicano.** Un'animazione giocata sotto la dissolvenza di schermata si vede
   solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello
   che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.
-- **La durata segue la distanza.** Un tempo fisso per i passi corti; una molla per una scheda che
-  percorre la sua altezza, dove lo stesso tempo sarebbe uno scatto; per un salto lungo una durata
+- **La durata segue la distanza.** Un tempo fisso per i passi corti; per una scheda che percorre la
+  sua altezza un tempo più lungo con la curva Fluido, che parte veloce e arriva ferma; per un salto lungo una durata
   che cresce con la corsa, con un tetto.
 - **L'uscita è più breve dell'entrata, o la sua copia speculare.** Un menu entra in 120 ms ed esce
-  in 75, con una dissolvenza sola; la scheda in fondo esce con la stessa molla letta all'indietro.
+  in 75, con una dissolvenza sola; la scheda in fondo esce con la stessa curva letta all'indietro.
 - **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando, e
   una finestra che si apre con un velo già in scena sfoca subito al pieno.
 - **Un sostituto lascia il posto sfumando**, in 150 ms: la miniatura all'immagine piena, la copia
@@ -333,7 +335,7 @@ grigie.
   sotto sull'inchiostro, così il bordo alto cade sul centro ottico del contenuto; la × si centra
   sul Tondo che sostituisce. Sono valori ideali, che si adattano in tre casi decisi dal titolare
   (vedi la sua scheda, con lo schema delle distanze e gli esempi).
-- **Scheda**: nelle app un pannello che sale dal basso, con la molla di AIV; sul web un oggetto
+- **Scheda**: nelle app un pannello che sale dal basso, con la curva Fluido di AIV; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
   principale, uno per schermata, il contorno per le altre.

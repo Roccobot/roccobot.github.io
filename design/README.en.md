@@ -221,14 +221,16 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | scrim behind panels | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
 | menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
-| bottom sheet entrance | spring with no bounce, medium-low stiffness; opaque in 110 ms | `ARRIVO_RIGIDITA` |
-| bottom sheet exit | 332 ms, the same spring read backward; scrim in 280 ms | `USCITA_MS` |
+| Fluido curve, motion with no finger | `cubic-bezier(0.25, 1, 1, 1)`; backward for exits | `GENTLE`, `ACCELERA` |
+| bottom sheet entrance | 332 ms, the Fluido curve; opaque in 110 ms | `SALITA_MS` |
+| bottom sheet exit | 332 ms, the Fluido curve read backward; scrim in 280 ms | `ACCELERA`, `VEIL_FADE_MS` |
+| window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
 | Start menu, from its corner | 110 ms, the pill's curve | `BAR_IN_MS` |
 | tap on the Tondo | down in 30 ms, up in 60, to 70%; × in 90 ms, color in 55 | `RIMBALZO` |
 | Tondo leaving | 100 ms, a curve that starts fast | `VIA_MS` |
 | jump to top and bottom | 280 ms plus 0.16 ms per pixel, at most 800 | `Jump.kt` |
-| image settling, and the change of space for the info bar | 220 ms | `SNAP_MS`, `BAR_ROOM_MS` |
+| swipe and image settling, and the change of space for the info bar | 220 ms; with the finger still the Fluido curve, with the finger moving `cubic-bezier(0.3, 0.3 x v, 0.3, 1)`, with v the finger's speed divided by the average speed, between 0 and 3 | `SNAP_MS`, `BAR_ROOM_MS`, `releaseEasing` |
 | stand-in giving way | 150 ms | `THUMB_FADE_MS` |
 | header stopped halfway | after 2,000 ms, in 250 ms | `FRONT_REST_MS` |
 | Tondo while reading | after 2,000 ms, in 150 ms | `READING_SHOW_MS` |
@@ -243,11 +245,11 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 - **Opacities multiply.** An animation played under the screen fade shows only its tail: what must
   be seen waits for the screen to arrive, and what arrives with the screen (a background, a band,
   the content) stays still.
-- **Duration follows distance.** A fixed time for short steps; a spring for a sheet that travels
-  its own height, where a fixed time would be a jolt; for a long jump a duration that grows with
+- **Duration follows distance.** A fixed time for short steps; for a sheet that travels its own
+  height a longer time on the Fluido curve, which starts fast and arrives at rest; for a long jump a duration that grows with
   the distance, with a cap.
 - **The exit is shorter than the entrance, or its mirror image.** A menu enters in 120 ms and exits
-  in 75, with a single fade; the bottom sheet exits on the same spring read backward.
+  in 75, with a single fade; the bottom sheet exits on the same curve read backward.
 - **No flashes between two surfaces.** The scrim does not go down while another surface is coming
   in, and a window that opens over a scrim already on screen blurs to full at once.
 - **A stand-in gives way with a fade**, in 150 ms: the thumbnail to the full image, the copy that
@@ -335,7 +337,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   19 above and below on the ink, so the top edge falls on the optical center of the content; the ×
   is centered on the Tondo it replaces. These are ideal values, adapted in three cases the owner
   decides (see its sheet, with the spacing diagram and the examples).
-- **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
+- **Card**: in the apps a panel that rises from the bottom, with AIV's Fluido curve; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
   action, one per screen, outlined for the others.

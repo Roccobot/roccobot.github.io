@@ -289,6 +289,77 @@ def motion():
     return ''.join(rows)
 
 
+# ── AIV's motion curves, as speed charts ──
+# The speed of a motion curve over time, drawn from the tokens (the Bezier numbers of `fluido`, and the
+# release curve family of `assestamento`), so the charts follow them. Speed is the slope of the curve,
+# dy/dx, in units of the average speed (1 = the whole way at constant speed). The page's script moves
+# a playhead with one dot per curve, and a block along the track under the first chart; with reduced
+# motion only the static charts are shown. The plot box is shared with the script (FLUIDO_PLOT).
+FLUIDO_W, FLUIDO_H = 320, 176
+FLUIDO_PLOT = (40, 312, 14, 150)  # left, right, top, bottom
+FLUIDO_TOP_SPEED = 4
+
+
+def _bez(a, b, t):
+    return 3 * (1 - t) ** 2 * t * a + 3 * (1 - t) * t ** 2 * b + t ** 3
+
+
+def _dbez(a, b, t):
+    return 3 * (1 - t) ** 2 * a + 6 * (1 - t) * t * (b - a) + 3 * t ** 2 * (1 - b)
+
+
+def speed_chart(curves, ms, aria_it, aria_en):
+    """`curves`: (bezier, css class); the first one also drives the block on the track, if any."""
+    L, R, T, B = FLUIDO_PLOT
+    px = lambda u: L + u * (R - L)
+    py = lambda s: B - min(s, FLUIDO_TOP_SPEED) / FLUIDO_TOP_SPEED * (B - T)
+    lines, dots = [], []
+    for i, ((x1, y1, x2, y2), cls) in enumerate(curves):
+        pts = []
+        for k in range(201):
+            t = k / 200
+            dx, dy = _dbez(x1, x2, t), _dbez(y1, y2, t)
+            pts.append(f'{px(_bez(x1, x2, t)):.2f},{py(dy / dx if dx > 1e-9 else 0.0):.2f}')
+        lines.append(f'<polyline class="{cls}" data-bezier="{x1:g},{y1:g},{x2:g},{y2:g}" points="{" ".join(pts)}"/>')
+        dots.append(f'<circle class="fl-dot {cls}-dot" r="4.5" cx="0" cy="{B}" data-i="{i}"/>')
+    grid = ''.join(f'<line class="fl-grid" x1="{L}" x2="{R}" y1="{py(s):.2f}" y2="{py(s):.2f}"/>' for s in (2, 3, 4))
+    nums = ''.join(f'<text class="fl-num" x="{L - 6}" y="{py(s) + 4:.2f}" text-anchor="end">{s}×</text>' for s in (0, 1, 2, 3, 4))
+    return (f'<svg class="fl-chart" viewBox="0 0 {FLUIDO_W} {FLUIDO_H}" data-ms="{e(ms)}" '
+            f'role="img" aria-label="{e(aria_it)}" data-label-en="{e(aria_en)}">'
+            f'{grid}<line class="fl-axis" x1="{L}" x2="{R}" y1="{B}" y2="{B}"/>'
+            f'<line class="fl-avg" x1="{L}" x2="{R}" y1="{py(1):.2f}" y2="{py(1):.2f}"/>{nums}'
+            f'<text class="fl-num" x="{L}" y="{B + 18}">0</text><text class="fl-num" x="{R}" y="{B + 18}" text-anchor="end">{e(ms)} ms</text>'
+            f'{"".join(lines)}'
+            f'<g class="fl-head" style="display:none"><line class="fl-head-line" x1="0" x2="0" y1="{T}" y2="{B}"/></g>'
+            f'<g class="fl-dots" style="display:none">{"".join(dots)}</g>'
+            '</svg>')
+
+
+def _motion(name):
+    return next(t for t in TOKENS['movimento']['tokens'] if t['name'] == name)
+
+
+def fluido_chart():
+    ms = _motion('scheda-entrata')['value'].split(' ')[0]
+    return speed_chart([(tuple(_motion('fluido')['bezier']), 'fl-speed')], ms,
+                       'La velocità della curva Fluido nel tempo: parte a 4 volte la media e scende fino a zero',
+                       'The speed of the Fluido curve over time: it starts at 4 times the average and falls to zero')
+
+
+def release_chart():
+    """The swipe after the finger lifts: one curve per finger speed v, which is also its start speed,
+    plus the Fluido curve for a finger at rest (below v_min)."""
+    tok = _motion('assestamento')
+    r = tok['rilascio']
+    ms = tok['value'].split(' ')[0]
+    curves = [(tuple(_motion('fluido')['bezier']), 'fl-rest')]
+    for v in range(1, int(r['v_max']) + 1):
+        curves.append(((r['x1'], r['x1'] * v, r['x2'], r['y2']), 'fl-speed'))
+    return speed_chart(curves, ms,
+                       'La velocità della strisciata dopo il distacco: una curva per velocità del dito, che parte a quella velocità e frena fino a zero',
+                       'The speed of the swipe after the finger lifts: one curve per finger speed, starting at that speed and braking to zero')
+
+
 MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto',
           'settembre', 'ottobre', 'novembre', 'dicembre']
 MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
@@ -440,6 +511,8 @@ def main():
         'centerref': center_reference(),
         'effects': effects(),
         'motion': motion(),
+        'fluido': fluido_chart(),
+        'rilascio': release_chart(),
         'version': version(),
         'version-full': version_full(),
         'hero-icon': hero_icon(),
