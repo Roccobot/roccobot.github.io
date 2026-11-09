@@ -160,14 +160,13 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   (`design/assets/icons/`). Nel tema chiaro menta su turchese, in quello scuro turchese luce su
   petrolio:
   cambiano tutti e due i livelli.
-  - **Centratura**: il glifo si centra sulla piastrella e poi sale dell'**8,9494% della propria
-    altezza**, non del lato della piastrella: è l'aggiustamento ottico che porta il triangolo
-    arrotondato verso la punta, col tondo che segue. Su un'icona da 512 con un glifo alto 257 px
-    vuol dire 23 px più in alto del centro. Il valore vive in `tokens.json`
-    (`centratura-icona-aiv`) anche come **punto del disegno**: nelle unità del tracciato è
-    (54; 54,3696), e va sul centro della piastrella a ogni scala. Per un glifo a scala `s` su una
-    tela da 108 la traslazione è quindi `54 - 54 x s` in orizzontale e `54 - 54,3696 x s` in
-    verticale.
+  - **Centratura**: il glifo si centra sulla piastrella e poi sale dell'**8,33% della propria
+    altezza** (un dodicesimo), non del lato della piastrella: è l'aggiustamento ottico che porta il
+    triangolo arrotondato verso la punta, col tondo che segue. Fa fede l'icona dell'app. Su
+    un'icona da 512 con un glifo alto 257 px vuol dire 21,4 px più in alto del centro. Il valore
+    vive in `tokens.json` (`centratura-icona-aiv`) anche come **punto del disegno**: nelle unità
+    del tracciato è (54; 54), e va sul centro della piastrella a ogni scala. Per un glifo a scala
+    `s` su una tela da 108 la traslazione è quindi `54 - 54 x s` nei due versi.
 - **L'icona di Aomidori per macOS** è l'esempio di icona adattiva in stile Liquid Glass: il
   sistema mostra la versione del tema in uso, e la forma della piastrella è disegnata nel file.
   La pagina mostra i due file della pagina di download di Aomidori (`Aomidori/assets/` dell'hub),
