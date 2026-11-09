@@ -319,10 +319,13 @@ grigie.
 
 - **Tondo**: il comando principale delle app, tondo e traslucido, nell'angolo del pollice (vedi
   la sua scheda).
+- 🚧 **La norma che viene prima di ogni misura**: un pannello che si apre dal basso non entra mai
+  nella barra dei gesti né nella sua sfumatura, e se serve un valore ideale cede.
 - **Menu Start**: i comandi che crescono dal Tondo, in due forme: da 9, tre per tre, e da 8, in
-  quattro file da 2. Margine ottico uguale sui quattro lati, passo uguale fra i centri delle
-  icone, × centrata sul posto di un'icona. Sono valori ideali, che si adattano in tre casi decisi
-  dal titolare (vedi la sua scheda, con lo schema delle distanze e gli esempi).
+  quattro file da 2. Passo di 68 fra i centri delle icone, 28 ai lati fino all'icona, 19 sopra e
+  sotto sull'inchiostro, così il bordo alto cade sul centro ottico del contenuto; la × si centra
+  sul Tondo che sostituisce. Sono valori ideali, che si adattano in tre casi decisi dal titolare
+  (vedi la sua scheda, con lo schema delle distanze e gli esempi).
 - **Scheda**: nelle app un pannello che sale dal basso, con la molla di AIV; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
