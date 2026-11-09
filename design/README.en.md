@@ -160,13 +160,13 @@ is the color of the icon.
   (`design/assets/icons/`). In the light theme mint on turquoise, in the dark one light turquoise
   on petrol:
   both layers change.
-  - **Centering**: the glyph is centered on the tile and then raised by **8.9494% of its own
-    height**, not of the tile's side: it is the optical adjustment that moves the rounded triangle
-    toward its tip, with the disc following. On a 512 icon with a 257 px tall glyph that means 23
-    px above the center. The value lives in `tokens.json` (`centratura-icona-aiv`) also as a
-    **point of the drawing**: in path units it is (54, 54.3696), and it goes on the tile's center
-    at any scale. For a glyph at scale `s` on a 108 canvas the translation is therefore
-    `54 - 54 x s` horizontally and `54 - 54.3696 x s` vertically.
+  - **Centering**: the glyph is centered on the tile and then raised by **8.33% of its own
+    height** (one twelfth), not of the tile's side: it is the optical adjustment that moves the
+    rounded triangle toward its tip, with the disc following. The app icon is the reference. On a
+    512 icon with a 257 px tall glyph that means 21.4 px above the center. The value lives in
+    `tokens.json` (`centratura-icona-aiv`) also as a **point of the drawing**: in path units it is
+    (54, 54), and it goes on the tile's center at any scale. For a glyph at scale `s` on a 108
+    canvas the translation is therefore `54 - 54 x s` in both directions.
 - **The Aomidori icon for macOS** is the example of an adaptive icon in the Liquid Glass style:
   the system shows the version for the current theme, and the tile shape is drawn in the file.
   The page shows the two files of the Aomidori download page (the hub's `Aomidori/assets/`),
