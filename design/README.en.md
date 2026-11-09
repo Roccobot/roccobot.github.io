@@ -321,10 +321,13 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 
 - **Tondo**: the main command of the apps, round and translucent, in the thumb's corner (see its
   sheet).
+- 🚧 **The rule that comes before every measurement**: a panel that opens from the bottom never
+  enters the gesture bar or its fade, and an ideal value gives way when it has to.
 - **Start menu**: the commands that grow out of the Tondo, in two shapes: 9 keys, three by three,
-  and 8 keys, in four rows of 2. The same optical margin on all four sides, an equal pitch between
-  icon centers, the × centered on an icon's place. These are ideal values, adapted in three cases
-  the owner decides (see its sheet, with the spacing diagram and the examples).
+  and 8 keys, in four rows of 2. A pitch of 68 between icon centers, 28 at the sides to the icon,
+  19 above and below on the ink, so the top edge falls on the optical center of the content; the ×
+  is centered on the Tondo it replaces. These are ideal values, adapted in three cases the owner
+  decides (see its sheet, with the spacing diagram and the examples).
 - **Card**: in the apps a panel that rises from the bottom, with AIV's spring; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main

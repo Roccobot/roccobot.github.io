@@ -1,38 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 353" width="528" height="706" font-family="Archivo, Helvetica, Arial, sans-serif">
-<rect width="264" height="353" fill="#8FA59F"/>
-<rect x="24" y="24" width="216" height="231" rx="32" fill="#FFFEFC"/>
-<line x1="60" y1="60" x2="204" y2="60" stroke="#EBD83A" stroke-width="3"/>
-<line x1="60" y1="132" x2="204" y2="132" stroke="#EBD83A" stroke-width="3"/>
-<line x1="60" y1="204" x2="132" y2="204" stroke="#EBD83A" stroke-width="3"/>
-<line x1="60" y1="60" x2="60" y2="204" stroke="#F2E88C" stroke-width="3"/>
-<line x1="132" y1="60" x2="132" y2="204" stroke="#F2E88C" stroke-width="3"/>
-<line x1="204" y1="60" x2="204" y2="132" stroke="#F2E88C" stroke-width="3"/>
-<rect x="46" y="46" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="39" y="85" width="42" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="118" y="46" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="115" y="85" width="34" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="190" y="46" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="183" y="85" width="42" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="46" y="118" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="43" y="157" width="34" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="118" y="118" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="111" y="157" width="42" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="190" y="118" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="187" y="157" width="34" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="46" y="190" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="39" y="229" width="42" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="118" y="190" width="28" height="28" rx="7" fill="#7FCBBB"/>
-<rect x="115" y="229" width="34" height="4" rx="2" fill="#B3B3B3"/>
-<rect x="190" y="190" width="28" height="28" rx="6" fill="none" stroke="#9AA8A4" stroke-width="1" stroke-dasharray="3 2"/>
-<path d="M197.84 197.84L210.16 210.16M210.16 197.84L197.84 210.16" stroke="#1E2523" stroke-width="2" stroke-linecap="round"/>
-<line x1="132" y1="24" x2="132" y2="46" stroke="#E6007E" stroke-width="3"/>
-<line x1="132" y1="233" x2="132" y2="255" stroke="#E6007E" stroke-width="3"/>
-<line x1="24" y1="132" x2="46" y2="132" stroke="#E6007E" stroke-width="3"/>
-<line x1="218" y1="132" x2="240" y2="132" stroke="#E6007E" stroke-width="3"/>
-<rect x="24" y="284" width="18" height="4" rx="2" fill="#E6007E"/>
-<text x="50" y="290" font-size="11" fill="#1E2523">margine-start  22</text>
-<rect x="24" y="304" width="18" height="4" rx="2" fill="#EBD83A"/>
-<text x="50" y="310" font-size="11" fill="#1E2523">cella-start-larghezza  72</text>
-<rect x="24" y="324" width="18" height="4" rx="2" fill="#F2E88C"/>
-<text x="50" y="330" font-size="11" fill="#1E2523">passo-start-righe  72</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268 353.3" width="536" height="706.6" font-family="Archivo, Helvetica, Arial, sans-serif">
+<rect width="268" height="353.3" fill="#8FA59F"/>
+<rect x="24" y="24" width="220" height="211.3" rx="32" fill="#FFFEFC"/>
+<line x1="66" y1="57" x2="202" y2="57" stroke="#EBD83A" stroke-width="3"/>
+<line x1="66" y1="125" x2="202" y2="125" stroke="#EBD83A" stroke-width="3"/>
+<line x1="66" y1="193" x2="134" y2="193" stroke="#EBD83A" stroke-width="3"/>
+<line x1="66" y1="57" x2="66" y2="193" stroke="#F2E88C" stroke-width="3"/>
+<line x1="134" y1="57" x2="134" y2="193" stroke="#F2E88C" stroke-width="3"/>
+<line x1="202" y1="57" x2="202" y2="125" stroke="#F2E88C" stroke-width="3"/>
+<rect x="52" y="43" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="45" y="76.3" width="42" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="120" y="43" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="117" y="76.3" width="34" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="188" y="43" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="181" y="76.3" width="42" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="52" y="111" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="49" y="144.3" width="34" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="120" y="111" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="113" y="144.3" width="42" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="188" y="111" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="185" y="144.3" width="34" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="52" y="179" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="45" y="212.3" width="42" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="120" y="179" width="28" height="28" rx="7" fill="#7FCBBB"/>
+<rect x="117" y="212.3" width="34" height="4" rx="2" fill="#B3B3B3"/>
+<rect x="188" y="179" width="28" height="28" rx="6" fill="none" stroke="#9AA8A4" stroke-width="1" stroke-dasharray="3 2"/>
+<path d="M195.84 186.84L208.16 199.16M208.16 186.84L195.84 199.16" stroke="#1E2523" stroke-width="2" stroke-linecap="round"/>
+<line x1="134" y1="24" x2="134" y2="43" stroke="#F47CBC" stroke-width="3"/>
+<line x1="134" y1="216.3" x2="134" y2="235.3" stroke="#F47CBC" stroke-width="3"/>
+<line x1="24" y1="125" x2="52" y2="125" stroke="#E6007E" stroke-width="3"/>
+<line x1="216" y1="125" x2="244" y2="125" stroke="#E6007E" stroke-width="3"/>
+<rect x="24" y="264.3" width="18" height="4" rx="2" fill="#E6007E"/>
+<text x="50" y="270.3" font-size="11" fill="#1E2523">margine-start-lati  28</text>
+<rect x="24" y="284.3" width="18" height="4" rx="2" fill="#F47CBC"/>
+<text x="50" y="290.3" font-size="11" fill="#1E2523">margine-start-verticale  19</text>
+<rect x="24" y="304.3" width="18" height="4" rx="2" fill="#EBD83A"/>
+<text x="50" y="310.3" font-size="11" fill="#1E2523">passo-start-colonne  68</text>
+<rect x="24" y="324.3" width="18" height="4" rx="2" fill="#F2E88C"/>
+<text x="50" y="330.3" font-size="11" fill="#1E2523">passo-start-righe  68</text>
 </svg>

@@ -270,13 +270,14 @@ td.kind { color: var(--testo-secondario); }
 .mock-notice b { color: var(--testo-accento); font-weight: 600; }
 .mock-notice::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 62%; background: var(--accento); }
 /* Start menu at half scale, from the Start tokens: the grid columns are as wide as the icon and the
-   gaps make the pitch (center to center), so the panel padding is the optical margin itself; at the
-   bottom the margin is measured to the label. The close key sits in the icon's place, its label empty. */
-.mock-start { --s: .5; --i: calc(var(--icona-start) * var(--s)); --block: calc((var(--icona-start) + var(--etichetta-start-spazio) + var(--etichetta-start-riga)) * var(--s)); position: absolute; right: .5rem; bottom: .5rem; display: grid; grid-template-columns: repeat(var(--cols), var(--i)); grid-auto-rows: var(--block); column-gap: calc((var(--cella-start-larghezza) - var(--icona-start)) * var(--s)); row-gap: calc(var(--passo-start-righe) * var(--s) - var(--block)); padding: calc(var(--margine-start) * var(--s)); border-radius: calc(var(--raggio-start) * var(--s)); background: var(--superficie); }
+   gaps make the pitch (center to center), so the panel padding is the margin itself, measured on the
+   ink: to the icon, and at the bottom to the label's ink. A block is the icon plus the label down to
+   its ink. In the mock the close key sits in an icon's place, its label empty. */
+.mock-start { --s: .5; --i: calc(var(--icona-start) * var(--s)); --block: calc((var(--icona-start) + var(--etichetta-start-inchiostro)) * var(--s)); position: absolute; right: .5rem; bottom: .5rem; display: grid; grid-template-columns: repeat(var(--cols), var(--i)); grid-auto-rows: var(--block); column-gap: calc((var(--passo-start-colonne) - var(--icona-start)) * var(--s)); row-gap: calc(var(--passo-start-righe) * var(--s) - var(--block)); padding: calc(var(--margine-start-verticale) * var(--s)) calc(var(--margine-start-lati) * var(--s)); border-radius: calc(var(--raggio-start) * var(--s)); background: var(--superficie); }
 .mock-start span { display: flex; flex-direction: column; align-items: center; gap: calc(var(--etichetta-start-spazio) * var(--s)); }
 .mock-start i, .mock-start svg { flex: none; width: var(--i); height: var(--i); }
 .mock-start i { border-radius: 4px; background: color-mix(in srgb, var(--accento) 70%, var(--superficie)); }
-.mock-start b { flex: none; width: calc(var(--w, 44px) * var(--s)); height: calc(var(--etichetta-start-riga) * var(--s)); background: linear-gradient(color-mix(in srgb, var(--testo) 35%, transparent), color-mix(in srgb, var(--testo) 35%, transparent)) bottom / 100% 3px no-repeat; }
+.mock-start b { flex: none; width: calc(var(--w, 44px) * var(--s)); height: calc((var(--etichetta-start-inchiostro) - var(--etichetta-start-spazio)) * var(--s)); background: linear-gradient(color-mix(in srgb, var(--testo) 35%, transparent), color-mix(in srgb, var(--testo) 35%, transparent)) bottom / 100% 3px no-repeat; }
 .mock-start svg { color: var(--testo); }
 .tondo-zone { position: absolute; right: calc(var(--tondo-fianco) - 2px); bottom: calc(var(--tondo-basso) - 2px); width: var(--bersaglio-minimo); height: var(--bersaglio-minimo); border-radius: 50%; outline: 1px dashed var(--testo-accento); }
 .links { display: grid; gap: .4rem; }
@@ -724,7 +725,9 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <p class="eyebrow"><span lang="it">Componenti</span><span lang="en">Components</span></p>
       <h2 id="h-comp"><span lang="it">Componenti</span><span lang="en">Components</span></h2>
       <p class="lead" lang="it">I pezzi che si ripetono nelle app e nelle pagine. Le schede complete del <a href="components/tondo/README.md">Tondo</a> e del <a href="components/start-menu/README.md">menu Start</a> sono fra i file di questa pagina.</p>
+      <p class="lead" lang="it"><strong>Una norma viene prima di ogni misura</strong>: un pannello che si apre dal basso non entra mai nella barra dei gesti né nella sua sfumatura, e se serve un valore ideale cede.</p>
       <p class="lead" lang="en">The pieces that repeat across the apps and pages. The full sheets of the <a href="components/tondo/README.en.md">Tondo</a> and of the <a href="components/start-menu/README.en.md">Start menu</a> are among this page's files.</p>
+      <p class="lead" lang="en"><strong>One rule comes before every measurement</strong>: a panel that opens from the bottom never enters the gesture bar or its fade, and an ideal value gives way when it has to.</p>
       <div class="comps">
         <div class="comp">
           <h3><span lang="it">Pulsanti</span><span lang="en">Buttons</span></h3>
@@ -770,14 +773,14 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Menu Start da 9</span><span lang="en">Start menu, 9 keys</span></h3>
-          <p lang="it">Cresce dal Tondo in 110 ms, tre per tre. Le icone distano 72 da centro a centro, e il pannello ha lo stesso margine ottico di 22 sui quattro lati: fino all'icona, e in basso fino all'etichetta. La × prende il posto di un'icona. Sono valori ideali: la <a href="components/start-menu/README.md">scheda del menu Start</a> dice quando si adattano.</p>
-          <p lang="en">It grows from the Tondo in 110 ms, three by three. Icons sit 72 apart, center to center, and the panel has the same optical margin of 22 on all four sides: to the icon, and at the bottom to the label. The × takes an icon's place. These are ideal values: the <a href="components/start-menu/README.en.md">Start menu sheet</a> says when they adapt.</p>
+          <p lang="it">Cresce dal Tondo in 110 ms, tre per tre. Le icone distano 68 da centro a centro. Il pannello ha 28 ai lati, fino all'icona, e 19 sopra e sotto, misurati sull'inchiostro fino all'icona e all'etichetta: così il bordo alto cade sul centro ottico del contenuto. La × si centra sul Tondo che sostituisce. Sono valori ideali: la <a href="components/start-menu/README.md">scheda del menu Start</a> dice quando si adattano.</p>
+          <p lang="en">It grows from the Tondo in 110 ms, three by three. Icons sit 68 apart, center to center. The panel has 28 at the sides, to the icon, and 19 above and below, measured on the ink to the icon and to the label: so the top edge falls on the optical center of the content. The × is centered on the Tondo it replaces. These are ideal values: the <a href="components/start-menu/README.en.md">Start menu sheet</a> says when they adapt.</p>
           <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:3"><span><i></i><b style="--w:42px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:38px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:42px"></b></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
         </div>
         <div class="comp">
           <h3><span lang="it">Menu Start da 8</span><span lang="en">Start menu, 8 keys</span></h3>
-          <p lang="it">Quattro file da due, con lo stesso passo e lo stesso margine del menu da 9, e il pannello cresce verso l'alto. È il menu del Tondo di Aomidori per Android e della casa di AIV Play.</p>
-          <p lang="en">Four rows of two, with the same pitch and margin as the 9-key menu, and the panel grows upward. It is the Tondo menu of Aomidori for Android and the home menu of AIV Play.</p>
+          <p lang="it">Quattro file da due, con gli stessi passi e gli stessi margini del menu da 9, e il pannello cresce verso l'alto. È il menu del Tondo di Aomidori per Android e della casa di AIV Play.</p>
+          <p lang="en">Four rows of two, with the same pitches and margins as the 9-key menu, and the panel grows upward. It is the Tondo menu of Aomidori for Android and the home menu of AIV Play.</p>
           <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-start" style="--cols:2"><span><i></i><b style="--w:42px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:40px"></b></span><span><i></i><b style="--w:38px"></b></span><span><i></i><b style="--w:36px"></b></span><span><i></i><b style="--w:36px"></b></span><span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></span></div></div></div>
         </div>
         <div class="comp">

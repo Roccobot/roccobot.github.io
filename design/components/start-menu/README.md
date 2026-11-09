@@ -2,11 +2,17 @@
 
 Il menu che cresce dal Tondo, vicino al lato del pollice, con la × al posto del Tondo.
 
-- **Due forme**: **da 9**, tre colonne per tre righe; **da 8**, quattro file da due, con lo
-  stesso passo e lo stesso margine. Il pannello è ancorato in basso e cresce verso l'alto. Fino a
+- **Due forme**: **da 9**, tre colonne per tre righe; **da 8**, quattro file da due, con gli
+  stessi passi e gli stessi margini. Il pannello è ancorato in basso e cresce verso l'alto. Fino a
   quattro celle è un 2 x 2, e tre celle formano una riga sola.
 - **Misure**: tasti alti `cella-start-altezza` (64), angoli del pannello `raggio-start` (32); il
   pannello cresce dal suo angolo in 110 ms. Le distanze sono qui sotto.
+
+## 🚧 La norma che viene prima
+
+**Il pannello non entra mai nella barra dei gesti né nella sua sfumatura.** Vale per ogni pannello
+che si apre dal basso, e viene prima di ogni valore ideale: se un valore porterebbe il fondo del
+pannello nella barra o nella sfumatura, il valore cede.
 
 ## 📐 Distanze
 
@@ -14,29 +20,29 @@ Il menu che cresce dal Tondo, vicino al lato del pollice, con la × al posto del
 
 | | regola | token | valore |
 |---|---|---|---|
-| 🟥 | **Margine ottico uguale sui quattro lati**: in alto, a sinistra e a destra dal bordo all'icona, in basso dal bordo all'etichetta, che è il pezzo più in basso | `margine-start` | 22 |
-| 🟨 | **Passo orizzontale**: la distanza fra i centri di due icone vicine, uguale fra tutte le colonne | `cella-start-larghezza` | 72 |
-| 🟨 | **Passo verticale**: la stessa distanza fra due righe, uguale fra tutte le righe; l'ideale è che sia uguale a quello orizzontale | `passo-start-righe` | 72 |
-| ✖️ | **La × si centra sul centro dell'icona** che occuperebbe il suo posto, non sul blocco di icona ed etichetta | `icona-start` | 28 |
-| 🏷️ | **L'etichetta** è centrata sotto l'icona, a 3 da lei, su una riga alta 12, larga al massimo 56 | `etichetta-start-spazio`, `etichetta-start-riga`, `etichetta-start-max` | 3, 12, 56 |
+| 🟥 | **Margine laterale**, uguale a sinistra e a destra, dal bordo all'icona | `margine-start-lati` | 28 |
+| 🩷 | **Margine verticale**, uguale sopra e sotto e misurato sull'inchiostro: in alto fino all'icona, in basso fino all'etichetta, che è il pezzo più in basso. Così il bordo alto cade sul centro ottico del contenuto | `margine-start-verticale` | 19 |
+| 🟨 | **Passo orizzontale**: la distanza fra i centri di due icone vicine, uguale fra tutte le colonne | `passo-start-colonne` | 68 |
+| 🟨 | **Passo verticale**: la stessa distanza fra due righe, uguale fra tutte le righe; l'ideale è che sia uguale a quello orizzontale | `passo-start-righe` | 68 |
+| ✖️ | **La × si centra sul centro del Tondo** che sostituisce. La regola 'sul centro del posto di un'icona' vale solo quando i due centri coincidono, come nei mockup | `icona-start` | 28 |
+| 🏷️ | **L'etichetta** è centrata sotto l'icona, a 3 da lei, su una riga alta 12, larga al massimo 56; il suo inchiostro finisce 9,3 sotto l'icona | `etichetta-start-spazio`, `etichetta-start-riga`, `etichetta-start-max`, `etichetta-start-inchiostro` | 3, 12, 56, 9,3 |
 
-- **Il margine è metà dello spazio fra due icone** (72 meno 28, diviso 2): così il vuoto intorno
-  al gruppo vale quanto quello fra le sue parti.
 - **Le dimensioni del pannello si ricavano dai token**, e non si scrivono a parte: larghezza = 2
-  margini + (colonne - 1) passi + icona; altezza = 2 margini + (righe - 1) passi verticali + icona +
-  spazio + riga dell'etichetta. Il menu da 9 misura 216 x 231, quello da 8 144 x 303.
+  margini laterali + (colonne - 1) passi + icona; altezza = 2 margini verticali + (righe - 1) passi
+  verticali + icona + inchiostro dell'etichetta. Il menu da 9 misura 220 x 211,3, quello da 8
+  152 x 279,3, un 2 x 2 152 x 143,3.
 - **Lo schema lo genera `build/build.py` dai token**, come la pagina: non si modifica a mano.
 
 ### ✏️ Valori ideali, e quando si adattano
 
 Queste misure sono i **valori ideali**: le proposte preliminari e i mockup si fanno con loro. Un menu
-vero può scostarsene, soprattutto in tre modi:
+vero può scostarsene, sempre dentro la norma della barra dei gesti, soprattutto in tre modi:
 
 | | quando | come | esempio |
 |---|---|---|---|
-| ⬜ | il menu è **quasi quadrato** | lo si rende quadrato del tutto | menu da 9: 224 x 224 al posto di 216 x 231 |
-| ↔️ | un'**etichetta lunga** chiede spazio | si allarga il margine laterale, uguale sui due lati | menu da 8: 158 x 303 al posto di 144 x 303 |
-| 👍 | il menu è pensato per l'**uso a una mano** | si stringono le spaziature, soprattutto in verticale | menu da 8: 144 x 280 al posto di 144 x 303 |
+| ⬜ | il menu è **quasi quadrato** | lo si rende quadrato del tutto | menu da 9: 220 x 220 al posto di 220 x 211,3 |
+| ↔️ | un'**etichetta lunga** chiede spazio | si allarga il margine laterale, uguale sui due lati | menu da 8: 166 x 279,3 al posto di 152 x 279,3 |
+| 👍 | il menu è pensato per l'**uso a una mano** | si stringono le spaziature, soprattutto in verticale | menu da 8: 152 x 256,3 al posto di 152 x 279,3 |
 
 - **Le eccezioni a spaziature e centrature le decide il titolare**: chi disegna un menu parte dai
   valori ideali e propone lo scostamento, non lo applica da sé.
