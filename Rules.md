@@ -58,9 +58,11 @@ repo di AIV.
   `Roboto-license.txt`. Il resto di
   `publish/` (il documento di feedback, i prototipi) qui non entra. La regola vive anche nel
   `Rules.md` di AIV, § '🚀 Che cosa produce un rilascio'.
-- ⚠️ **L'APK non c'è**: il pulsante di download punta all'asset dell'ultima release del repo
-  pubblico `Roccobot/AIV-releases`, come Aomidori fa con le sue, quindi un rilascio non cambia il
-  sito.
+- ⚠️ **L'APK non c'è**: dal 2026-11-10 il tasto della pagina porta a Google Play, e l'APK di AIV
+  GitHub si scarica da un easter egg (sette tocchi sull'icona fanno passare il tasto a GitHub,
+  `Uovo`, `Rules.md` di AIV § '🚀 Che cosa produce un rilascio'), che punta all'asset dell'ultima
+  release del repo pubblico
+  `Roccobot/AIV-releases`, come Aomidori fa con le sue, quindi un rilascio non cambia il sito.
 - ⚠️ Non va spostata né tolta per pulizia: l'informativa è l'indirizzo dato a Google Play.
 
 ⚠️⚠️ **LA CARTELLA `Aomidori/` È L'ECCEZIONE A 'QUI NON VIVONO PROGETTI', VOLUTA DALL'UTENTE** (sua

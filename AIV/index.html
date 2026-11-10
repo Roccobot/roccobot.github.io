@@ -233,7 +233,10 @@
     --icona:88px;
     display:grid; grid-template-columns:auto 1fr; column-gap:28px; align-items:center
   }
-  .icona{border-radius:24%; display:block; width:var(--icona); height:var(--icona)}
+  /* ⚠️ `touch-action` e niente evidenziazione: i sette tocchi di `Uovo` sono rapidi, e sul
+     telefono il doppio tocco ingrandirebbe la pagina, e il tocco la colorerebbe. */
+  .icona{border-radius:24%; display:block; width:var(--icona); height:var(--icona);
+    touch-action:manipulation; -webkit-tap-highlight-color:transparent; user-select:none}
   /* ⚠️ Due righe a ogni lingua: 7em lascia fuori 'Astonishing Image', che chiede
      circa 8em, e tiene 'Image Viewer'. */
   h1{font-size:40px; line-height:1.2; letter-spacing:-0.02em; font-weight:500; margin:0; max-width:7em}
@@ -449,7 +452,10 @@
              vedono i 72dp centrali su 108; qui la piastrella si vede tutta.
              ⚠️ La coppia di colori segue il tema come l'icona vera, che ha una
              `values-night/` sua: non si fissa il glifo chiaro. -->
-        <svg class="icona" viewBox="0 0 108 108" width="88" height="88" aria-hidden="true">
+        <!-- ⚠️ È anche l'easter egg di `Uovo` (scelta Uovo-01 di Rocco, 2026-11-10): sette
+             tocchi di fila fanno passare il tasto a GitHub, che scarica l'APK di AIV GitHub.
+             Niente puntatore e niente segno: chi non lo sa non lo trova. -->
+        <svg class="icona" id="icona" viewBox="0 0 108 108" width="88" height="88" aria-hidden="true">
           <rect width="108" height="108" fill="var(--accent)"></rect>
           <path d="M30,19a10,10 0 1,0 0,20a10,10 0 1,0 0,-20z" fill="var(--glyph)"></path>
           <path fill="var(--glyph)" fill-rule="evenodd" d="M58.1311,27.1833L88.1311,71.1833A5,5 0 0 1 84,79L24,79A5,5 0 0 1 19.8689,71.1833L49.8689,27.1833A5,5 0 0 1 58.1311,27.1833ZM56.0424,49.5583L68.0424,66.5583A2.5,2.5 0 0 1 66,70.5L42,70.5A2.5,2.5 0 0 1 39.9576,66.5583L51.9576,49.5583A2.5,2.5 0 0 1 56.0424,49.5583Z"></path>
@@ -458,10 +464,16 @@
       </div>
         <p class="claim" id="claim"></p>
         <div class="blocco-scarica">
-          <a class="scarica" id="scarica" href="https://github.com/Roccobot/AIV-releases/releases/latest" download target="_blank" rel="noopener noreferrer">
+          <!-- Il tasto porta alla scheda di AIV Play (`Uovo`, scelta Tasto-01 di Rocco,
+               2026-11-10): la forma e il colore di prima, e il logo di Google Play al posto
+               della freccia. Dopo l'easter egg (vedi l'icona) lo stesso tasto scarica l'APK di
+               AIV GitHub, col logo di GitHub (sua scelta dello stesso giorno, dopo l'anteprima
+               con un link sotto il tasto). I due loghi sono quelli monocromi di Simple Icons
+               (CC0), nel colore del testo del tasto, e li scrive `disegna()`. Fino al 2026-11-10
+               il tasto scaricava l'APK di AIV GitHub. -->
+          <a class="scarica" id="scarica" href="https://play.google.com/store/apps/details?id=io.github.roccobot.aiv.play" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d="M12 3.5v11.2M12 15.6l4.4-4.4M12 15.6L7.6 11.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-              <path d="M4.4 18.8h15.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              <path id="scarica-logo" fill="currentColor" d=""></path>
             </svg>
             <span id="scarica-testo"></span>
           </a>
@@ -516,7 +528,8 @@
       </div>
     </div>
 
-    <div class="installa" id="installa"></div>
+    <!-- La nota sull'APK, solo dopo l'easter egg: AIV Play si installa dallo Store. -->
+    <div class="installa" id="installa" hidden></div>
   </div>
 
   <!-- ══ TRE SEZIONI E NON PIÙ SEI SCHEDE IN FILA, dalla 6.50 (`Rinnovo`, scelte Racconto-01,
@@ -684,6 +697,24 @@
   // pubblica la stessa release nei due repo.
   var REPO = 'Roccobot/AIV-releases';
 
+  // La scheda di AIV Play, dove porta il tasto dal 2026-11-10 (`Uovo`, scelta Tasto-01).
+  var PLAY = 'https://play.google.com/store/apps/details?id=io.github.roccobot.aiv.play';
+
+  /*
+   * L'easter egg di `Uovo` (scelta Uovo-01 di Rocco, 2026-11-10): AIV GitHub non si
+   * pubblicizza, e il tasto lo scarica solo dopo SETTE tocchi di fila sull'icona, come il
+   * numero di build di Android che apre le Opzioni sviluppatore. Una pausa più lunga di
+   * `PAUSA_MS` fa ripartire il conto; nessun segno lungo la strada.
+   */
+  var TOCCHI = 7;
+  var PAUSA_MS = 1500;
+
+  // I due loghi del tasto, monocromi, da Simple Icons (CC0), sulla griglia di 24.
+  var LOGO = {
+    play: 'M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z',
+    github: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'
+  };
+
   /*
    * ⚠️ IL COPY È QUELLO DEL DOCUMENTO DI DESIGN, parola per parola, e non si
    * riscrive qui: se una frase va cambiata, si cambia là e si riporta.
@@ -756,7 +787,8 @@
         ['Ritocca', 'Un editor fotografico vero, che salva sempre una copia e lascia l\'originale com\'è.'],
         ['Organizza', 'Le cartelle e i file, in ordine senza fatica.']
       ],
-      scarica: 'Scarica AIV',
+      scarica: 'Scarica da Google Play',
+      github: 'Scarica da GitHub',
       android: 'Android 9 o successivo',
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
       /* ⚠️ NIENTE CONTI qui: diceva 'il pannello con le dieci azioni', e un numero in un
@@ -801,7 +833,8 @@
         ['Retouch', 'A real photo editor that always saves a copy and leaves the original as it is.'],
         ['Organise', 'Folders and files, kept in order without effort.']
       ],
-      scarica: 'Download AIV',
+      scarica: 'Get it on Google Play',
+      github: 'Download from GitHub',
       android: 'Android 9 or later',
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
       schermataAlt: 'Two AIV screens: the folder list next to the thumbnails of one folder, and a folder grid with a selection under way, the selection weight in the header and the actions panel at the bottom.',
@@ -884,7 +917,7 @@
    * `FolderScreen.kt`: *una riga di menu è una richiesta, non un indicatore di
    * stato*). Quale tema c'è lo dice la pagina, che è sotto gli occhi.
    */
-  var stato = { lingua: linguaIniziale(), scelto: null, rel: null };
+  var stato = { lingua: linguaIniziale(), scelto: null, rel: null, uovo: false };
 
   var mqScuro = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -948,17 +981,20 @@
     el('schermata').alt = T.schermataAlt;
     el('schermata-selezione').alt = T.selezioneAlt;
 
-    // ⚠️ Il tasto porta all'apk della release; senza apk allegato porta alla
-    // release stessa invece di rompersi, come chiede il brief.
+    // Il tasto porta a Google Play, senza versione: la versione dello Store la dice lo Store.
+    // ⚠️ Dopo l'easter egg lo stesso tasto scarica l'APK di AIV GitHub: porta all'apk della
+    // release, e senza apk allegato alla release stessa invece di rompersi, come chiede il
+    // brief. Con lui compare la nota sull'installazione, che vale per il solo APK.
     var tasto = el('scarica');
-    el('scarica-testo').textContent = T.scarica + (rel ? ' ' + rel.tag : '');
-    tasto.href = asset ? asset.browser_download_url
-      : (rel ? rel.pagina : 'https://github.com/' + REPO + '/releases/latest');
-    if (asset) tasto.setAttribute('download', ''); else tasto.removeAttribute('download');
+    el('scarica-testo').textContent = stato.uovo ? T.github : T.scarica;
+    el('scarica-logo').setAttribute('d', stato.uovo ? LOGO.github : LOGO.play);
+    el('installa').hidden = !stato.uovo;
+    tasto.href = !stato.uovo ? PLAY : (asset ? asset.browser_download_url
+      : (rel ? rel.pagina : 'https://github.com/' + REPO + '/releases/latest'));
+    if (stato.uovo && asset) tasto.setAttribute('download', ''); else tasto.removeAttribute('download');
 
-    // ⚠️ Nome e peso ci sono SOLO se c'è l'apk allegato, e senza di lui la riga
-    // si accorcia invece di riempirsi di trattini: prima nominava un file
-    // ricavato dal tag, cioè un file che nessuno può scaricare.
+    // ⚠️ Nome e peso dell'APK ci sono SOLO dopo l'easter egg e se c'è l'apk allegato: prima
+    // nominava un file ricavato dal tag, cioè un file che nessuno può scaricare.
     // ⚠️ PEZZI E SEPARATORI, e non una stringa sola: la riga va a capo prima di ogni
     // pezzo (richiesta dell'utente), e per farlo i pezzi devono essere nodi che il CSS
     // possa rendere blocchi. Fino alla 6.60 c'era anche il link 'codice sorgente', tolto
@@ -968,7 +1004,7 @@
     // ⚠️ La versione di Android porta una classe sua: è il pezzo meno importante, e
     // l'utente l'ha voluta un filo più trasparente degli altri.
     var righe = [];
-    if (asset) righe.push([asset.name + ' \u00B7 ' + peso(asset.size, T.loc), '']);
+    if (stato.uovo && asset) righe.push([asset.name + ' · ' + peso(asset.size, T.loc), '']);
     righe.push([T.android, ' minuta']);
     // ⚠️ La riga di Fiducia-01 è un pezzo della riga tecnica, l'ultimo: così va a capo come
     // gli altri sul telefono, e su schermo largo resta accanto al tasto senza un blocco suo.
@@ -1043,6 +1079,18 @@
       // scrivere una riga nelle note di rilascio, e quelle non ci sono più.
     });
   }
+
+  /* I sette tocchi sull'icona (vedi `TOCCHI`): al settimo il tasto passa a GitHub, e resta
+     così fino al ricaricamento, come la scelta del tema. */
+  var conto = 0, ultimo = 0;
+  el('icona').addEventListener('click', function () {
+    var ora = Date.now();
+    conto = (ora - ultimo > PAUSA_MS) ? 1 : conto + 1;
+    ultimo = ora;
+    if (conto < TOCCHI || stato.uovo) return;
+    stato.uovo = true;
+    disegna();
+  });
 
   el('lingua').addEventListener('click', function () {
     stato.lingua = (stato.lingua === 'it') ? 'en' : 'it';
