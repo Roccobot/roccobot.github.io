@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.65
+> **Versione**: 2.66
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -163,11 +163,11 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Si lavora sul **ramo principale** (`main`, o `master` in `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
-- **SlimVer** (`x.xx`) sempre, a ogni commit sul prodotto: +0,01 ritocco, decimale
-  successivo per una funzionalità (capacità nuova: 5.85 diventa 5.90), intero successivo per una
-  release maggiore (5.85 diventa 6.00). Conferma all'utente se un ritocco porta a un decimale tondo
-  (1.59) o una funzionalità a un intero (2.90) (`Roccobot.md` § '🌿 Workflow git e versioni').
-  Eccezioni: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
+- **SlimVer** (`x.xx`) per il Web, **SemVer** per app e software; chi ha già uno schema lo tiene.
+  Bump a ogni commit sul prodotto: +0,01 ritocco, decimale successivo per una funzionalità,
+  intero successivo per una release maggiore. Conferma all'utente se un ritocco porta a un decimale
+  tondo (1.59) o una funzionalità a un intero (2.90) (`Roccobot.md` § '🌿 Workflow git e
+  versioni'). Userscript SemVer, liste AdBlock con la data, Worker con `rev`.
 - **La versione ha una fonte sola**, visibile e per le persone; i confronti usano il `versionCode`.
 - **Più sessioni sullo stesso progetto: il numero lo prende chi mergia per primo**, e chi arriva
   dopo riparte dal ramo principale col numero successivo, senza togliere niente al lavoro
