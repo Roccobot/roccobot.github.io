@@ -306,8 +306,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Nomi dei progetti**: 'Arda Top', 'I Grandi di Arda' e 'Arda' sono sinonimi e nessuno si
   corregge; 'Grimorio' è terminologia morta. Le liste AdBlock sono 'Roccobot ABP'; RoccobotOS è il
   sito di riferimento personale (`Rules.md` § '🏷️ Nomi dei progetti (terminologia condivisa)').
-- **Ogni progetto ha la sua versione e il suo deploy**: SlimVer di serie, `@version` SemVer per
-  gli userscript, `! Last updated:` per le liste AdBlock. La verifica di pubblicazione si fa con la
+- **Ogni progetto ha la sua versione e il suo deploy**: lo schema che ha già, e per un progetto
+  nuovo SlimVer sul Web e SemVer per app e software; `@version` SemVer per gli userscript, `! Last updated:` per le liste AdBlock. La verifica di pubblicazione si fa con la
   sonda del progetto toccato.
 - **Priorità**: istruzioni dell'utente, poi le regole del repo pertinente (questo per ciò che è
   trasversale, quello del progetto per ciò che è suo), poi i canoni sui fatti, poi
