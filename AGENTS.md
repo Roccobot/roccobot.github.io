@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 2.64
+> **Versione**: 2.65
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché in `rules/Roccobot.md`, che nel dubbio fa
@@ -159,8 +159,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 
 - **Allineamento prima di ogni modifica**, perché il remoto riceve commit da altri: `git -C <repo> fetch origin <principale>`, poi, in una chiamata a sé,
   `git -C <repo> rev-list --left-right --count origin/<principale>...HEAD`, e se il primo numero
-  è sopra zero si allinea prima di lavorare.
-- Si lavora sul **ramo principale** (`main`, o `master` nel repo `roccobot.github.io`).
+  è sopra zero si allinea.
+- Si lavora sul **ramo principale** (`main`, o `master` in `roccobot.github.io`).
 - **Mai operazioni distruttive a working tree sporco**, mai force-push sul ramo principale, mai
   riscrivere la storia di un branch altrui; **mai un repository nella cartella Inizio** (`~/.git`).
 - **SlimVer** (`x.xx`) sempre, a ogni commit sul prodotto: +0,01 ritocco, decimale
@@ -168,7 +168,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   release maggiore (5.85 diventa 6.00). Conferma all'utente se un ritocco porta a un decimale tondo
   (1.59) o una funzionalità a un intero (2.90) (`Roccobot.md` § '🌿 Workflow git e versioni').
   Eccezioni: userscript in SemVer, liste AdBlock con la data, Worker con `rev`.
-- **Il numero di versione ha una fonte sola**, ed è visibile nel prodotto.
+- **La versione ha una fonte sola**, visibile e per le persone; i confronti usano il `versionCode`.
 - **Più sessioni sullo stesso progetto: il numero lo prende chi mergia per primo**, e chi arriva
   dopo riparte dal ramo principale col numero successivo, senza togliere niente al lavoro
   dell'altra. Prima di un lavoro che rilascia si guarda se un'altra sessione è sullo stesso
