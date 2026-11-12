@@ -114,8 +114,9 @@ cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
   è di portata generale è qui, se è universale vive in `rules/Roccobot.md`. Nel dubbio, questo
   file.
 
-⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: SlimVer (`x.xx`) è il
-default (`Roccobot.md`, § '🌿 Workflow git e versioni'), con la fonte e la resa che ogni repo
+⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: un progetto nuovo prende
+SlimVer (`x.xx`) se è Web e SemVer se è un'app o un software, e chi ha già uno schema lo tiene
+(`Roccobot.md`, § '🌿 Workflow git e versioni'), con la fonte e la resa che ogni repo
 dichiara; le liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version`
 SemVer e il link di installazione da ripetere dopo ogni go-live; 'Ma che parola è' resta senza
 numero per scelta dell'utente.
