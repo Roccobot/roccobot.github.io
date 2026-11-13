@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>RUIAS - Simulatore di animazioni per componenti UI</title>
-<link rel="icon" href="../hub/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="../hub/favicon.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
@@ -61,10 +61,14 @@
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--font); }
 .wrap { max-width: 78rem; margin: 0 auto; padding-block: 1.6rem 3rem;
         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .8rem 1.5rem; margin-bottom: 1.4rem; }
+/* The title row: RUIAS, then the full name and the version in small type on the same baseline, and
+   the design system pill at the end of the same row */
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .6rem 1.5rem; margin-bottom: 1.4rem; }
+.title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; min-width: 0; }
 h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.1; }
-.kicker { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .3rem 0 0; }
-.lead { margin: .5rem 0 0; color: var(--muted); max-width: 60ch; text-wrap: pretty; }
+.fullname { font-size: .95rem; color: var(--muted); }
+.ver { font-size: .85rem; font-variant-numeric: tabular-nums; opacity: .8; margin-left: .35rem; }
+.kicker { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: 0; }
 .tools-top { display: flex; gap: .5rem; align-items: center; }
 button, select, input { font: inherit; color: inherit; }
 .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 0 .95rem; min-height: 36px; cursor: pointer; font-size: .9rem; }
@@ -75,11 +79,27 @@ button, select, input { font: inherit; color: inherit; }
            display: inline-grid; place-items: center; cursor: pointer; padding: 0; margin-left: auto; }
 .playbtn:hover { background: var(--accent-hover); }
 .playbtn svg { width: 22px; height: 22px; fill: currentColor; }
-.keys { font-size: .82rem; color: var(--muted); margin: 0; }
-kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 .3rem; background: var(--card); color: var(--ink); }
-button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* No focus rings on the controls (the owner's choice): a click or a key leaves no frame behind */
+button:focus, select:focus, input:focus { outline: none; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
-@media (min-width: 62rem) { .layout { grid-template-columns: 21rem minmax(0, 1fr); align-items: start; } }
+@media (min-width: 62rem) { .layout { grid-template-columns: 23.5rem minmax(0, 1fr); align-items: start; } }
+.stage .chip { padding: 0 .8rem; }
+.stage .row.one { flex-wrap: nowrap; }
+/* The info mark in the preview's corner: quiet, almost invisible, with the technical notes on hover,
+   focus or tap */
+.stage { position: relative; }
+.info { position: absolute; top: .55rem; right: .6rem; width: 26px; height: 26px; border: 0; background: none; padding: 0;
+        color: var(--muted); opacity: .35; cursor: help; display: grid; place-items: center; }
+.info:hover, .info[aria-expanded="true"] { opacity: .8; }
+.info svg { width: 16px; height: 16px; }
+.tip { position: absolute; top: 2.3rem; right: .6rem; left: .6rem; z-index: 5; background: var(--card); border: 1px solid var(--line);
+       border-radius: 10px; padding: .7rem .8rem; font-size: .8rem; color: var(--muted); line-height: 1.45;
+       box-shadow: 0 6px 20px rgb(0 0 0 / .12); text-wrap: pretty; }
+/* Entrance and exit, one panel at a time */
+.tabs { display: flex; gap: .4rem; }
+.tabs .chip { min-height: 40px; padding: 0 1.1rem; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; }
+.tabs .chip::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--pc); }
+.tabs .chip[aria-pressed="true"]::before { background: var(--on-accent); }
 /* The preview stays in view while the panels scroll, where the screen is tall enough to hold it whole */
 @media (min-width: 62rem) and (min-height: 58rem) { .stage { position: sticky; top: 1rem; } }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; min-width: 0; }
@@ -108,7 +128,9 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .dialog .btns { display: flex; justify-content: flex-end; gap: 14px; font-size: .74rem; font-weight: 600; color: var(--label); margin-top: 4px; }
 
 /* The two phase panels */
-.phases { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
+.phases { display: grid; grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+.phases .in, .tabs .in { --pc: var(--in); }
+.phases .out, .tabs .out { --pc: var(--out); }
 .phase h2 { margin: 0; font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; }
 .phase h2::before { content: ""; width: .7rem; height: .7rem; border-radius: 50%; background: var(--pc); }
 .phase.in { --pc: var(--in); }
@@ -150,16 +172,14 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 .sw input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; margin: 0; }
 .dim { opacity: .45; }
 .msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
-footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-width: 70ch; text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
 </style>
 
 <div class="wrap">
   <header class="top">
-    <div>
+    <div class="title">
       <h1>RUIAS</h1>
-      <p class="kicker" data-t="kicker"></p>
-      <p class="lead" data-t="lead"></p>
+      <span class="fullname">Roccobot's UI Animation Simulator&nbsp;<span class="ver" id="version"></span></span>
     </div>
     <div class="tools-top">
       <button class="chip" type="button" id="reset" data-t="reset"></button>
@@ -168,7 +188,11 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
 
   <div class="layout">
     <aside class="card stage" aria-labelledby="stage-title">
-      <h2 id="stage-title" class="kicker" style="margin:0" data-t="preview"></h2>
+      <h2 id="stage-title" class="kicker" data-t="preview"></h2>
+      <button class="info" type="button" id="info" aria-expanded="false" aria-controls="tip">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="7.35" y="7" width="1.3" height="4.5" rx=".6" fill="currentColor"/><circle cx="8" cy="4.9" r=".85" fill="currentColor"/></svg>
+      </button>
+      <div class="tip" id="tip" role="tooltip" hidden></div>
       <div class="phone" id="phone">
         <div class="grid" id="grid"></div>
         <div class="blurback" id="blurback"></div>
@@ -186,14 +210,14 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
       <div class="phase-now" id="phase-now" aria-live="off"></div>
       <div class="group">
         <span class="lab" data-t="component"></span>
-        <div class="row" id="comp">
+        <div class="row one" id="comp">
           <button class="chip" type="button" data-v="sheet" data-t="compSheet"></button>
           <button class="chip" type="button" data-v="dialog" data-t="compDialog"></button>
         </div>
       </div>
       <div class="group">
         <span class="lab" data-t="sequence"></span>
-        <div class="row" id="seq">
+        <div class="row one" id="seq">
           <button class="chip" type="button" data-v="cycle" data-t="seqCycle"></button>
           <button class="chip" type="button" data-v="in" data-t="seqIn"></button>
           <button class="chip" type="button" data-v="out" data-t="seqOut"></button>
@@ -221,14 +245,13 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
       </div>
     </aside>
 
-    <div class="phases" id="phases"></div>
+    <div class="phases" id="phases">
+      <div class="tabs" id="tabs" role="group">
+        <button class="chip in" type="button" data-v="in" data-t="in"></button>
+        <button class="chip out" type="button" data-v="out" data-t="out"></button>
+      </div>
+    </div>
   </div>
-
-  <footer class="note">
-    <p class="keys" id="keys"></p>
-    <p data-t="foot"></p>
-    <p class="keys">RUIAS <span id="version"></span></p>
-  </footer>
 </div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -238,18 +261,16 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
 <script>
 (function () {
   'use strict';
-  // The version, SlimVer: its one source, shown at the foot of the page.
-  var VERSION = '1.00';
+  // The version, SlimVer: its one source, shown beside the title.
+  var VERSION = '1.10';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
-      kicker: 'Simulatore di animazioni per componenti UI', reset: 'Valori del design system',
-      lead: "Roccobot's User Interface Animation Simulator: la curva, la velocità e l'effetto di ogni parametro, sulla scheda delle informazioni o sulla finestra di dialogo di AIV. Entrata e uscita hanno valori separati.",
+      reset: 'Valori del design system', info: 'Note tecniche',
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
-      sequence: 'Sequenza', seqCycle: 'Entrata e uscita', seqIn: 'Solo entrata', seqOut: 'Solo uscita',
+      sequence: 'Sequenza', seqCycle: 'Entrata-uscita', seqIn: 'Entrata', seqOut: 'Uscita',
       speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
-      keys: [['T', 'tema chiaro o scuro'], ['L', 'lingua'], ['⇧', 'trascinando una maniglia, la tiene in orizzontale o in verticale']],
       veil: 'Velo', veilOn: 'Velo dietro il componente', veilOp: 'Opacità', veilBlur: 'Sfocatura dietro',
       sheetTitle: 'Informazioni', dlgTitle: 'Eliminare 3 elementi?', dlgText: 'Vanno nel Cestino, da cui puoi ripristinarli per 30 giorni.', dlgNo: 'Annulla', dlgYes: 'Elimina',
       rows: [['Nome', 'IMG_2041.jpg'], ['Dimensioni', '4.032 x 3.024'], ['Peso', '3,8 MB'], ['Data', '12 nov 2026, 18:40'], ['Fotocamera', 'Xiaomi 15'], ['Cartella', 'DCIM/Camera']],
@@ -265,12 +286,10 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
       presets: { ds: 'Design system', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
-      kicker: 'UI component animation simulator', reset: 'Design system values',
-      lead: "Roccobot's User Interface Animation Simulator: the curve, the speed and the effect of every setting, on AIV's info sheet or dialog. Entrance and exit have separate values.",
+      reset: 'Design system values', info: 'Technical notes',
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
-      sequence: 'Sequence', seqCycle: 'Entrance and exit', seqIn: 'Entrance only', seqOut: 'Exit only',
+      sequence: 'Sequence', seqCycle: 'Entrance-exit', seqIn: 'Entrance', seqOut: 'Exit',
       speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
-      keys: [['T', 'light or dark theme'], ['L', 'language'], ['⇧', 'while dragging a handle, keeps it horizontal or vertical']],
       veil: 'Scrim', veilOn: 'Scrim behind the component', veilOp: 'Opacity', veilBlur: 'Background blur',
       sheetTitle: 'Info', dlgTitle: 'Delete 3 items?', dlgText: 'They go to the Trash, where you can restore them for 30 days.', dlgNo: 'Cancel', dlgYes: 'Delete',
       rows: [['Name', 'IMG_2041.jpg'], ['Size', '4,032 x 3,024'], ['Weight', '3.8 MB'], ['Date', 'Nov 12, 2026, 6:40 PM'], ['Camera', 'Xiaomi 15'], ['Folder', 'DCIM/Camera']],
@@ -295,7 +314,7 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
   var DS_IN = [0, 0.4, 0.2, 1], DS_OUT = [0.25, 0.08, 0.9, 0.5];
   function defaults() {
     return {
-      comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000,
+      comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000, tab: 'in',
       sheet: {
         in: { c: DS_IN.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 30 }, trail: { on: true, dp: 20 } },
         out: { c: DS_OUT.slice(), ms: 300, fade: { on: true, base: 'path', from: 65, to: 90 }, trail: { on: true, dp: 20 } },
@@ -314,6 +333,7 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
   var S = defaults();
   try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.sheet && saved.dialog) S = saved; } catch (e) {}
   if (typeof S.hold !== 'number') S.hold = 1000;
+  if (S.tab !== 'in' && S.tab !== 'out') S.tab = 'in';
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   function t(k) { return T[S.lang][k]; }
 
@@ -330,7 +350,8 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
   // Speed in fractions of the way per ms, over one 60 Hz frame centred on x: what the eye sees, and
   // finite where the curve starts with a vertical tangent (the entrance curve, x1 = 0).
   function speed(c, ms, x) {
-    var h = FRAME / 2 / ms, a = Math.max(0, x - h), b = Math.min(1, x + h);
+    // The window is always one frame wide, shifted inwards at the two ends, so the line has no step there
+    var w = Math.min(1, FRAME / ms), a = Math.min(Math.max(0, x - w / 2), 1 - w), b = a + w;
     return (ease(c, b) - ease(c, a)) / ((b - a) * ms);
   }
   function step(c, ms, x) { var h = FRAME / ms, a = Math.min(Math.max(x, 0), Math.max(0, 1 - h)); return Math.abs(ease(c, a + h) - ease(c, a)); }
@@ -552,29 +573,31 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
   // ── The speed graph, After Effects style: speed over time, in units per second ──
   function travel(ph) { return S.comp === 'sheet' ? 500 : Math.abs(100 - cur(ph).scale); }
   function niceMax(v) { var e = Math.pow(10, Math.floor(Math.log10(v))), f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
+  // The speed graph has a wider left margin than the Bezier one: its labels reach five digits (20.000).
+  var GS = { L: 48, R: 248, T: 14, B: 232 };
   function drawSpeed(P) {
     var p = cur(P.ph), svg = P.sp, D = travel(P.ph), N = 160;
     var vals = [], maxV = 0, minV = 0, peakAt = 0;
     for (var i = 0; i <= N; i++) { var x = i / N, v = speed(p.c, p.ms, x) * D * 1000; vals.push(v); if (v > maxV) { maxV = v; peakAt = x; } if (v < minV) minV = v; }
     var avg = D * 1000 / p.ms, top = niceMax(Math.max(maxV, avg) * 1.08 || 1), bot = minV < 0 ? -niceMax(-minV * 1.08) : 0;
-    var X = function (u) { return G.L + u * (G.R - G.L); }, Y = function (v) { return G.B - (v - bot) / (top - bot) * (G.B - G.T); };
+    var X = function (u) { return GS.L + u * (GS.R - GS.L); }, Y = function (v) { return GS.B - (v - bot) / (top - bot) * (GS.B - GS.T); };
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     var ticks = [bot, 0, top / 2, top].filter(function (v, i, a) { return a.indexOf(v) === i; });
     ticks.forEach(function (v) {
-      svg.appendChild(sv('line', { 'class': 'gridl', x1: G.L, x2: G.R, y1: Y(v), y2: Y(v) }));
-      var tx = sv('text', { 'class': 'tick', x: G.L - 5, y: Y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = Math.abs(v) >= 100 ? num(v) : fmt(v, 1); svg.appendChild(tx);
+      svg.appendChild(sv('line', { 'class': 'gridl', x1: GS.L, x2: GS.R, y1: Y(v), y2: Y(v) }));
+      var tx = sv('text', { 'class': 'tick', x: GS.L - 5, y: Y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = Math.abs(v) >= 100 ? num(v) : fmt(v, 1); svg.appendChild(tx);
     });
     [0, 0.5, 1].forEach(function (u) {
-      var tx = sv('text', { 'class': 'tick', x: X(u), y: G.B + 14, 'text-anchor': u === 0 ? 'start' : u === 1 ? 'end' : 'middle' });
+      var tx = sv('text', { 'class': 'tick', x: X(u), y: GS.B + 14, 'text-anchor': u === 0 ? 'start' : u === 1 ? 'end' : 'middle' });
       tx.textContent = Math.round(u * p.ms) + ' ms'; svg.appendChild(tx);
     });
-    svg.appendChild(sv('line', { 'class': 'ax', x1: G.L, x2: G.R, y1: Y(0), y2: Y(0) }));
-    svg.appendChild(sv('line', { 'class': 'lin', x1: G.L, x2: G.R, y1: Y(avg), y2: Y(avg) }));
+    svg.appendChild(sv('line', { 'class': 'ax', x1: GS.L, x2: GS.R, y1: Y(0), y2: Y(0) }));
+    svg.appendChild(sv('line', { 'class': 'lin', x1: GS.L, x2: GS.R, y1: Y(avg), y2: Y(avg) }));
     var pts = vals.map(function (v, i) { return X(i / N).toFixed(1) + ',' + Y(Math.max(bot, Math.min(top, v))).toFixed(1); });
     svg.appendChild(sv('polygon', { 'class': 'area', points: X(0) + ',' + Y(0) + ' ' + pts.join(' ') + ' ' + X(1) + ',' + Y(0) }));
     svg.appendChild(sv('polyline', { 'class': 'curve', points: pts.join(' ') }));
     svg.appendChild(sv('circle', { 'class': 'pk', r: 3.5, cx: X(peakAt), cy: Y(Math.min(top, maxV)) }));
-    P.headSp = sv('line', { 'class': 'head-line', x1: -10, x2: -10, y1: G.T, y2: G.B });
+    P.headSp = sv('line', { 'class': 'head-line', x1: -10, x2: -10, y1: GS.T, y2: GS.B });
     svg.appendChild(P.headSp);
     var unit = S.comp === 'sheet' ? t('unitSheet') : t('unitDialog');
     P.gSp.querySelector('.cap').textContent = t('peak') + ' ' + num(maxV) + ' ' + unit + ' ' + (S.lang === 'it' ? 'a ' : 'at ') + Math.round(peakAt * p.ms) + ' ms · ' + t('avg') + ' ' + num(avg) + ' ' + unit;
@@ -636,18 +659,16 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
     playIcon();
     document.getElementById('hold').value = S.hold;
     document.getElementById('hold-v').textContent = num(S.hold) + ' ms';
-    var keys = document.getElementById('keys');
-    while (keys.firstChild) keys.removeChild(keys.firstChild);
-    t('keys').forEach(function (k, i) {
-      if (i) keys.appendChild(document.createTextNode(' · '));
-      keys.appendChild(el('kbd', { text: k[0] })); keys.appendChild(document.createTextNode(' ' + k[1]));
-    });
+    document.getElementById('tip').textContent = t('foot');
+    document.getElementById('info').setAttribute('aria-label', t('info'));
+    Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.tab)); });
     var v = S[S.comp].veil;
     document.getElementById('veil-on').checked = v.on;
     document.getElementById('veil-op').value = v.op; document.getElementById('veil-op-v').textContent = v.op + '%';
     document.getElementById('veil-blur').value = v.blur; document.getElementById('veil-blur-v').textContent = v.blur + ' dp';
     sheet.hidden = S.comp !== 'sheet'; dialog.hidden = S.comp !== 'dialog';
     panels.in && syncPanel(panels.in); panels.out && syncPanel(panels.out);
+    if (panels.in) { panels.in.sec.hidden = S.tab !== 'in'; panels.out.sec.hidden = S.tab !== 'out'; }
   }
   function changed(ph, dragging) {
     syncPanel(panels[ph]);
@@ -767,6 +788,19 @@ footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-wi
 
   panels.in = buildPanel('in');
   panels.out = buildPanel('out');
+  // The tabs: entrance or exit, one panel at a time, with no scrolling between them.
+  Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) {
+    b.addEventListener('click', function () { S.tab = b.getAttribute('data-v'); save(); syncAll(); });
+  });
+  // The info mark: the notes appear on hover and on focus, and a tap keeps them open.
+  (function () {
+    var btn = document.getElementById('info'), tip = document.getElementById('tip'), pinned = false;
+    var show = function (on) { tip.hidden = !on; btn.setAttribute('aria-expanded', String(on)); };
+    btn.addEventListener('mouseenter', function () { show(true); });
+    btn.addEventListener('mouseleave', function () { if (!pinned) show(false); });
+    btn.addEventListener('click', function () { pinned = !pinned; show(pinned); });
+    document.addEventListener('click', function (e) { if (pinned && e.target !== btn && !btn.contains(e.target)) { pinned = false; show(false); } });
+  })();
   syncAll();
   // At rest the page shows the component open; with reduced motion nothing moves until Play.
   paint(timeline()[0][0] === 'shut' ? timeline()[0][1] + cur('in').ms + 1 : 0);

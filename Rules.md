@@ -206,8 +206,12 @@ numero per scelta dell'utente.
   entrata e uscita, col grafico della curva e quello della velocità nello stile di After Effects.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`), con la tessera in
-  RoccoHub fra 'Siti e strumenti'. Un file solo, `ruias/index.html`, con la versione SlimVer nella
-  costante `VERSION` e in fondo alla pagina; i valori di serie sono quelli del design system
+  RoccoHub fra 'Siti e strumenti'. La pagina è `ruias/index.html`, con la sua favicon (`favicon.svg`
+  e `favicon.png`, in `#43B59E`: il grafico della velocità di `cubic-bezier(0.67, 0, 0.33, 1)` come
+  in After Effects, con le tacche dei fotogrammi, dentro un tondo dello stesso spessore, che ne taglia
+  le code ai lati) e la versione SlimVer nella costante `VERSION`,
+  scritta accanto al titolo; entrata e uscita si mostrano una per volta, con due linguette, e le note
+  tecniche sono nel tooltip della ℹ️ dell'anteprima. I valori di serie sono quelli del design system
   (`design/tokens.json`, famiglia `movimento`), e quando cambiano là si cambiano anche qui. Non va
   spostata né tolta per pulizia.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
