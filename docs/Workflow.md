@@ -163,6 +163,15 @@
     sul ramo principale e a ogni PR clona accanto hub e `tools` e rifà i controlli su tutti i
     commit arrivati. Non può bloccare un push diretto, ma il controllo rosso si vede sul commit e
     GitHub ne avvisa il proprietario.
+    - **In `tools` il brief non fa partire la corsa** (dal 2026-11-13, `Vaglio`, Macchine-14): il
+      repo è privato, ogni corsa si paga, e il brief si scrive decine di volte al giorno. Il push
+      che tocca solo `.memo/LATEST.md` è filtrato, e una corsa a orario al giorno controlla i
+      commit delle ultime 25 ore (`githook.py ci` senza base, con `GITHUB_EVENT_NAME=schedule`),
+      compreso il brief scritto dal Worker, che non passa dagli hook.
+    - **Le prove degli script dell'hub girano solo nell'hub** (stesso giorno, Macchine-15): negli
+      altri repo esercitano codice che quella corsa non ha cambiato.
+    - **Su una PR il confronto parte dalla base comune** (`base...head`, Macchine-16): così una
+      riga che `main` ha tolto dopo l'apertura del branch non risulta aggiunta dal branch.
     - ⚠️ **`tools` è privato**, e il token automatico di un altro repo non lo legge: là il clone
       fallisce e i rimandi alle regole universali restano non verificabili, mentre caratteri,
       link, titoli, righe aggiunte e messaggi si controllano lo stesso. Il controllo completo gira

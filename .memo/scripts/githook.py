@@ -21,6 +21,7 @@ Exit status: 0 when everything is in order, 1 when something must be fixed.
 
 Author: Rocco Casadei, a.k.a. Roccobot
 """
+import os
 import re
 import importlib.util
 import subprocess
@@ -241,11 +242,23 @@ def main(argv):
         return report(check_message(text), 'commit bloccato')
     if mode == 'ci' and len(argv) == 3:
         base, head = argv[1], argv[2]
+        # A scheduled run has no BASE: it checks the commits of the last 25 hours, the ones a
+        # push filter let through without a run (in tools, the brief: Vaglio, Macchine-14). The
+        # extra hour overlaps the run of the day before, so a late run leaves no gap.
+        if not base.strip('0') and os.environ.get('GITHUB_EVENT_NAME') == 'schedule':
+            recent = git('rev-list', '--since=25 hours ago', head).split()
+            if not recent:
+                print('controllo delle regole: nessun commit nelle ultime 25 ore')
+                return 0
+            base = f'{recent[-1]}~1'
         # A new branch has no BASE (all zeros): then only HEAD itself is checked.
         if not base.strip('0') or not git('rev-parse', '--verify', '-q', f'{base}^{{commit}}'):
             base = f'{head}~1' if git('rev-parse', '--verify', '-q', f'{head}~1') else ''
         span = f'{base}..{head}' if base else head
-        diff = git('diff', '-M', base, head) if base else git('show', '-M', '--format=', head)
+        # Three dots: the diff starts at the merge base. On a pull request whose base moved on,
+        # two dots would show main's later removals as additions of the branch (Vaglio,
+        # Macchine-16); on a push the merge base is BASE itself, so nothing changes there.
+        diff = git('diff', '-M', f'{base}...{head}') if base else git('show', '-M', '--format=', head)
         problems = check_diff(diff)
         commits = git('rev-list', '--no-merges', span).split()
         anonymous = []

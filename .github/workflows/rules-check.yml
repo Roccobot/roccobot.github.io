@@ -56,20 +56,28 @@ jobs:
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../roccobot.github.io/.memo/scripts/githook.py ci "$BASE" "$HEAD"
 
+      # The tests below exercise the hub's own scripts, which a run in another repo does not
+      # change: they run here only (Vaglio, Macchine-15), and save a step in every other repo.
       - name: Prove anti-regressione del verificatore (caporali e ingresso)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_refcheck.py
 
       - name: Prove del gancio dei comandi (ambiente e segreti)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_hooks.py
 
       - name: Prove dell'avviso sui flussi che partono da soli (Freno)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_githook.py
 
       - name: Prove della chiusura di una card (Contromisura-03)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_closecard.py
 
       - name: Prove della soglia delle patch delle dipendenze (Soglia-01)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_check_dependencies.py
 
       - name: Prove della parola delle regole, prima il file (Parola-01)
+        if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_rules_password.py
