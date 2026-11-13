@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>RUIAS - Simulatore di animazioni per componenti UI</title>
+<link rel="icon" href="../hub/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../hub/favicon.png" type="image/png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
+<!--
+  RUIAS, Roccobot's User Interface Animation Simulator: a service page of the hub. The curves,
+  durations, fades, trail and scrim of AIV's bottom sheet and dialog, for the entrance and the exit,
+  with the Bezier graph and an After Effects style speed graph. Colours and type from the Roccobot
+  Design System (design/tokens.json); the T key turns the theme over for the open page only.
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+</head>
+<body>
+<style>
+/* RUIAS: the preview phone on the left (sticky on wide screens), the entrance and exit panels on the
+   right, each with its Bezier graph, its After Effects style speed graph and its controls.
+   Colours and type from the Roccobot Design System, servizio- family (design/tokens.json). */
+:root {
+  --bg: #e3eae7;          /* servizio-fondo */
+  --card: #f7faf9;        /* servizio-scheda */
+  --line: #c9d4d0;        /* servizio-linea */
+  --ink: #1a1c1b;         /* servizio-testo */
+  --muted: #4d5956;       /* servizio-testo-secondario */
+  --accent: #00727b;      /* servizio-accento */
+  --on-accent: #ffffff;   /* servizio-su-accento */
+  --accent-hover: #008577;/* servizio-accento-attivo */
+  --label: #0b6b5b;       /* servizio-etichetta */
+  --in: #0b6b5b;          /* testo-accento: the entrance */
+  --out: #9a5800;         /* soglia-arancio: the exit */
+  --field: #edece8;       /* superficie-alta */
+  --screen: #fcfbf8;      /* fondo, AIV's screen */
+  --surface: #fffefc;     /* superficie, AIV's sheet */
+  --scrim: #000000;       /* velo: black in the light theme */
+  --font: Archivo, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #2e3836; --card: #3b4744; --line: #4e5b57; --ink: #f3f6f5; --muted: #c2cdc9;
+    --accent: #43b59e; --on-accent: #00382f; --accent-hover: #4fd9be; --label: #43b59e;
+    --in: #4fd9be; --out: #f0b060; --field: #333b39; --screen: #151b1a; --surface: #1e2523; --scrim: #ffffff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #2e3836; --card: #3b4744; --line: #4e5b57; --ink: #f3f6f5; --muted: #c2cdc9;
+  --accent: #43b59e; --on-accent: #00382f; --accent-hover: #4fd9be; --label: #43b59e;
+  --in: #4fd9be; --out: #f0b060; --field: #333b39; --screen: #151b1a; --surface: #1e2523; --scrim: #ffffff;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--font); }
+.wrap { max-width: 78rem; margin: 0 auto; padding-block: 1.6rem 3rem;
+        padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .8rem 1.5rem; margin-bottom: 1.4rem; }
+h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.1; }
+.kicker { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .3rem 0 0; }
+.lead { margin: .5rem 0 0; color: var(--muted); max-width: 60ch; text-wrap: pretty; }
+.tools-top { display: flex; gap: .5rem; align-items: center; }
+button, select, input { font: inherit; color: inherit; }
+.chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 0 .95rem; min-height: 36px; cursor: pointer; font-size: .9rem; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+/* Play and pause: a round button with the glyph alone, the triangle or the two bars */
+.playbtn { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent);
+           display: inline-grid; place-items: center; cursor: pointer; padding: 0; margin-left: auto; }
+.playbtn:hover { background: var(--accent-hover); }
+.playbtn svg { width: 22px; height: 22px; fill: currentColor; }
+.keys { font-size: .82rem; color: var(--muted); margin: 0; }
+kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 .3rem; background: var(--card); color: var(--ink); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
+@media (min-width: 62rem) { .layout { grid-template-columns: 21rem minmax(0, 1fr); align-items: start; } }
+/* The preview stays in view while the panels scroll, where the screen is tall enough to hold it whole */
+@media (min-width: 62rem) and (min-height: 58rem) { .stage { position: sticky; top: 1rem; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; min-width: 0; }
+.stage { display: flex; flex-direction: column; gap: .9rem; }
+.group { display: flex; flex-direction: column; gap: .4rem; }
+.group > .lab { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.phase-now { font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+
+/* The phone: AIV's screen at 412 x 892 dp, drawn smaller */
+.phone { position: relative; width: 100%; max-width: 15.5rem; aspect-ratio: 412 / 892; margin: 0 auto; border-radius: 28px;
+         border: 7px solid var(--ink); overflow: hidden; background: var(--screen); }
+.grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; align-content: start; }
+.grid i { aspect-ratio: 1; display: block; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0; }
+.blurback { position: absolute; inset: 0; pointer-events: none; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 56%; background: var(--surface); border-radius: 18px 18px 0 0;
+         padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; will-change: transform, opacity, filter; }
+.sheet .grab { width: 30px; height: 4px; border-radius: 2px; background: var(--line); align-self: center; margin-bottom: 4px; }
+.sheet b, .dialog b { font-size: .9rem; font-weight: 600; }
+.sheet .r { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding-top: 5px; font-size: .68rem; color: var(--muted); }
+.sheet .r span:last-child { color: var(--ink); font-family: var(--mono); font-size: .62rem; text-align: right; }
+.dialog { position: absolute; left: 9%; right: 9%; top: 50%; translate: 0 -50%; background: var(--surface); border-radius: 20px;
+          padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 8px; will-change: transform, opacity; }
+.dialog p { margin: 0; font-size: .72rem; color: var(--muted); line-height: 1.4; }
+.dialog .btns { display: flex; justify-content: flex-end; gap: 14px; font-size: .74rem; font-weight: 600; color: var(--label); margin-top: 4px; }
+
+/* The two phase panels */
+.phases { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
+.phase h2 { margin: 0; font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; }
+.phase h2::before { content: ""; width: .7rem; height: .7rem; border-radius: 50%; background: var(--pc); }
+.phase.in { --pc: var(--in); }
+.phase.out { --pc: var(--out); }
+.phase .head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; margin-bottom: .8rem; }
+.code { font-family: var(--mono); font-size: .85rem; background: var(--field); border-radius: 8px; padding: .3rem .6rem; overflow-wrap: anywhere; }
+.graphs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 40rem) { .graphs { grid-template-columns: minmax(0, 1fr); } }
+.graph { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.graph .gt { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.graph svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; }
+.graph .cap { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+svg .ax { stroke: var(--line); stroke-width: 1; }
+svg .gridl { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+svg .lin { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4; fill: none; opacity: .6; }
+svg .curve { stroke: var(--pc); stroke-width: 2.5; fill: none; }
+svg .arm { stroke: var(--muted); stroke-width: 1.2; }
+svg .handle { fill: var(--card); stroke: var(--pc); stroke-width: 2.5; cursor: grab; }
+svg .handle:active { cursor: grabbing; }
+svg .hit { fill: transparent; cursor: grab; }
+svg .tick { fill: var(--muted); font-size: 10px; font-family: var(--font); }
+svg .area { fill: var(--pc); opacity: .12; }
+svg .head-line { stroke: var(--ink); stroke-width: 1; opacity: .5; }
+svg .head-dot { fill: var(--card); stroke: var(--ink); stroke-width: 2; }
+svg .pk { fill: var(--pc); }
+.ctrls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem 1.2rem; margin-top: 1rem; }
+@media (max-width: 40rem) { .ctrls { grid-template-columns: minmax(0, 1fr); } }
+.ctrl { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.ctrl .top { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; font-size: .88rem; }
+.ctrl .val { font-family: var(--mono); font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ctrl input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+.sub { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); grid-column: 1 / -1;
+       border-top: 1px solid var(--line); padding-top: .8rem; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.paste { display: flex; gap: .4rem; grid-column: 1 / -1; }
+.paste input { flex: 1 1 auto; min-width: 0; border: 1px solid var(--line); background: var(--field); border-radius: 8px; padding: .45rem .6rem; font-family: var(--mono); font-size: .82rem; }
+.paste .err { color: var(--out); font-size: .8rem; }
+select { border: 1px solid var(--line); background: var(--field); border-radius: 8px; padding: .4rem .5rem; min-width: 0; max-width: 100%; }
+.sw { display: inline-flex; align-items: center; gap: .45rem; font-size: .85rem; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink); }
+.sw input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; margin: 0; }
+.dim { opacity: .45; }
+.msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
+footer.note { margin-top: 1.6rem; color: var(--muted); font-size: .85rem; max-width: 70ch; text-wrap: pretty; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>RUIAS</h1>
+      <p class="kicker" data-t="kicker"></p>
+      <p class="lead" data-t="lead"></p>
+    </div>
+    <div class="tools-top">
+      <button class="chip" type="button" id="reset" data-t="reset"></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="card stage" aria-labelledby="stage-title">
+      <h2 id="stage-title" class="kicker" style="margin:0" data-t="preview"></h2>
+      <div class="phone" id="phone">
+        <div class="grid" id="grid"></div>
+        <div class="blurback" id="blurback"></div>
+        <div class="scrim" id="scrim"></div>
+        <div class="sheet" id="sheet">
+          <span class="grab"></span>
+          <b data-t="sheetTitle"></b>
+        </div>
+        <div class="dialog" id="dialog" hidden>
+          <b data-t="dlgTitle"></b>
+          <p data-t="dlgText"></p>
+          <div class="btns"><span data-t="dlgNo"></span><span data-t="dlgYes"></span></div>
+        </div>
+      </div>
+      <div class="phase-now" id="phase-now" aria-live="off"></div>
+      <div class="group">
+        <span class="lab" data-t="component"></span>
+        <div class="row" id="comp">
+          <button class="chip" type="button" data-v="sheet" data-t="compSheet"></button>
+          <button class="chip" type="button" data-v="dialog" data-t="compDialog"></button>
+        </div>
+      </div>
+      <div class="group">
+        <span class="lab" data-t="sequence"></span>
+        <div class="row" id="seq">
+          <button class="chip" type="button" data-v="cycle" data-t="seqCycle"></button>
+          <button class="chip" type="button" data-v="in" data-t="seqIn"></button>
+          <button class="chip" type="button" data-v="out" data-t="seqOut"></button>
+        </div>
+      </div>
+      <div class="group">
+        <span class="lab" data-t="speed"></span>
+        <div class="row" id="rate">
+          <button class="chip" type="button" data-v="1" data-t="rate1"></button>
+          <button class="chip" type="button" data-v="0.25" data-t="rate025"></button>
+          <button class="playbtn" type="button" id="play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-shape" d=""/></svg>
+          </button>
+        </div>
+        <div class="ctrl"><div class="top"><label for="hold" data-t="hold"></label><span class="val" id="hold-v"></span></div>
+          <input type="range" id="hold" min="0" max="3000" step="100"></div>
+      </div>
+      <div class="group" id="veil-group">
+        <span class="lab" data-t="veil"></span>
+        <label class="sw"><input type="checkbox" id="veil-on"> <span data-t="veilOn"></span></label>
+        <div class="ctrl"><div class="top"><label for="veil-op" data-t="veilOp"></label><span class="val" id="veil-op-v"></span></div>
+          <input type="range" id="veil-op" min="0" max="80" step="1"></div>
+        <div class="ctrl"><div class="top"><label for="veil-blur" data-t="veilBlur"></label><span class="val" id="veil-blur-v"></span></div>
+          <input type="range" id="veil-blur" min="0" max="40" step="1"></div>
+      </div>
+    </aside>
+
+    <div class="phases" id="phases"></div>
+  </div>
+
+  <footer class="note">
+    <p class="keys" id="keys"></p>
+    <p data-t="foot"></p>
+    <p class="keys">RUIAS <span id="version"></span></p>
+  </footer>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="trail" x="0" y="-30%" width="100%" height="160%"><feGaussianBlur id="trail-blur" stdDeviation="0 0"/></filter>
+</svg>
+
+<script>
+(function () {
+  'use strict';
+  // The version, SlimVer: its one source, shown at the foot of the page.
+  var VERSION = '1.00';
+  document.getElementById('version').textContent = VERSION;
+  // ── Texts, in Italian and English ──
+  var T = {
+    it: {
+      kicker: 'Simulatore di animazioni per componenti UI', reset: 'Valori del design system',
+      lead: "Roccobot's User Interface Animation Simulator: la curva, la velocità e l'effetto di ogni parametro, sulla scheda delle informazioni o sulla finestra di dialogo di AIV. Entrata e uscita hanno valori separati.",
+      preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
+      sequence: 'Sequenza', seqCycle: 'Entrata e uscita', seqIn: 'Solo entrata', seqOut: 'Solo uscita',
+      speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
+      keys: [['T', 'tema chiaro o scuro'], ['L', 'lingua'], ['⇧', 'trascinando una maniglia, la tiene in orizzontale o in verticale']],
+      veil: 'Velo', veilOn: 'Velo dietro il componente', veilOp: 'Opacità', veilBlur: 'Sfocatura dietro',
+      sheetTitle: 'Informazioni', dlgTitle: 'Eliminare 3 elementi?', dlgText: 'Vanno nel Cestino, da cui puoi ripristinarli per 30 giorni.', dlgNo: 'Annulla', dlgYes: 'Elimina',
+      rows: [['Nome', 'IMG_2041.jpg'], ['Dimensioni', '4.032 x 3.024'], ['Peso', '3,8 MB'], ['Data', '12 nov 2026, 18:40'], ['Fotocamera', 'Xiaomi 15'], ['Cartella', 'DCIM/Camera']],
+      in: 'Entrata', out: 'Uscita', curve: 'Curva di Bézier', speedGraph: 'Velocità (After Effects)',
+      copy: 'Copia', copied: 'Copiato', copyFail: 'Selezionato: copialo con ⌘C', paste: 'Incolla una curva', apply: 'Applica',
+      pasteHint: 'cubic-bezier(0.7, 0, 0.3, 0.1)', pasteErr: 'Scrivi quattro numeri, come cubic-bezier(0.7, 0, 0.3, 0.1).',
+      preset: 'Curve pronte', duration: 'Durata', fade: 'Dissolvenza', fadeOn: 'Attiva', fadeBase: 'Misurata sul',
+      baseTime: 'tempo', basePath: 'percorso', fadeFrom: 'Da', fadeTo: 'A', trail: 'Scia (motion blur)', trailOn: 'Attiva', trailDp: 'Quantità al picco',
+      scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
+      peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
+      phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
+      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. I valori si salvano solo in questo browser.",
+      presets: { ds: 'Design system', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
+    },
+    en: {
+      kicker: 'UI component animation simulator', reset: 'Design system values',
+      lead: "Roccobot's User Interface Animation Simulator: the curve, the speed and the effect of every setting, on AIV's info sheet or dialog. Entrance and exit have separate values.",
+      preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
+      sequence: 'Sequence', seqCycle: 'Entrance and exit', seqIn: 'Entrance only', seqOut: 'Exit only',
+      speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
+      keys: [['T', 'light or dark theme'], ['L', 'language'], ['⇧', 'while dragging a handle, keeps it horizontal or vertical']],
+      veil: 'Scrim', veilOn: 'Scrim behind the component', veilOp: 'Opacity', veilBlur: 'Background blur',
+      sheetTitle: 'Info', dlgTitle: 'Delete 3 items?', dlgText: 'They go to the Trash, where you can restore them for 30 days.', dlgNo: 'Cancel', dlgYes: 'Delete',
+      rows: [['Name', 'IMG_2041.jpg'], ['Size', '4,032 x 3,024'], ['Weight', '3.8 MB'], ['Date', 'Nov 12, 2026, 6:40 PM'], ['Camera', 'Xiaomi 15'], ['Folder', 'DCIM/Camera']],
+      in: 'Entrance', out: 'Exit', curve: 'Bézier curve', speedGraph: 'Speed (After Effects)',
+      copy: 'Copy', copied: 'Copied', copyFail: 'Selected: copy it with ⌘C', paste: 'Paste a curve', apply: 'Apply',
+      pasteHint: 'cubic-bezier(0.7, 0, 0.3, 0.1)', pasteErr: 'Type four numbers, like cubic-bezier(0.7, 0, 0.3, 0.1).',
+      preset: 'Presets', duration: 'Duration', fade: 'Fade', fadeOn: 'On', fadeBase: 'Measured on',
+      baseTime: 'time', basePath: 'travel', fadeFrom: 'From', fadeTo: 'To', trail: 'Trail (motion blur)', trailOn: 'On', trailDp: 'Amount at peak',
+      scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
+      peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
+      phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
+      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. Values are saved in this browser only.',
+      presets: { ds: 'Design system', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
+    }
+  };
+  var PRESETS = [
+    ['ds', null], ['fluido', [0.25, 1, 1, 1]], ['linear', [0, 0, 1, 1]], ['ease', [0.25, 0.1, 0.25, 1]], ['easeIn', [0.42, 0, 1, 1]],
+    ['easeOut', [0, 0, 0.58, 1]], ['easeInOut', [0.42, 0, 0.58, 1]], ['emph', [0.05, 0.7, 0.1, 1]], ['emphA', [0.3, 0, 0.8, 0.15]],
+    ['std', [0.2, 0, 0, 1]], ['back', [0.34, 1.56, 0.64, 1]]
+  ];
+  // The Roccobot Design System values (design/tokens.json, famiglia movimento).
+  var DS_IN = [0, 0.4, 0.2, 1], DS_OUT = [0.25, 0.08, 0.9, 0.5];
+  function defaults() {
+    return {
+      comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000,
+      sheet: {
+        in: { c: DS_IN.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 30 }, trail: { on: true, dp: 20 } },
+        out: { c: DS_OUT.slice(), ms: 300, fade: { on: true, base: 'path', from: 65, to: 90 }, trail: { on: true, dp: 20 } },
+        veil: { on: true, op: 30, blur: 12 }
+      },
+      dialog: {
+        in: { c: DS_IN.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 20 }, scale: 92 },
+        out: { c: DS_OUT.slice(), ms: 300, fade: { on: true, base: 'time', from: 70, to: 100 }, scale: 92 },
+        veil: { on: true, op: 30, blur: 12 }
+      }
+    };
+  }
+
+  // ── State, kept in this browser only ──
+  var KEY = 'ruias-1';
+  var S = defaults();
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.sheet && saved.dialog) S = saved; } catch (e) {}
+  if (typeof S.hold !== 'number') S.hold = 1000;
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function t(k) { return T[S.lang][k]; }
+
+  // ── Bezier maths ──
+  function bz(a, b, u) { return 3 * (1 - u) * (1 - u) * u * a + 3 * (1 - u) * u * u * b + u * u * u; }
+  function ease(c, x) {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    var lo = 0, hi = 1;
+    for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (bz(c[0], c[2], m) < x) lo = m; else hi = m; }
+    return bz(c[1], c[3], (lo + hi) / 2);
+  }
+  var FRAME = 1000 / 60;
+  // Speed in fractions of the way per ms, over one 60 Hz frame centred on x: what the eye sees, and
+  // finite where the curve starts with a vertical tangent (the entrance curve, x1 = 0).
+  function speed(c, ms, x) {
+    var h = FRAME / 2 / ms, a = Math.max(0, x - h), b = Math.min(1, x + h);
+    return (ease(c, b) - ease(c, a)) / ((b - a) * ms);
+  }
+  function step(c, ms, x) { var h = FRAME / ms, a = Math.min(Math.max(x, 0), Math.max(0, 1 - h)); return Math.abs(ease(c, a + h) - ease(c, a)); }
+  function peakStep(c, ms) { var p = 0, n = Math.max(ms, 60); for (var i = 0; i <= n; i++) p = Math.max(p, step(c, ms, i / n)); return p || 1; }
+  // Trailing zeros go only after a decimal point: 100000 stays 100000.
+  function fmt(n, d) { var s = n.toFixed(d === undefined ? 2 : d); if (s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, ''); return s === '-0' ? '0' : s; }
+  // A whole number with the thousands separator of the page's language (10.000, 10,000)
+  function num(v) { return Math.round(v).toLocaleString(S.lang === 'it' ? 'it-IT' : 'en-US'); }
+  function timeAt(c, path) { var lo = 0, hi = 1; for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (ease(c, m) < path) lo = m; else hi = m; } return hi; }
+  function cssOf(c) { return 'cubic-bezier(' + c.map(function (v) { return fmt(v); }).join(', ') + ')'; }
+  function parseCurve(s) {
+    var nums = String(s).replace(/[fF](?=\s*[,)]|\s*$)/g, '').match(/-?\d*\.?\d+(?:e-?\d+)?/gi);
+    if (!nums || nums.length !== 4) return null;
+    var c = nums.map(Number);
+    if (c.some(isNaN) || c[0] < 0 || c[0] > 1 || c[2] < 0 || c[2] > 1) return null;
+    return c;
+  }
+
+  // ── DOM helpers, no innerHTML ──
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) { if (k === 'text') n.textContent = attrs[k]; else if (k === 'cls') n.className = attrs[k]; else n.setAttribute(k, attrs[k]); }
+    (kids || []).forEach(function (c) { if (c) n.appendChild(c); });
+    return n;
+  }
+  function sv(tag, attrs) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+
+  // ── The phone ──
+  var phone = document.getElementById('phone'), sheet = document.getElementById('sheet'), dialog = document.getElementById('dialog');
+  var scrim = document.getElementById('scrim'), blurback = document.getElementById('blurback'), trailBlur = document.getElementById('trail-blur');
+  var TILES = ['#7d9a8c', '#c9a27e', '#5f7a94', '#a8b7a0', '#d6c3a5', '#6e8b7d', '#b98f72', '#8ea5b8', '#9fb08f', '#c7b299', '#71889b', '#a3967f', '#88a091', '#d0b48e', '#667f73', '#b4a48c', '#7f95a6', '#9cae96', '#c4a685', '#6c8577', '#a28c78'];
+  var grid = document.getElementById('grid');
+  TILES.concat(TILES).slice(0, 36).forEach(function (c) { var i = el('i'); i.style.background = c; grid.appendChild(i); });
+  var rowsBox = [];
+  function fillSheet() {
+    rowsBox.forEach(function (r) { r.remove(); });
+    rowsBox = t('rows').map(function (r) { var d = el('div', { cls: 'r' }, [el('span', { text: r[0] }), el('span', { text: r[1] })]); sheet.appendChild(d); return d; });
+  }
+
+  // ── The two phase panels ──
+  var panels = {};
+  function slider(id, min, max, stepv, label) {
+    var input = el('input', { type: 'range', id: id, min: min, max: max, step: stepv });
+    var val = el('span', { cls: 'val' });
+    var lab = el('label', { 'for': id });
+    var box = el('div', { cls: 'ctrl' }, [el('div', { cls: 'top' }, [lab, val]), input]);
+    return { box: box, input: input, val: val, lab: lab, key: label };
+  }
+  function buildPanel(ph) {
+    var sec = el('section', { cls: 'card phase ' + ph });
+    var h2 = el('h2');
+    var code = el('code', { cls: 'code' });
+    var copyBtn = el('button', { cls: 'chip', type: 'button' });
+    var copyK = el('button', { cls: 'chip', type: 'button' });
+    var head = el('div', { cls: 'head' }, [h2, el('div', { cls: 'row' }, [code, copyBtn, copyK])]);
+    var msg = el('div', { cls: 'msg' });
+    // Graphs
+    var bz = sv('svg', { viewBox: '0 0 260 260', role: 'img' });
+    var sp = sv('svg', { viewBox: '0 0 260 260', role: 'img' });
+    var gBz = el('div', { cls: 'graph' }, [el('span', { cls: 'gt' }), bz, el('span', { cls: 'cap' })]);
+    var gSp = el('div', { cls: 'graph' }, [el('span', { cls: 'gt' }), sp, el('span', { cls: 'cap' })]);
+    var graphs = el('div', { cls: 'graphs' }, [gBz, gSp]);
+    // Controls
+    var ctrls = el('div', { cls: 'ctrls' });
+    var sl = {};
+    ['x1', 'y1', 'x2', 'y2'].forEach(function (k, i) {
+      var s = slider(ph + '-' + k, i % 2 ? -1 : 0, i % 2 ? 2 : 1, 0.01, k);
+      s.lab.textContent = k; sl[k] = s; ctrls.appendChild(s.box);
+    });
+    var pasteIn = el('input', { type: 'text', id: ph + '-paste', spellcheck: 'false', autocomplete: 'off' });
+    var pasteBtn = el('button', { cls: 'chip', type: 'button' });
+    var pasteLab = el('label', { 'for': ph + '-paste', cls: 'sub' });
+    var pasteErr = el('div', { cls: 'err msg' });
+    ctrls.appendChild(pasteLab);
+    ctrls.appendChild(el('div', { cls: 'paste' }, [pasteIn, pasteBtn]));
+    var preLab = el('label', { 'for': ph + '-preset' });
+    var pre = el('select', { id: ph + '-preset' });
+    ctrls.appendChild(el('div', { cls: 'ctrl' }, [preLab, pre]));
+    var dur = slider(ph + '-ms', 50, 1500, 10, 'duration');
+    ctrls.appendChild(dur.box);
+    // Fade
+    var fadeSub = el('div', { cls: 'sub' });
+    var fadeTitle = el('span');
+    var fadeOn = el('input', { type: 'checkbox', id: ph + '-fade-on' });
+    var fadeOnLab = el('span');
+    fadeSub.appendChild(fadeTitle); fadeSub.appendChild(el('label', { cls: 'sw' }, [fadeOn, fadeOnLab]));
+    ctrls.appendChild(fadeSub);
+    var baseLab = el('label', { 'for': ph + '-base' });
+    var base = el('select', { id: ph + '-base' }, [el('option', { value: 'time' }), el('option', { value: 'path' })]);
+    ctrls.appendChild(el('div', { cls: 'ctrl' }, [baseLab, base]));
+    var ff = slider(ph + '-ff', 0, 100, 1, 'from'), ft = slider(ph + '-ft', 0, 100, 1, 'to');
+    var fadeRange = el('div', { cls: 'ctrl' }, [ff.box, ft.box]);
+    ctrls.appendChild(fadeRange);
+    // Trail (sheet) or scale (dialog)
+    var trailSub = el('div', { cls: 'sub' });
+    var trailTitle = el('span');
+    var trailOn = el('input', { type: 'checkbox', id: ph + '-trail-on' });
+    var trailOnLab = el('span');
+    var trailSw = el('label', { cls: 'sw' }, [trailOn, trailOnLab]);
+    trailSub.appendChild(trailTitle); trailSub.appendChild(trailSw);
+    ctrls.appendChild(trailSub);
+    var tdp = slider(ph + '-tdp', 0, 60, 1, 'dp');
+    var sc = slider(ph + '-scale', 50, 100, 1, 'scale');
+    ctrls.appendChild(tdp.box); ctrls.appendChild(sc.box);
+    sec.appendChild(head); sec.appendChild(msg); sec.appendChild(graphs); sec.appendChild(ctrls); sec.appendChild(pasteErr);
+    document.getElementById('phases').appendChild(sec);
+
+    var P = { ph: ph, sec: sec, h2: h2, code: code, copyBtn: copyBtn, copyK: copyK, msg: msg, bz: bz, sp: sp, gBz: gBz, gSp: gSp, sl: sl,
+      pasteIn: pasteIn, pasteBtn: pasteBtn, pasteLab: pasteLab, pasteErr: pasteErr, pre: pre, preLab: preLab, dur: dur,
+      fadeTitle: fadeTitle, fadeOn: fadeOn, fadeOnLab: fadeOnLab, base: base, baseLab: baseLab, ff: ff, ft: ft, fadeRange: fadeRange,
+      trailTitle: trailTitle, trailOn: trailOn, trailOnLab: trailOnLab, trailSw: trailSw, tdp: tdp, sc: sc };
+    wirePanel(P);
+    return P;
+  }
+  function cur(ph) { return S[S.comp][ph]; }
+
+  function wirePanel(P) {
+    var ph = P.ph;
+    ['x1', 'y1', 'x2', 'y2'].forEach(function (k, i) {
+      P.sl[k].input.addEventListener('input', function () { cur(ph).c[i] = Number(P.sl[k].input.value); changed(ph); });
+    });
+    P.pasteBtn.addEventListener('click', function () { applyPaste(P); });
+    P.pasteIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyPaste(P); });
+    P.pre.addEventListener('change', function () {
+      var p = PRESETS[Number(P.pre.value)];
+      if (!p) return;
+      cur(ph).c = (p[1] || (ph === 'in' ? DS_IN : DS_OUT)).slice();
+      changed(ph);
+    });
+    P.dur.input.addEventListener('input', function () { cur(ph).ms = Number(P.dur.input.value); changed(ph); });
+    P.fadeOn.addEventListener('change', function () { cur(ph).fade.on = P.fadeOn.checked; changed(ph); });
+    P.base.addEventListener('change', function () { cur(ph).fade.base = P.base.value; changed(ph); });
+    P.ff.input.addEventListener('input', function () { cur(ph).fade.from = Number(P.ff.input.value); if (cur(ph).fade.to < cur(ph).fade.from) cur(ph).fade.to = cur(ph).fade.from; changed(ph); });
+    P.ft.input.addEventListener('input', function () { cur(ph).fade.to = Number(P.ft.input.value); if (cur(ph).fade.from > cur(ph).fade.to) cur(ph).fade.from = cur(ph).fade.to; changed(ph); });
+    P.trailOn.addEventListener('change', function () { cur(ph).trail.on = P.trailOn.checked; changed(ph); });
+    P.tdp.input.addEventListener('input', function () { cur(ph).trail.dp = Number(P.tdp.input.value); changed(ph); });
+    P.sc.input.addEventListener('input', function () { cur(ph).scale = Number(P.sc.input.value); changed(ph); });
+    P.copyBtn.addEventListener('click', function () { copy(cssOf(cur(ph).c), P); });
+    P.copyK.addEventListener('click', function () { copy('CubicBezierEasing(' + cur(ph).c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')', P); });
+    dragHandles(P);
+  }
+  function applyPaste(P) {
+    var c = parseCurve(P.pasteIn.value);
+    if (!c) { P.pasteErr.textContent = t('pasteErr'); return; }
+    P.pasteErr.textContent = '';
+    cur(P.ph).c = c.map(function (v) { return Math.round(v * 1000) / 1000; });
+    changed(P.ph);
+  }
+  function copy(text, P) {
+    var done = function (ok) { P.msg.textContent = ok ? t('copied') + ': ' + text : t('copyFail'); setTimeout(function () { P.msg.textContent = ''; }, 2500); };
+    try {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { selectCode(P); done(false); });
+    } catch (e) { selectCode(P); done(false); }
+  }
+  function selectCode(P) { try { var r = document.createRange(); r.selectNodeContents(P.code); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
+
+  // ── The Bezier graph: y range grows with the handles, as on the reference ──
+  var G = { L: 34, R: 248, T: 14, B: 232 };
+  function yRange(c) { return [Math.min(0, c[1], c[3]) - 0.08, Math.max(1, c[1], c[3]) + 0.08]; }
+  function bzMap(c) {
+    var yr = yRange(c);
+    return {
+      x: function (v) { return G.L + v * (G.R - G.L); },
+      y: function (v) { return G.B - (v - yr[0]) / (yr[1] - yr[0]) * (G.B - G.T); },
+      inv: function (px, py) { return [(px - G.L) / (G.R - G.L), yr[0] + (G.B - py) / (G.B - G.T) * (yr[1] - yr[0])]; }
+    };
+  }
+  function drawBezier(P) {
+    var c = cur(P.ph).c, m = bzMap(c), svg = P.bz;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+      svg.appendChild(sv('line', { 'class': 'gridl', x1: m.x(v), x2: m.x(v), y1: G.T, y2: G.B }));
+      var tx = sv('text', { 'class': 'tick', x: m.x(v), y: G.B + 14, 'text-anchor': 'middle' }); tx.textContent = Math.round(v * 100) + '%'; svg.appendChild(tx);
+    });
+    [0, 0.5, 1].forEach(function (v) {
+      svg.appendChild(sv('line', { 'class': 'gridl', x1: G.L, x2: G.R, y1: m.y(v), y2: m.y(v) }));
+      var tx = sv('text', { 'class': 'tick', x: G.L - 5, y: m.y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = v.toFixed(1); svg.appendChild(tx);
+    });
+    svg.appendChild(sv('line', { 'class': 'lin', x1: m.x(0), y1: m.y(0), x2: m.x(1), y2: m.y(1) }));
+    svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(0), y1: m.y(0), x2: m.x(c[0]), y2: m.y(c[1]) }));
+    svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(1), y1: m.y(1), x2: m.x(c[2]), y2: m.y(c[3]) }));
+    svg.appendChild(sv('path', { 'class': 'curve', d: 'M' + m.x(0) + ' ' + m.y(0) + ' C' + m.x(c[0]) + ' ' + m.y(c[1]) + ' ' + m.x(c[2]) + ' ' + m.y(c[3]) + ' ' + m.x(1) + ' ' + m.y(1) }));
+    P.headBz = sv('circle', { 'class': 'head-dot', r: 4, cx: -20, cy: -20 });
+    svg.appendChild(P.headBz);
+    [[0, 1], [2, 3]].forEach(function (ix, n) {
+      svg.appendChild(sv('circle', { 'class': 'hit', r: 16, cx: m.x(c[ix[0]]), cy: m.y(c[ix[1]]), 'data-h': n }));
+      svg.appendChild(sv('circle', { 'class': 'handle', r: 7, cx: m.x(c[ix[0]]), cy: m.y(c[ix[1]]), 'data-h': n }));
+    });
+    P.bz.setAttribute('aria-label', t('curve') + ' ' + cssOf(c));
+  }
+  function dragHandles(P) {
+    // With ⇧ held the handle keeps to one axis, as in Photoshop: the one along which the pointer has
+    // moved more since the drag began, in screen pixels; the other coordinate stays where it started.
+    var active = -1, frozen = null, start = null, startXY = null;
+    P.bz.addEventListener('pointerdown', function (e) {
+      var h = e.target.getAttribute && e.target.getAttribute('data-h');
+      if (h === null || h === undefined) return;
+      active = Number(h); frozen = bzMap(cur(P.ph).c);
+      start = [e.clientX, e.clientY]; startXY = [cur(P.ph).c[active * 2], cur(P.ph).c[active * 2 + 1]];
+      P.bz.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    P.bz.addEventListener('pointermove', function (e) {
+      if (active < 0) return;
+      var r = P.bz.getBoundingClientRect(), sx = 260 / r.width, sy = 260 / r.height;
+      var v = frozen.inv((e.clientX - r.left) * sx, (e.clientY - r.top) * sy);
+      if (e.shiftKey) {
+        if (Math.abs(e.clientX - start[0]) >= Math.abs(e.clientY - start[1])) v[1] = startXY[1]; else v[0] = startXY[0];
+      }
+      var c = cur(P.ph).c;
+      c[active * 2] = Math.round(Math.min(1, Math.max(0, v[0])) * 100) / 100;
+      c[active * 2 + 1] = Math.round(Math.min(2, Math.max(-1, v[1])) * 100) / 100;
+      changed(P.ph, true);
+    });
+    var end = function () { if (active >= 0) { active = -1; frozen = null; changed(P.ph); } };
+    P.bz.addEventListener('pointerup', end); P.bz.addEventListener('pointercancel', end);
+  }
+
+  // ── The speed graph, After Effects style: speed over time, in units per second ──
+  function travel(ph) { return S.comp === 'sheet' ? 500 : Math.abs(100 - cur(ph).scale); }
+  function niceMax(v) { var e = Math.pow(10, Math.floor(Math.log10(v))), f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
+  function drawSpeed(P) {
+    var p = cur(P.ph), svg = P.sp, D = travel(P.ph), N = 160;
+    var vals = [], maxV = 0, minV = 0, peakAt = 0;
+    for (var i = 0; i <= N; i++) { var x = i / N, v = speed(p.c, p.ms, x) * D * 1000; vals.push(v); if (v > maxV) { maxV = v; peakAt = x; } if (v < minV) minV = v; }
+    var avg = D * 1000 / p.ms, top = niceMax(Math.max(maxV, avg) * 1.08 || 1), bot = minV < 0 ? -niceMax(-minV * 1.08) : 0;
+    var X = function (u) { return G.L + u * (G.R - G.L); }, Y = function (v) { return G.B - (v - bot) / (top - bot) * (G.B - G.T); };
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var ticks = [bot, 0, top / 2, top].filter(function (v, i, a) { return a.indexOf(v) === i; });
+    ticks.forEach(function (v) {
+      svg.appendChild(sv('line', { 'class': 'gridl', x1: G.L, x2: G.R, y1: Y(v), y2: Y(v) }));
+      var tx = sv('text', { 'class': 'tick', x: G.L - 5, y: Y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = Math.abs(v) >= 100 ? num(v) : fmt(v, 1); svg.appendChild(tx);
+    });
+    [0, 0.5, 1].forEach(function (u) {
+      var tx = sv('text', { 'class': 'tick', x: X(u), y: G.B + 14, 'text-anchor': u === 0 ? 'start' : u === 1 ? 'end' : 'middle' });
+      tx.textContent = Math.round(u * p.ms) + ' ms'; svg.appendChild(tx);
+    });
+    svg.appendChild(sv('line', { 'class': 'ax', x1: G.L, x2: G.R, y1: Y(0), y2: Y(0) }));
+    svg.appendChild(sv('line', { 'class': 'lin', x1: G.L, x2: G.R, y1: Y(avg), y2: Y(avg) }));
+    var pts = vals.map(function (v, i) { return X(i / N).toFixed(1) + ',' + Y(Math.max(bot, Math.min(top, v))).toFixed(1); });
+    svg.appendChild(sv('polygon', { 'class': 'area', points: X(0) + ',' + Y(0) + ' ' + pts.join(' ') + ' ' + X(1) + ',' + Y(0) }));
+    svg.appendChild(sv('polyline', { 'class': 'curve', points: pts.join(' ') }));
+    svg.appendChild(sv('circle', { 'class': 'pk', r: 3.5, cx: X(peakAt), cy: Y(Math.min(top, maxV)) }));
+    P.headSp = sv('line', { 'class': 'head-line', x1: -10, x2: -10, y1: G.T, y2: G.B });
+    svg.appendChild(P.headSp);
+    var unit = S.comp === 'sheet' ? t('unitSheet') : t('unitDialog');
+    P.gSp.querySelector('.cap').textContent = t('peak') + ' ' + num(maxV) + ' ' + unit + ' ' + (S.lang === 'it' ? 'a ' : 'at ') + Math.round(peakAt * p.ms) + ' ms · ' + t('avg') + ' ' + num(avg) + ' ' + unit;
+    P.sp.setAttribute('aria-label', t('speedGraph'));
+    P.spMap = { X: X };
+  }
+
+  // ── Fill controls from the state ──
+  function syncPanel(P) {
+    var p = cur(P.ph), ph = P.ph;
+    P.h2.textContent = t(ph);
+    P.code.textContent = cssOf(p.c);
+    P.copyBtn.textContent = t('copy') + ' CSS';
+    P.copyK.textContent = t('copy') + ' Compose';
+    P.gBz.querySelector('.gt').textContent = t('curve');
+    P.gSp.querySelector('.gt').textContent = t('speedGraph');
+    P.gBz.querySelector('.cap').textContent = '25% → ' + Math.round(ease(p.c, 0.25) * 100) + '%  ·  50% → ' + Math.round(ease(p.c, 0.5) * 100) + '%';
+    ['x1', 'y1', 'x2', 'y2'].forEach(function (k, i) { P.sl[k].input.value = p.c[i]; P.sl[k].val.textContent = fmt(p.c[i]); });
+    P.pasteLab.textContent = t('paste'); P.pasteBtn.textContent = t('apply'); P.pasteIn.placeholder = t('pasteHint');
+    P.preLab.textContent = t('preset');
+    if (P.pre.options.length !== PRESETS.length + 1) {
+      while (P.pre.firstChild) P.pre.removeChild(P.pre.firstChild);
+      P.pre.appendChild(el('option', { value: '' })); PRESETS.forEach(function (p2, i) { P.pre.appendChild(el('option', { value: String(i) })); });
+    }
+    P.pre.options[0].textContent = '...';
+    PRESETS.forEach(function (p2, i) { P.pre.options[i + 1].textContent = t('presets')[p2[0]] + (p2[1] ? '  ' + cssOf(p2[1]) : ''); });
+    var match = PRESETS.findIndex(function (p2) { var c2 = p2[1] || (ph === 'in' ? DS_IN : DS_OUT); return c2.every(function (v, i) { return Math.abs(v - p.c[i]) < 1e-6; }); });
+    P.pre.value = match >= 0 ? String(match) : '';
+    P.dur.lab.textContent = t('duration'); P.dur.input.value = p.ms; P.dur.val.textContent = p.ms + ' ms';
+    P.fadeTitle.textContent = t('fade'); P.fadeOnLab.textContent = t('fadeOn'); P.fadeOn.checked = p.fade.on;
+    P.baseLab.textContent = t('fadeBase'); P.base.options[0].textContent = t('baseTime'); P.base.options[1].textContent = t('basePath'); P.base.value = p.fade.base;
+    P.ff.lab.textContent = t('fadeFrom'); P.ff.input.value = p.fade.from;
+    P.ft.lab.textContent = t('fadeTo'); P.ft.input.value = p.fade.to;
+    // Beside each end of the fade, the moment it falls on: on the travel, the time the curve reaches it
+    var tf = function (pc) { var u = p.fade.base === 'time' ? pc / 100 : timeAt(p.c, pc / 100); return pc + '% · ' + Math.round(u * p.ms) + ' ms'; };
+    P.ff.val.textContent = tf(p.fade.from); P.ft.val.textContent = tf(p.fade.to);
+    [P.base, P.ff.input, P.ft.input].forEach(function (n) { n.disabled = !p.fade.on; });
+    P.fadeRange.classList.toggle('dim', !p.fade.on); P.base.parentNode.classList.toggle('dim', !p.fade.on);
+    var isSheet = S.comp === 'sheet';
+    P.trailTitle.textContent = isSheet ? t('trail') : t('scale');
+    P.trailSw.hidden = !isSheet; P.tdp.box.hidden = !isSheet; P.sc.box.hidden = isSheet;
+    if (isSheet) {
+      P.trailOnLab.textContent = t('trailOn'); P.trailOn.checked = p.trail.on;
+      P.tdp.lab.textContent = t('trailDp'); P.tdp.input.value = p.trail.dp; P.tdp.val.textContent = p.trail.dp + ' dp';
+      P.tdp.input.disabled = !p.trail.on; P.tdp.box.classList.toggle('dim', !p.trail.on);
+    } else {
+      P.sc.lab.textContent = ph === 'in' ? t('scaleFrom') : t('scaleTo'); P.sc.input.value = p.scale; P.sc.val.textContent = p.scale + '%';
+    }
+    drawBezier(P); drawSpeed(P);
+  }
+  function syncAll() {
+    document.documentElement.lang = S.lang;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (n) { var v = t(n.getAttribute('data-t')); if (typeof v === 'string') n.textContent = v; });
+    document.title = S.lang === 'it' ? 'RUIAS - Simulatore di animazioni per componenti UI' : 'RUIAS - UI component animation simulator';
+    fillSheet();
+    [['comp', S.comp], ['seq', S.seq], ['rate', String(S.rate)]].forEach(function (g) {
+      Array.prototype.forEach.call(document.querySelectorAll('#' + g[0] + ' [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === g[1])); });
+    });
+    playIcon();
+    document.getElementById('hold').value = S.hold;
+    document.getElementById('hold-v').textContent = num(S.hold) + ' ms';
+    var keys = document.getElementById('keys');
+    while (keys.firstChild) keys.removeChild(keys.firstChild);
+    t('keys').forEach(function (k, i) {
+      if (i) keys.appendChild(document.createTextNode(' · '));
+      keys.appendChild(el('kbd', { text: k[0] })); keys.appendChild(document.createTextNode(' ' + k[1]));
+    });
+    var v = S[S.comp].veil;
+    document.getElementById('veil-on').checked = v.on;
+    document.getElementById('veil-op').value = v.op; document.getElementById('veil-op-v').textContent = v.op + '%';
+    document.getElementById('veil-blur').value = v.blur; document.getElementById('veil-blur-v').textContent = v.blur + ' dp';
+    sheet.hidden = S.comp !== 'sheet'; dialog.hidden = S.comp !== 'dialog';
+    panels.in && syncPanel(panels.in); panels.out && syncPanel(panels.out);
+  }
+  function changed(ph, dragging) {
+    syncPanel(panels[ph]);
+    if (!dragging) save();
+  }
+
+  // ── Global controls ──
+  function pick(groupId, fn) {
+    Array.prototype.forEach.call(document.querySelectorAll('#' + groupId + ' [data-v]'), function (b) {
+      b.addEventListener('click', function () { fn(b.getAttribute('data-v')); clock = 0; save(); syncAll(); });
+    });
+  }
+  pick('comp', function (v) { S.comp = v; });
+  pick('seq', function (v) { S.seq = v; });
+  pick('rate', function (v) { S.rate = Number(v); });
+  document.getElementById('reset').addEventListener('click', function () { var d = defaults(); d.lang = S.lang; d.comp = S.comp; d.seq = S.seq; d.rate = S.rate; S = d; clock = 0; save(); syncAll(); });
+  document.getElementById('veil-on').addEventListener('change', function (e) { S[S.comp].veil.on = e.target.checked; save(); syncAll(); });
+  document.getElementById('veil-op').addEventListener('input', function (e) { S[S.comp].veil.op = Number(e.target.value); save(); syncAll(); });
+  document.getElementById('veil-blur').addEventListener('input', function (e) { S[S.comp].veil.blur = Number(e.target.value); save(); syncAll(); });
+  document.getElementById('hold').addEventListener('input', function (e) { S.hold = Number(e.target.value); clock = 0; save(); syncAll(); });
+  var playing = true;
+  document.getElementById('play').addEventListener('click', function () { setPlaying(!playing); });
+  function playIcon() {
+    var b = document.getElementById('play');
+    document.getElementById('play-shape').setAttribute('d', playing ? 'M6.5 5h4v14h-4zM13.5 5h4v14h-4z' : 'M8 5.2v13.6L19 12z');
+    b.setAttribute('aria-label', playing ? t('play') : t('resume'));
+    b.title = playing ? t('play') : t('resume');
+  }
+  // Keys: T turns the theme over for this page only, as on RoccoHub; L switches the language.
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' && e.target.type === 'text' || tag === 'select' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 't' || e.key === 'T') {
+      var root = document.documentElement, dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    } else if (e.key === 'l' || e.key === 'L') {
+      S.lang = S.lang === 'it' ? 'en' : 'it'; save(); syncAll();
+    }
+  });
+
+  // ── The animation ──
+  // The pauses between the phases are S.hold, in real time at every speed: only the animation slows.
+  function timeline() {
+    var a = cur('in'), b = cur('out'), h = Math.max(S.hold, 1);
+    if (S.seq === 'in') return [['shut', h], ['in', a.ms], ['open', h]];
+    if (S.seq === 'out') return [['open', h], ['out', b.ms], ['shut', h]];
+    return [['shut', h], ['in', a.ms], ['open', h], ['out', b.ms]];
+  }
+  function segmentAt(ms) {
+    var tl = timeline(), acc = 0;
+    for (var i = 0; i < tl.length; i++) { if (ms < acc + tl[i][1]) return tl[i][0]; acc += tl[i][1]; }
+    return tl[tl.length - 1][0];
+  }
+  function fadeAlpha(p, x, path, entering) {
+    if (!p.fade.on) return 1;
+    var v = p.fade.base === 'time' ? x : path, a = p.fade.from / 100, b = p.fade.to / 100;
+    var k = b <= a ? (v >= a ? 1 : 0) : Math.min(1, Math.max(0, (v - a) / (b - a)));
+    return entering ? k : 1 - k;
+  }
+  var peaks = {};
+  function peakOf(ph) { var p = cur(ph), key = S.comp + ph + p.c.join() + p.ms; if (!peaks[key]) peaks[key] = peakStep(p.c, p.ms); return peaks[key]; }
+  function paint(ms) {
+    var tl = timeline(), acc = 0, seg = tl[tl.length - 1], local = 0;
+    for (var i = 0; i < tl.length; i++) { if (ms < acc + tl[i][1]) { seg = tl[i]; local = ms - acc; break; } acc += tl[i][1]; }
+    var kind = seg[0], open = 1, alpha = 1, blurDp = 0, x = -1, ph = null, scale = 1;
+    var scalePx = phone.clientWidth / 412;
+    if (kind === 'shut') { open = 0; alpha = 0; }
+    else if (kind === 'in' || kind === 'out') {
+      ph = kind; var p = cur(ph); x = Math.min(1, local / p.ms); var f = ease(p.c, x);
+      // f is the fraction of the way covered in this phase, also what a fade on the travel reads
+      open = kind === 'in' ? f : 1 - f;
+      alpha = fadeAlpha(p, x, f, kind === 'in');
+      if (S.comp === 'sheet' && p.trail.on) blurDp = p.trail.dp * step(p.c, p.ms, x) / peakOf(ph);
+      if (S.comp === 'dialog') { var s0 = p.scale / 100; scale = kind === 'in' ? s0 + (1 - s0) * f : 1 + (s0 - 1) * f; }
+    }
+    var v = S[S.comp].veil, vo = Math.max(0, Math.min(1, open));
+    scrim.style.opacity = v.on ? (v.op / 100 * vo).toFixed(3) : '0';
+    var bb = v.on ? v.blur * scalePx * vo : 0;
+    blurback.style.backdropFilter = bb > 0.05 ? 'blur(' + bb.toFixed(2) + 'px)' : 'none';
+    blurback.style.webkitBackdropFilter = blurback.style.backdropFilter;
+    if (S.comp === 'sheet') {
+      var h = sheet.offsetHeight;
+      sheet.style.transform = 'translateY(' + ((1 - open) * (h + 16)).toFixed(2) + 'px)';
+      sheet.style.opacity = alpha.toFixed(3);
+      trailBlur.setAttribute('stdDeviation', '0 ' + (blurDp * scalePx / 2).toFixed(2));
+      sheet.style.filter = blurDp > 0.2 ? 'url(#trail)' : 'none';
+    } else {
+      dialog.style.transform = 'scale(' + scale.toFixed(4) + ')';
+      dialog.style.opacity = (kind === 'shut' ? 0 : alpha).toFixed(3);
+    }
+    ['in', 'out'].forEach(function (k) {
+      var P = panels[k];
+      if (!P || !P.headBz) return;
+      if (ph === k) {
+        var c = cur(k).c, m = bzMap(c);
+        P.headBz.setAttribute('cx', m.x(x)); P.headBz.setAttribute('cy', m.y(ease(c, x)));
+        var hx = P.spMap.X(x); P.headSp.setAttribute('x1', hx); P.headSp.setAttribute('x2', hx);
+      } else { P.headBz.setAttribute('cx', -20); P.headSp.setAttribute('x1', -10); P.headSp.setAttribute('x2', -10); }
+    });
+    var label = kind === 'in' ? t('phIn') + ': ' + Math.round(local) + ' ms' : kind === 'out' ? t('phOut') + ': ' + Math.round(local) + ' ms' : kind === 'open' ? t('phOpen') : t('phShut');
+    document.getElementById('phase-now').textContent = label + (S.rate !== 1 ? '  (' + t('rate025') + ')' : '');
+  }
+  var clock = 0, last = 0, raf = 0;
+  function total() { return timeline().reduce(function (s, p) { return s + p[1]; }, 0); }
+  function frame(now) {
+    if (last) {
+      var k = segmentAt(clock), moving = k === 'in' || k === 'out';
+      clock = (clock + (now - last) * (moving ? S.rate : 1)) % total();
+    }
+    last = now; paint(clock); raf = requestAnimationFrame(frame);
+  }
+  function setPlaying(p) {
+    playing = p; playIcon();
+    cancelAnimationFrame(raf);
+    if (p) { last = 0; raf = requestAnimationFrame(frame); }
+  }
+
+  panels.in = buildPanel('in');
+  panels.out = buildPanel('out');
+  syncAll();
+  // At rest the page shows the component open; with reduced motion nothing moves until Play.
+  paint(timeline()[0][0] === 'shut' ? timeline()[0][1] + cur('in').ms + 1 : 0);
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(false); else setPlaying(true);
+})();
+</script>
+
+</body>
+</html>

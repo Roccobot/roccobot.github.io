@@ -198,6 +198,18 @@ numero per scelta dell'utente.
   schede dei componenti e i file del marchio e dell'icona di AIV. La scrive la sessione `Roccobot`,
   con le regole di `Roccobot.md` § '🎨 Grafica'. Pubblica, ma fuori dalla mappa e
   dall'indicizzazione (`noindex`), come `hub/`.
+- **`ruias/` è RUIAS, 'Simulatore di animazioni per componenti UI'** (Roccobot's User Interface
+  Animation Simulator, voce `Cinescopio`, sua richiesta del 2026-11-13): uno strumento con funzioni,
+  quindi un'eccezione dichiarata a 'qui non vivono progetti', voluta da lui (`Ospite-01`: lo vuole
+  sull'hub, come pagina di servizio, e non in un repo suo come RatioLab). Simula la scheda dal basso
+  e la finestra di dialogo di AIV con curve di Bézier, durate, dissolvenze, scia e velo separati per
+  entrata e uscita, col grafico della curva e quello della velocità nello stile di After Effects.
+  Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
+  schermo; fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`), con la tessera in
+  RoccoHub fra 'Siti e strumenti'. Un file solo, `ruias/index.html`, con la versione SlimVer nella
+  costante `VERSION` e in fondo alla pagina; i valori di serie sono quelli del design system
+  (`design/tokens.json`, famiglia `movimento`), e quando cambiano là si cambiano anche qui. Non va
+  spostata né tolta per pulizia.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:
   Pages li pubblica comunque, e restano raggiungibili, ma sono materiale di lavoro e non pagine.
 

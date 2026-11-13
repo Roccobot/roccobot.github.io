@@ -271,7 +271,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   appcast di un'app il cui repo è privato dal 2026-10-15; `styles/`, l'archivio degli stili di
   Aomidori e dei loro font, che il pacchetto dello Store confronta; e `AIV/`, pagina di download e informativa di AIV, copiate da
   `publish/` del suo repo, che diventa privato (`Serratura`), e da ricopiare qui a ogni modifica di
-  quei file. Nessuna si sposta per pulizia (`Rules.md` § '🗂️ I progetti e i loro file di regole').
+  quei file; `ruias/`, RUIAS, il simulatore di animazioni per componenti UI (`Ospite-01`). Nessuna si sposta per pulizia (`Rules.md` § '🗂️ I progetti e i loro file di regole').
   L'hub tiene le regole trasversali e gli strumenti che le fanno rispettare (`.memo/scripts/`); il
   testo completo delle sue regole vive in `Rules.md`.
 - **Prima di lavorare su un progetto si leggono le regole del suo repo** (`AGENTS.md` e
