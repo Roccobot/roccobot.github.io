@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="32" viewBox="0 0 32 32">
-  <title>Documenti di feedback</title>
+  <title>RoccoHub</title>
   <defs>
     <mask id="notepad" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
       <rect x="3" y="4.5" width="26" height="26" rx="5" fill="white"/>

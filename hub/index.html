@@ -13,82 +13,47 @@
 <!--
   RoccoHub, a service page: the feedback documents (DF) first, then the links in daily use. Two
   themes, light and dark: the system's on loading, and the T key turns it over for the open page
-  only, with nothing stored. Every colour and the type come from the Roccobot Design system; the
-  mark is its 天.
+  only, with nothing stored. Every colour and the type come from the Roccobot Design System
+  (design/tokens.json: the servizio- family, the three soglia- and testo-accento; the font stack is
+  marchio); the mark is its 天.
   Author: Rocco Casadei, a.k.a. Roccobot
 -->
 <style>
-  /* Light theme: the light counterpart of the dark one, a pale green-grey page with almost white
-     cards, so the two themes read as the same page (Rocco's choice Chiaro-01, 2026-11-03: the
-     first light theme, Roccobot Design's near-white neutrals, left the cards without contrast).
-     Turquoise is graphics and filled surfaces only, so the text that reads as accent takes
-     testo-accento. Contrasts measured on 2026-11-03. */
+  /* Each colour is written once with its two values, light and dark: light-dark() picks one by the
+     colour scheme in use, the system's or the one the T key sets on the root. The light theme is the
+     light counterpart of the dark one, a pale green-grey page with almost white cards, so the two
+     themes read as the same page; the dark one is the deep green-grey between light and dark, so
+     that the brand green of the mark and of the buttons stands out. Contrasts in the tokens. */
   :root {
-    color-scheme: light;
-    --bg: #E3EAE7;            /* 5.3 under testo-accento, 6.0 under --ink-muted */
-    --card: #F7FAF9;          /* the cards lift off the page */
-    --line: #C9D4D0;
-    --ink: #1A1C1B;           /* testo, 16.3 on --card */
-    --plat: #5F6B68;          /* 5.3 on --card: fainter than the subtitle, still readable */
-    --ink-muted: #4D5956;     /* 6.0 on --bg, 7.0 on --card */
-    /* The buttons: petrolio with white text (Rocco's request: white on the green pills), the
-       Roccobot Design pair of its dark theme; white on turquoise would be 2.52. */
-    --accent: #00727B;        /* petrolio, 5.4 on --card */
-    --on-accent: #FFFFFF;     /* 5.69 over the accent */
-    --accent-hover: #008577;  /* 4.54 under --on-accent */
-    --label: #0B6B5B;         /* testo-accento, 5.3 on --bg */
-    --link: #0B6B5B;          /* testo-accento, 6.1 on --card */
-    /* The shares used up of the Actions tile, all above 4.5 on --card */
-    --warn: #9A5800;          /* orange, 5.3 */
-    --alert: #9B4A45;         /* dull dark red, 5.8 */
-    --alarm: #B3261E;         /* deep red, 6.2 */
-    --font: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: light dark;
+    --bg: light-dark(#E3EAE7, #2E3836);           /* servizio-fondo */
+    --card: light-dark(#F7FAF9, #3B4744);         /* servizio-scheda: the cards lift off the page */
+    --line: light-dark(#C9D4D0, #4E5B57);         /* servizio-linea */
+    --ink: light-dark(#1A1C1B, #F3F6F5);          /* servizio-testo */
+    --ink-muted: light-dark(#4D5956, #C2CDC9);    /* servizio-testo-secondario */
+    --plat: light-dark(#5F6B68, #ACB7B3);         /* servizio-testo-tenue: fainter than the subtitle */
+    /* The buttons: the accent reversed from accento, petrolio with white text in the light theme
+       (white on turquoise would be 2.52), turchese with dark text in the dark one */
+    --accent: light-dark(#00727B, #43B59E);       /* servizio-accento */
+    --on-accent: light-dark(#FFFFFF, #00382F);    /* servizio-su-accento */
+    --accent-hover: light-dark(#008577, #4FD9BE); /* servizio-accento-attivo */
+    --label: light-dark(#0B6B5B, #43B59E);        /* servizio-etichetta */
+    --link: light-dark(#0B6B5B, #4FD9BE);         /* testo-accento */
+    /* The shares used up of the Actions tile */
+    --warn: light-dark(#9A5800, #F0B060);         /* soglia-arancio, from 50% */
+    --alert: light-dark(#9B4A45, #DEACA6);        /* soglia-rosso, from 70% */
+    --alarm: light-dark(#B3261E, #FF9A90);        /* soglia-rosso-intenso, from 90% */
+    --font: Archivo, "Helvetica Neue", Arial, sans-serif;
   }
-  /* Dark theme: the deep green-grey between light and dark of the page's first version, so that
-     the brand green of the mark and of the buttons stands out. Contrasts measured on 2026-11-02. */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #2E3836;          /* fondo-intermedio */
-      --card: #3B4744;        /* scheda-intermedia: the cards lift off the page */
-      --line: #4E5B57;
-      --ink: #F3F6F5;         /* 11.1 on --bg, 8.9 on --card */
-      --plat: #ACB7B3;        /* 4.7 on --card: fainter than the subtitle, still readable */
-      --ink-muted: #C2CDC9;   /* 7.4 on --bg, 5.9 on --card */
-      --label: #43B59E;       /* turchese, 4.8 on --bg */
-      --accent: #43B59E;      /* turchese: on the dark cards the buttons keep it, with dark text */
-      --on-accent: #00382F;   /* contenuto-su-accento, 5.19 over the accent */
-      --accent-hover: #4FD9BE; /* turchese-luce, 7.5 under --on-accent */
-      --link: #4FD9BE;        /* turchese-luce, 6.9 on --bg, 5.5 on --card */
-      --warn: #F0B060;        /* orange, 5.1 on --card */
-      --alert: #DEACA6;       /* dull red, 4.9 */
-      --alarm: #FF9A90;       /* deep red, 4.7 */
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --bg: #2E3836;
-    --card: #3B4744;
-    --line: #4E5B57;
-    --ink: #F3F6F5;
-    --plat: #ACB7B3;
-    --ink-muted: #C2CDC9;
-    --label: #43B59E;
-    --accent: #43B59E;
-    --on-accent: #00382F;
-    --accent-hover: #4FD9BE;
-    --link: #4FD9BE;
-    --warn: #F0B060;
-    --alert: #DEACA6;
-    --alarm: #FF9A90;
-  }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--font); }
   main { max-width: 40rem; margin: 0 auto; padding: 2.75rem 1rem 3rem; }
   header { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 2.2rem; }
   header svg { width: 3rem; height: auto; flex: none; }
   h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
-  .meta { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .1rem 0 0; }
+  .meta { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .1rem 0 0; }
   /* Section titles: a quiet label, so the cards and the tiles stay the protagonists */
   section + section { margin-top: 2.4rem; }
   h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
@@ -119,8 +84,11 @@
      button label: measured against the baseline and the ink of 'A' in Archivo 600 */
   .android { --scale: 1.5227; --shift: -2.152; }
   .txt p { margin: .2rem 0 0; color: var(--ink-muted); font-size: 1rem; text-wrap: pretty; }
-  a.site { display: inline-block; margin-top: .35rem; color: var(--link); font-size: .9rem; font-weight: 600;
+  a.site { position: relative; display: inline-block; margin-top: .35rem; color: var(--link); font-size: .9rem; font-weight: 600;
            text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  /* A text link is 21.6 px tall: its touch area grows to 44 px, the web minimum of the design system,
+     without moving the layout. Above it there is only the description, which is not a link. */
+  a.site::after { content: ""; position: absolute; inset: -.7rem -.35rem; }
   a.site:hover { text-decoration-thickness: 2px; }
   /* Two links in a row: a gap between them, and the second one wraps whole */
   a.site + a.site { margin-left: 1.1rem; }
@@ -143,9 +111,21 @@
   a.sub { position: relative; z-index: 1; display: block; width: fit-content; margin-top: .1rem;
           color: var(--ink-muted); font-size: .9rem; text-decoration: underline;
           text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  /* Its touch area is 44 px tall too: down to the tile's edge, and the rest upwards, over the
+     space under the note's letters */
+  a.sub::after { content: ""; position: absolute; inset: -.55rem -.35rem -.85rem; }
   a.sub:hover { color: var(--link); text-decoration-thickness: 2px; }
-  .name::after { content: " \2197"; font-weight: 400; }          /* the north-east arrow: opens elsewhere */
+  /* The north-east arrow (opens elsewhere) is drawn, in the text colour: Archivo has no U+2197, so
+     another font drew it, and a phone may draw it as a colour emoji. Its box is as tall as Archivo's
+     capitals (0.706 em) and sits on the baseline, so the arrow is centred on the cap height. */
+  .name::after { content: ""; display: inline-block; width: .72em; height: .72em; margin-left: .25em;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  /* The line of the latest run holds its place from the start, with an invisible character, so it is
+     as tall as a line of text and nothing below moves when the run arrives */
+  #actions-last:empty::before { content: "\200B"; }
   /* A share of the quota or of the budget used up: orange from 50%, red from 70%, deep red from 90% */
   .note[data-level="warn"] { color: var(--warn); }
   .note[data-level="alert"] { color: var(--alert); }
@@ -160,6 +140,12 @@
   .tiles > li > a:focus-visible, .tile:has(.name:focus-visible) { outline: 2px solid var(--link); outline-offset: 2px; }
   .tile .name:focus-visible { outline: none; }
   a.open:focus-visible { border-radius: 999px; }
+  /* Colours and borders under the pointer change in 160 ms (web-hover), and at once with the
+     system's reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    a { transition: color .16s, background-color .16s, border-color .16s, text-decoration-thickness .16s; }
+    .tile { transition: border-color .16s; }
+  }
 </style>
 </head>
 <body>
@@ -179,23 +165,23 @@
         <div class="txt">
           <h3>AIV <span class="plat">Astonishing Image Viewer</span></h3>
           <p>Gestore di immagini avanzato per Android</p>
-          <a class="site" href="https://roccobot.github.io/AIV/" target="_blank" rel="noopener">Sito</a>
+          <a class="site" href="https://roccobot.github.io/AIV/" target="_blank" rel="noopener" aria-label="Sito di AIV">Sito</a>
         </div>
         <div class="act">
           <span class="marks" role="img" aria-label="Android"><svg class="mark android" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg></span>
-          <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+          <a class="open" href="https://aiv-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener" aria-label="Apri il documento di feedback di AIV">Apri</a>
         </div>
       </li>
       <li>
         <div class="txt">
           <h3>Aomidori</h3>
           <p>Lettore di EPUB, fumetti e&nbsp;Markdown per macOS</p>
-          <a class="site" href="https://roccobot.github.io/Aomidori/" target="_blank" rel="noopener">Sito</a>
+          <a class="site" href="https://roccobot.github.io/Aomidori/" target="_blank" rel="noopener" aria-label="Sito di Aomidori">Sito</a>
           <a class="site" href="https://roccobot.github.io/styles/aomidori_flex_changelog.html" target="_blank" rel="noopener">Registro di Aomidori Flex</a>
         </div>
         <div class="act">
           <span class="marks" role="img" aria-label="macOS"><svg class="mark apple" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><svg class="mark laptop" viewBox="0 -960 960 960" aria-hidden="true"><path d="M57-160q-24 0-40.5-17.5T0-220h141q-24 0-42-18t-18-42v-500q0-24 18-42t42-18h678q24 0 42 18t18 42v500q0 24-18 42t-42 18h141q0 25-17.5 42.5T900-160H57Zm423-22q14 0 24-10t10-24q0-14-10-24t-24-10q-14 0-24 10t-10 24q0 14 10 24t24 10Z"/></svg></span>
-          <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+          <a class="open" href="https://aomidori-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener" aria-label="Apri il documento di feedback di Aomidori per macOS">Apri</a>
         </div>
       </li>
       <li>
@@ -205,7 +191,7 @@
         </div>
         <div class="act">
           <span class="marks" role="img" aria-label="Android"><svg class="mark android" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg></span>
-          <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener">Apri</a>
+          <a class="open" href="https://aomidori-android-feedback.roccobot-b90.workers.dev/feedback" target="_blank" rel="noopener" aria-label="Apri il documento di feedback di Aomidori per Android">Apri</a>
         </div>
       </li>
     </ul>
@@ -215,7 +201,7 @@
     <h2 id="t-link">Link utili</h2>
     <ul class="tiles">
       <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note">Progetti e repo di Roccobot</span><a class="sub" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Repo principali</a></div></li>
-      <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last" hidden></span></a></li>
+      <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last"></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
       <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Regole e principi di UI/UX di Roccobot</span></a></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
@@ -253,64 +239,73 @@
     root.dataset.theme = dark ? 'light' : 'dark';
   });
   // The GitHub Actions tile, from the rules-proxy Worker (GET /actions, public, cached five
-  // minutes there). The decisions live in actionsLines(), a pure function; the code below it only
+  // minutes there). The decisions live in actionsLine(), a pure function; the code below it only
   // fetches and writes, with textContent.
-  // Rocco's spending limit beyond the free quota, in euros (his answer Quota-01, 2026-11-08).
-  const BUDGET_EUR = 25;
+  // Rocco's spending limit, in US dollars as GitHub bills it, for all of Actions (his answers
+  // Quota-01 and of 2026-11-13): the Worker's paid counts the storage of artifacts and caches too.
+  const BUDGET_USD = 25;
   // The colour of a share used up: none under 50%, then orange, red and deep red (his thresholds).
+  const LEVELS = ['', 'warn', 'alert', 'alarm'];
   const level = (pct) => pct >= 90 ? 'alarm' : pct >= 70 ? 'alert' : pct >= 50 ? 'warn' : '';
-  const n = (v) => Number(v).toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
-  /* The line for the month: the free minutes used and their share of the quota; once the quota is
-     used up, the extra minutes and their share of the budget take its place (reading them already
-     says the free ones are gone, Rocco's precision). GitHub bills in US dollars, so the share needs
-     the day's rate (eurPerUsd); without it the line has no share. */
-  function actionsLines(d, eurPerUsd) {
-    if (!d.included) return [{ text: `${n(d.counted)} minuti usati nel mese`, level: '' }];
-    if (d.counted < d.included) {
-      const pct = Math.round(d.counted / d.included * 100);
-      return [{ text: `${n(d.counted)} minuti gratuiti usati (${pct}%)`, level: level(pct) }];
+  const higher = (a, b) => LEVELS.indexOf(a) >= LEVELS.indexOf(b) ? a : b;
+  const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+  const n = (v) => v.toLocaleString('it-IT', { maximumFractionDigits: 0, useGrouping: 'always' });
+  // A run still going has no minutes yet: the line says so.
+  const RUNNING = ['queued', 'in_progress', 'waiting', 'requested', 'pending'];
+  /* The line for the month. The quota is an amount in dollars (12 on the Free plan): under it, the
+     free minutes used and the share of the quota spent, rounded down, so 100% shows only once the
+     quota is used up. Once it is used up, the extra minutes and their share of the budget take its
+     place (reading them already says the free ones are gone, Rocco's precision), and with no extra
+     minute yet the line says the free ones are over. As soon as something is paid the line is at
+     least orange (Rocco's choice Spia-01), red from 70% of the budget and deep red from 90%; when
+     the paid amount is unknown, deep red. A partial answer of the Worker, where a repo's visibility
+     could not be read, may count a public repo, so the line says it is an estimate. */
+  function actionsLine(d) {
+    if (!isNum(d.counted)) return { text: 'Minuti non disponibili ora', level: '' };
+    const notes = [];
+    const budget = () => {
+      const share = Math.round(d.paid / BUDGET_USD * 100);
+      notes.push(`${share}% del budget`);
+      return higher('warn', level(share));
+    };
+    let text, lvl = '';
+    if (!d.included || !isNum(d.used)) {
+      text = `${n(d.counted)} minuti usati nel mese`;
+    } else if (d.used < d.included) {
+      const pct = Math.floor(d.used / d.included * 100);
+      text = `${n(d.counted)} minuti gratuiti usati`;
+      notes.push(`${pct}%`);
+      lvl = level(pct);
+      // storage beyond its allowance is paid even with free minutes left
+      if (isNum(d.paid) && d.paid > 0) lvl = higher(lvl, budget());
+    } else {
+      const extra = isNum(d.extra) ? Math.round(d.extra) : 0;
+      text = extra > 0 ? `Minuti extra: ${n(extra)}` : 'Minuti gratuiti finiti';
+      lvl = !isNum(d.paid) ? 'alarm' : extra > 0 || d.paid > 0 ? budget() : 'warn';
     }
-    const extra = Math.round(d.counted - d.included);
-    if (typeof eurPerUsd === 'number' && typeof d.paid === 'number') {
-      const share = Math.round(d.paid * eurPerUsd / BUDGET_EUR * 100);
-      return [{ text: `Minuti extra: ${n(extra)} (${share}% del budget)`, level: level(share) }];
-    }
-    return [{ text: `Minuti extra: ${n(extra)}`, level: 'alarm' }];
+    if (d.partial) notes.push('stima');
+    return { text: notes.length ? `${text} (${notes.join(', ')})` : text, level: lvl };
+  }
+  function lastRunLine(run) {
+    if (RUNNING.includes(run.status)) return `Ultima corsa: ${run.repo}, in corso`;
+    return isNum(run.weighted) ? `Ultima corsa: ${run.repo}, ${n(run.weighted)} min` : `Ultima corsa: ${run.repo}`;
   }
   (async () => {
     const note = document.getElementById('actions-note');
     const last = document.getElementById('actions-last');
     try {
-      const r = await fetch('https://rules-proxy.roccobot-b90.workers.dev/actions');
+      // After eight seconds without an answer the tile gives up, as on an error.
+      const r = await fetch('https://rules-proxy.roccobot-b90.workers.dev/actions', { signal: AbortSignal.timeout(8000) });
       const d = await r.json();
       if (!d.ok) {
         note.textContent = d.error === 'billing-config' ? 'Contatore non ancora collegato' : 'Minuti non disponibili ora';
         return;
       }
-      let rate = null;
-      if (d.included && d.counted >= d.included) {
-        // The ECB rate of the day, from Frankfurter (api v2), only when there are extra minutes.
-        try {
-          rate = (await (await fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=EUR')).json())[0].rate;
-        } catch {}
-      }
-      const [first, ...more] = actionsLines(d, rate);
-      note.textContent = first.text;
-      if (first.level) note.dataset.level = first.level;
-      let after = note;
-      for (const line of more) {
-        const el = document.createElement('span');
-        el.className = 'note';
-        el.textContent = line.text;
-        if (line.level) el.dataset.level = line.level;
-        after.after(el);
-        after = el;
-      }
+      const line = actionsLine(d);
+      note.textContent = line.text;
+      if (line.level) note.dataset.level = line.level;
       const run = (d.runs || [])[0];
-      if (run) {
-        last.textContent = `Ultima corsa: ${run.repo}, ${n(run.weighted)} min`;
-        last.hidden = false;
-      }
+      if (run) last.textContent = lastRunLine(run);
     } catch {
       note.textContent = 'Minuti non disponibili ora';
     }
