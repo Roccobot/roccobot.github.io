@@ -226,12 +226,17 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | gesto Indietro | 180 ms col dito in fondo, lineare | `PredictiveBack.kt` |
 | Indietro verso la miniatura | 300 ms, quartica in uscita | `SWIPE_MS` |
 | Indietro su un menu | fino al 90%; 100 ms se si annulla | `BACK_SCALE` |
-| velo dietro i pannelli | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
+| velo dietro i pannelli | 320 ms, la curva d'entrata; esce col pannello | `Veil.kt`, `LabMotion.IN_MS` |
 | entrata di un menu | 120 ms da scala 0,96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
-| curva Fluido, i movimenti senza dito | `cubic-bezier(0.25, 1, 1, 1)`; all'indietro per le uscite | `GENTLE`, `ACCELERA` |
-| entrata della scheda in fondo | 332 ms, la curva Fluido; opaca in 110 ms | `SALITA_MS` |
-| uscita della scheda in fondo | 332 ms, la curva Fluido letta all'indietro; velo in 280 ms | `ACCELERA`, `VEIL_FADE_MS` |
+| curva Fluido, i movimenti senza dito che non sono un'entrata o un'uscita | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
+| curva d'entrata | `cubic-bezier(0, 0.4, 0.2, 1)` | `LabMotion.IN` |
+| curva d'uscita | `cubic-bezier(0.25, 0.08, 0.9, 0.5)` | `LabMotion.OUT` |
+| entrata della scheda in fondo | 320 ms, la curva d'entrata, con la scia; opaca in 96 ms, rampa lineare | `LabMotion.IN_MS`, `SHEET_FADE_IN_MS` |
+| uscita della scheda in fondo | 300 ms, la curva d'uscita, con la scia; dissolvenza fra il 65 e il 90% del percorso, da 252 a 292 ms | `LabMotion.OUT_MS`, `FADE_OUT_FROM`, `FADE_OUT_TO` |
+| entrata della finestra al centro | 320 ms dal 92%, la curva d'entrata; opaca in 64 ms, rampa lineare; senza scia | `lab_window_in.xml`, `WINDOW_FADE_IN_MS` |
+| uscita della finestra al centro | 300 ms fino al 92%, la curva d'uscita; dissolvenza da 210 a 300 ms, rampa lineare; senza scia | `lab_window_out.xml`, `WINDOW_FADE_OUT_FROM_MS` |
+| scia di una scheda che si sposta | sfocatura verticale fino a 20 dp, in proporzione alla strada che la curva fa in un fotogramma; oltre il bordo sfuma nel trasparente | `PEAK_BLUR_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
 | menu Start, dal suo angolo | 110 ms, la curva della pillola | `BAR_IN_MS` |
@@ -254,10 +259,16 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
   solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello
   che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.
 - **La durata segue la distanza.** Un tempo fisso per i passi corti; per una scheda che percorre la
-  sua altezza un tempo più lungo con la curva Fluido, che parte veloce e arriva ferma; per un salto lungo una durata
-  che cresce con la corsa, con un tetto.
-- **L'uscita è più breve dell'entrata, o la sua copia speculare.** Un menu entra in 120 ms ed esce
-  in 75, con una dissolvenza sola; la scheda in fondo esce con la stessa curva letta all'indietro.
+  sua altezza un tempo più lungo con la curva d'entrata, che parte veloce e arriva ferma; per un salto
+  lungo una durata che cresce con la corsa, con un tetto.
+- **L'uscita è più breve dell'entrata.** Un menu entra in 120 ms ed esce in 75, con una dissolvenza
+  sola; la scheda e la finestra al centro entrano in 320 ed escono in 300, con una curva che accelera
+  fino a lasciare lo schermo.
+- **Le dissolvenze di entrata e uscita si misurano sul tempo**, non sul percorso: con la curva
+  d'entrata il 20% della strada arriva in 5 ms, e una dissolvenza legata al percorso finirebbe nel
+  primo fotogramma. Fa eccezione l'uscita della scheda, che sfuma quando è già quasi fuori.
+- **Quello che si sposta ha la scia, quello che resta al centro cresce e si stringe**: la scheda
+  sfoca nel verso del movimento quanto corre la curva, la finestra al centro va e viene dal 92%.
 - **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando, e
   una finestra che si apre con un velo già in scena sfoca subito al pieno.
 - **Un sostituto lascia il posto sfumando**, in 150 ms: la miniatura all'immagine piena, la copia
@@ -343,7 +354,7 @@ grigie.
   sopra e 19 sotto; la × si centra
   sul Tondo che sostituisce. Sono valori ideali, che si adattano in tre casi decisi dal titolare
   (vedi la sua scheda, con lo schema delle distanze e gli esempi).
-- **Scheda**: nelle app un pannello che sale dal basso, con la curva Fluido di AIV; sul web un oggetto
+- **Scheda**: nelle app un pannello che sale dal basso, con la curva d'entrata di AIV e la scia; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
   principale, uno per schermata, il contorno per le altre.
