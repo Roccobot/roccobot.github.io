@@ -308,7 +308,7 @@ può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 | Comunicazione con l'utente **sempre in italiano** | qui, '🗣️ Lingua di risposta' |
 | Quello che l'utente mette in `res/`, in **qualsiasi** progetto: **non si tocca mai** | `Roccobot.md`, 'Bonifica e ottimizzazione degli asset'; `Rules.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' per `favicon.png` |
 | Quantizzazione a palette **vietata** (banding) | `Rules.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' |
-| Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, 'Grafica' |
+| Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, '🧹 Bonifica e ottimizzazione degli asset' e 'Grafica' |
 | Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
 | Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, '🧪 Test e verifiche (siti e app web)' |
