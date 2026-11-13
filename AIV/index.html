@@ -268,7 +268,18 @@
   .tecnica .minuta{opacity:0.72}
   .tecnica .sep{display:none}
   .tecnica .pezzo{display:block}
-  .installa{font-size:16.6px; line-height:1.6; color:var(--text-muted); opacity:0.7; max-width:44ch; margin-top:32px; text-wrap:pretty}
+  /* Larga quanto le due colonne della testata, testo e immagine (sua richiesta del 2026-11-13,
+     sull'anteprima dell'impronta); fino ad allora 44 caratteri. */
+  .installa{font-size:16.6px; line-height:1.6; color:var(--text-muted); opacity:0.7; margin-top:32px; text-wrap:pretty}
+  .installa p{margin:0}
+  /* L'impronta va a capo solo dopo i due punti (`<wbr>` scritti da `disegna()`), mai a metà di
+     una coppia di cifre. */
+  .impronta{margin-top:10px !important; font-size:12.5px; line-height:1.55}
+  /* Etichetta e impronta sulla stessa riga (sua richiesta del 2026-11-13); dove la riga non
+     basta l'impronta passa sotto, e le sue righe si bilanciano, perché non resti sola l'ultima
+     coppia di cifre. */
+  .impronta{display:flex; flex-wrap:wrap; column-gap:0.5em}
+  .impronta code{text-wrap:balance; font-family:ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size:1em; letter-spacing:0.02em}
 
   /* ── Le immagini dell'app, che sono VERE dal 2026-09-02 ──
      Prima qui c'era un mockup disegnato in CSS: una cornice di telefono con
@@ -411,7 +422,7 @@
     .scarica{font-size:18px; padding:16px 30px; border-radius:14px; gap:10px}
     .scarica svg{width:20px; height:20px}
     .tecnica{text-align:center; line-height:1.8}
-    .installa{margin-top:20px; max-width:none; font-size:13px}
+    .installa{margin-top:20px; font-size:13px}
     .sezione{padding-top:40px}
     .fatti{grid-template-columns:1fr; padding-top:20px}
   }
@@ -528,8 +539,14 @@
       </div>
     </div>
 
-    <!-- La nota sull'APK, solo dopo l'easter egg: AIV Play si installa dallo Store. -->
-    <div class="installa" id="installa" hidden></div>
+    <!-- La nota sull'APK, solo dopo l'easter egg: AIV Play si installa dallo Store. Sotto,
+         l'impronta SHA-256 del certificato con cui è firmato l'APK di AIV GitHub (sua richiesta del
+         2026-11-13: *solo se si può fare apparire senza scombinare il layout*): compare e sparisce
+         con la nota, e chi scarica la confronta con quella che legge nell'APK (`IMPRONTA`). -->
+    <div class="installa" id="installa" hidden>
+      <p id="installa-testo"></p>
+      <p class="impronta"><span id="impronta-etichetta"></span><code id="impronta"></code></p>
+    </div>
   </div>
 
   <!-- ══ TRE SEZIONI E NON PIÙ SEI SCHEDE IN FILA, dalla 6.50 (`Rinnovo`, scelte Racconto-01,
@@ -699,6 +716,11 @@
 
   // La scheda di AIV Play, dove porta il tasto dal 2026-11-10 (`Uovo`, scelta Tasto-01).
   var PLAY = 'https://play.google.com/store/apps/details?id=io.github.roccobot.aiv.play';
+  // L'impronta SHA-256 del certificato con cui release.yml firma l'APK di AIV GitHub, letta con
+  // `apksigner verify --print-certs` sull'APK della 1.0.0 e uguale a quella registrata nella Play
+  // Console (Verifica dello sviluppatore Android). ⚠️ Una chiave di firma nuova la cambia: chi
+  // cambia la chiave cambia anche questa riga.
+  var IMPRONTA = '4E:86:9D:6E:39:DE:5F:77:21:18:B2:61:54:1F:7F:A9:7E:56:73:FE:A1:7C:4F:6E:51:CC:3C:9F:05:50:DA:AF';
 
   /*
    * L'easter egg di `Uovo` (scelta Uovo-01 di Rocco, 2026-11-10): AIV GitHub non si
@@ -791,6 +813,7 @@
       github: 'Scarica da GitHub',
       android: 'Android 9 o successivo',
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
+      impronta: 'SHA-256 del certificato:',
       /* ⚠️ NIENTE CONTI qui: diceva 'il pannello con le dieci azioni', e un numero in un
          testo alternativo invecchia al primo mockup nuovo, che disegna l'utente e non io.
          Vedi `Roccobot.md` § 'I conti si contano, non si scrivono'. */
@@ -837,6 +860,7 @@
       github: 'Download from GitHub',
       android: 'Android 9 or later',
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
+      impronta: 'Certificate SHA-256:',
       schermataAlt: 'Two AIV screens: the folder list next to the thumbnails of one folder, and a folder grid with a selection under way, the selection weight in the header and the actions panel at the bottom.',
       selezioneAlt: 'A folder grid with a selection under way: the selection weight in the header, the actions panel at the bottom.',
       fatti: [
@@ -977,7 +1001,14 @@
     document.documentElement.lang = T.lang;
 
     el('claim').textContent = lega(T.claim);
-    el('installa').textContent = T.installa;
+    el('installa-testo').textContent = T.installa;
+    el('impronta-etichetta').textContent = T.impronta;
+    var impronta = el('impronta');
+    svuota(impronta);
+    IMPRONTA.split(':').forEach(function (coppia, i, tutte) {
+      impronta.appendChild(document.createTextNode(coppia + (i < tutte.length - 1 ? ':' : '')));
+      if (i < tutte.length - 1) impronta.appendChild(document.createElement('wbr'));
+    });
     el('schermata').alt = T.schermataAlt;
     el('schermata-selezione').alt = T.selezioneAlt;
 
