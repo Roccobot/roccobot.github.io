@@ -31,7 +31,6 @@
     --line: light-dark(#C9D4D0, #4E5B57);         /* servizio-linea */
     --ink: light-dark(#1A1C1B, #F3F6F5);          /* servizio-testo */
     --ink-muted: light-dark(#4D5956, #C2CDC9);    /* servizio-testo-secondario */
-    --plat: light-dark(#5F6B68, #ACB7B3);         /* servizio-testo-tenue: fainter than the subtitle */
     /* The buttons: the accent reversed from accento, petrolio with white text in the light theme
        (white on turquoise would be 2.52), turchese with dark text in the dark one */
     --accent: light-dark(#00727B, #43B59E);       /* servizio-accento */
@@ -41,7 +40,7 @@
     --link: light-dark(#0B6B5B, #4FD9BE);         /* testo-accento */
     /* The shares used up of the Actions tile */
     --warn: light-dark(#9A5800, #F0B060);         /* soglia-arancio, from 50% */
-    --alert: light-dark(#9B4A45, #DEACA6);        /* soglia-rosso, from 70% */
+    --alert: light-dark(#9B4A45, #FA98A8);        /* soglia-rosso, from 70% */
     --alarm: light-dark(#B3261E, #FF9A90);        /* soglia-rosso-intenso, from 90% */
     --font: Archivo, "Helvetica Neue", Arial, sans-serif;
   }
@@ -65,8 +64,6 @@
            display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
   h3 { font-size: 1.2rem; font-weight: 600; margin: 0; }
-  /* the full name after the app's short name: same size, fainter and lighter, so the short name leads */
-  .plat { color: var(--plat); font-weight: 500; white-space: nowrap; }  /* wraps whole, never one word alone */
   /* The platform beside Apri, with the marks and the measures of the DFs' titles: Apple's two
      marks at 0.62em, centred on what reads as each shape (the apple's body spans 5.791 to 24 of
      its 24-unit grid, the laptop 3 to 20), and Android's head alone, 1.5227 times bigger because
@@ -163,7 +160,7 @@
     <ul>
       <li>
         <div class="txt">
-          <h3>AIV <span class="plat">Astonishing Image Viewer</span></h3>
+          <h3>AIV</h3>
           <p>Gestore di immagini avanzato per Android</p>
           <a class="site" href="https://roccobot.github.io/AIV/" target="_blank" rel="noopener" aria-label="Sito di AIV">Sito</a>
         </div>

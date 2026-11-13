@@ -137,9 +137,8 @@ numero per scelta dell'utente.
   che apre il DF e, accanto al pulsante, i segni della piattaforma come nel titolo dei DF (la mela e
   il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito (in quello
   di Aomidori anche il registro di Aomidori Flex); su un telefono i segni vanno sopra il pulsante.
-  Sul telefono il titolo di AIV va a capo dopo `AIV`, ed è voluto: il nome per esteso, `Astonishing
-  Image Viewer`, va a capo intero e mai una parola per volta (la regola delle parole sole vale per
-  i paragrafi, e questo è un titolo). **'Link utili'**, tessere con un titolo e una
+  Il titolo del riquadro di AIV è la sola sigla `AIV`, senza il nome per esteso (sua scelta del
+  2026-11-13: sui telefoni stretti il nome faceva uscire il riquadro dallo schermo). **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
   strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP); la tessera `GitHub`
   ha una seconda riga, `Repo principali`, verso `Repos.md` di `tools`. La tessera `GitHub
