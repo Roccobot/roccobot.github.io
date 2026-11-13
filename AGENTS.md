@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.01
+> **Versione**: 3.02
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -27,7 +27,7 @@
   le sezioni di `rules/Roccobot.md` quando il lavoro le tocca.
 - Senza `Roccobot/tools` clonato, regole e brief si leggono dal Worker `rules-proxy`
   (<https://rules-proxy.roccobot-b90.workers.dev/> più `rules/Roccobot.md` o `.memo/LATEST.md`),
-  con uno User-Agent da browser.
+  con uno User-Agent da browser; il brief vuole la parola d'ordine (§ '🔌 Worker `rules-proxy`').
 - Un file di regole si legge **per intero e in grezzo**, mai da un riassunto, e contiene la riga
   `> **Versione**:` (§ '🔌 Worker `rules-proxy`').
 - I canoni si leggono quando il tema li tocca: `rules/JRRT.md` per Tolkien, `rules/Earthsea.md`
