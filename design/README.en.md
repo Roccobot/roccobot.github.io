@@ -227,12 +227,17 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | Back gesture | 180 ms with the finger at the end, linear | `PredictiveBack.kt` |
 | Back into the thumbnail | 300 ms, quartic ease-out | `SWIPE_MS` |
 | Back on a menu | down to 90%; 100 ms if canceled | `BACK_SCALE` |
-| scrim behind panels | 800 ms, `CubicBezier(0.2, 0.6, 0.35, 1)` | `VEIL_IN_MS` |
+| scrim behind panels | 320 ms, the entrance curve; leaves with the panel | `Veil.kt`, `LabMotion.IN_MS` |
 | menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
-| Fluido curve, motion with no finger | `cubic-bezier(0.25, 1, 1, 1)`; backward for exits | `GENTLE`, `ACCELERA` |
-| bottom sheet entrance | 332 ms, the Fluido curve; opaque in 110 ms | `SALITA_MS` |
-| bottom sheet exit | 332 ms, the Fluido curve read backward; scrim in 280 ms | `ACCELERA`, `VEIL_FADE_MS` |
+| Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
+| entrance curve | `cubic-bezier(0, 0.4, 0.2, 1)` | `LabMotion.IN` |
+| exit curve | `cubic-bezier(0.25, 0.08, 0.9, 0.5)` | `LabMotion.OUT` |
+| bottom sheet entrance | 320 ms, the entrance curve, with the trail; opaque in 96 ms, linear ramp | `LabMotion.IN_MS`, `SHEET_FADE_IN_MS` |
+| bottom sheet exit | 300 ms, the exit curve, with the trail; fade between 65 and 90% of the way, from 252 to 292 ms | `LabMotion.OUT_MS`, `FADE_OUT_FROM`, `FADE_OUT_TO` |
+| centred window entrance | 320 ms from 92%, the entrance curve; opaque in 64 ms, linear ramp; no trail | `lab_window_in.xml`, `WINDOW_FADE_IN_MS` |
+| centred window exit | 300 ms down to 92%, the exit curve; fade from 210 to 300 ms, linear ramp; no trail | `lab_window_out.xml`, `WINDOW_FADE_OUT_FROM_MS` |
+| trail of a travelling sheet | vertical blur up to 20 dp, in proportion to the way the curve covers in one frame; past the edge it fades into transparency | `PEAK_BLUR_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
 | Start menu, from its corner | 110 ms, the pill's curve | `BAR_IN_MS` |
@@ -255,10 +260,16 @@ code). The values are also in the tokens, family `movimento`, each with its cons
   be seen waits for the screen to arrive, and what arrives with the screen (a background, a band,
   the content) stays still.
 - **Duration follows distance.** A fixed time for short steps; for a sheet that travels its own
-  height a longer time on the Fluido curve, which starts fast and arrives at rest; for a long jump a duration that grows with
-  the distance, with a cap.
-- **The exit is shorter than the entrance, or its mirror image.** A menu enters in 120 ms and exits
-  in 75, with a single fade; the bottom sheet exits on the same curve read backward.
+  height a longer time on the entrance curve, which starts fast and arrives at rest; for a long jump
+  a duration that grows with the distance, with a cap.
+- **The exit is shorter than the entrance.** A menu enters in 120 ms and exits in 75, with a single
+  fade; the sheet and the centred window enter in 320 and exit in 300, on a curve that speeds up
+  until it leaves the screen.
+- **Entrance and exit fades are measured in time**, not along the way: on the entrance curve 20% of
+  the way is covered in 5 ms, and a fade tied to the way would end in the first frame. The leaving
+  sheet is the exception, fading when it is almost out.
+- **What travels has the trail, what stays centred grows and shrinks**: the sheet blurs along its
+  motion as fast as the curve runs, the centred window comes and goes from 92%.
 - **No flashes between two surfaces.** The scrim does not go down while another surface is coming
   in, and a window that opens over a scrim already on screen blurs to full at once.
 - **A stand-in gives way with a fade**, in 150 ms: the thumbnail to the full image, the copy that
@@ -346,7 +357,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   on the ink 22.7 above and 19 below; the ×
   is centered on the Tondo it replaces. These are ideal values, adapted in three cases the owner
   decides (see its sheet, with the spacing diagram and the examples).
-- **Card**: in the apps a panel that rises from the bottom, with AIV's Fluido curve; on the web one
+- **Card**: in the apps a panel that rises from the bottom, with AIV's entrance curve and the trail; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
   action, one per screen, outlined for the others.

@@ -332,7 +332,9 @@ def speed_chart(curves, ms, aria_it, aria_en):
         for k in range(201):
             t = k / 200
             dx, dy = _dbez(x1, x2, t), _dbez(y1, y2, t)
-            pts.append(f'{px(_bez(x1, x2, t)):.2f},{py(dy / dx if dx > 1e-9 else 0.0):.2f}')
+            # A vertical tangent (x1 = 0, the entrance curve at its start) is the top speed, not zero.
+            speed = dy / dx if dx > 1e-9 else (FLUIDO_TOP_SPEED if dy > 1e-9 else 0.0)
+            pts.append(f'{px(_bez(x1, x2, t)):.2f},{py(speed):.2f}')
         lines.append(f'<polyline class="{cls}" data-bezier="{x1:g},{y1:g},{x2:g},{y2:g}" points="{" ".join(pts)}"/>')
         dots.append(f'<circle class="fl-dot {cls}-dot" r="4.5" cx="0" cy="{B}" data-i="{i}"/>')
     grid = ''.join(f'<line class="fl-grid" x1="{L}" x2="{R}" y1="{py(s):.2f}" y2="{py(s):.2f}"/>' for s in (2, 3, 4))
@@ -353,10 +355,26 @@ def _motion(name):
 
 
 def fluido_chart():
-    ms = _motion('scheda-entrata')['value'].split(' ')[0]
+    ms = _motion('tastiera')['value'].split(' ')[0]
     return speed_chart([(tuple(_motion('fluido')['bezier']), 'fl-speed')], ms,
                        'La velocità della curva Fluido nel tempo: parte a 4 volte la media e scende fino a zero',
                        'The speed of the Fluido curve over time: it starts at 4 times the average and falls to zero')
+
+
+def entrance_chart():
+    """The entrance curve over the sheet's entrance time: it starts at its top speed and brakes to rest."""
+    ms = _motion('scheda-entrata')['value'].split(' ')[0]
+    return speed_chart([(tuple(_motion('curva-entrata')['bezier']), 'fl-speed')], ms,
+                       "La velocità della curva d'entrata nel tempo: parte alla velocità più alta e scende fino a zero",
+                       'The speed of the entrance curve over time: it starts at its top speed and falls to zero')
+
+
+def exit_chart():
+    """The exit curve over the sheet's exit time: it starts almost at rest and leaves at 5 times the average."""
+    ms = _motion('scheda-uscita')['value'].split(' ')[0]
+    return speed_chart([(tuple(_motion('curva-uscita')['bezier']), 'fl-speed')], ms,
+                       "La velocità della curva d'uscita nel tempo: parte quasi ferma e cresce oltre 4 volte la media",
+                       'The speed of the exit curve over time: it starts almost at rest and grows past 4 times the average')
 
 
 def release_chart():
@@ -525,6 +543,8 @@ def main():
         'effects': effects(),
         'motion': motion(),
         'fluido': fluido_chart(),
+        'entrata': entrance_chart(),
+        'uscita': exit_chart(),
         'rilascio': release_chart(),
         'version': version(),
         'version-full': version_full(),

@@ -674,13 +674,30 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </table>
       </div>
       <div class="pal-group">
+        <h3 id="h-mov-curve"><span lang="it">Le curve d'entrata e d'uscita</span><span lang="en">The entrance and exit curves</span></h3>
+        <p lang="it">Quello che entra (la scheda dal basso, la finestra al centro, il velo) usa <code>cubic-bezier(0, 0.4, 0.2, 1)</code> in 320&nbsp;ms: parte alla velocità più alta, frena sempre e arriva ferma, e a metà del tempo ha già fatto il 90% della strada. Quello che esce usa <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> in 300&nbsp;ms: parte quasi ferma, accelera sempre e lascia lo schermo a 5 volte la velocità media.</p>
+        <p lang="en">What comes in (the bottom sheet, the centred window, the scrim) uses <code>cubic-bezier(0, 0.4, 0.2, 1)</code> over 320&nbsp;ms: it starts at its top speed, keeps braking and arrives at rest, and halfway through the time it has already covered 90% of the way. What leaves uses <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> over 300&nbsp;ms: it starts almost at rest, keeps speeding up and leaves the screen at 5 times the average speed.</p>
+        <p lang="it">Le dissolvenze si misurano sul tempo, con una rampa lineare: la scheda diventa opaca nei primi 96&nbsp;ms, la finestra nei primi 64, e la finestra sfuma negli ultimi 90&nbsp;ms. La scheda in uscita sfuma fra il 65 e il 90% del percorso, quando è già quasi fuori. La scheda che si sposta ha la scia, una sfocatura verticale fino a 20&nbsp;dp che segue la velocità della curva; la finestra al centro non si sposta, cresce dal 92% ed esce stringendosi fino al 92%.</p>
+        <p lang="en">Fades are measured in time, on a linear ramp: the sheet turns opaque in the first 96&nbsp;ms, the window in the first 64, and the window fades out in the last 90&nbsp;ms. The leaving sheet fades between 65 and 90% of the way, when it is almost out. A travelling sheet has the trail, a vertical blur of up to 20&nbsp;dp that follows the curve's speed; the centred window does not travel, it grows from 92% and leaves shrinking down to 92%.</p>
+        <figure class="fl">
+          <!--@entrata-->
+          <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
+          <figcaption><span lang="it">La curva d'entrata: velocità nel tempo, in multipli della media (la linea tratteggiata); nei primi istanti è oltre il grafico.<br>La scheda di 320&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The entrance curve: speed over time, in multiples of the average (the dashed line); in the first instants it is past the chart.<br>The 320&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+        </figure>
+        <figure class="fl">
+          <!--@uscita-->
+          <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
+          <figcaption><span lang="it">La curva d'uscita, che finisce a 5 volte la media, oltre il grafico.<br>La scheda di 300&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The exit curve, which ends at 5 times the average, past the chart.<br>The 300&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+        </figure>
+      </div>
+      <div class="pal-group">
         <h3 id="h-mov-fluido"><span lang="it">La curva Fluido</span><span lang="en">The Fluido curve</span></h3>
-        <p lang="it">La curva dei movimenti senza dito: la scheda che sale dal basso, la finestra che scorre con la tastiera, la strisciata quando il dito si ferma prima di staccarsi. Parte a 4 volte la velocità media, rallenta sempre e arriva ferma, così non c'è uno scatto finale. Le uscite la leggono all'indietro: partono da ferme e accelerano.</p>
-        <p lang="en">The curve of motion with no finger: the sheet rising from the bottom, the window gliding with the keyboard, the swipe when the finger stops before lifting. It starts at 4 times the average speed, keeps slowing down and arrives at rest, so there is no final jolt. Exits read it backward: they start at rest and speed up.</p>
+        <p lang="it">La curva dei movimenti senza dito che non sono un'entrata o un'uscita: la finestra che scorre con la tastiera, la strisciata quando il dito si ferma prima di staccarsi. Parte a 4 volte la velocità media, rallenta sempre e arriva ferma, così non c'è uno scatto finale.</p>
+        <p lang="en">The curve of motion with no finger that is neither an entrance nor an exit: the window gliding with the keyboard, the swipe when the finger stops before lifting. It starts at 4 times the average speed, keeps slowing down and arrives at rest, so there is no final jolt.</p>
         <figure class="fl">
           <!--@fluido-->
           <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
-          <figcaption><span lang="it">Velocità nel tempo, in multipli della media (la linea tratteggiata).<br>La scheda di 332&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">Speed over time, in multiples of the average (the dashed line).<br>The 332&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+          <figcaption><span lang="it">Velocità nel tempo, in multipli della media (la linea tratteggiata).<br>La finestra di 250&nbsp;ms con la tastiera, rallentata 5&nbsp;volte.</span><span lang="en">Speed over time, in multiples of the average (the dashed line).<br>The 250&nbsp;ms window with the keyboard, slowed down 5&nbsp;times.</span></figcaption>
         </figure>
         <p lang="it">La strisciata fra le foto usa la curva Fluido solo se il dito si ferma prima di staccarsi. Se il dito si muove, la curva parte alla sua velocità, così la foto non riparte da ferma: <code>cubic-bezier(0.3, 0.3 x v, 0.3, 1)</code>, dove v è la velocità del dito divisa per quella media dell'animazione, fra 0 e 3. È una famiglia di curve, una per ogni v.</p>
         <p lang="en">The swipe between photos uses the Fluido curve only if the finger stops before lifting. If the finger is moving, the curve starts at its speed, so the photo doesn't restart from rest: <code>cubic-bezier(0.3, 0.3 x v, 0.3, 1)</code>, where v is the finger's speed divided by the animation's average speed, between 0 and 3. It is a family of curves, one for each v.</p>
@@ -693,8 +710,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         <h3 id="h-mov-regole"><span lang="it">Le regole del movimento</span><span lang="en">The rules of motion</span></h3>
       <ul class="steps" lang="it">
         <li><strong>Le opacità si moltiplicano.</strong> Un'animazione giocata sotto la dissolvenza di schermata si vede solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.</li>
-        <li><strong>La durata segue la distanza.</strong> Un tempo fisso per i passi corti; per una scheda che percorre la sua altezza un tempo più lungo, con la curva Fluido; per un salto lungo una durata che cresce con la corsa, con un tetto.</li>
-        <li><strong>L'uscita è più breve dell'entrata, o la sua copia speculare.</strong> Un menu entra in 120&nbsp;ms ed esce in 75; la scheda in fondo esce con la stessa curva letta all'indietro.</li>
+        <li><strong>La durata segue la distanza.</strong> Un tempo fisso per i passi corti; per una scheda che percorre la sua altezza un tempo più lungo, con la curva d'entrata; per un salto lungo una durata che cresce con la corsa, con un tetto.</li>
+        <li><strong>L'uscita è più breve dell'entrata.</strong> Un menu entra in 120&nbsp;ms ed esce in 75; la scheda e la finestra al centro entrano in 320 ed escono in 300, con una curva che accelera fino a lasciare lo schermo.</li>
         <li><strong>Fra due superfici niente lampi.</strong> Il velo non scende finché un'altra superficie sta entrando, e una finestra che si apre con un velo già in scena sfoca subito al pieno.</li>
         <li><strong>Un sostituto lascia il posto sfumando</strong>, in 150&nbsp;ms: la miniatura all'immagine piena, la copertura di un video al primo fotogramma.</li>
         <li><strong>Due glifi che si incrociano usano un esponente sotto uno</strong> (0,8): con due opacità lineari, a metà corsa i glifi sono al 9% e il tasto resta vuoto.</li>
@@ -704,8 +721,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       </ul>
       <ul class="steps" lang="en">
         <li><strong>Opacities multiply.</strong> An animation played under the screen fade shows only its tail: what must be seen waits for the screen to arrive, and what arrives with the screen (a background, a band, the content) stays still.</li>
-        <li><strong>Duration follows distance.</strong> A fixed time for short steps; for a sheet that travels its own height a longer time, on the Fluido curve; for a long jump a duration that grows with the distance, with a cap.</li>
-        <li><strong>The exit is shorter than the entrance, or its mirror image.</strong> A menu enters in 120&nbsp;ms and exits in 75; the bottom sheet exits on the same curve read backward.</li>
+        <li><strong>Duration follows distance.</strong> A fixed time for short steps; for a sheet that travels its own height a longer time, on the entrance curve; for a long jump a duration that grows with the distance, with a cap.</li>
+        <li><strong>The exit is shorter than the entrance.</strong> A menu enters in 120&nbsp;ms and exits in 75; the sheet and the centred window enter in 320 and exit in 300, on a curve that speeds up until it leaves the screen.</li>
         <li><strong>No flashes between two surfaces.</strong> The scrim does not go down while another surface is coming in, and a window that opens over a scrim already on screen blurs to full at once.</li>
         <li><strong>A stand-in gives way with a fade</strong>, in 150&nbsp;ms: the thumbnail to the full image, a video's cover to its first frame.</li>
         <li><strong>Two crossing glyphs use an exponent below one</strong> (0.8): with two linear opacities, halfway through both glyphs are at 9% and the button looks empty.</li>
@@ -774,8 +791,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Scheda dal basso</span><span lang="en">Bottom sheet</span></h3>
-          <p lang="it">Nelle app sale dal basso con la curva Fluido, sopra il velo: angoli in alto di 28, un rientro di 24 e il tasto di chiusura accanto al titolo.</p>
-          <p lang="en">In the apps it rises from the bottom on the Fluido curve, above the scrim: 28 top corners, a 24 inset and the close button next to the title.</p>
+          <p lang="it">Nelle app sale dal basso con la curva d'entrata e la scia, sopra il velo: angoli in alto di 28, un rientro di 24 e il tasto di chiusura accanto al titolo.</p>
+          <p lang="en">In the apps it rises from the bottom on the entrance curve with the trail, above the scrim: 28 top corners, a 24 inset and the close button next to the title.</p>
           <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-sheet"><div class="mock-sheet-head"><span class="mock-bar"></span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></div><span class="mock-bar"></span><span class="mock-bar" style="width:70%"></span></div></div></div>
         </div>
         <div class="comp">
@@ -1073,7 +1090,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         head.setAttribute('transform', 'translate(' + (L + u * (R - L)) + ' 0)');
         curves.forEach(function (c, i) {
           var t = solve(c, u), dx = dbez(c[0], c[2], t), dy = dbez(c[1], c[3], t);
-          var speed = dx > 1e-6 ? Math.min(dy / dx, TOP) : 0;
+          // A vertical tangent (the entrance curve at its start) is the top speed, not zero.
+          var speed = dx > 1e-6 ? Math.min(dy / dx, TOP) : (dy > 1e-6 ? TOP : 0);
           dots[i].setAttribute('cx', String(L + u * (R - L)));
           dots[i].setAttribute('cy', String(B - speed / TOP * (B - T)));
           if (i === 0 && block) block.style.transform = 'translateX(' + bez(c[1], c[3], t) * (track.clientWidth - block.offsetWidth) + 'px)';
