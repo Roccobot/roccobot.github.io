@@ -142,7 +142,7 @@ is the color of the icon.
 - **Aomidori palette**: `turchese-luce`, `menta-chiaro`, `ardesia`.
 - **The theme chosen inside an app isn't the system one**: every color goes through the app's
   palette.
-- **Contrast**: 4.5:1 for text, 3:1 for graphics (icons, control borders, focus rings). It is
+- **Contrast**: 4.5:1 for text, 3:1 for graphics (icons, control borders, focus indicator). It is
   measured on the component's real background and declared; the owner approves any exception, with
   its number stated. The two declared exceptions are turquoise in the light theme (2.43, and 2.06 on
   `servizio-fondo`) and the
@@ -399,7 +399,8 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - Sliders say their value; every icon has a spoken description.
 - The Tondo is announced as `Comandi` (Commands), and every Start menu item by its name.
 - A gesture the screen reader intercepts always has a visible alternative.
-- On the web keyboard focus is visible, and motion respects `prefers-reduced-motion`.
+- On the web keyboard focus is recognized by a discreet change, as on mouse hover (color or
+  background), with no ring and no skip-to-content link; motion respects `prefers-reduced-motion`.
 
 ## Voice and copy
 

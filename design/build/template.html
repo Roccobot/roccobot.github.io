@@ -24,9 +24,10 @@ html { scroll-padding-top: calc(var(--barra) + env(safe-area-inset-top, 0px) + 1
 body { margin: 0; background: var(--fondo); color: var(--testo); font: 400 1.0625rem/1.55 var(--tipo); -webkit-font-smoothing: antialiased; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--fondo); }
 a { color: var(--testo-accento); text-underline-offset: .2em; text-decoration-thickness: 1px; }
-a:hover { text-decoration-thickness: 2px; }
+a:hover, a:focus-visible { text-decoration-thickness: 2px; }
 html { -webkit-tap-highlight-color: transparent; }
-:focus-visible { outline: 2px solid var(--testo-accento); outline-offset: 2px; border-radius: 4px; }
+/* keyboard focus has no ring: each control reached with Tab changes like on hover (see :hover rules) */
+:focus-visible { outline: none; }
 code { font-family: var(--mono); font-size: .86em; white-space: nowrap; }
 .stack code, .tok-name { white-space: normal; }
 p, li, dd, figcaption, td { text-wrap: pretty; }
@@ -45,7 +46,7 @@ h2, h3 { margin: 0; }
 /* the language and theme controls, side by side at the top right */
 .ctl { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--contorno); border-radius: var(--raggio-pieno); background: var(--superficie); color: var(--testo); font: 500 .875rem/1 var(--tipo); white-space: nowrap; cursor: pointer; }
 .lang { margin-left: auto; }
-.ctl:hover { border-color: var(--testo-accento); }
+.ctl:hover, .ctl:focus-visible { border-color: var(--testo-accento); }
 .ctl kbd { font: 500 .75rem/1 var(--mono); padding: .2rem .4rem; border-radius: 4px; background: var(--superficie-alta); color: var(--testo-secondario); }
 .ctl svg { width: 1.1rem; height: 1.1rem; }
 /* every label a button can show sits in one grid cell, and only the current one is visible: the
@@ -61,7 +62,7 @@ h2, h3 { margin: 0; }
 .toc p { margin: 0 0 .75rem; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--testo-secondario); }
 .toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .15rem; }
 .toc a { display: block; padding: .3rem 0 .3rem .75rem; border-left: 2px solid var(--linea); color: var(--testo-secondario); text-decoration: none; font-size: .9375rem; }
-.toc a:hover { color: var(--testo); border-left-color: var(--contorno); }
+.toc a:hover, .toc a:focus-visible { color: var(--testo); border-left-color: var(--contorno); }
 main { min-width: 0; }
 section { padding-top: 4.5rem; }
 .eyebrow { margin: 0 0 .6rem; font-size: .75rem; line-height: 1rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--testo-accento); }
@@ -630,8 +631,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     <section id="contrasti" aria-labelledby="h-con">
       <p class="eyebrow"><span lang="it">Accessibilità</span><span lang="en">Accessibility</span></p>
       <h2 id="h-con"><span lang="it">Contrasti misurati</span><span lang="en">Measured contrast</span></h2>
-      <p class="lead" lang="it">Il testo vuole 4,5:1, la grafica (icone, bordi dei controlli, anelli di fuoco) 3:1. Un'eccezione la approva il titolare, col numero dichiarato.</p>
-      <p class="lead" lang="en">Text needs 4.5:1, graphics (icons, control borders, focus rings) 3:1. The owner approves any exception, with its number stated.</p>
+      <p class="lead" lang="it">Il testo vuole 4,5:1, la grafica (icone, bordi dei controlli, segno del fuoco) 3:1. Un'eccezione la approva il titolare, col numero dichiarato.</p>
+      <p class="lead" lang="en">Text needs 4.5:1, graphics (icons, control borders, focus indicator) 3:1. The owner approves any exception, with its number stated.</p>
       <div class="tbl">
         <table>
           <thead><tr><th scope="col"><span lang="it">Coppia</span><span lang="en">Pair</span></th><th scope="col"><span lang="it">Uso</span><span lang="en">Use</span></th><th scope="col"><span lang="it">Chiaro</span><span lang="en">Light</span></th><th scope="col"><span lang="it">Scuro</span><span lang="en">Dark</span></th></tr></thead>
