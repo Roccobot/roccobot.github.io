@@ -211,7 +211,7 @@ numero per scelta dell'utente.
   e `favicon.png`, in `#43B59E`: il grafico della velocità di `cubic-bezier(0.67, 0, 0.33, 1)` come
   in After Effects, con le tacche dei fotogrammi, dentro un tondo dello stesso spessore, che ne taglia
   le code ai lati) e la versione SlimVer nella costante `VERSION`,
-  scritta accanto al titolo; entrata e uscita si mostrano una per volta, con due linguette, e le note
+  scritta accanto al titolo; entrata e uscita si mostrano una per volta, con due linguette nell'intestazione, e le note
   tecniche sono nel tooltip della ℹ️ dell'anteprima. `Copia tutto` mette negli appunti un JSON con
   ogni valore impostabile della pagina, per tutti e due i componenti e le due fasi, coi nomi in stile
   token del design system. I valori di serie sono quelli del design system
