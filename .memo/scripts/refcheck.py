@@ -636,6 +636,17 @@ FORMULE_AVVISA = [
     # una cosa è: `dove sta andando il lavoro` è italiano corretto e vive in `Roccobot.md`.
     (re.compile(r"\bdove st(?:a|anno)\s+(?![a-zà-ù]+(?:ando|endo)\b|per\b)", re.I),
      "'dove sta' per 'dov'è': dov'è il cursore, in che punto è"),
+    # ⚠️⚠️ L'ACCENTO CHE MANCA DEL TUTTO, e non quello scritto con l'apostrofo, che la lista
+    # chiusa qui sopra già blocca (Vaglio, Regole-32, 2026-11-13: in `Roccobot.md` erano rimasti
+    # 'piu', 'densita', 'e il giudice', 'Unita', 'ne i vicini'). Avvisa e non blocca, perché un
+    # identificatore o un testo in un'altra lingua può avere la stessa forma. L'elenco tiene solo
+    # parole che senza accento non esistono in italiano: fuori `meta` (la meta, il testo meta),
+    # `unita` (participio di unire), `necessita` (il verbo), `e` e `ne`, che si leggono solo
+    # nella frase.
+    (re.compile(r"\b(?:piu|perche|poiche|affinche|benche|cioe|puo|gia|cosi|densita|qualita|"
+                r"velocita|possibilita|attivita|proprieta|realta|verita|citta)\b", re.I),
+     "parola italiana senza l'accento: più, perché, può, già, così, densità e simili (legittimo "
+     "se è un identificatore o un'altra lingua)"),
 ]
 # ⚠️ Una formula fra BACKTICK è una CITAZIONE, non un uso, ed è la stessa convenzione con cui
 # i trattini lunghi si possono nominare nella regola che li vieta: il divieto, per esistere,

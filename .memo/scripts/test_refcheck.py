@@ -540,6 +540,23 @@ class LexiconTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertEqual(refcheck.formula_defects(text), ([], []))
 
+    def test_missing_accent_is_a_warning(self):
+        # Vaglio, Regole-32: the accent left out altogether, which the closed list of the
+        # apostrophe forms does not see ('DPR molto piu alto', 'hanno densita ben maggiore').
+        for text in ('Screenshot da smartphone: DPR molto piu alto.',
+                     'Gli schermi hanno densita ben maggiore.', 'Non si puo fare.',
+                     'Lo ha gia detto.'):
+            with self.subTest(text=text):
+                blocks, warnings = refcheck.formula_defects(text)
+                self.assertEqual((len(blocks), len(warnings)), (0, 1))
+
+    def test_words_that_exist_without_accent_pass(self):
+        for text in ('La meta non è ancora chiara.', 'La squadra è unita.',
+                     'Il testo meta resta fuori.', 'Il progetto necessita di una prova.',
+                     'Si scrive `piu` solo per nominarlo.', 'Più, perché, già e così.'):
+            with self.subTest(text=text):
+                self.assertEqual(refcheck.formula_defects(text), ([], []))
+
     def test_ui_text_chosen_by_the_owner_passes_only_where_registered(self):
         # Parola (2026-10-19): a text the owner chose word for word passes in the file it is
         # registered for, and only as written. A registry of the test's own: the real one changes

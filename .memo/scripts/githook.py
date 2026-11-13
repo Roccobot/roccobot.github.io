@@ -192,6 +192,30 @@ def actions_warning(files, root=Path('.')):
     return woken
 
 
+# ── The stamp of the brief (Vaglio, Regole-34, 2026-11-13) ──
+# The second line of the brief, `> **Last turn**: ...`, is what catchup.py reads to show a new
+# session what arrived after the last turn; the rules want it redone at every writing of the
+# brief, and for five days it stayed still across more than ten commits. A warning and not a
+# block: a commit that only fixes a typo in the brief is a good commit, and the stamp comes from
+# `catchup.py --stamp`, which the hook cannot run for the agent.
+BRIEF = '.memo/LATEST.md'
+STAMP = re.compile(r'^\+> \*\*Last turn\*\*:', re.M)
+
+
+def stale_stamp(diff):
+    """True when the diff changes the brief and leaves its Last turn stamp as it was."""
+    for name, body in re.findall(r'^\+\+\+ b/([^\n]+)\n(.*?)(?=^diff --git|\Z)', diff,
+                                 flags=re.M | re.S):
+        if name == BRIEF:
+            return not STAMP.search(body)
+    return False
+
+
+STAMP_WARNING = ('githook (avviso): il brief cambia e il timbro "Last turn" della seconda riga '
+                 'no. Rifallo con `catchup.py --stamp "<agente>"` dell\'hub (Roccobot.md, la voce '
+                 'su che cosa è cambiato dall\'ultimo turno).')
+
+
 def clean_message(text):
     """The message as git records it: no comment lines, nothing below the scissors line."""
     lines = []
@@ -232,7 +256,10 @@ def main(argv):
                   'partire ' + ', '.join(woken) + '. In un repo privato sono minuti a pagamento: '
                   'il filtro dei percorsi di quel flusso deve elencare le cartelle del codice '
                   '(Roccobot.md, la voce sui flussi che partono da soli).', file=sys.stderr)
-        return report(check_diff(git('diff', '--cached', '-M')), 'commit bloccato')
+        staged = git('diff', '--cached', '-M')
+        if stale_stamp(staged):
+            print(STAMP_WARNING, file=sys.stderr)
+        return report(check_diff(staged), 'commit bloccato')
     if mode == 'commit-msg' and len(argv) == 2:
         text = Path(argv[1]).read_text(encoding='utf-8')
         if not has_agent(clean_message(text)):
@@ -263,14 +290,21 @@ def main(argv):
         problems = check_diff(diff)
         commits = git('rev-list', '--no-merges', span).split()
         anonymous = []
+        unstamped = []
         for sha in commits:
             body = git('log', '-1', '--format=%B', sha)
             for p in check_message(body):
                 problems.append(f'commit {sha[:7]}: {p}')
             if not has_agent(body):
                 anonymous.append(sha[:7])
+            # Only the run on GitHub sees the brief written through the Worker, so the stamp is
+            # checked here commit by commit, not on the whole range.
+            if stale_stamp(git('show', '-M', '--format=', sha)):
+                unstamped.append(sha[:7])
         if anonymous:
             print(f'(avviso) senza riga Agent: {" ".join(anonymous)}')
+        if unstamped:
+            print(f'(avviso) brief cambiato senza il timbro Last turn rifatto: {" ".join(unstamped)}')
         # A green run says what it looked at: an empty range would pass too, and only this
         # line tells the two apart in the log.
         added = sum(1 for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++'))
