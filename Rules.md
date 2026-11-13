@@ -764,7 +764,9 @@ sessione:
    sempre**, perché il suo puntatore non può dipendere da una riga di passaggio.
    - ⚠️ **Si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
      `.memo/` come già `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>.
-     È la via che copre le sessioni **senza** `Roccobot/tools` agganciato, o con meno
+     Dal `rev` 15 (2026-11-13) la lettura vuole la parola d'ordine, `RULES_PASSWORD`
+     dall'ambiente, nell'intestazione `X-Rules-Password` (`Roccobot.md` § '🔌 Worker
+     `rules-proxy`'). È la via che copre le sessioni **senza** `Roccobot/tools` agganciato, o con meno
      permessi: senza di essa il brief sarebbe invisibile proprio a chi ne ha più bisogno.
 4. ⚠️⚠️ **Il brief SI SCRIVE, non solo si legge, e in tre momenti obbligatori**
    (istruzione dell'utente, 2026-08-01): quando una richiesta **nasce** e non la si esegue

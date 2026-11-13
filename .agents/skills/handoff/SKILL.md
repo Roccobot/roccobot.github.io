@@ -27,7 +27,8 @@ norma e non l'eccezione.
   nomina il nucleo universale, cioè l'`AGENTS.md` di ogni repo (§ '🧾 Il brief e il non perdere
   niente').
 - ⚠️ **E si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
-  `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>. È
+  `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>, e dal
+  `rev` 15 (2026-11-13) la lettura vuole la parola d'ordine nell'intestazione `X-Rules-Password`. È
   la via per le sessioni che non hanno quel repo agganciato o hanno meno permessi (scelta
   dell'utente, 2026-07-30), e la scrittura segue il protocollo 'Aggiungi alle regole' di
   `Roccobot.md`. ⚠️ **Un GET che risponde 404 sotto un percorso ammesso significa 'file
@@ -594,7 +595,7 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 > **Che cos'è questo file, e che cosa devi farne.** È lo **stato volatile** lasciato dalla
 > sessione precedente: cosa era in corso e dove si è fermato. È **unico e trans-repo**, copre
 > tutti i repo di Roccobot e tutti gli agenti, e vive in `Roccobot/tools`, `.memo/LATEST.md`
-> (leggibile e scrivibile anche via Worker:
+> (leggibile e scrivibile anche via Worker, con la parola d'ordine:
 > <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>).
 >
 > **All'arrivo, in quest'ordine.**
