@@ -120,6 +120,12 @@
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
             mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
   .note { display: block; margin-top: .1rem; color: var(--ink-muted); font-size: .9rem; text-wrap: pretty; }
+  /* A link inside a tile's note (Design System's 'Animazioni', to RUIAS): above the main link's
+     ::before like a.sub, underlined, with a 44 px touch area that does not move the layout */
+  a.inl { position: relative; z-index: 1; color: inherit; text-decoration: underline;
+          text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a.inl::after { content: ""; position: absolute; inset: -.7rem -.35rem; }
+  a.inl:hover { color: var(--link); text-decoration-thickness: 2px; }
   /* The line of the latest run holds its place from the start, with an invisible character, so it is
      as tall as a line of text and nothing below moves when the run arrives */
   #actions-last:empty::before { content: "\200B"; }
@@ -200,7 +206,7 @@
       <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note">Progetti e repo di Roccobot</span><a class="sub" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Repo principali</a></div></li>
       <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last"></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
-      <li><a href="../design/" target="_blank" rel="noopener"><span class="name">Design System</span><span class="note">Regole e principi di UI/UX di Roccobot</span></a></li>
+      <li><div class="tile"><a class="name" href="../design/" target="_blank" rel="noopener">Design System</a><span class="note">Riferimento UI/UX · <a class="inl" href="../ruias/" target="_blank" rel="noopener">Animazioni</a></span></div></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I worker dei DF e delle regole condivise</span></a></li>
     </ul>

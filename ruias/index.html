@@ -262,7 +262,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.10';
+  var VERSION = '1.11';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -697,6 +697,16 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
     b.setAttribute('aria-label', playing ? t('play') : t('resume'));
     b.title = playing ? t('play') : t('resume');
   }
+  // The space bar is the page's: it plays and pauses, and neither scrolls the page nor presses the
+  // focused button or box (outside the text fields). Both key events are taken, since a button and a
+  // checkbox act on the key's release.
+  function spaceIsOurs(e) {
+    if (e.code !== 'Space' && e.key !== ' ') return false;
+    var tag = (e.target.tagName || '').toLowerCase();
+    return !(tag === 'input' && e.target.type === 'text' || tag === 'textarea' || tag === 'select' || e.metaKey || e.ctrlKey || e.altKey);
+  }
+  document.addEventListener('keydown', function (e) { if (spaceIsOurs(e)) { e.preventDefault(); if (!e.repeat) setPlaying(!playing); } }, true);
+  document.addEventListener('keyup', function (e) { if (spaceIsOurs(e)) e.preventDefault(); }, true);
   // Keys: T turns the theme over for this page only, as on RoccoHub; L switches the language.
   document.addEventListener('keydown', function (e) {
     var tag = (e.target.tagName || '').toLowerCase();

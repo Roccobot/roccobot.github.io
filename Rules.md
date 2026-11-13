@@ -205,7 +205,8 @@ numero per scelta dell'utente.
   e la finestra di dialogo di AIV con curve di Bézier, durate, dissolvenze, scia e velo separati per
   entrata e uscita, col grafico della curva e quello della velocità nello stile di After Effects.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
-  schermo; fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`), con la tessera in
+  schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
+  controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`), con la tessera in
   RoccoHub fra 'Siti e strumenti'. La pagina è `ruias/index.html`, con la sua favicon (`favicon.svg`
   e `favicon.png`, in `#43B59E`: il grafico della velocità di `cubic-bezier(0.67, 0, 0.33, 1)` come
   in After Effects, con le tacche dei fotogrammi, dentro un tondo dello stesso spessore, che ne taglia
