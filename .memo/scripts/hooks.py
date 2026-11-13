@@ -563,7 +563,9 @@ def segmenti(comando):
 
 
 def commit_nel_comando(comando, cwd):
-    """[(repo, messaggio o None, aggiunge)] per ogni `git commit` del comando."""
+    """[(repo, messaggio o None, aggiunge, salta_hook)] per ogni `git commit` del comando;
+    `salta_hook` è vero quando il comando non lascia girare gli hook di git (`--no-verify`, `-n`,
+    o un `core.hooksPath` diverso passato con `-c`)."""
     trovati, qui, aggiunge = [], Path(cwd or os.getcwd()), False
     for t in segmenti(comando):
         if t[0] == 'cd' and len(t) > 1:
@@ -571,12 +573,14 @@ def commit_nel_comando(comando, cwd):
             continue
         if t[0] != 'git':
             continue
-        dove, i = qui, 1
+        dove, i, salta_hook = qui, 1, False
         while i < len(t) and t[i].startswith('-'):
             if t[i] == '-C' and i + 1 < len(t):
                 dove = (qui / os.path.expanduser(t[i + 1])).resolve()
                 i += 2
                 continue
+            if t[i] == '-c' and i + 1 < len(t) and t[i + 1].lower().startswith('core.hookspath'):
+                salta_hook = True
             i += 2 if t[i] == '-c' else 1
         sotto = t[i] if i < len(t) else ''
         resto = t[i + 1:]
@@ -599,11 +603,25 @@ def commit_nel_comando(comando, cwd):
                 j += 2; continue
             if re.fullmatch(r'-[a-zA-Z]*a[a-zA-Z]*', a) or a == '--all':
                 aggiunge = True
+            if re.fullmatch(r'-[a-zA-Z]*n[a-zA-Z]*', a) or a == '--no-verify':
+                salta_hook = True
             j += 1
         repo = radice(dove)
         if repo:
-            trovati.append((repo, '\n\n'.join(messaggio) if messaggio else None, aggiunge))
+            trovati.append((repo, '\n\n'.join(messaggio) if messaggio else None, aggiunge, salta_hook))
     return trovati
+
+
+def hook_di_git_attivi(repo):
+    """True when `git commit` in this repo runs githook.py through `.githooks/`: the setting is on,
+    the two files are there, and they find the hub the way they look for it (this repo, or a clone
+    named roccobot.github.io next to it). Without the hub they let the commit pass unchecked."""
+    if git(repo, 'config', '--get', 'core.hooksPath', timeout=5)[1] != '.githooks':
+        return False
+    if not all((repo / '.githooks' / f).is_file() for f in ('pre-commit', 'commit-msg')):
+        return False
+    vicini = [repo] + [d for d in repo.parent.iterdir() if d.name.lower() == 'roccobot.github.io']
+    return any((d / '.memo' / 'scripts' / 'githook.py').is_file() for d in vicini)
 
 
 def diff_da_controllare(repo, aggiunge):
@@ -822,7 +840,7 @@ def mode_bash(ev):
     if not commit:
         return
     regole_viste = False
-    for repo, messaggio, aggiunge in commit:
+    for repo, messaggio, aggiunge, salta_hook in commit:
         ramo = ramo_principale(repo)
         aggiorna(repo, ramo)
         dietro = conta(repo, f'HEAD..origin/{ramo}')
@@ -835,6 +853,13 @@ def mode_bash(ev):
         if v and v[0] != v[1]:
             blocca(f'Commit bloccato in {repo.name}: badge v{v[0]} contro datiVersion {v[1]} (fonte '
                    'unica: dati.js). Allinea il badge di ripiego in index.src.html prima di committare.')
+        # The rest (dashes, refcheck.py on the added lines, on the message and on the rule files)
+        # is what githook.py does through `.githooks/` at the same commit: when those hooks will
+        # run, they do it once, at the moment git records the commit (Vaglio, Macchine-23: every
+        # commit of Claude ran the same three checks twice, and the full one costs seconds). The
+        # two checks above need the network or the sites, and githook.py does not do them.
+        if not salta_hook and hook_di_git_attivi(repo):
+            continue
         diff = senza_terzi(diff_da_controllare(repo, aggiunge))
         aggiunte =[l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
         if any(c in l for l in aggiunte for c in TRATTINI):

@@ -371,6 +371,69 @@ class TurnRealignTests(unittest.TestCase):
         self.assertEqual(self.head(), before)
 
 
+class CommitChecksTests(unittest.TestCase):
+    """Vaglio, Macchine-23: when the git hooks of `.githooks/` will run at the commit, the Claude
+    hook leaves them the checks they do (the message, the added lines, the rule files) and keeps
+    the ones they cannot do. With the git hooks off, or skipped, it does them all as before."""
+
+    # An accent written with an apostrophe, which refcheck.py refuses: built here, so that this
+    # file passes the same check.
+    MESSAGE = 'perche' + chr(39) + ' no'
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        hub = self.tmp / 'roccobot.github.io' / '.memo' / 'scripts'
+        hub.mkdir(parents=True)
+        (hub / 'githook.py').write_text('', encoding='utf-8')     # what the git hooks look for
+        origin, self.repo = self.tmp / 'origin.git', self.tmp / 'repo'
+        subprocess.run(['git', 'init', '-q', '--bare', '-b', 'main', str(origin)], check=True)
+        subprocess.run(['git', 'clone', '-q', str(origin), str(self.repo)], check=True, capture_output=True)
+        (self.repo / '.githooks').mkdir()
+        for name in ('pre-commit', 'commit-msg'):
+            shutil.copyfile(SCRIPT.parents[2] / '.githooks' / name, self.repo / '.githooks' / name)
+        git(self.repo, 'add', '.githooks')
+        git(self.repo, 'commit', '-q', '--no-verify', '-m', 'hook')
+        git(self.repo, 'push', '-q', 'origin', 'main')
+
+    def commit(self, extra=''):
+        return run_hook(f'git -C {self.repo} {extra}commit -m "{self.MESSAGE}"')
+
+    def test_without_git_hooks_the_message_is_checked_here(self):
+        self.assertEqual(self.commit().returncode, 2)
+
+    def test_with_git_hooks_the_message_is_left_to_them(self):
+        git(self.repo, 'config', 'core.hooksPath', '.githooks')
+        result = self.commit()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_skipping_the_git_hooks_brings_the_checks_back(self):
+        git(self.repo, 'config', 'core.hooksPath', '.githooks')
+        self.assertEqual(run_hook(f'git -C {self.repo} commit --no-verify -m "{self.MESSAGE}"').returncode, 2)
+        self.assertEqual(run_hook(f'git -C {self.repo} commit -n -m "{self.MESSAGE}"').returncode, 2)
+        self.assertEqual(self.commit('-c core.hooksPath=/dev/null ').returncode, 2)
+
+    def test_without_the_hub_next_to_it_the_git_hooks_check_nothing(self):
+        import shutil
+        git(self.repo, 'config', 'core.hooksPath', '.githooks')
+        shutil.rmtree(self.tmp / 'roccobot.github.io')
+        self.assertEqual(self.commit().returncode, 2)
+
+    def test_the_remote_check_stays_here(self):
+        git(self.repo, 'config', 'core.hooksPath', '.githooks')
+        other = self.tmp / 'other'
+        subprocess.run(['git', 'clone', '-q', str(self.tmp / 'origin.git'), str(other)], check=True,
+                       capture_output=True)
+        (other / 'x.txt').write_text('x\n', encoding='utf-8')
+        git(other, 'add', 'x.txt')
+        git(other, 'commit', '-q', '--no-verify', '-m', 'altro')
+        git(other, 'push', '-q', 'origin', 'main')
+        result = run_hook(f'git -C {self.repo} commit -m "un messaggio giusto"')
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('dietro origin/main', result.stderr)
+
+
 class TurnTimeTests(unittest.TestCase):
     """Vaglio, Macchine-21: the turn hook stays within its 40 seconds. Thirteen repos on eight
     threads took two rounds of fetches; now every repo has its thread, and a fetch has 10 seconds."""

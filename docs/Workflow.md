@@ -121,7 +121,12 @@
     blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
     trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nel messaggio o nelle
     righe aggiunte, o nei file di regole **quando il commit ne tocca uno** (su un commit di AIV
-    che non li cambia bloccava per difetti di altri repo, 2026-09-27); **prima di aprire o commentare una PR, di fare una domanda
+    che non li cambia bloccava per difetti di altri repo, 2026-09-27). ⚠️ **Dal 2026-11-13
+    (`Vaglio`, Macchine-23) quegli ultimi controlli li lascia agli hook di git** quando gireranno
+    allo stesso commit (`core.hooksPath` uguale a `.githooks`, i due file al loro posto e l'hub
+    raggiungibile da loro), perché `githook.py` li rifaceva uguali; li fa ancora lui con
+    `--no-verify`, con `-n` o con un altro `core.hooksPath` passato con `-c`, e restano suoi il
+    ritardo sul remoto e il badge. **Prima di aprire o commentare una PR, di fare una domanda
     a scelta multipla o di pubblicare un artefatto** passa il testo a `refcheck.py`, e blocca.
   - ⚠️⚠️ **Prima di ogni comando blocca quelli che stampano l'ambiente intero o un segreto** (dal
     2026-10-15, su richiesta dell'utente): `env` senza un comando da lanciare, `printenv` senza un
