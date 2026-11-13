@@ -59,11 +59,11 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--font); }
-.wrap { max-width: 78rem; margin: 0 auto; padding-block: 1.6rem 3rem;
+.wrap { max-width: 78rem; margin: 0 auto; padding-block: 1.1rem .5rem;
         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 /* The title row: RUIAS, then the full name and the version in small type on the same baseline, and
    the design system pill at the end of the same row */
-header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .6rem 1.5rem; margin-bottom: 1.4rem; }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .6rem 1.5rem; margin-bottom: 1rem; }
 .title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; min-width: 0; }
 h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.1; }
 .fullname { font-size: .95rem; color: var(--muted); }
@@ -104,14 +104,14 @@ button:focus, select:focus, input:focus { outline: none; }
 .tabs .chip[aria-pressed="true"]::before { background: var(--on-accent); }
 /* The preview stays in view while the panels scroll, where the screen is tall enough to hold it whole */
 @media (min-width: 62rem) and (min-height: 58rem) { .stage { position: sticky; top: 1rem; } }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; min-width: 0; }
-.stage { display: flex; flex-direction: column; gap: .9rem; padding-top: 1.6rem; }
-.group { display: flex; flex-direction: column; gap: .4rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1.1rem; min-width: 0; }
+.stage { display: flex; flex-direction: column; gap: .7rem; padding-top: 1.4rem; }
+.group { display: flex; flex-direction: column; gap: .35rem; }
 .group > .lab { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .row { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
 
 /* The phone: AIV's screen at 412 x 892 dp, drawn smaller */
-.phone { position: relative; width: 100%; max-width: 15.5rem; aspect-ratio: 412 / 892; margin: 0 auto; border-radius: 28px;
+.phone { position: relative; width: 100%; max-width: 14.5rem; aspect-ratio: 412 / 892; margin: 0 auto; border-radius: 28px;
          border: 7px solid var(--ink); overflow: hidden; background: var(--screen); }
 .grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; align-content: start; }
 .grid i { aspect-ratio: 1; display: block; }
@@ -136,7 +136,7 @@ button:focus, select:focus, input:focus { outline: none; }
 .phase h2::before { content: ""; width: .7rem; height: .7rem; border-radius: 50%; background: var(--pc); }
 .phase.in { --pc: var(--in); }
 .phase.out { --pc: var(--out); }
-.phase .head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; margin-bottom: .8rem; }
+.phase .head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; margin-bottom: .5rem; }
 .code { font-family: var(--mono); font-size: .85rem; background: var(--field); border-radius: 8px; padding: .3rem .6rem; overflow-wrap: anywhere; }
 .graphs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 @media (max-width: 40rem) { .graphs { grid-template-columns: minmax(0, 1fr); } }
@@ -157,14 +157,14 @@ svg .area { fill: var(--pc); opacity: .12; }
 svg .head-line { stroke: var(--ink); stroke-width: 1; opacity: .5; }
 svg .head-dot { fill: var(--card); stroke: var(--ink); stroke-width: 2; }
 svg .pk { fill: var(--pc); }
-.ctrls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem 1.2rem; margin-top: 1rem; }
+.ctrls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem 1.2rem; margin-top: .7rem; }
 @media (max-width: 40rem) { .ctrls { grid-template-columns: minmax(0, 1fr); } }
 .ctrl { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
 .ctrl .top { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; font-size: .88rem; }
 .ctrl .val { font-family: var(--mono); font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .ctrl input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
 .sub { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); grid-column: 1 / -1;
-       border-top: 1px solid var(--line); padding-top: .8rem; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+       border-top: 1px solid var(--line); padding-top: .6rem; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
 .paste { display: flex; gap: .4rem; grid-column: 1 / -1; }
 .paste input { flex: 1 1 auto; min-width: 0; border: 1px solid var(--line); background: var(--field); border-radius: 8px; padding: .45rem .6rem; font-family: var(--mono); font-size: .82rem; }
 .paste .err { color: var(--out); font-size: .8rem; }
@@ -261,7 +261,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.21';
+  var VERSION = '1.22';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -409,8 +409,8 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
     var head = el('div', { cls: 'head' }, [h2, el('div', { cls: 'row' }, [code, copyBtn, copyK])]);
     var msg = el('div', { cls: 'msg' });
     // Graphs
-    var bz = sv('svg', { viewBox: '0 0 260 260', role: 'img' });
-    var sp = sv('svg', { viewBox: '0 0 260 260', role: 'img' });
+    var bz = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img' });
+    var sp = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img' });
     var gBz = el('div', { cls: 'graph' }, [el('span', { cls: 'gt' }), bz, el('span', { cls: 'cap' })]);
     var gSp = el('div', { cls: 'graph' }, [el('span', { cls: 'gt' }), sp, el('span', { cls: 'cap' })]);
     var graphs = el('div', { cls: 'graphs' }, [gBz, gSp]);
@@ -509,7 +509,9 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
   function selectCode(P) { try { var r = document.createRange(); r.selectNodeContents(P.code); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
 
   // ── The Bezier graph: y range grows with the handles, as on the reference ──
-  var G = { L: 34, R: 248, T: 14, B: 232 };
+  // The graphs' drawing box: a little lower than wide, so the page fits a full-screen window
+  var VW = 260, VH = 220;
+  var G = { L: 34, R: 248, T: 12, B: 194 };
   function yRange(c) { return [Math.min(0, c[1], c[3]) - 0.08, Math.max(1, c[1], c[3]) + 0.08]; }
   function bzMap(c) {
     var yr = yRange(c);
@@ -555,7 +557,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
     });
     P.bz.addEventListener('pointermove', function (e) {
       if (active < 0) return;
-      var r = P.bz.getBoundingClientRect(), sx = 260 / r.width, sy = 260 / r.height;
+      var r = P.bz.getBoundingClientRect(), sx = VW / r.width, sy = VH / r.height;
       var v = frozen.inv((e.clientX - r.left) * sx, (e.clientY - r.top) * sy);
       if (e.shiftKey) {
         if (Math.abs(e.clientX - start[0]) >= Math.abs(e.clientY - start[1])) v[1] = startXY[1]; else v[0] = startXY[0];
@@ -573,7 +575,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
   function travel(ph) { return S.comp === 'sheet' ? 500 : Math.abs(100 - cur(ph).scale); }
   function niceMax(v) { var e = Math.pow(10, Math.floor(Math.log10(v))), f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
   // The speed graph has a wider left margin than the Bezier one: its labels reach five digits (20.000).
-  var GS = { L: 48, R: 248, T: 14, B: 232 };
+  var GS = { L: 48, R: 248, T: 12, B: 194 };
   function drawSpeed(P) {
     var p = cur(P.ph), svg = P.sp, D = travel(P.ph), N = 160;
     var vals = [], maxV = 0, minV = 0, peakAt = 0;
