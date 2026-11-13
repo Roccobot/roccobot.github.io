@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.00
+> **Versione**: 3.01
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -57,7 +57,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   logo personale (§ '🧹 Bonifica e ottimizzazione degli asset').
 - **Icone e immagini originali e così come sono**: mai la copia ricompressa della chat, niente
   ritaglio né pixel spostati nel canvas, niente quantizzazione a palette, niente compensazioni di
-  margini di segno opposto (§ '🎨 Grafica').
+  margini di segno opposto (§ '🧹 Bonifica e ottimizzazione degli asset' e § '🎨 Grafica').
 - **Allineamento al remoto prima di toccare un file**, col confronto dei ref (sezione Git, sotto).
 - **Conferma esplicita per le operazioni ad alto impatto**: infrastruttura, segreti, admin,
   breaking change e main release; il resto del go-live segue il cancello (sezione 🚦).
@@ -106,7 +106,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   (`git -C`), mai `&&` né heredoc (§ '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio ogni richiesta di autorizzazione è approvata**, salvo
   i divieti di sicurezza; in locale `caffeinate` si dichiara quando parte, e a fine lavoro si
-  ferma (§ '☕ Le sessioni locali e `caffeinate`').
+  ferma (§ '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata'
+  e § '☕ Le sessioni locali e `caffeinate`').
 - **Un passo che può fare solo l'utente**: si prepara il resto e gli si scrivono i clic in ordine,
   col modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
@@ -121,14 +122,15 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Prima di ogni lavoro si consigliano modello e sforzo**, che solo l'utente imposta, e si
   aspetta il via (§ '🤖 Modello da usare').
 - **Le priorità le decide l'agente, e le dichiara**; un messaggio che comincia con `‼︎` o con
-  `\\` va in coda, anche a turno iniziato (§ '⚙️ Automazione e interazioni').
+  `\\` va in coda, anche a turno iniziato (§ '🗂️ Le priorità le decide la sessione,
+  e le dichiara' e § '⏭️ L'operatore `‼︎`').
 - **Liste di scelte a blocchi con un nome**, e sigle **nome-numero** (`Setaccio-01`), mai
   lettera-numero; una scelta si chiede con lo **strumento a scelta multipla**, dove c'è
   (§ '💬 Stile di comunicazione').
 - **Un'affermazione non è una verifica**, nemmeno dell'utente: un fatto è accertato solo con un
   dato letto sul momento (§ '🧪 Test e verifiche').
 - **Raccomandazioni di prodotti**: paese d'origine sempre; niente Israele né entità legate; prima
-  i servizi europei, l'open source e il pagamento una tantum; **criptovalute mai**; **niente
+  i servizi europei, salvo uno gratuito e più efficace, poi l'open source e il pagamento una tantum; **criptovalute mai**; **niente
   spoiler** (§ '⚖️ Vincoli etici e anti-spoiler').
 
 ## 🚦 Per agente: il cancello e il go-live
@@ -143,7 +145,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   pagine o repository, e nessun deploy, finché l'utente non ha chiesto di modificare **quella**
   cosa (**cancello 'modifica X'**). ⚠️ Il **brief** è fuori dal cancello: tutti lo scrivono.
 - Le parole di via libera ('smarmella', 'apri tutto', 'apri il gas', 'vai con dio', 'daje tutta',
-  'deploya') valgono come conferma piena per tutti.
+  'deploya' e simili) valgono come conferma piena per tutti.
 
 ## 🌿 Git e versioni
 
