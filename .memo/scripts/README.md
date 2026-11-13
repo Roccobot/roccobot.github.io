@@ -16,13 +16,15 @@
 | `test_refcheck.py` | le prove di `refcheck.py`, che girano anche nell'Action `rules-check` |
 | `char-exceptions.json` | il registro delle citazioni autorizzate a contenere caratteri altrimenti vietati |
 | `hooks.py` | il dispatcher degli hook di Claude per tutti i repo clonati accanto all'hub |
-| `test_hooks.py` | le prove del blocco dei comandi che stampano l'ambiente o un segreto, che girano anche nell'Action `rules-check` |
+| `test_hooks.py` | le prove di `hooks.py`, che girano anche nell'Action `rules-check`: il blocco dei comandi che stampano l'ambiente o un segreto, la lettura della bacheca col segno per sessione, il promemoria sulla lingua, il passo 0 giornaliero, il riallineamento del turno e i suoi tempi, i controlli al commit lasciati agli hook di git |
 | `githook.py` | i controlli degli hook di git e dell'Action `rules-check`, per tutti gli agenti; prima di un commit di solo testo avvisa dei flussi di prove che farebbe partire (`Freno`) |
 | `test_githook.py` | le prove dell'avviso `Freno`: un filtro per esclusione si sveglia su `.scratch/`, uno per inclusione no |
 | `shared.py` | i valori e i due aiuti di git che servono a più script, scritti una volta sola: quali file sono di regole, la bacheca, Rocco e il Worker, il ramo principale di un clone e il suo `fetch` (`Vaglio`, Macchine-17) |
 | `catchup.py` | che cosa è arrivato dopo il timbro `Last turn` del brief, e il timbro stesso (`--stamp`) |
 | `closecard.py` | chiude una card della bacheca in un comando solo: in cima a `Fatte`, spuntata, senza l'assegnazione all'utente e col commento dell'esito (`Contromisura-03`) |
 | `test_closecard.py` | le prove delle scelte di `closecard.py`, senza chiamare Trello |
+| `rules_password.py` | dove gli script trovano la parola delle regole del Worker: prima il file `~/.config/roccobot/rules-password` del Mac di Rocco, poi la variabile `RULES_PASSWORD`; la restituisce e non la stampa mai (`Parola-01`) |
+| `test_rules_password.py` | le prove di `rules_password.py`, che girano anche nell'Action `rules-check` |
 | `checkjs.py` | la sintassi dello script finale di un documento generato |
 | `fixcomments.py` | gli accenti scritti con l'apostrofo, corretti solo dentro i commenti di un sorgente |
 | `testpage.py` | la prova di una pagina HTML prima di pubblicarla: sintassi e disegno |
@@ -33,13 +35,16 @@
 | `test-site-search.js` | il banco della ricerca del sito dal tocco lungo sul FAB, sui due siti |
 | `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` e cancella quelle che gli autori hanno ritirato (`RIMOSSA`, salvo un pacchetto fallito); una skill ferma ma ancora fornita si rivaluta ogni sei mesi (scelta dell'utente, 2026-10-26); i controlli sui caratteri non guardano quei file, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`) |
 | `check-dependencies.py` | confronta il registro `docs/Dependencies.json` di un repo con le ultime versioni pubblicate; lo lancia ogni lunedì il workflow `dependencies.yml` |
+| `test_check_dependencies.py` | le prove della soglia delle patch di `check-dependencies.py` (`Soglia-01`), che girano anche nell'Action `rules-check` |
 | `browser.py` | il Chromium degli strumenti che aprono una pagina, cercato da tutti nello stesso modo; lo caricano i controlli dei DF di AIV e di Aomidori e `og-image.py` di AIV, dall'hub clonato accanto o, su GitHub, da `.roccobot-hub` (dalla `Attrezzi`, 2026-11-07) |
 | `android_project.py` | il repo di un'app Android che i tre controlli qui sotto guardano: `--repo DIR`, e le parti proprie dell'app in `android-checks.json` alla sua radice (cartella delle risorse, disegni intoccabili, chiavi uguali di proposito) |
 | `icon-check.py` | le icone vettoriali di un'app Android: grammatica dei tracciati, vincoli di Android, e la resa con Chromium (linee guida Material, avvolgimento, cucitura) |
 | `icon-round.py` | gli spigoli vivi delle icone di un'app Android, col raggio da usare; esclude i disegni intoccabili, i glifi di Material e i disegni dell'utente entrati senza toccarli |
 | `i18n-check.py` | le traduzioni di un'app Android contro l'inglese: chiavi, segnaposto, plurali, caratteri vietati, apostrofi e chiavi mai tradotte; lo lancia il banco di AIV su GitHub |
 
-Il perché di ognuno vive nell'intestazione del file.
+Il perché di ognuno vive nell'intestazione del file. Un file nuovo di questa cartella entra nella
+tabella nello stesso commit: lo controlla `test_refcheck.py` (`ScriptsReadmeTests`, dal 2026-11-13,
+`Vaglio`, Macchine-24).
 
 ## 🧰 I banchi da ricostruire
 

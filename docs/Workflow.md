@@ -227,10 +227,15 @@
   *imposta un controllo settimanale automatico delle dipendenze in ogni repo*), in due modi
   secondo che cosa il repo usa. La regola che lo chiede è in `Roccobot.md` § '🔗 Le dipendenze si
   seguono: ogni versione nuova si legge'.
-  - **Le azioni di GitHub**, in ogni repo che ha workflow: `.github/dependabot.yml`, e Dependabot
-    apre una pull request quando un'azione ha una versione nuova (per esempio `actions/checkout`
-    dalla `v4` alla `v5`). La pull request si legge, coi changelog che riporta, e si mergia come
-    ogni aggiornamento; i richiami ai workflow riusabili di questo repo (`@master`) non li tocca.
+  - **Le azioni di GitHub**, in ogni repo i cui workflow usano azioni con una versione (come dice il
+    nucleo): `.github/dependabot.yml`, e Dependabot apre una pull request quando un'azione ha una
+    versione nuova (per esempio `actions/checkout` dalla `v4` alla `v5`). La pull request si legge,
+    coi changelog che riporta, e si mergia come ogni aggiornamento; i richiami ai workflow
+    riusabili di questo repo (`@master`) non li tocca. ⚠️ **Un repo il cui unico workflow è il
+    richiamo di `rules-check@master` non ha niente da seguire**, e non riceve il file (fino al
+    2026-11-13 questa voce diceva 'in ogni repo che ha workflow', `Vaglio`, Macchine-25); un repo
+    che aggiunge un workflow con un'azione versionata (`actions/checkout@v7`) riceve
+    `dependabot.yml` nello stesso commit.
   - **Il registro del progetto**, dove c'è (Aomidori, AIV, Terramare e Arda: `docs/Dependencies.json`):
     il workflow riusabile `.github/workflows/dependencies.yml` di questo repo, che ogni repo richiama
     dal suo `.github/workflows/dependencies.yml` col cron. Lancia lo script di questo repo,
@@ -269,8 +274,8 @@
 - **Quando gira**: il lunedì alle 06:17 UTC, cioè alle 08:17 a Roma con l'ora legale e alle 07:17
   con quella solare; Dependabot alle 08:00 di Roma. Una run si lancia anche a mano dalla scheda
   Actions del repo (`workflow_dispatch`).
-- ⚠️ **Un repo nuovo con un registro riceve il richiamo, e uno con dei workflow riceve
-  `dependabot.yml`**: senza, resta fuori dal controllo.
+- ⚠️ **Un repo nuovo con un registro riceve il richiamo, e uno con azioni versionate nei suoi
+  workflow riceve `dependabot.yml`**: senza, resta fuori dal controllo.
 - ⚠️ **In un repo privato le run consumano i minuti del piano** (Aomidori dal 2026-10-15): il
   controllo gira su Linux, dove un minuto conta uno e non dieci come su macOS.
 

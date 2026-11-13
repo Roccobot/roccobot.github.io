@@ -7,6 +7,7 @@ Author: Rocco Casadei, a.k.a. Roccobot
 import importlib.util
 import os
 import pty
+import re
 import subprocess
 import sys
 import shutil
@@ -346,6 +347,20 @@ class AbsentProjectTests(unittest.TestCase):
                      "la pagina 'Ma che parola è' (`manifest.json`)", 'il sito di Roccobot.me, `docs/`'):
             with self.subTest(line=line):
                 self.assertTrue(refcheck.cita_progetto_assente([line], 0))
+
+
+class ScriptsReadmeTests(unittest.TestCase):
+    """The README.md of this folder is the one list of its scripts (the hub's AGENTS.md says so),
+    and on 2026-11-13 three files that the rules-check Action runs were missing from it (Vaglio,
+    Macchine-24)."""
+
+    def test_every_file_of_the_folder_has_its_row(self):
+        folder = SCRIPT.parent
+        readme = (folder / 'README.md').read_text(encoding='utf-8')
+        listed = set(re.findall(r'^\| `([^`]+)` \|', readme, re.M))
+        files = {f.name for f in folder.iterdir() if f.is_file() and f.name != 'README.md'}
+        self.assertEqual(sorted(files - listed), [])
+        self.assertEqual(sorted(listed - files), [])
 
 
 class HeadingAboveTests(unittest.TestCase):
