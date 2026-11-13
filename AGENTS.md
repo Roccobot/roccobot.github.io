@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.02
+> **Versione**: 3.12
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -105,8 +105,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   quando la scelta è dell'utente. **Un comando semplice per chiamata**: mai `cd` prima di `git`
   (`git -C`), mai `&&` né heredoc (§ '⚙️ Automazione e interazioni').
 - **Dall'inizio di una sessione al rilascio ogni richiesta di autorizzazione è approvata**, salvo
-  i divieti di sicurezza; in locale `caffeinate` si dichiara quando parte, e a fine lavoro si
-  ferma (§ '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata'
+  i divieti di sicurezza, l'alto impatto (versione tonda compresa) e le domande del cancello, che
+  con `caffeinate` decide l'agente; in locale `caffeinate` si dichiara quando parte, e a fine
+  lavoro si ferma (§ '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata'
   e § '☕ Le sessioni locali e `caffeinate`').
 - **Un passo che può fare solo l'utente**: si prepara il resto e gli si scrivono i clic in ordine,
   col modo di verificare; finché il clic manca, la cosa non è fatta.
@@ -127,6 +128,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Liste di scelte a blocchi con un nome**, e sigle **nome-numero** (`Setaccio-01`), mai
   lettera-numero; una scelta si chiede con lo **strumento a scelta multipla**, dove c'è
   (§ '💬 Stile di comunicazione').
+- ⚠️⚠️ **Niente resta da decidere**: le decisioni dell'utente si propongono tutte di seguito, a
+  scelta multipla, finché ognuna ha una risposta che permette di proseguire; un compito nuovo
+  nato dal lavoro diventa una card da approvare (§ '❓ Niente resta da decidere').
 - **Un'affermazione non è una verifica**, nemmeno dell'utente: un fatto è accertato solo con un
   dato letto sul momento (§ '🧪 Test e verifiche').
 - **Raccomandazioni di prodotti**: paese d'origine sempre; niente Israele né entità legate; prima
@@ -181,8 +185,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   prossima sessione' ne fa una voce da lasciare.
 - **Un compito che non si esegue subito ha un nome in codice**, una parola italiana unica nel
   brief: si scrive nel titolo della voce e poi si comunica all'utente.
-- Una domanda senza risposta entro un turno finisce nel brief, con le opzioni e il parere; una
-  risposta a scelta si travasa con la **sua chiave**.
+- Una domanda senza risposta a fine turno finisce nel brief, con le opzioni e il parere, e si
+  ripropone al primo turno; una risposta a scelta si travasa con la **sua chiave**.
 - **Come si scrive**: con un commit, o dal Worker dichiarando `baseSha` e mandando il file intero
   (§ '🔌 Worker `rules-proxy`'). Il timbro `Last turn` lo mette `catchup.py --stamp`, ogni commit
   ha la riga `Agent: <piattaforma>`, e una versione nuova di un file di `rules/` ha la sua riga
@@ -191,8 +195,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   una regola vuol dire anche correggere subito ogni frase datata, in tutti i repo** (protocollo
   'Aggiungi alle regole').
 - **I lavori vivono anche sulla bacheca Trello `Roccobot`** (Worker, azione `trello`): card
-  `Codice: che cosa` con l'etichetta del progetto, `In corso` quando inizia, `Admin` per ogni
-  decisione dell'utente, assegnata a lui se ferma un lavoro (§ '📌 La bacheca di lavoro').
+  `Codice: che cosa` con l'etichetta del progetto, `In corso` quando inizia, `Admin` per i passi
+  dell'utente e le decisioni che nessuno ha potuto chiedergli, assegnata a lui se ferma un lavoro
+  (§ '📌 La bacheca di lavoro').
 
 ## 🧪 Verifiche e controlli
 
@@ -204,8 +209,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Prima di un commit si lancia `refcheck.py`** (`.memo/scripts/` di `roccobot.github.io`) sui
   file di regole, sul diff e sul messaggio, e in ogni clone si attivano gli hook di git
   (`git config core.hooksPath .githooks`). Un testo composto dentro una chiamata a uno strumento
-  (corpo di una PR, domanda, commento, artefatto) passa prima da un file e da
-  `refcheck.py --text` (§ '🛡️ I controlli per tutti gli agenti').
+  (corpo di una PR, domanda, commento) passa prima da un file e da `refcheck.py --text`, e la
+  pagina di un artefatto da `refcheck.py --html` (§ '🛡️ I controlli per tutti gli agenti').
 - **I conti si contano**: un numero che si ricava contando non si scrive in prosa
   (§ '🔢 I conti si contano, non si scrivono').
 - **Alla fine di un lavoro si fa il bilancio di chiusura**: ogni voce si confronta col codice del
@@ -235,8 +240,10 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Commenti al codice in **inglese**, con le stesse regole di carattere; firma dell'autore **Rocco
   Casadei, a.k.a. Roccobot** (§ '🧑‍💻 Codice e artefatti generati').
 - **Nomi dei file** in inglese, e un nome che esiste già non si cambia mai; **cartelle
-  minuscole**; il contenuto è in inglese se si comincia da zero, altrimenti resta nella lingua
-  che c'è già (§ '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
+  minuscole**; un file tiene la lingua che ha, e un documento nuovo è in italiano se è interno,
+  bilingue con l'inglese di serie se è pubblico e obbligatorio, altrimenti si chiede; una skill
+  nuova è in inglese
+  (§ '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
 - **Le dipendenze si seguono**: ogni progetto ne tiene il registro, e ogni versione nuova si
   legge prima di una release (§ '🔗 Le dipendenze si seguono').
 - Mobile è **Android**, desktop è **macOS**.
