@@ -337,6 +337,65 @@ class AbsentProjectTests(unittest.TestCase):
         refcheck.PROGETTI = {**refcheck.PROGETTI, 'Aomidori': Path(__file__).resolve().parent}
         self.assertFalse(refcheck.cita_progetto_assente(['`docs/AppStore.md` di Aomidori'], 0))
 
+    def test_every_project_has_its_names(self):
+        # Vaglio, Macchine-13: Aomidroid, userscripts, cheparolae and rocco.bot had no plain name.
+        self.assertEqual(set(refcheck.NOMI_PROGETTI), set(refcheck.PROGETTI))
+        absent = {name: Path('/absent') / name for name in refcheck.PROGETTI}
+        refcheck.PROGETTI = absent
+        for line in ('`android/build.gradle.kts` di Aomidroid', 'lo userscript `DIVRoccobot.user.js`',
+                     "la pagina 'Ma che parola è' (`manifest.json`)", 'il sito di Roccobot.me, `docs/`'):
+            with self.subTest(line=line):
+                self.assertTrue(refcheck.cita_progetto_assente([line], 0))
+
+
+class HeadingAboveTests(unittest.TestCase):
+    """A brief entry names its project in the heading and cites the project's files many lines
+    below (Vaglio, Macchine-13: `docs/Editor.md` under `### AIV: la 8.61`, twenty-seven lines
+    apart, was reported as missing because the hub has a `docs/` folder too)."""
+
+    ENTRY = ['### AIV: la 8.61 e la filigrana', '', '- uno', '- due', '- tre', '- quattro',
+             '- la specifica in `docs/Editor.md` (filigrana)']
+
+    def setUp(self):
+        original = refcheck.PROGETTI
+        refcheck.PROGETTI = {**original, 'Aomidori': Path('/absent/Aomidori')}
+        self.addCleanup(setattr, refcheck, 'PROGETTI', original)
+
+    def test_the_nearest_heading_names_aiv(self):
+        self.assertTrue(refcheck.cita_aiv(self.ENTRY, len(self.ENTRY) - 1))
+
+    def test_the_nearest_heading_names_an_absent_project(self):
+        entry = ['### Aomidroid: il lettore', ''] + self.ENTRY[2:]
+        self.assertTrue(refcheck.cita_progetto_assente(entry, len(entry) - 1))
+
+    def test_a_later_heading_closes_the_entry(self):
+        entry = self.ENTRY[:4] + ['### Hub: il verificatore'] + self.ENTRY[4:]
+        self.assertFalse(refcheck.cita_aiv(entry, len(entry) - 1))
+
+    def test_a_comment_inside_a_code_block_is_not_a_heading(self):
+        entry = ['### Hub: i comandi', '```', '# AIV: un commento', '```', '', '', '- `docs/Editor.md`']
+        self.assertEqual(refcheck.titolo_sopra(entry, len(entry) - 1), '### Hub: i comandi')
+        self.assertFalse(refcheck.cita_aiv(entry, len(entry) - 1))
+
+    def test_the_brief_case_end_to_end(self):
+        # The real script on a hub and a tools without the AIV clone: the path is unverifiable.
+        with tempfile.TemporaryDirectory() as folder:
+            base = Path(folder)
+            scripts = base / 'roccobot.github.io/.memo/scripts'
+            scripts.mkdir(parents=True)
+            for name in ('refcheck.py', 'char-exceptions.json'):
+                shutil.copyfile(SCRIPT.with_name(name), scripts / name)
+            (base / 'roccobot.github.io/docs').mkdir()
+            (base / 'tools/.memo').mkdir(parents=True)
+            (base / 'tools/.memo/LATEST.md').write_text('# Handoff\n\n' + '\n'.join(self.ENTRY) + '\n',
+                                                        encoding='utf-8')
+            for name in refcheck.PROGETTI:
+                (base / name).mkdir()
+            result = subprocess.run([sys.executable, str(scripts / 'refcheck.py')],
+                                    capture_output=True, text=True)
+        self.assertNotIn('percorsi citati inesistenti', result.stdout)
+        self.assertIn('non verificabili', result.stdout)
+
 
 class RemovedFileTests(unittest.TestCase):
     """Every repository's `docs/Removed.md` is a rule file, so its titles can be cited.

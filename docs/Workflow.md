@@ -273,9 +273,8 @@
   `datiVersion`, ritardo sul remoto, **trattini lunghi** nelle righe aggiunte, i **riferimenti
   incrociati** dei file di regole, e i **caratteri del messaggio di commit**, anche quando
   arriva da un file con `-F`. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
-  e controlla anche i file di `Roccobot/tools`, il `CLAUDE.md` di `Roccobot/AIV` e i
-  **documenti** di `Roccobot/mihon-aniyomi-ext` quando quei repo sono agganciati; di un repo
-  assente lo **dichiara**). ⚠️ Criterio,
+  e controlla anche i file di regole di `Roccobot/tools`, di `Roccobot/AIV` e dei repo dei
+  progetti quando quei repo sono agganciati; di un repo assente lo **dichiara**). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
   che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,

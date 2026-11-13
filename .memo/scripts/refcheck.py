@@ -54,9 +54,7 @@ VERBOSE = "-v" in sys.argv
 # Claude Code può essere la cartella che contiene i repo.
 SITO = Path(__file__).resolve().parents[2]
 TOOLS = SITO.parent / "tools"
-MIHON = SITO.parent / "mihon-aniyomi-ext"
-# ⚠️ `AIV` è entrato il 2026-09-02, ed è un file di REGOLE come gli altri, non un documento
-# di repo terzo come quelli di `mihon-aniyomi-ext`: `AIV/CLAUDE.md` è nato il 2026-09-01 e
+# ⚠️ `AIV` è entrato il 2026-09-02, ed è un file di REGOLE come gli altri: `AIV/CLAUDE.md` è nato il 2026-09-01 e
 # dal giorno dopo il brief ne citava una sezione, che il verificatore segnalava come
 # inesistente proprio perché il file era fuori copertura. È il sintomo rovesciato già visto
 # con `Earthsea.md`, e la lezione è la stessa: un file di regole nuovo deve entrare da sé.
@@ -133,24 +131,11 @@ RULEFILES = [
 # nessuno. Glob e non elenco: uno snippet nuovo entra nel controllo da sé, che è l'unico
 # modo perché non si ripeta.
 ] + sorted(TOOLS.glob("snippets/*.md"))
-
-# ── I documenti degli ALTRI repo ──
-# Non sono file di regole, e per questo stanno in un insieme a sé invece che in `RULEFILES`:
-# di loro si controllano i CARATTERI e i LINK, che valgono per qualunque testo italiano, non
-# i rimandi fra sezioni né i titoli citabili come ancora, che sono un meccanismo dei soli
-# file di regole. Mescolarli avrebbe indicizzato come 'sezione citabile' ogni titolo di un
-# README, cioè il contrario di quello che l'indice serve a dire.
-# ⚠️ Sono entrati il 2026-08-19, quando la bonifica di `mihon-aniyomi-ext` ha trovato 110
-# righe senza accenti e tre `È`, cioè la forma che le regole vietano per nome. Non erano
-# sfuggite al controllo: erano fuori dal suo raggio, che si fermava a due repo, ed è la stessa
-# lezione degli snippet stantii ('un controllo che copre un repo non dice niente sull'altro').
-# Glob e non elenco, per la stessa ragione: un documento nuovo entra da sé.
-# ⚠️ I SORGENTI restano fuori di proposito: i loro commenti sono in inglese per regola, e su
-# un sorgente il controllo dei caratteri segnalerebbe lettere non latine legittime (una regex,
-# un nome proprio). Le loro righe aggiunte le guarda comunque il modo `--diff`, che gira su
-# ogni file.
-TESTI = sorted(MIHON.glob("*.md")) + sorted(MIHON.glob("*/README.md")) \
-    + sorted(MIHON.glob(".github/workflows/*.yml"))
+# ⚠️ Dal 2026-08-19 al 2026-11-13 c'era anche un insieme di documenti di un repo terzo,
+# `mihon-aniyomi-ext`, di cui si controllavano solo caratteri e link: quel repo è archiviato e
+# fuori da `Repos.md` di `tools`, e il controllo è stato tolto con lui (`Vaglio`, Macchine-18).
+# I documenti dei nostri repo sono in `RULEFILES`, e le righe aggiunte di ogni file le guarda il
+# modo `--diff`.
 
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
@@ -746,6 +731,24 @@ def sect_refs(righe, i, max_cont=2):
     return fuori
 
 
+def titolo_sopra(righe, i):
+    """Il titolo Markdown più vicino sopra la riga `i` (indice da 0), o '' se non ce n'è.
+
+    Nel brief è il titolo della voce (`### AIV: ...`), nelle regole quello della sezione: dice
+    di quale progetto parla una riga che non lo nomina. Le righe dentro un blocco di codice
+    non contano, perché là `# ...` è un commento: i recinti si contano risalendo, e un titolo
+    vale solo con un numero pari di recinti fra lui e la riga.
+    """
+    recinti = 0
+    for j in range(i - 1, -1, -1):
+        riga = righe[j]
+        if riga.lstrip().startswith("```"):
+            recinti += 1
+        elif recinti % 2 == 0 and RE_HEADING.match(riga):
+            return riga
+    return ""
+
+
 def cita_aiv(righe, i, intorno=2):
     """Vero se il rimando che parte dalla riga `i` parla del repo `AIV`.
 
@@ -756,8 +759,12 @@ def cita_aiv(righe, i, intorno=2):
     altro e cita una sezione davvero inesistente di un altro file passerebbe come non
     verificabile. Costa un difetto non visto in una sessione senza AIV, mentre l'errore
     opposto (trattare per rotto ciò che non si può leggere) blocca ogni commit.
+    ⚠️ Dal 2026-11-13 (`Vaglio`, Macchine-13) guarda anche il titolo più vicino
+    sopra la riga: una voce del brief nomina il progetto nel titolo e cita i suoi file trenta
+    righe più in basso (`docs/Editor.md`, sotto `### AIV: la 8.61`), e quel giorno il percorso
+    giusto risultava rotto, perché `docs/` esiste anche nell'hub.
     """
-    vicine = righe[max(0, i - intorno):i + intorno + 1]
+    vicine = righe[max(0, i - intorno):i + intorno + 1] + [titolo_sopra(righe, i)]
     return any("AIV" in r for r in vicine)
 
 
@@ -796,17 +803,21 @@ def stato_in_repo(p):
 # di `tools`, dove sono clonati solo l'hub e `tools`, dava per inesistenti undici percorsi giusti
 # di AIV e di Aomidori (`docs/Feedback-maintenance.md`, `docs/AppStore.md`), ed era rosso su ogni
 # commit. Con la maiuscola e a parola intera, perché `arda` minuscolo compare anche altrove.
+# ⚠️ Dal 2026-11-13 (`Vaglio`, Macchine-13) ogni progetto di `PROGETTI` ha qui i suoi nomi, e
+# Aomidori anche `Aomidroid`, la sua versione per Android, che vive nel suo repo (`android/`).
 NOMI_PROGETTI = {"earthsea": ("Terramare",), "arda": ("Arda",), "ratiolab": ("RatioLab",),
                  "CleanSVG": ("CleanSVG",), "ABP": ("ABP",), "RoccobotOS": ("RoccobotOS",),
-                 "Aomidori": ("Aomidori",)}
+                 "Aomidori": ("Aomidori", "Aomidroid"), "userscripts": ("userscript", "userscripts"),
+                 "cheparolae": ("Ma che parola è", "cheparolae"), "rocco.bot": ("Roccobot.me", "rocco.bot")}
 
 
 def cita_progetto_assente(righe, i, intorno=1):
     """Vero se il rimando che parte dalla riga `i` nomina il repo di un progetto che questa
     sessione non monta (`Roccobot/earthsea`, e gli altri di `PROGETTI`), o il progetto col nome
-    di `NOMI_PROGETTI`. Stesso criterio di `cita_aiv`: un percorso davvero sbagliato in una riga
-    che nomina quel progetto passa come non verificabile, e lo vede la sessione che ha il repo."""
-    vicine = righe[max(0, i - intorno): i + intorno + 1]
+    di `NOMI_PROGETTI`. Stesso criterio di `cita_aiv`, titolo più vicino sopra la riga compreso:
+    un percorso davvero sbagliato in una riga che nomina quel progetto passa come non
+    verificabile, e lo vede la sessione che ha il repo."""
+    vicine = righe[max(0, i - intorno): i + intorno + 1] + [titolo_sopra(righe, i)]
     assenti = [n for n, r in PROGETTI.items() if not r.exists()]
     nomi = [re.compile(rf"\b{re.escape(a)}\b") for n in assenti for a in NOMI_PROGETTI.get(n, ())]
     return any(f"Roccobot/{n}" in r for r in vicine for n in assenti) \
@@ -1802,7 +1813,6 @@ def main():
     if "--diff" in sys.argv:
         return main_diff()
     present = [f for f in RULEFILES if f.exists()]
-    testi = [f for f in TESTI if f.exists()]
     missing_repo = not TOOLS.exists()
 
     titles = {}
@@ -1830,10 +1840,8 @@ def main():
     aiv_missing = not AIV.exists()
     seen = {"link": 0, "path": 0, "sect": 0}
 
-    for f in present + testi:
+    for f in present:
         base = f.parent
-        # I documenti degli altri repo si fermano qui: caratteri e link, non i rimandi.
-        solo_testo = f in testi
         for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8"), f):
             bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
         # ⚠️ Il lessico sui file di REGOLE per intero, non solo sulle righe aggiunte: sono
@@ -1852,8 +1860,6 @@ def main():
                 seen["link"] += 1
                 if not (base / url).resolve().exists():
                     bad_links.append((f, n, url))
-            if solo_testo:
-                continue
             for p in RE_PATH.findall(line):
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
@@ -1912,7 +1918,7 @@ def main():
 
     def rel(p):
         for etichetta_repo, radice in (("SITO", SITO), ("TOOLS", TOOLS), ("AIV", AIV),
-                                       ("MIHON", MIHON), *PROGETTI.items()):
+                                       *PROGETTI.items()):
             try:
                 return f"{etichetta_repo}/{p.relative_to(radice)}"
             except ValueError:
@@ -1998,12 +2004,8 @@ def main():
         print(f"\nNota: i repo dei progetti {', '.join(assenti)} non sono agganciati, quindi i "
               "loro `CLAUDE.md` non sono nell'indice e i rimandi che li nominano restano non "
               "verificabili. Non è un difetto: è copertura mancante.")
-    if not MIHON.exists():
-        print(f"\nNota: {MIHON} non è agganciato, quindi i suoi documenti non sono stati "
-              "guardati. Non è un difetto: è copertura mancante, e si recupera agganciando "
-              "il repo.")
     if VERBOSE or rotti:
-        print(f"\n{tot} riferimenti controllati in {len(present) + len(testi)} file "
+        print(f"\n{tot} riferimenti controllati in {len(present)} file "
               f"({seen['link']} link, {seen['path']} percorsi, {seen['sect']} rimandi a sezione), "
               f"{len(titles)} titoli indicizzati.")
     print("refcheck: tutto in ordine" if not rotti else "refcheck: DIFETTI TROVATI")
