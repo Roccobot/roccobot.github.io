@@ -48,6 +48,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import rules_password  # noqa: E402
 import shared  # noqa: E402
 
 HUB = Path(__file__).resolve().parents[2]
@@ -312,7 +313,6 @@ def azioni_di_rocco(azioni, etichette, brief=''):
 def trello_get(path, query):
     """One GET to Trello through the Worker; None on any failure, so a slow Trello never blocks."""
     import urllib.request
-    import rules_password
     parola = rules_password.read()
     if not parola:
         return None
@@ -589,31 +589,87 @@ def blocca(msg):
 # locale of the container. So a command that prints the whole environment, or a variable named
 # like a secret, is blocked; any other variable is read by name (`printenv LANG`), and a secret
 # is used without printing it (`curl -d "$RULES_PASSWORD"` passes).
+# ⚠️ It is a brake against accidents, not a lock: a secret copied into another variable, a script
+# file that prints it, or a command substitution (`echo "$(printenv X)"`) still pass. Since
+# 2026-11-13 (Vaglio, Macchine-19) it also looks inside `bash -c`, `sh -c` and `eval`, at
+# `declare -p`, at here-strings (`<<<`) fed to a command that prints its input, at the code of
+# `python -c`, `node -e`, `perl -e` and `ruby -e`, and at the file of the rules password.
 SEGRETO = re.compile(r'(PASSWORD|PASSWD|SECRET|TOKEN|_KEY|_PAT)$', re.I)
 ASSEGNAZIONE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*=.*', re.S)
+VARIABILE = re.compile(r'\$\{?([A-Za-z_][A-Za-z0-9_]*)')
+# The commands that print what they read, from a file or from their input.
+STAMPANO = {'cat', 'tac', 'nl', 'head', 'tail', 'less', 'more', 'bat', 'od', 'xxd', 'hexdump',
+            'strings', 'base64', 'rev', 'fold', 'tee', 'cut', 'sort', 'uniq', 'paste', 'column',
+            'tr', 'grep', 'egrep', 'fgrep', 'rg', 'sed', 'awk'}
+# Their first argument is a pattern, not a file: `grep -rn rules-password .` looks for the name.
+CON_MODELLO = {'grep', 'egrep', 'fgrep', 'rg', 'sed', 'awk'}
+SHELL = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
+FILE_PAROLA = rules_password.FILE.name  # read first on Rocco's Mac
+# The flags that give an interpreter its code on the command line; `node -p` prints the result.
+CODICE = {'python': ('-c',), 'python3': ('-c',), 'node': ('-e', '--eval', '-p', '--print', '-pe'),
+          'perl': ('-e', '-E'), 'ruby': ('-e',)}
+STAMPA_CODICE = re.compile(r'\b(print|pprint|console\.(log|error|info|warn|dir)|'
+                           r'(process|sys)\.std(out|err)\.write)\s*\(')
+AMBIENTE_INTERO = re.compile(r'os\.environ(?!\s*\[|\.get\b)|process\.env(?!\s*\[|\.\w)')
 
 
 def comandi_semplici(comando):
-    """Like `segmenti`, but split on pipes too: `env | sort` prints the environment like `env`.
-    Leading assignments (`LC_ALL=C.UTF-8 ./gradlew`) are dropped, so the command comes first."""
-    out = []
-    for pezzo in re.split(r'&&|\|\||[;|\n]', comando):
-        try:
-            t = shlex.split(pezzo)
-        except ValueError:
-            t = pezzo.split()
-        while t and ASSEGNAZIONE.fullmatch(t[0]):
-            t = t[1:]
-        if t:
-            out.append(t)
+    """The command split into simple commands, on `;`, `&&`, `||`, pipes, `&` and new lines, with
+    quotes respected: `bash -c "echo $X | cat"` keeps its string whole. Leading assignments
+    (`LC_ALL=C.UTF-8 ./gradlew`) are dropped, so the command comes first, and so are the brackets
+    of a subshell. A command shlex cannot read (an open quote) falls back to splitting on spaces."""
+    try:
+        lx = shlex.shlex(comando, posix=True, punctuation_chars=';&|<>()\n')
+        lx.whitespace, lx.whitespace_split, lx.commenters = ' \t\r', True, ''
+        token = list(lx)
+    except ValueError:
+        token = comando.replace('\n', ' ; ').split()
+    out, t = [], []
+    for x in token + [';']:
+        if x and set(x) <= set(';&|\n'):
+            while t and ASSEGNAZIONE.fullmatch(t[0]):
+                t = t[1:]
+            if t:
+                out.append(t)
+            t = []
+        elif x not in ('(', ')'):
+            t.append(x)
     return out
 
 
-def stampa_ambiente(t):
+def _stampa_nel_codice(codice):
+    """Why a line of Python or JavaScript prints a secret or the whole environment, or None: the
+    arguments of every print call are read, so a secret sent somewhere else does not count."""
+    for m in STAMPA_CODICE.finditer(codice):
+        livello, i = 1, m.end()
+        while i < len(codice) and livello:
+            livello += {'(': 1, ')': -1}.get(codice[i], 0)
+            i += 1
+        argomento = codice[m.end():i]
+        segreti = [n for n in re.findall(r'[A-Z_][A-Z0-9_]*', argomento) if SEGRETO.search(n)]
+        if segreti:
+            return f"il codice stampa un segreto ({', '.join(segreti)})"
+        if AMBIENTE_INTERO.search(argomento):
+            return "il codice stampa l'ambiente intero"
+    return None
+
+
+def stampa_ambiente(t, profondita=0):
     """Why the simple command `t` prints the whole environment or a secret, or None."""
     nome, arg = os.path.basename(t[0]), t[1:]
     if any(re.search(r'/proc/[^/\s]+/environ', a) for a in t):
         return "legge l'ambiente di un processo da /proc"
+
+    def dentro(testo):
+        # A command written as a string runs like one typed: the same checks, one level down.
+        if profondita >= 3:
+            return None
+        for interno in comandi_semplici(testo):
+            motivo = stampa_ambiente(interno, profondita + 1)
+            if motivo:
+                return motivo
+        return None
+
     if nome == 'env':
         # `env` prints the environment unless it runs a command; `-i` empties it first, and
         # `-S` is a command written as a string.
@@ -628,8 +684,51 @@ def stampa_ambiente(t):
             if a.startswith('-') or ASSEGNAZIONE.fullmatch(a):
                 i += 1
                 continue
-            return None
+            return stampa_ambiente(arg[i:], profondita + 1) if profondita < 3 else None
         return "`env` senza un comando da lanciare stampa l'ambiente intero"
+    if nome in SHELL:
+        # `bash -c 'script'`, `bash -lc 'script'`: the script is the first argument after the flag.
+        for i, a in enumerate(arg):
+            if a.startswith('-') and not a.startswith('--') and 'c' in a[1:]:
+                script = next((s for s in arg[i + 1:] if not s.startswith('-')), '')
+                return dentro(script)
+        return None
+    if nome == 'eval':
+        return dentro(' '.join(arg))
+    if nome in CODICE:
+        for i, a in enumerate(arg[:-1]):
+            if a in CODICE[nome] or (nome.startswith('python') and re.fullmatch(r'-[A-Za-z]*c', a)):
+                codice = arg[i + 1]
+                if a in ('-p', '--print', '-pe'):
+                    codice = f'print({codice})'
+                if nome in ('perl', 'ruby'):
+                    # Without brackets (`print $ENV{X}`, `puts ENV['X']`): a print and a secret.
+                    segreti = [n for n in re.findall(r'[A-Z_][A-Z0-9_]*', codice) if SEGRETO.search(n)]
+                    if segreti and re.search(r'\b(print|say|puts|p|printf)\b', codice):
+                        return f"il codice stampa un segreto ({', '.join(segreti)})"
+                    return None
+                return _stampa_nel_codice(codice)
+        return None
+    if nome in STAMPANO:
+        # The rules password file (rules_password.FILE): a path to it, or its name alone where it
+        # cannot be a pattern.
+        file_ = [a for a in arg if a.endswith('/' + FILE_PAROLA)
+                 or (a == FILE_PAROLA and nome not in CON_MODELLO)]
+        if file_:
+            return f'`{nome}` stampa il file della parola delle regole ({file_[0]})'
+        # A here-string goes to the command's input, and these print it.
+        for i, a in enumerate(arg[:-1]):
+            if a == '<<<':
+                segreti = [m for m in VARIABILE.findall(arg[i + 1]) if SEGRETO.search(m)]
+                if segreti:
+                    return f"`{nome}` stampa un segreto passato con `<<<` ({', '.join(segreti)})"
+        return None
+    if nome in ('declare', 'typeset', 'export', 'readonly'):
+        opzioni = [a for a in arg if a.startswith('-')]
+        segreti = [a for a in arg if not a.startswith('-') and SEGRETO.search(a.split('=')[0])
+                   and '=' not in a]
+        if segreti and any('p' in o for o in opzioni):
+            return f"`{nome} -p` stampa un segreto ({', '.join(segreti)})"
     if nome == 'printenv':
         nomi = [a for a in arg if not a.startswith('-')]
         if not nomi:

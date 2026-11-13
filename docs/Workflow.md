@@ -129,6 +129,18 @@
     `RULES_PASSWORD` nella trascrizione della sessione. Una variabile si legge per nome
     (`printenv LANG`), e un segreto si usa senza stamparlo (`curl -d "$RULES_PASSWORD"` passa).
     Le prove sono in `.memo/scripts/test_hooks.py`, e girano anche nell'Action `rules-check`.
+    - **Dal 2026-11-13 (`Vaglio`, Macchine-19) guarda anche dove la prima versione non guardava**:
+      dentro `bash -c`, `sh -c`, `eval` e il comando lanciato da `env`; `declare -p` e `typeset -p`
+      di un segreto; una stringa passata con `<<<` a un comando che stampa quello che legge (`cat`,
+      `base64`, `grep`...); le chiamate di stampa nel codice di `python -c`, `node -e` e `-p`,
+      `perl -e` e `ruby -e`, quando stampano un segreto o l'ambiente intero; e la lettura del file
+      della parola delle regole (`~/.config/roccobot/rules-password`) con un comando che lo stampa.
+      Ogni caso ha la sua prova nei due versi: un `curl` col segreto in un'intestazione, anche
+      dentro `bash -c` o passato con `<<<`, e uno script Python che lo manda e stampa solo l'esito
+      passano.
+    - ⚠️ **È un freno contro gli incidenti, non una serratura**: un segreto copiato in un'altra
+      variabile, uno script su file che lo stampa o una sostituzione di comando
+      (`echo "$(printenv X)"`) passano ancora.
   - ⚠️⚠️ **A ogni messaggio di Rocco, un promemoria sulla lingua** (modo `prompt`,
     `PROMEMORIA_LINGUA`, dal 2026-11-07, sua scelta Prevenzione-01, dopo quattro ricadute in frasi
     inglesi nella chat): agisce prima della scrittura, quando la regola letta all'avvio è lontana
