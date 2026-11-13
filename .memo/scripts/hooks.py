@@ -43,6 +43,7 @@ import re
 import shlex
 import subprocess
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
@@ -55,6 +56,17 @@ HUB = Path(__file__).resolve().parents[2]
 BASE = HUB.parent                      # la cartella che contiene i repo
 REFCHECK = HUB / '.memo' / 'scripts' / 'refcheck.py'
 TRATTINI = (chr(0x2014), chr(0x2013))
+
+# The time limits of the hooks, from the step-0 command in the hub's Rules.md: 60 seconds for
+# `start`, 40 for `prompt`, 30 for `edit`. A hook past its limit is stopped by Claude Code with
+# whatever it had still to print. Until 2026-11-13 (Vaglio, Macchine-21) the turn hook could need
+# 50 seconds of fetches (13 repos on 8 threads, 25 seconds each) and then 30 of step 0. Now every
+# repo has its own thread, so the fetches take as long as the slowest one.
+TETTO_TURNO = 40
+MARGINE_TURNO = 5           # printing and exit
+FETCH_TURNO = 10            # at each message of Rocco's
+FETCH_AVVIO = 20            # at the start, followed by catchup.py (20)
+FETCH_MODIFICA = 15         # before an edit, followed by a merge
 
 
 def git(repo, *args, timeout=20):
@@ -186,7 +198,7 @@ def mode_start(ev):
         return
     def uno(repo):
         ramo = ramo_principale(repo)
-        if not aggiorna(repo, ramo):
+        if not aggiorna(repo, ramo, FETCH_AVVIO):
             return f'{repo.name}: fetch non riuscito, nessun allineamento'
         corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
         dietro = conta(repo, f'HEAD..origin/{ramo}')
@@ -199,8 +211,9 @@ def mode_start(ev):
         perche = f"ramo '{corrente}'" if corrente != ramo else 'modifiche locali non committate'
         return f'{repo.name}: {dietro} commit dietro origin/{ramo} ({perche}): riallinea a mano'
 
-    with ThreadPoolExecutor(8) as ex:
-        righe = [r for r in ex.map(uno, repos()) if r]
+    elenco = repos()
+    with ThreadPoolExecutor(max(len(elenco), 1)) as ex:
+        righe = [r for r in ex.map(uno, elenco) if r]
     # The git hooks of `.githooks/` (githook.py) work only once a clone points git at them, and
     # a fresh container clones everything anew: done here, it never depends on remembering it.
     for repo in repos():
@@ -262,13 +275,19 @@ def mode_start(ev):
 # assignments went unseen until he wrote about them. One call per message of his, through the
 # rules-proxy Worker (route since its rev 10); every session sees everything, with the card's
 # labels, and acts only on its own area (choice Area-01).
+# ⚠️ Since 2026-11-13 (Vaglio, Macchine-20) the mark of the last check is kept per session, in a
+# JSON file like the step-0 state: until then it was one file per computer (`trello-since`), so on
+# Rocco's Mac, with several sessions in the same home folder, an action reached only the first
+# session he wrote to, which could belong to another area. A session without a mark starts one
+# day back, as a new container always did.
 
 BACHECA, ROCCO, WORKER = shared.BOARD, shared.ROCCO, shared.WORKER
 AGENTI = '6ae3acdf8660d605eb672abe'          # the agents' account, roccobot_ai
 TAG_AGENTI = '@roccobot_ai'
 LISTE_DI_RITORNO = {'Admin', 'Fatte'}       # his decisions: a card into or out of these lists
 FILTRO_AZIONI = 'commentCard,updateCard:idList,addMemberToCard'
-SEGNO_BACHECA = Path.home() / '.claude' / 'trello-since'
+SEGNI_BACHECA = Path.home() / '.claude' / 'roccobot-bacheca.json'
+GIORNI_SEGNO = 7                            # a session silent for longer leaves the file
 
 
 def azioni_di_rocco(azioni, etichette, brief=''):
@@ -328,21 +347,40 @@ def trello_get(path, query):
     return risposta.get('data') if isinstance(risposta, dict) and 'data' in risposta else None
 
 
-def avvisi_bacheca():
+def leggi_segni():
+    try:
+        segni = json.loads(SEGNI_BACHECA.read_text(encoding='utf-8'))
+        return segni if isinstance(segni, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def scrivi_segno(sessione, quando, adesso):
+    """Write this session's mark. The file is read again just before writing and replaced in one
+    step, so a session writing at the same moment loses at most its own mark, and then sees the
+    same actions twice: never none."""
+    from datetime import timedelta
+    vecchio = (adesso - timedelta(days=GIORNI_SEGNO)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    segni = {k: v for k, v in leggi_segni().items() if isinstance(v, str) and v >= vecchio}
+    segni[sessione] = quando
+    try:
+        SEGNI_BACHECA.parent.mkdir(parents=True, exist_ok=True)
+        provvisorio = SEGNI_BACHECA.with_name(f'{SEGNI_BACHECA.name}.{os.getpid()}')
+        provvisorio.write_text(json.dumps(segni), encoding='utf-8')
+        os.replace(provvisorio, SEGNI_BACHECA)
+    except OSError:
+        pass
+
+
+def avvisi_bacheca(ev):
     from datetime import datetime, timedelta, timezone
     adesso = datetime.now(timezone.utc)
-    try:
-        dal = SEGNO_BACHECA.read_text().strip()
-    except OSError:
-        dal = (adesso - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')   # a new container
+    sessione = ev.get('session_id') or 'senza-id'
+    dal = leggi_segni().get(sessione) or (adesso - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
     azioni = trello_get(f'/boards/{BACHECA}/actions', {'filter': FILTRO_AZIONI, 'since': dal, 'limit': '100'})
     if azioni is None:
         return []                   # the mark stays where it was: the next message asks again
-    try:
-        SEGNO_BACHECA.parent.mkdir(parents=True, exist_ok=True)
-        SEGNO_BACHECA.write_text(adesso.strftime('%Y-%m-%dT%H:%M:%SZ'))
-    except OSError:
-        pass
+    scrivi_segno(sessione, adesso.strftime('%Y-%m-%dT%H:%M:%SZ'), adesso)
     if not azioni_di_rocco(azioni, {}):
         return []                   # the labels cost two more calls: only when there is news
     carte = trello_get(f'/boards/{BACHECA}/cards', {'fields': 'idLabels'}) or []
@@ -365,6 +403,8 @@ def avvisi_bacheca():
 PASSO0_STATO = Path.home() / '.claude' / 'roccobot-passo0.json'
 PASSO0_TITOLO = '0. ⚠️⚠️ **PRIMA DI TUTTO'
 IMPOSTAZIONI = Path.home() / '.claude' / 'settings.json'
+PASSO0_MASSIMO = 15         # step 0 writes a JSON file: it takes well under a second
+PASSO0_MINIMO = 3
 
 
 def comando_passo_zero(testo):
@@ -376,8 +416,10 @@ def comando_passo_zero(testo):
     return m.group(1).strip() if m else None
 
 
-def passo_zero_giornaliero(ev, oggi=None):
-    """Run step 0 if this session has not run it today; return the lines to show."""
+def passo_zero_giornaliero(ev, oggi=None, tempo=PASSO0_MASSIMO):
+    """Run step 0 if this session has not run it today; return the lines to show. `tempo` is
+    what is left of the turn hook's time: with too little the step waits for the next message,
+    since a hook stopped halfway would lose the language reminder too (Vaglio, Macchine-21)."""
     sessione = ev.get('session_id') or 'senza-id'
     oggi = oggi or date.today().isoformat()
     try:
@@ -386,6 +428,8 @@ def passo_zero_giornaliero(ev, oggi=None):
         stato = {}
     if stato.get(sessione) == oggi:
         return []
+    if tempo < PASSO0_MINIMO:
+        return ['passo 0 rimandato al prossimo messaggio: il gancio del turno è vicino al suo tempo massimo']
     try:
         comando = comando_passo_zero((HUB / 'Rules.md').read_text(encoding='utf-8'))
     except OSError:
@@ -394,7 +438,7 @@ def passo_zero_giornaliero(ev, oggi=None):
         return ["passo 0 NON eseguito: il comando non si trova in Rules.md dell'hub, § '🚀 Protocollo di avvio'"]
     prima = IMPOSTAZIONI.read_bytes() if IMPOSTAZIONI.exists() else b''
     try:
-        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True, timeout=30)
+        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True, timeout=tempo)
     except (subprocess.TimeoutExpired, OSError) as e:
         return [f'passo 0 NON riuscito: {e}']
     if r.returncode:
@@ -411,6 +455,34 @@ def passo_zero_giornaliero(ev, oggi=None):
         return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook aggiornati nelle '
                 'impostazioni utente, validi dalla sessione dopo; il codice degli hook è quello appena riallineato']
     return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook già aggiornati']
+
+
+def riallinea_turno(repo, tempo=FETCH_TURNO):
+    """Bring in the commits that arrived from outside (admin saves, bots, other sessions), or say
+    why not; None when the repo is current or the remote did not answer.
+    ⚠️ Only a fast-forward, which cannot lose anything: no own commits (they would wait unpushed),
+    a clean tree, and `merge --ff-only`, which stops on an untracked file that the remote adds
+    with the same name. Until 2026-11-13 it was `reset --hard`, which overwrote that file without
+    a word (Vaglio, Macchine-22); the start hook already used `--ff-only`."""
+    ramo = ramo_principale(repo)
+    if not aggiorna(repo, ramo, tempo):
+        return None
+    dietro = conta(repo, f'HEAD..origin/{ramo}')
+    if not dietro:
+        return None
+    avanti = conta(repo, f'origin/{ramo}..HEAD')
+    corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
+    if avanti:
+        perche = f'{avanti} commit propri'
+    elif not pulito(repo):
+        perche = 'modifiche locali non committate'
+    elif git(repo, 'merge', '--ff-only', '--quiet', f'origin/{ramo}')[0] == 0:
+        return (f"{repo.name}: ramo '{corrente}' riallineato a origin/{ramo}, {dietro} commit recuperati "
+                '(salvataggio admin, bot o altra sessione)')
+    else:
+        perche = 'un avanti veloce non riuscito (un file non tracciato che il remoto aggiunge?)'
+    return (f'{repo.name}: ATTENZIONE, {dietro} commit dietro origin/{ramo} e {perche}: riallinea a mano '
+            'prima di toccare quei file')
 
 
 PROMEMORIA_LINGUA = ("[prompt] Scrivi a Rocco SOLO in italiano: ogni frase, anche quelle brevi fra "
@@ -434,29 +506,17 @@ def mode_prompt(ev):
               "il lavoro in corso (merge e verifiche compresi), di' in una riga che la voce è "
               "accodata, e solo dopo eseguila.")
 
-    def uno(repo):
-        ramo = ramo_principale(repo)
-        if not aggiorna(repo, ramo):
-            return None
-        dietro = conta(repo, f'HEAD..origin/{ramo}')
-        if not dietro:
-            return None
-        avanti = conta(repo, f'origin/{ramo}..HEAD')
-        corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
-        if avanti == 0 and pulito(repo):
-            # Solo avanti veloce nei fatti: 0 commit propri e albero pulito, niente da perdere.
-            if git(repo, 'reset', '--hard', '--quiet', f'origin/{ramo}')[0] == 0:
-                return f"{repo.name}: ramo '{corrente}' riallineato a origin/{ramo}, {dietro} commit recuperati (salvataggio admin, bot o altra sessione)"
-        perche = f'{avanti} commit propri' if avanti else 'modifiche locali non committate'
-        return f'{repo.name}: ATTENZIONE, {dietro} commit dietro origin/{ramo} e {perche}: riallinea a mano prima di toccare quei file'
-
-    with ThreadPoolExecutor(8) as ex:
-        bacheca = ex.submit(avvisi_bacheca)
-        for r in ex.map(uno, repos()):
+    inizio = time.monotonic()
+    elenco = repos()
+    # One thread per repo, plus the board: the fetches take as long as the slowest one.
+    with ThreadPoolExecutor(len(elenco) + 1) as ex:
+        bacheca = ex.submit(avvisi_bacheca, ev)
+        for r in ex.map(riallinea_turno, elenco):
             if r:
                 print(f'[prompt] {r}')
         righe = bacheca.result()
-    for r in passo_zero_giornaliero(ev):
+    resta = TETTO_TURNO - MARGINE_TURNO - (time.monotonic() - inizio)
+    for r in passo_zero_giornaliero(ev, tempo=min(PASSO0_MASSIMO, resta)):
         print(f'[prompt] {r}')
     if righe:
         print('[bacheca] Azioni di Rocco sulla bacheca dopo il controllo precedente. Una card della '
@@ -480,7 +540,7 @@ def mode_edit(ev):
     if not pulito(repo):
         print(f'[PreEdit] {repo.name}: modifiche locali non committate, allineamento saltato')
         return
-    aggiorna(repo, ramo)
+    aggiorna(repo, ramo, FETCH_MODIFICA)
     if git(repo, 'merge', '--ff-only', '--quiet', f'origin/{ramo}')[0] == 0:
         print(f"[PreEdit] {repo.name}: allineato a origin/{ramo} ({git(repo, 'rev-parse', '--short', 'HEAD')[1]})")
     else:

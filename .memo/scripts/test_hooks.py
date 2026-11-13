@@ -199,8 +199,8 @@ class PromptReminderTests(unittest.TestCase):
         import io
         h = load_hooks()
         h.repos = lambda: []
-        h.avvisi_bacheca = lambda: []
-        h.passo_zero_giornaliero = lambda ev: []
+        h.avvisi_bacheca = lambda ev: []
+        h.passo_zero_giornaliero = lambda ev, tempo=None: []
         for prompt in ('ciao', '\\\\ dopo', ''):
             with self.subTest(prompt=prompt):
                 out = io.StringIO()
@@ -251,6 +251,164 @@ class DailyStepZeroTests(unittest.TestCase):
         ran, out = self.runs('s1', '2026-11-08')
         self.assertFalse(ran)
         self.assertIn('NON eseguito', out[0])
+
+    def test_with_too_little_time_it_waits_for_the_next_message(self):
+        # Vaglio, Macchine-21: a hook stopped at its limit loses what it had still to print.
+        out = self.h.passo_zero_giornaliero({'session_id': 's1'}, '2026-11-08', tempo=1)
+        self.assertFalse(self.segno.exists())
+        self.assertIn('rimandato', out[0])
+        self.assertTrue(self.runs('s1', '2026-11-08')[0])
+
+
+class BoardMarkTests(unittest.TestCase):
+    """Vaglio, Macchine-20: the mark of the last look at the board is kept per session. With one
+    mark per computer, an action reached only the first session Rocco wrote to."""
+
+    def setUp(self):
+        import tempfile
+        from datetime import datetime, timedelta, timezone
+        self.h = load_hooks()
+        self.h.SEGNI_BACHECA = Path(tempfile.mkdtemp()) / 'segni.json'
+        hour_ago = (datetime.now(timezone.utc) - timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        self.action = {'type': 'commentCard', 'date': hour_ago, 'idMemberCreator': self.h.ROCCO,
+                       'data': {'card': {'id': 'c1', 'name': 'Una card', 'shortLink': 'abc123'},
+                                'text': '@roccobot_ai guarda qui'}}
+        self.answer = True
+
+        def fake_get(path, query):
+            if not self.answer:
+                return None
+            if path.endswith('/actions'):
+                return [a for a in [self.action] if a['date'] > query['since']]
+            return []
+        self.h.trello_get = fake_get
+
+    def look(self, session):
+        return self.h.avvisi_bacheca({'session_id': session})
+
+    def test_every_session_sees_an_action_once(self):
+        self.assertEqual(len(self.look('s1')), 1)
+        self.assertEqual(self.look('s1'), [])
+        self.assertEqual(len(self.look('s2')), 1)
+        self.assertEqual(self.look('s2'), [])
+
+    def test_a_failed_call_leaves_the_mark_where_it_was(self):
+        self.answer = False
+        self.assertEqual(self.look('s1'), [])
+        self.answer = True
+        self.assertEqual(len(self.look('s1')), 1)
+
+    def test_old_marks_leave_the_file(self):
+        self.h.SEGNI_BACHECA.write_text(json.dumps({'vecchia': '2020-01-01T00:00:00Z'}), encoding='utf-8')
+        self.look('s1')
+        self.assertEqual(set(json.loads(self.h.SEGNI_BACHECA.read_text(encoding='utf-8'))), {'s1'})
+
+
+def git(repo, *args):
+    return subprocess.run(['git', '-C', str(repo), '-c', 'user.name=Prova', '-c', 'user.email=prova@example.org',
+                           *args], capture_output=True, text=True, check=True).stdout
+
+
+class TurnRealignTests(unittest.TestCase):
+    """The turn hook brings in the commits that arrived from outside, and never loses local work
+    (Vaglio, Macchine-22: `reset --hard` overwrote an untracked file that the remote added)."""
+
+    def setUp(self):
+        import tempfile
+        self.h = load_hooks()
+        self.tmp = Path(tempfile.mkdtemp())
+        self.origin, self.clone, self.other = self.tmp / 'origin.git', self.tmp / 'clone', self.tmp / 'other'
+        subprocess.run(['git', 'init', '-q', '--bare', '-b', 'main', str(self.origin)], check=True)
+        subprocess.run(['git', 'clone', '-q', str(self.origin), str(self.other)], check=True,
+                       capture_output=True)
+        (self.other / 'a.txt').write_text('uno\n', encoding='utf-8')
+        git(self.other, 'add', 'a.txt')
+        git(self.other, 'commit', '-q', '-m', 'primo')
+        git(self.other, 'push', '-q', 'origin', 'main')
+        subprocess.run(['git', 'clone', '-q', str(self.origin), str(self.clone)], check=True)
+
+    def remote_adds(self, name, text):
+        (self.other / name).write_text(text, encoding='utf-8')
+        git(self.other, 'add', name)
+        git(self.other, 'commit', '-q', '-m', f'aggiunge {name}')
+        git(self.other, 'push', '-q', 'origin', 'main')
+
+    def head(self):
+        return git(self.clone, 'rev-parse', 'HEAD').strip()
+
+    def test_a_clean_clone_is_brought_forward(self):
+        self.remote_adds('b.txt', 'due\n')
+        out = self.h.riallinea_turno(self.clone)
+        self.assertIn('1 commit recuperati', out)
+        self.assertEqual((self.clone / 'b.txt').read_text(encoding='utf-8'), 'due\n')
+
+    def test_an_untracked_file_the_remote_adds_is_kept(self):
+        self.remote_adds('b.txt', 'del remoto\n')
+        (self.clone / 'b.txt').write_text('lavoro mio, non tracciato\n', encoding='utf-8')
+        before = self.head()
+        out = self.h.riallinea_turno(self.clone)
+        self.assertIn('ATTENZIONE', out)
+        self.assertEqual((self.clone / 'b.txt').read_text(encoding='utf-8'), 'lavoro mio, non tracciato\n')
+        self.assertEqual(self.head(), before)
+
+    def test_own_commits_are_left_alone(self):
+        self.remote_adds('b.txt', 'due\n')
+        (self.clone / 'c.txt').write_text('mio\n', encoding='utf-8')
+        git(self.clone, 'add', 'c.txt')
+        git(self.clone, 'commit', '-q', '-m', 'mio')
+        before = self.head()
+        out = self.h.riallinea_turno(self.clone)
+        self.assertIn('1 commit propri', out)
+        self.assertEqual(self.head(), before)
+
+    def test_uncommitted_changes_are_left_alone(self):
+        self.remote_adds('b.txt', 'due\n')
+        (self.clone / 'a.txt').write_text('cambiato\n', encoding='utf-8')
+        before = self.head()
+        out = self.h.riallinea_turno(self.clone)
+        self.assertIn('modifiche locali non committate', out)
+        self.assertEqual((self.clone / 'a.txt').read_text(encoding='utf-8'), 'cambiato\n')
+        self.assertEqual(self.head(), before)
+
+
+class TurnTimeTests(unittest.TestCase):
+    """Vaglio, Macchine-21: the turn hook stays within its 40 seconds. Thirteen repos on eight
+    threads took two rounds of fetches; now every repo has its thread, and a fetch has 10 seconds."""
+
+    def test_the_fetches_run_all_together_with_a_short_limit(self):
+        import contextlib
+        import io
+        import time
+        h = load_hooks()
+        limits = []
+
+        def slow_fetch(repo, branch, timeout=25):
+            limits.append(timeout)
+            time.sleep(1)
+            return False
+        h.aggiorna = slow_fetch
+        h.repos = lambda: [Path(f'/absent/repo{i}') for i in range(13)]
+        h.avvisi_bacheca = lambda ev: []
+        h.passo_zero_giornaliero = lambda ev, tempo=None: []
+        start = time.monotonic()
+        with contextlib.redirect_stdout(io.StringIO()):
+            h.mode_prompt({'prompt': 'ciao'})
+        self.assertLess(time.monotonic() - start, 1.8)
+        self.assertEqual(len(limits), 13)
+        self.assertTrue(all(t <= 10 for t in limits), limits)
+
+    def test_step_zero_gets_what_is_left_of_the_limit(self):
+        import contextlib
+        import io
+        h = load_hooks()
+        given = []
+        h.repos = lambda: []
+        h.avvisi_bacheca = lambda ev: []
+        h.passo_zero_giornaliero = lambda ev, tempo=None: given.append(tempo) or []
+        with contextlib.redirect_stdout(io.StringIO()):
+            h.mode_prompt({'prompt': 'ciao'})
+        self.assertLessEqual(given[0], h.TETTO_TURNO - h.MARGINE_TURNO)
+        self.assertLessEqual(given[0], h.PASSO0_MASSIMO)
 
 
 if __name__ == '__main__':

@@ -115,7 +115,9 @@
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, le altre
     sessioni negli altri repo) se il ramo è pulito e senza commit propri,
-    altrimenti avvisa; prima di toccare un file allinea il suo repo; **prima di un `git commit`
+    altrimenti avvisa (dal 2026-11-13 con `merge --ff-only` e non più con `reset --hard`, che
+    sovrascriveva senza avviso un file non tracciato che il remoto aggiunge con lo stesso nome:
+    `Vaglio`, Macchine-22); prima di toccare un file allinea il suo repo; **prima di un `git commit`
     blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
     trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nel messaggio o nelle
     righe aggiunte, o nei file di regole **quando il commit ne tocca uno** (su un commit di AIV
@@ -149,6 +151,19 @@
     frasi inglesi e faceva riscriverli. Rocco l'ha fatto togliere: il blocco arriva dopo che lui
     ha letto il messaggio, gli manda lo stesso testo due volte e costa token, e l'inglese lui lo
     legge; il punto è che il messaggio sia in italiano da subito.
+  - ⚠️ **Il gancio del turno resta entro i suoi 40 secondi** (il tempo massimo che gli dà la riga del
+    passo 0; `start` ne ha 60, `edit` 30). Dal 2026-11-13 (`Vaglio`, Macchine-21) ogni repo ha il
+    suo filo e un `fetch` ha 10 secondi, quindi i `fetch` durano quanto il più lento; il passo 0
+    giornaliero riceve il tempo che resta, e se è troppo poco aspetta il messaggio dopo. Prima 13
+    `fetch` su otto fili, da 25 secondi l'uno, potevano chiedere 50 secondi, più i 30 del passo 0,
+    e un gancio fermato al tetto perde quello che doveva ancora stampare. I tempi sono in testa a
+    `hooks.py`.
+  - **Le azioni di Rocco sulla bacheca le vede ogni sessione** (righe `[bacheca]`): dal 2026-11-13
+    (`Vaglio`, Macchine-20) il segno dell'ultimo controllo è uno per sessione, in
+    `~/.claude/roccobot-bacheca.json`, come lo stato del passo 0. Prima era uno per computer
+    (`~/.claude/trello-since`), e sul Mac, con più sessioni nella stessa cartella Inizio, un'azione
+    la vedeva solo la prima sessione a cui lui scriveva. Una sessione senza segno parte da un giorno
+    prima.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
     compresi, e non il diff vuoto dello stage.
