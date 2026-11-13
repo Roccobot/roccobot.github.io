@@ -20,7 +20,7 @@
 </head>
 <body>
 <style>
-/* RUIAS: the preview phone on the left (sticky on wide screens), the entrance and exit panels on the
+/* RUIAS: the preview phone on the left, as tall as the panel beside it, the entrance and exit panels on the
    right, each with its Bezier graph, its After Effects style speed graph and its controls.
    Colours and type from the Roccobot Design System, servizio- family (design/tokens.json). */
 :root {
@@ -39,6 +39,7 @@
   --screen: #fcfbf8;      /* fondo, AIV's screen */
   --surface: #fffefc;     /* superficie, AIV's sheet */
   --scrim: #000000;       /* velo: black in the light theme */
+  --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%234d5956' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); /* the dropdown chevron, in --muted */
   --font: Archivo, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -47,6 +48,7 @@
     --bg: #2e3836; --card: #3b4744; --line: #4e5b57; --ink: #f3f6f5; --muted: #c2cdc9;
     --accent: #43b59e; --on-accent: #00382f; --accent-hover: #4fd9be; --label: #43b59e;
     --in: #4fd9be; --out: #f0b060; --field: #333b39; --screen: #151b1a; --surface: #1e2523; --scrim: #ffffff;
+    --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%23c2cdc9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     color-scheme: dark;
   }
 }
@@ -54,6 +56,7 @@
   --bg: #2e3836; --card: #3b4744; --line: #4e5b57; --ink: #f3f6f5; --muted: #c2cdc9;
   --accent: #43b59e; --on-accent: #00382f; --accent-hover: #4fd9be; --label: #43b59e;
   --in: #4fd9be; --out: #f0b060; --field: #333b39; --screen: #151b1a; --surface: #1e2523; --scrim: #ffffff;
+  --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%23c2cdc9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -82,7 +85,7 @@ button, select, input { font: inherit; color: inherit; }
 /* No focus rings on the controls (the owner's choice): a click or a key leaves no frame behind */
 button:focus, select:focus, input:focus { outline: none; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
-@media (min-width: 62rem) { .layout { grid-template-columns: 23.5rem minmax(0, 1fr); align-items: start; } }
+@media (min-width: 62rem) { .layout { grid-template-columns: 23.5rem minmax(0, 1fr); } }
 .stage .chip { padding: 0 .8rem; }
 .stage .row.one { flex-wrap: nowrap; }
 /* The info mark in the preview's corner: quiet, almost invisible, with the technical notes on hover,
@@ -102,8 +105,6 @@ button:focus, select:focus, input:focus { outline: none; }
 .tabs .chip { min-height: 40px; padding: 0 1.1rem; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; }
 .tabs .chip::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--pc); }
 .tabs .chip[aria-pressed="true"]::before { background: var(--on-accent); }
-/* The preview stays in view while the panels scroll, where the screen is tall enough to hold it whole */
-@media (min-width: 62rem) and (min-height: 58rem) { .stage { position: sticky; top: 1rem; } }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1.1rem; min-width: 0; }
 .stage { display: flex; flex-direction: column; gap: .7rem; padding-top: 1.4rem; }
 .group { display: flex; flex-direction: column; gap: .35rem; }
@@ -168,12 +169,27 @@ svg .pk { fill: var(--pc); }
 .paste { display: flex; gap: .4rem; grid-column: 1 / -1; }
 .paste input { flex: 1 1 auto; min-width: 0; border: 1px solid var(--line); background: var(--field); border-radius: 8px; padding: .45rem .6rem; font-family: var(--mono); font-size: .82rem; }
 .paste .err { color: var(--out); font-size: .8rem; }
-select { border: 1px solid var(--line); background: var(--field); border-radius: 8px; padding: .4rem .5rem; min-width: 0; max-width: 100%; }
+/* The dropdowns draw their own chevron, .75rem from the right edge: the native one sits against the border */
+select { appearance: none; border: 1px solid var(--line); background: var(--field) var(--chev) no-repeat right .75rem center / 12px 8px;
+         border-radius: 8px; padding: .4rem 2.1rem .4rem .5rem; min-width: 0; max-width: 100%; }
 .sw { display: inline-flex; align-items: center; gap: .45rem; font-size: .85rem; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink); }
 .sw input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; margin: 0; }
 .dim { opacity: .45; }
 .msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+#reset .short { display: none; }
+/* The phone: the title block centred, and the four header pills on one row, a little tighter, with
+   the design system pill in its short form */
+@media (max-width: 40rem) {
+  header.top { justify-content: center; }
+  .title { justify-content: center; text-align: center; }
+  .tools-top { flex-wrap: nowrap; justify-content: center; gap: .3rem; }
+  .tools-top .chip { padding: 0 .55rem; font-size: .82rem; white-space: nowrap; }
+  .tabs { gap: .3rem; margin-right: .2rem; }
+  .tabs .chip { padding: 0 .6rem; gap: .35rem; }
+  #reset .long { display: none; }
+  #reset .short { display: inline; }
+}
 </style>
 
 <div class="wrap">
@@ -188,7 +204,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
         <button class="chip out" type="button" data-v="out" data-t="out"></button>
       </div>
       <button class="chip" type="button" id="copyall"></button>
-      <button class="chip" type="button" id="reset" data-t="reset"></button>
+      <button class="chip" type="button" id="reset"><span class="long" data-t="reset"></span><span class="short" data-t="resetShort"></span></button>
     </div>
   </header>
 
@@ -261,12 +277,12 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.22';
+  var VERSION = '1.23';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
-      reset: 'Valori del design system', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
+      reset: 'Valori del design system', resetShort: 'Valori DS', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
       sequence: 'Sequenza', seqCycle: 'Entrata-uscita', seqIn: 'Entrata', seqOut: 'Uscita',
       speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
@@ -285,7 +301,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       presets: { ds: 'Design system', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
-      reset: 'Design system values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
+      reset: 'Design system values', resetShort: 'DS values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
       sequence: 'Sequence', seqCycle: 'Entrance-exit', seqIn: 'Entrance', seqOut: 'Exit',
       speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
