@@ -24,10 +24,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rules_password  # noqa: E402
+import shared  # noqa: E402
 
-WORKER = "https://rules-proxy.roccobot-b90.workers.dev/"
-BOARD = "6ae2176ecb8fb9cf1c9689a6"
-ROCCO = "6ae21589e5ae078f5f0a615d"
+WORKER, BOARD, ROCCO = shared.WORKER, shared.BOARD, shared.ROCCO
 DONE_LIST = "Fatte"
 SHORT_LINK = re.compile(r"^[A-Za-z0-9]{8}$")
 
@@ -68,8 +67,7 @@ def call(method, path, query=None, body=None):
         payload["body"] = body
     req = urllib.request.Request(
         WORKER, data=json.dumps(payload).encode(), method="POST",
-        headers={"Content-Type": "application/json",
-                 "User-Agent": "Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/120 Safari/537.36"})
+        headers={"Content-Type": "application/json", "User-Agent": shared.USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
             out = json.load(r)

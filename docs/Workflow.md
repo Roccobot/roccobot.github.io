@@ -115,11 +115,18 @@
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, le altre
     sessioni negli altri repo) se il ramo è pulito e senza commit propri,
-    altrimenti avvisa; prima di toccare un file allinea il suo repo; **prima di un `git commit`
+    altrimenti avvisa (dal 2026-11-13 con `merge --ff-only` e non più con `reset --hard`, che
+    sovrascriveva senza avviso un file non tracciato che il remoto aggiunge con lo stesso nome:
+    `Vaglio`, Macchine-22); prima di toccare un file allinea il suo repo; **prima di un `git commit`
     blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
     trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nel messaggio o nelle
     righe aggiunte, o nei file di regole **quando il commit ne tocca uno** (su un commit di AIV
-    che non li cambia bloccava per difetti di altri repo, 2026-09-27); **prima di aprire o commentare una PR, di fare una domanda
+    che non li cambia bloccava per difetti di altri repo, 2026-09-27). ⚠️ **Dal 2026-11-13
+    (`Vaglio`, Macchine-23) quegli ultimi controlli li lascia agli hook di git** quando gireranno
+    allo stesso commit (`core.hooksPath` uguale a `.githooks`, i due file al loro posto e l'hub
+    raggiungibile da loro), perché `githook.py` li rifaceva uguali; li fa ancora lui con
+    `--no-verify`, con `-n` o con un altro `core.hooksPath` passato con `-c`, e restano suoi il
+    ritardo sul remoto e il badge. **Prima di aprire o commentare una PR, di fare una domanda
     a scelta multipla o di pubblicare un artefatto** passa il testo a `refcheck.py`, e blocca.
   - ⚠️⚠️ **Prima di ogni comando blocca quelli che stampano l'ambiente intero o un segreto** (dal
     2026-10-15, su richiesta dell'utente): `env` senza un comando da lanciare, `printenv` senza un
@@ -129,6 +136,18 @@
     `RULES_PASSWORD` nella trascrizione della sessione. Una variabile si legge per nome
     (`printenv LANG`), e un segreto si usa senza stamparlo (`curl -d "$RULES_PASSWORD"` passa).
     Le prove sono in `.memo/scripts/test_hooks.py`, e girano anche nell'Action `rules-check`.
+    - **Dal 2026-11-13 (`Vaglio`, Macchine-19) guarda anche dove la prima versione non guardava**:
+      dentro `bash -c`, `sh -c`, `eval` e il comando lanciato da `env`; `declare -p` e `typeset -p`
+      di un segreto; una stringa passata con `<<<` a un comando che stampa quello che legge (`cat`,
+      `base64`, `grep`...); le chiamate di stampa nel codice di `python -c`, `node -e` e `-p`,
+      `perl -e` e `ruby -e`, quando stampano un segreto o l'ambiente intero; e la lettura del file
+      della parola delle regole (`~/.config/roccobot/rules-password`) con un comando che lo stampa.
+      Ogni caso ha la sua prova nei due versi: un `curl` col segreto in un'intestazione, anche
+      dentro `bash -c` o passato con `<<<`, e uno script Python che lo manda e stampa solo l'esito
+      passano.
+    - ⚠️ **È un freno contro gli incidenti, non una serratura**: un segreto copiato in un'altra
+      variabile, uno script su file che lo stampa o una sostituzione di comando
+      (`echo "$(printenv X)"`) passano ancora.
   - ⚠️⚠️ **A ogni messaggio di Rocco, un promemoria sulla lingua** (modo `prompt`,
     `PROMEMORIA_LINGUA`, dal 2026-11-07, sua scelta Prevenzione-01, dopo quattro ricadute in frasi
     inglesi nella chat): agisce prima della scrittura, quando la regola letta all'avvio è lontana
@@ -137,6 +156,19 @@
     frasi inglesi e faceva riscriverli. Rocco l'ha fatto togliere: il blocco arriva dopo che lui
     ha letto il messaggio, gli manda lo stesso testo due volte e costa token, e l'inglese lui lo
     legge; il punto è che il messaggio sia in italiano da subito.
+  - ⚠️ **Il gancio del turno resta entro i suoi 40 secondi** (il tempo massimo che gli dà la riga del
+    passo 0; `start` ne ha 60, `edit` 30). Dal 2026-11-13 (`Vaglio`, Macchine-21) ogni repo ha il
+    suo filo e un `fetch` ha 10 secondi, quindi i `fetch` durano quanto il più lento; il passo 0
+    giornaliero riceve il tempo che resta, e se è troppo poco aspetta il messaggio dopo. Prima 13
+    `fetch` su otto fili, da 25 secondi l'uno, potevano chiedere 50 secondi, più i 30 del passo 0,
+    e un gancio fermato al tetto perde quello che doveva ancora stampare. I tempi sono in testa a
+    `hooks.py`.
+  - **Le azioni di Rocco sulla bacheca le vede ogni sessione** (righe `[bacheca]`): dal 2026-11-13
+    (`Vaglio`, Macchine-20) il segno dell'ultimo controllo è uno per sessione, in
+    `~/.claude/roccobot-bacheca.json`, come lo stato del passo 0. Prima era uno per computer
+    (`~/.claude/trello-since`), e sul Mac, con più sessioni nella stessa cartella Inizio, un'azione
+    la vedeva solo la prima sessione a cui lui scriveva. Una sessione senza segno parte da un giorno
+    prima.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
     compresi, e non il diff vuoto dello stage.
@@ -195,10 +227,15 @@
   *imposta un controllo settimanale automatico delle dipendenze in ogni repo*), in due modi
   secondo che cosa il repo usa. La regola che lo chiede è in `Roccobot.md` § '🔗 Le dipendenze si
   seguono: ogni versione nuova si legge'.
-  - **Le azioni di GitHub**, in ogni repo che ha workflow: `.github/dependabot.yml`, e Dependabot
-    apre una pull request quando un'azione ha una versione nuova (per esempio `actions/checkout`
-    dalla `v4` alla `v5`). La pull request si legge, coi changelog che riporta, e si mergia come
-    ogni aggiornamento; i richiami ai workflow riusabili di questo repo (`@master`) non li tocca.
+  - **Le azioni di GitHub**, in ogni repo i cui workflow usano azioni con una versione (come dice il
+    nucleo): `.github/dependabot.yml`, e Dependabot apre una pull request quando un'azione ha una
+    versione nuova (per esempio `actions/checkout` dalla `v4` alla `v5`). La pull request si legge,
+    coi changelog che riporta, e si mergia come ogni aggiornamento; i richiami ai workflow
+    riusabili di questo repo (`@master`) non li tocca. ⚠️ **Un repo il cui unico workflow è il
+    richiamo di `rules-check@master` non ha niente da seguire**, e non riceve il file (fino al
+    2026-11-13 questa voce diceva 'in ogni repo che ha workflow', `Vaglio`, Macchine-25); un repo
+    che aggiunge un workflow con un'azione versionata (`actions/checkout@v7`) riceve
+    `dependabot.yml` nello stesso commit.
   - **Il registro del progetto**, dove c'è (Aomidori, AIV, Terramare e Arda: `docs/Dependencies.json`):
     il workflow riusabile `.github/workflows/dependencies.yml` di questo repo, che ogni repo richiama
     dal suo `.github/workflows/dependencies.yml` col cron. Lancia lo script di questo repo,
@@ -237,8 +274,8 @@
 - **Quando gira**: il lunedì alle 06:17 UTC, cioè alle 08:17 a Roma con l'ora legale e alle 07:17
   con quella solare; Dependabot alle 08:00 di Roma. Una run si lancia anche a mano dalla scheda
   Actions del repo (`workflow_dispatch`).
-- ⚠️ **Un repo nuovo con un registro riceve il richiamo, e uno con dei workflow riceve
-  `dependabot.yml`**: senza, resta fuori dal controllo.
+- ⚠️ **Un repo nuovo con un registro riceve il richiamo, e uno con azioni versionate nei suoi
+  workflow riceve `dependabot.yml`**: senza, resta fuori dal controllo.
 - ⚠️ **In un repo privato le run consumano i minuti del piano** (Aomidori dal 2026-10-15): il
   controllo gira su Linux, dove un minuto conta uno e non dieci come su macOS.
 
@@ -273,9 +310,8 @@
   `datiVersion`, ritardo sul remoto, **trattini lunghi** nelle righe aggiunte, i **riferimenti
   incrociati** dei file di regole, e i **caratteri del messaggio di commit**, anche quando
   arriva da un file con `-F`. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
-  e controlla anche i file di `Roccobot/tools`, il `CLAUDE.md` di `Roccobot/AIV` e i
-  **documenti** di `Roccobot/mihon-aniyomi-ext` quando quei repo sono agganciati; di un repo
-  assente lo **dichiara**). ⚠️ Criterio,
+  e controlla anche i file di regole di `Roccobot/tools`, di `Roccobot/AIV` e dei repo dei
+  progetti quando quei repo sono agganciati; di un repo assente lo **dichiara**). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
   che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,

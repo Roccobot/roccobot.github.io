@@ -27,11 +27,13 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import shared  # noqa: E402
+
 HUB = Path(__file__).resolve().parents[2]
 BASE = HUB.parent
 BRIEF = BASE / 'tools' / '.memo' / 'LATEST.md'
 CHANGELOG = BASE / 'tools' / 'rules' / 'Changelog.md'
-KNOWN_BRANCH = {'roccobot.github.io': 'master'}
 STAMP = re.compile(r'^> \*\*Last turn\*\*: (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z), ([^;]+); (.*)$', re.M)
 SENSITIVE = re.compile(r'(^|/)(CLAUDE|AGENTS|Rules|GEMINI|SKILL)\.md$|^(rules|snippets|\.agents|\.claude|'
                        r'\.github|\.githooks|\.memo/scripts)/')
@@ -51,24 +53,12 @@ def label(repo):
     return 'hub' if name == 'roccobot.github.io' else name
 
 
-def branch(repo):
-    rc, out = git(repo, 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD')
-    if rc == 0 and out.startswith('origin/'):
-        return out[len('origin/'):]
-    return KNOWN_BRANCH.get(repo.name.lower(), 'main')
-
-
-def fetch(repo, ramo):
-    # The refspec is explicit: a clone without remote.origin.fetch updates only FETCH_HEAD.
-    git(repo, 'fetch', '--quiet', 'origin', f'+refs/heads/{ramo}:refs/remotes/origin/{ramo}')
-
-
 def stamp_line(agent, do_fetch):
     parts = []
     for repo in repos():
-        ramo = branch(repo)
+        ramo = shared.main_branch(repo)
         if do_fetch:
-            fetch(repo, ramo)
+            shared.fetch_main(repo, ramo)
         rc, sha = git(repo, 'rev-parse', '--short=7', f'origin/{ramo}')
         if rc == 0:
             parts.append(f'{label(repo)} {sha}')
@@ -98,9 +88,9 @@ def main(argv):
     seen = dict(re.findall(r'([\w.-]+) ([0-9a-f]{7,40})', rest))
     print(f'Ultimo turno: {agent}, {when}\n')
     for repo in repos():
-        ramo = branch(repo)
+        ramo = shared.main_branch(repo)
         if do_fetch:
-            fetch(repo, ramo)
+            shared.fetch_main(repo, ramo)
         sha = seen.get(label(repo))
         span = [f'{sha}..origin/{ramo}'] if sha else ['--since', when, f'origin/{ramo}']
         rc, out = git(repo, 'log', '--no-merges', '--name-only', '--format=%h\x1f%an\x1f%s', *span)

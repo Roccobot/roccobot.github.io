@@ -43,16 +43,30 @@ import re
 import shlex
 import subprocess
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import rules_password  # noqa: E402
+import shared  # noqa: E402
+
 HUB = Path(__file__).resolve().parents[2]
 BASE = HUB.parent                      # la cartella che contiene i repo
 REFCHECK = HUB / '.memo' / 'scripts' / 'refcheck.py'
-# Il ramo principale quando il remoto non lo dice: l'hub è l'unico su `master`.
-RAMO_NOTO = {'roccobot.github.io': 'master'}
 TRATTINI = (chr(0x2014), chr(0x2013))
+
+# The time limits of the hooks, from the step-0 command in the hub's Rules.md: 60 seconds for
+# `start`, 40 for `prompt`, 30 for `edit`. A hook past its limit is stopped by Claude Code with
+# whatever it had still to print. Until 2026-11-13 (Vaglio, Macchine-21) the turn hook could need
+# 50 seconds of fetches (13 repos on 8 threads, 25 seconds each) and then 30 of step 0. Now every
+# repo has its own thread, so the fetches take as long as the slowest one.
+TETTO_TURNO = 40
+MARGINE_TURNO = 5           # printing and exit
+FETCH_TURNO = 10            # at each message of Rocco's
+FETCH_AVVIO = 20            # at the start, followed by catchup.py (20)
+FETCH_MODIFICA = 15         # before an edit, followed by a merge
 
 
 def git(repo, *args, timeout=20):
@@ -79,18 +93,10 @@ def radice(percorso):
     return Path(out) if rc == 0 and out else None
 
 
-def ramo_principale(repo):
-    rc, out = git(repo, 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD', timeout=5)
-    if rc == 0 and out.startswith('origin/'):
-        return out[len('origin/'):]
-    return RAMO_NOTO.get(repo.name, 'main')
-
-
-def aggiorna(repo, ramo):
-    # ⚠️ Il refspec è esplicito: un clone senza `remote.origin.fetch` (è successo con
-    # `earthsea`) aggiorna solo FETCH_HEAD, e `origin/main` resta fermo mentendo.
-    return git(repo, 'fetch', '--quiet', 'origin', f'+refs/heads/{ramo}:refs/remotes/origin/{ramo}',
-               timeout=25)[0] == 0
+# Il ramo principale di un clone e il fetch di quel ramo vivono in shared.py, che li dà anche a
+# catchup.py (Vaglio, Macchine-17).
+ramo_principale = shared.main_branch
+aggiorna = shared.fetch_main
 
 
 def pulito(repo):
@@ -192,7 +198,7 @@ def mode_start(ev):
         return
     def uno(repo):
         ramo = ramo_principale(repo)
-        if not aggiorna(repo, ramo):
+        if not aggiorna(repo, ramo, FETCH_AVVIO):
             return f'{repo.name}: fetch non riuscito, nessun allineamento'
         corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
         dietro = conta(repo, f'HEAD..origin/{ramo}')
@@ -205,8 +211,9 @@ def mode_start(ev):
         perche = f"ramo '{corrente}'" if corrente != ramo else 'modifiche locali non committate'
         return f'{repo.name}: {dietro} commit dietro origin/{ramo} ({perche}): riallinea a mano'
 
-    with ThreadPoolExecutor(8) as ex:
-        righe = [r for r in ex.map(uno, repos()) if r]
+    elenco = repos()
+    with ThreadPoolExecutor(max(len(elenco), 1)) as ex:
+        righe = [r for r in ex.map(uno, elenco) if r]
     # The git hooks of `.githooks/` (githook.py) work only once a clone points git at them, and
     # a fresh container clones everything anew: done here, it never depends on remembering it.
     for repo in repos():
@@ -268,15 +275,19 @@ def mode_start(ev):
 # assignments went unseen until he wrote about them. One call per message of his, through the
 # rules-proxy Worker (route since its rev 10); every session sees everything, with the card's
 # labels, and acts only on its own area (choice Area-01).
+# ⚠️ Since 2026-11-13 (Vaglio, Macchine-20) the mark of the last check is kept per session, in a
+# JSON file like the step-0 state: until then it was one file per computer (`trello-since`), so on
+# Rocco's Mac, with several sessions in the same home folder, an action reached only the first
+# session he wrote to, which could belong to another area. A session without a mark starts one
+# day back, as a new container always did.
 
-BACHECA = '6ae2176ecb8fb9cf1c9689a6'
-ROCCO = '6ae21589e5ae078f5f0a615d'
+BACHECA, ROCCO, WORKER = shared.BOARD, shared.ROCCO, shared.WORKER
 AGENTI = '6ae3acdf8660d605eb672abe'          # the agents' account, roccobot_ai
 TAG_AGENTI = '@roccobot_ai'
 LISTE_DI_RITORNO = {'Admin', 'Fatte'}       # his decisions: a card into or out of these lists
 FILTRO_AZIONI = 'commentCard,updateCard:idList,addMemberToCard'
-SEGNO_BACHECA = Path.home() / '.claude' / 'trello-since'
-WORKER = 'https://rules-proxy.roccobot-b90.workers.dev/'
+SEGNI_BACHECA = Path.home() / '.claude' / 'roccobot-bacheca.json'
+GIORNI_SEGNO = 7                            # a session silent for longer leaves the file
 
 
 def azioni_di_rocco(azioni, etichette, brief=''):
@@ -321,16 +332,13 @@ def azioni_di_rocco(azioni, etichette, brief=''):
 def trello_get(path, query):
     """One GET to Trello through the Worker; None on any failure, so a slow Trello never blocks."""
     import urllib.request
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    import rules_password
     parola = rules_password.read()
     if not parola:
         return None
     corpo = json.dumps({'action': 'trello', 'password': parola, 'method': 'GET',
                         'path': path, 'query': query}).encode()
     req = urllib.request.Request(WORKER, data=corpo, method='POST', headers={
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/120 Safari/537.36'})
+        'Content-Type': 'application/json', 'User-Agent': shared.USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=6) as r:
             risposta = json.load(r)
@@ -339,21 +347,40 @@ def trello_get(path, query):
     return risposta.get('data') if isinstance(risposta, dict) and 'data' in risposta else None
 
 
-def avvisi_bacheca():
+def leggi_segni():
+    try:
+        segni = json.loads(SEGNI_BACHECA.read_text(encoding='utf-8'))
+        return segni if isinstance(segni, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def scrivi_segno(sessione, quando, adesso):
+    """Write this session's mark. The file is read again just before writing and replaced in one
+    step, so a session writing at the same moment loses at most its own mark, and then sees the
+    same actions twice: never none."""
+    from datetime import timedelta
+    vecchio = (adesso - timedelta(days=GIORNI_SEGNO)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    segni = {k: v for k, v in leggi_segni().items() if isinstance(v, str) and v >= vecchio}
+    segni[sessione] = quando
+    try:
+        SEGNI_BACHECA.parent.mkdir(parents=True, exist_ok=True)
+        provvisorio = SEGNI_BACHECA.with_name(f'{SEGNI_BACHECA.name}.{os.getpid()}')
+        provvisorio.write_text(json.dumps(segni), encoding='utf-8')
+        os.replace(provvisorio, SEGNI_BACHECA)
+    except OSError:
+        pass
+
+
+def avvisi_bacheca(ev):
     from datetime import datetime, timedelta, timezone
     adesso = datetime.now(timezone.utc)
-    try:
-        dal = SEGNO_BACHECA.read_text().strip()
-    except OSError:
-        dal = (adesso - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')   # a new container
+    sessione = ev.get('session_id') or 'senza-id'
+    dal = leggi_segni().get(sessione) or (adesso - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
     azioni = trello_get(f'/boards/{BACHECA}/actions', {'filter': FILTRO_AZIONI, 'since': dal, 'limit': '100'})
     if azioni is None:
         return []                   # the mark stays where it was: the next message asks again
-    try:
-        SEGNO_BACHECA.parent.mkdir(parents=True, exist_ok=True)
-        SEGNO_BACHECA.write_text(adesso.strftime('%Y-%m-%dT%H:%M:%SZ'))
-    except OSError:
-        pass
+    scrivi_segno(sessione, adesso.strftime('%Y-%m-%dT%H:%M:%SZ'), adesso)
     if not azioni_di_rocco(azioni, {}):
         return []                   # the labels cost two more calls: only when there is news
     carte = trello_get(f'/boards/{BACHECA}/cards', {'fields': 'idLabels'}) or []
@@ -376,6 +403,8 @@ def avvisi_bacheca():
 PASSO0_STATO = Path.home() / '.claude' / 'roccobot-passo0.json'
 PASSO0_TITOLO = '0. ⚠️⚠️ **PRIMA DI TUTTO'
 IMPOSTAZIONI = Path.home() / '.claude' / 'settings.json'
+PASSO0_MASSIMO = 15         # step 0 writes a JSON file: it takes well under a second
+PASSO0_MINIMO = 3
 
 
 def comando_passo_zero(testo):
@@ -387,8 +416,10 @@ def comando_passo_zero(testo):
     return m.group(1).strip() if m else None
 
 
-def passo_zero_giornaliero(ev, oggi=None):
-    """Run step 0 if this session has not run it today; return the lines to show."""
+def passo_zero_giornaliero(ev, oggi=None, tempo=PASSO0_MASSIMO):
+    """Run step 0 if this session has not run it today; return the lines to show. `tempo` is
+    what is left of the turn hook's time: with too little the step waits for the next message,
+    since a hook stopped halfway would lose the language reminder too (Vaglio, Macchine-21)."""
     sessione = ev.get('session_id') or 'senza-id'
     oggi = oggi or date.today().isoformat()
     try:
@@ -397,6 +428,8 @@ def passo_zero_giornaliero(ev, oggi=None):
         stato = {}
     if stato.get(sessione) == oggi:
         return []
+    if tempo < PASSO0_MINIMO:
+        return ['passo 0 rimandato al prossimo messaggio: il gancio del turno è vicino al suo tempo massimo']
     try:
         comando = comando_passo_zero((HUB / 'Rules.md').read_text(encoding='utf-8'))
     except OSError:
@@ -405,7 +438,7 @@ def passo_zero_giornaliero(ev, oggi=None):
         return ["passo 0 NON eseguito: il comando non si trova in Rules.md dell'hub, § '🚀 Protocollo di avvio'"]
     prima = IMPOSTAZIONI.read_bytes() if IMPOSTAZIONI.exists() else b''
     try:
-        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True, timeout=30)
+        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True, timeout=tempo)
     except (subprocess.TimeoutExpired, OSError) as e:
         return [f'passo 0 NON riuscito: {e}']
     if r.returncode:
@@ -422,6 +455,34 @@ def passo_zero_giornaliero(ev, oggi=None):
         return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook aggiornati nelle '
                 'impostazioni utente, validi dalla sessione dopo; il codice degli hook è quello appena riallineato']
     return ['passo 0 eseguito (primo messaggio di oggi): permessi e hook già aggiornati']
+
+
+def riallinea_turno(repo, tempo=FETCH_TURNO):
+    """Bring in the commits that arrived from outside (admin saves, bots, other sessions), or say
+    why not; None when the repo is current or the remote did not answer.
+    ⚠️ Only a fast-forward, which cannot lose anything: no own commits (they would wait unpushed),
+    a clean tree, and `merge --ff-only`, which stops on an untracked file that the remote adds
+    with the same name. Until 2026-11-13 it was `reset --hard`, which overwrote that file without
+    a word (Vaglio, Macchine-22); the start hook already used `--ff-only`."""
+    ramo = ramo_principale(repo)
+    if not aggiorna(repo, ramo, tempo):
+        return None
+    dietro = conta(repo, f'HEAD..origin/{ramo}')
+    if not dietro:
+        return None
+    avanti = conta(repo, f'origin/{ramo}..HEAD')
+    corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
+    if avanti:
+        perche = f'{avanti} commit propri'
+    elif not pulito(repo):
+        perche = 'modifiche locali non committate'
+    elif git(repo, 'merge', '--ff-only', '--quiet', f'origin/{ramo}')[0] == 0:
+        return (f"{repo.name}: ramo '{corrente}' riallineato a origin/{ramo}, {dietro} commit recuperati "
+                '(salvataggio admin, bot o altra sessione)')
+    else:
+        perche = 'un avanti veloce non riuscito (un file non tracciato che il remoto aggiunge?)'
+    return (f'{repo.name}: ATTENZIONE, {dietro} commit dietro origin/{ramo} e {perche}: riallinea a mano '
+            'prima di toccare quei file')
 
 
 PROMEMORIA_LINGUA = ("[prompt] Scrivi a Rocco SOLO in italiano: ogni frase, anche quelle brevi fra "
@@ -445,29 +506,17 @@ def mode_prompt(ev):
               "il lavoro in corso (merge e verifiche compresi), di' in una riga che la voce è "
               "accodata, e solo dopo eseguila.")
 
-    def uno(repo):
-        ramo = ramo_principale(repo)
-        if not aggiorna(repo, ramo):
-            return None
-        dietro = conta(repo, f'HEAD..origin/{ramo}')
-        if not dietro:
-            return None
-        avanti = conta(repo, f'origin/{ramo}..HEAD')
-        corrente = git(repo, 'symbolic-ref', '--short', '-q', 'HEAD', timeout=5)[1]
-        if avanti == 0 and pulito(repo):
-            # Solo avanti veloce nei fatti: 0 commit propri e albero pulito, niente da perdere.
-            if git(repo, 'reset', '--hard', '--quiet', f'origin/{ramo}')[0] == 0:
-                return f"{repo.name}: ramo '{corrente}' riallineato a origin/{ramo}, {dietro} commit recuperati (salvataggio admin, bot o altra sessione)"
-        perche = f'{avanti} commit propri' if avanti else 'modifiche locali non committate'
-        return f'{repo.name}: ATTENZIONE, {dietro} commit dietro origin/{ramo} e {perche}: riallinea a mano prima di toccare quei file'
-
-    with ThreadPoolExecutor(8) as ex:
-        bacheca = ex.submit(avvisi_bacheca)
-        for r in ex.map(uno, repos()):
+    inizio = time.monotonic()
+    elenco = repos()
+    # One thread per repo, plus the board: the fetches take as long as the slowest one.
+    with ThreadPoolExecutor(len(elenco) + 1) as ex:
+        bacheca = ex.submit(avvisi_bacheca, ev)
+        for r in ex.map(riallinea_turno, elenco):
             if r:
                 print(f'[prompt] {r}')
         righe = bacheca.result()
-    for r in passo_zero_giornaliero(ev):
+    resta = TETTO_TURNO - MARGINE_TURNO - (time.monotonic() - inizio)
+    for r in passo_zero_giornaliero(ev, tempo=min(PASSO0_MASSIMO, resta)):
         print(f'[prompt] {r}')
     if righe:
         print('[bacheca] Azioni di Rocco sulla bacheca dopo il controllo precedente. Una card della '
@@ -491,7 +540,7 @@ def mode_edit(ev):
     if not pulito(repo):
         print(f'[PreEdit] {repo.name}: modifiche locali non committate, allineamento saltato')
         return
-    aggiorna(repo, ramo)
+    aggiorna(repo, ramo, FETCH_MODIFICA)
     if git(repo, 'merge', '--ff-only', '--quiet', f'origin/{ramo}')[0] == 0:
         print(f"[PreEdit] {repo.name}: allineato a origin/{ramo} ({git(repo, 'rev-parse', '--short', 'HEAD')[1]})")
     else:
@@ -514,7 +563,9 @@ def segmenti(comando):
 
 
 def commit_nel_comando(comando, cwd):
-    """[(repo, messaggio o None, aggiunge)] per ogni `git commit` del comando."""
+    """[(repo, messaggio o None, aggiunge, salta_hook)] per ogni `git commit` del comando;
+    `salta_hook` è vero quando il comando non lascia girare gli hook di git (`--no-verify`, `-n`,
+    o un `core.hooksPath` diverso passato con `-c`)."""
     trovati, qui, aggiunge = [], Path(cwd or os.getcwd()), False
     for t in segmenti(comando):
         if t[0] == 'cd' and len(t) > 1:
@@ -522,12 +573,14 @@ def commit_nel_comando(comando, cwd):
             continue
         if t[0] != 'git':
             continue
-        dove, i = qui, 1
+        dove, i, salta_hook = qui, 1, False
         while i < len(t) and t[i].startswith('-'):
             if t[i] == '-C' and i + 1 < len(t):
                 dove = (qui / os.path.expanduser(t[i + 1])).resolve()
                 i += 2
                 continue
+            if t[i] == '-c' and i + 1 < len(t) and t[i + 1].lower().startswith('core.hookspath'):
+                salta_hook = True
             i += 2 if t[i] == '-c' else 1
         sotto = t[i] if i < len(t) else ''
         resto = t[i + 1:]
@@ -550,11 +603,25 @@ def commit_nel_comando(comando, cwd):
                 j += 2; continue
             if re.fullmatch(r'-[a-zA-Z]*a[a-zA-Z]*', a) or a == '--all':
                 aggiunge = True
+            if re.fullmatch(r'-[a-zA-Z]*n[a-zA-Z]*', a) or a == '--no-verify':
+                salta_hook = True
             j += 1
         repo = radice(dove)
         if repo:
-            trovati.append((repo, '\n\n'.join(messaggio) if messaggio else None, aggiunge))
+            trovati.append((repo, '\n\n'.join(messaggio) if messaggio else None, aggiunge, salta_hook))
     return trovati
+
+
+def hook_di_git_attivi(repo):
+    """True when `git commit` in this repo runs githook.py through `.githooks/`: the setting is on,
+    the two files are there, and they find the hub the way they look for it (this repo, or a clone
+    named roccobot.github.io next to it). Without the hub they let the commit pass unchecked."""
+    if git(repo, 'config', '--get', 'core.hooksPath', timeout=5)[1] != '.githooks':
+        return False
+    if not all((repo / '.githooks' / f).is_file() for f in ('pre-commit', 'commit-msg')):
+        return False
+    vicini = [repo] + [d for d in repo.parent.iterdir() if d.name.lower() == 'roccobot.github.io']
+    return any((d / '.memo' / 'scripts' / 'githook.py').is_file() for d in vicini)
 
 
 def diff_da_controllare(repo, aggiunge):
@@ -600,31 +667,87 @@ def blocca(msg):
 # locale of the container. So a command that prints the whole environment, or a variable named
 # like a secret, is blocked; any other variable is read by name (`printenv LANG`), and a secret
 # is used without printing it (`curl -d "$RULES_PASSWORD"` passes).
+# ⚠️ It is a brake against accidents, not a lock: a secret copied into another variable, a script
+# file that prints it, or a command substitution (`echo "$(printenv X)"`) still pass. Since
+# 2026-11-13 (Vaglio, Macchine-19) it also looks inside `bash -c`, `sh -c` and `eval`, at
+# `declare -p`, at here-strings (`<<<`) fed to a command that prints its input, at the code of
+# `python -c`, `node -e`, `perl -e` and `ruby -e`, and at the file of the rules password.
 SEGRETO = re.compile(r'(PASSWORD|PASSWD|SECRET|TOKEN|_KEY|_PAT)$', re.I)
 ASSEGNAZIONE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*=.*', re.S)
+VARIABILE = re.compile(r'\$\{?([A-Za-z_][A-Za-z0-9_]*)')
+# The commands that print what they read, from a file or from their input.
+STAMPANO = {'cat', 'tac', 'nl', 'head', 'tail', 'less', 'more', 'bat', 'od', 'xxd', 'hexdump',
+            'strings', 'base64', 'rev', 'fold', 'tee', 'cut', 'sort', 'uniq', 'paste', 'column',
+            'tr', 'grep', 'egrep', 'fgrep', 'rg', 'sed', 'awk'}
+# Their first argument is a pattern, not a file: `grep -rn rules-password .` looks for the name.
+CON_MODELLO = {'grep', 'egrep', 'fgrep', 'rg', 'sed', 'awk'}
+SHELL = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
+FILE_PAROLA = rules_password.FILE.name  # read first on Rocco's Mac
+# The flags that give an interpreter its code on the command line; `node -p` prints the result.
+CODICE = {'python': ('-c',), 'python3': ('-c',), 'node': ('-e', '--eval', '-p', '--print', '-pe'),
+          'perl': ('-e', '-E'), 'ruby': ('-e',)}
+STAMPA_CODICE = re.compile(r'\b(print|pprint|console\.(log|error|info|warn|dir)|'
+                           r'(process|sys)\.std(out|err)\.write)\s*\(')
+AMBIENTE_INTERO = re.compile(r'os\.environ(?!\s*\[|\.get\b)|process\.env(?!\s*\[|\.\w)')
 
 
 def comandi_semplici(comando):
-    """Like `segmenti`, but split on pipes too: `env | sort` prints the environment like `env`.
-    Leading assignments (`LC_ALL=C.UTF-8 ./gradlew`) are dropped, so the command comes first."""
-    out = []
-    for pezzo in re.split(r'&&|\|\||[;|\n]', comando):
-        try:
-            t = shlex.split(pezzo)
-        except ValueError:
-            t = pezzo.split()
-        while t and ASSEGNAZIONE.fullmatch(t[0]):
-            t = t[1:]
-        if t:
-            out.append(t)
+    """The command split into simple commands, on `;`, `&&`, `||`, pipes, `&` and new lines, with
+    quotes respected: `bash -c "echo $X | cat"` keeps its string whole. Leading assignments
+    (`LC_ALL=C.UTF-8 ./gradlew`) are dropped, so the command comes first, and so are the brackets
+    of a subshell. A command shlex cannot read (an open quote) falls back to splitting on spaces."""
+    try:
+        lx = shlex.shlex(comando, posix=True, punctuation_chars=';&|<>()\n')
+        lx.whitespace, lx.whitespace_split, lx.commenters = ' \t\r', True, ''
+        token = list(lx)
+    except ValueError:
+        token = comando.replace('\n', ' ; ').split()
+    out, t = [], []
+    for x in token + [';']:
+        if x and set(x) <= set(';&|\n'):
+            while t and ASSEGNAZIONE.fullmatch(t[0]):
+                t = t[1:]
+            if t:
+                out.append(t)
+            t = []
+        elif x not in ('(', ')'):
+            t.append(x)
     return out
 
 
-def stampa_ambiente(t):
+def _stampa_nel_codice(codice):
+    """Why a line of Python or JavaScript prints a secret or the whole environment, or None: the
+    arguments of every print call are read, so a secret sent somewhere else does not count."""
+    for m in STAMPA_CODICE.finditer(codice):
+        livello, i = 1, m.end()
+        while i < len(codice) and livello:
+            livello += {'(': 1, ')': -1}.get(codice[i], 0)
+            i += 1
+        argomento = codice[m.end():i]
+        segreti = [n for n in re.findall(r'[A-Z_][A-Z0-9_]*', argomento) if SEGRETO.search(n)]
+        if segreti:
+            return f"il codice stampa un segreto ({', '.join(segreti)})"
+        if AMBIENTE_INTERO.search(argomento):
+            return "il codice stampa l'ambiente intero"
+    return None
+
+
+def stampa_ambiente(t, profondita=0):
     """Why the simple command `t` prints the whole environment or a secret, or None."""
     nome, arg = os.path.basename(t[0]), t[1:]
     if any(re.search(r'/proc/[^/\s]+/environ', a) for a in t):
         return "legge l'ambiente di un processo da /proc"
+
+    def dentro(testo):
+        # A command written as a string runs like one typed: the same checks, one level down.
+        if profondita >= 3:
+            return None
+        for interno in comandi_semplici(testo):
+            motivo = stampa_ambiente(interno, profondita + 1)
+            if motivo:
+                return motivo
+        return None
+
     if nome == 'env':
         # `env` prints the environment unless it runs a command; `-i` empties it first, and
         # `-S` is a command written as a string.
@@ -639,8 +762,51 @@ def stampa_ambiente(t):
             if a.startswith('-') or ASSEGNAZIONE.fullmatch(a):
                 i += 1
                 continue
-            return None
+            return stampa_ambiente(arg[i:], profondita + 1) if profondita < 3 else None
         return "`env` senza un comando da lanciare stampa l'ambiente intero"
+    if nome in SHELL:
+        # `bash -c 'script'`, `bash -lc 'script'`: the script is the first argument after the flag.
+        for i, a in enumerate(arg):
+            if a.startswith('-') and not a.startswith('--') and 'c' in a[1:]:
+                script = next((s for s in arg[i + 1:] if not s.startswith('-')), '')
+                return dentro(script)
+        return None
+    if nome == 'eval':
+        return dentro(' '.join(arg))
+    if nome in CODICE:
+        for i, a in enumerate(arg[:-1]):
+            if a in CODICE[nome] or (nome.startswith('python') and re.fullmatch(r'-[A-Za-z]*c', a)):
+                codice = arg[i + 1]
+                if a in ('-p', '--print', '-pe'):
+                    codice = f'print({codice})'
+                if nome in ('perl', 'ruby'):
+                    # Without brackets (`print $ENV{X}`, `puts ENV['X']`): a print and a secret.
+                    segreti = [n for n in re.findall(r'[A-Z_][A-Z0-9_]*', codice) if SEGRETO.search(n)]
+                    if segreti and re.search(r'\b(print|say|puts|p|printf)\b', codice):
+                        return f"il codice stampa un segreto ({', '.join(segreti)})"
+                    return None
+                return _stampa_nel_codice(codice)
+        return None
+    if nome in STAMPANO:
+        # The rules password file (rules_password.FILE): a path to it, or its name alone where it
+        # cannot be a pattern.
+        file_ = [a for a in arg if a.endswith('/' + FILE_PAROLA)
+                 or (a == FILE_PAROLA and nome not in CON_MODELLO)]
+        if file_:
+            return f'`{nome}` stampa il file della parola delle regole ({file_[0]})'
+        # A here-string goes to the command's input, and these print it.
+        for i, a in enumerate(arg[:-1]):
+            if a == '<<<':
+                segreti = [m for m in VARIABILE.findall(arg[i + 1]) if SEGRETO.search(m)]
+                if segreti:
+                    return f"`{nome}` stampa un segreto passato con `<<<` ({', '.join(segreti)})"
+        return None
+    if nome in ('declare', 'typeset', 'export', 'readonly'):
+        opzioni = [a for a in arg if a.startswith('-')]
+        segreti = [a for a in arg if not a.startswith('-') and SEGRETO.search(a.split('=')[0])
+                   and '=' not in a]
+        if segreti and any('p' in o for o in opzioni):
+            return f"`{nome} -p` stampa un segreto ({', '.join(segreti)})"
     if nome == 'printenv':
         nomi = [a for a in arg if not a.startswith('-')]
         if not nomi:
@@ -674,7 +840,7 @@ def mode_bash(ev):
     if not commit:
         return
     regole_viste = False
-    for repo, messaggio, aggiunge in commit:
+    for repo, messaggio, aggiunge, salta_hook in commit:
         ramo = ramo_principale(repo)
         aggiorna(repo, ramo)
         dietro = conta(repo, f'HEAD..origin/{ramo}')
@@ -687,6 +853,13 @@ def mode_bash(ev):
         if v and v[0] != v[1]:
             blocca(f'Commit bloccato in {repo.name}: badge v{v[0]} contro datiVersion {v[1]} (fonte '
                    'unica: dati.js). Allinea il badge di ripiego in index.src.html prima di committare.')
+        # The rest (dashes, refcheck.py on the added lines, on the message and on the rule files)
+        # is what githook.py does through `.githooks/` at the same commit: when those hooks will
+        # run, they do it once, at the moment git records the commit (Vaglio, Macchine-23: every
+        # commit of Claude ran the same three checks twice, and the full one costs seconds). The
+        # two checks above need the network or the sites, and githook.py does not do them.
+        if not salta_hook and hook_di_git_attivi(repo):
+            continue
         diff = senza_terzi(diff_da_controllare(repo, aggiunge))
         aggiunte =[l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
         if any(c in l for l in aggiunte for c in TRATTINI):
@@ -697,9 +870,7 @@ def mode_bash(ev):
         # commit che non li cambia non ha niente da dire, e bloccarlo per un difetto di un altro
         # repo fermerebbe il lavoro (è successo il 2026-09-27 a una sessione su AIV).
         toccati = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
-        di_regole = any(t.endswith(('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')) or t.startswith(('rules/', 'snippets/', '.memo/', 'docs/'))
-                        for t in toccati)
-        if di_regole and not regole_viste:
+        if shared.touches_rules(toccati) and not regole_viste:
             regole_viste = True
             rc, out = refcheck()
             if rc:
