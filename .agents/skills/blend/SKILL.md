@@ -42,6 +42,7 @@ codice in linea e `stile2` no. Con `-elem stile1 stile2`, l'uscita definisce le 
 | `RoccobotMD`, `Roccobot MD` | quello stile col suo nome; allo stesso modo ogni altro stile dell'indice, col nome del file o del titolo senza spazi, in <https://roccobot.github.io/RoccobotOS/styles/> |
 | `AomidoriFlex`, `Aomidori Flex`, `Flex` | <https://roccobot.github.io/styles/AomidoriFlex.css> |
 | un altro nome che comincia con `Aomidori` | la variante con quel nome in <https://roccobot.github.io/styles/> |
+| `RoccobotOS Flex`, `RoccobotOSFlex` | il derivato di Aomidori Flex che ha il nome di RoccobotOS, <https://roccobot.github.io/styles/RoccobotOS.css>; da non confondere con `RoccobotOS`, lo stile del sito |
 
 Lo script risolve questi nomi da sé, e senza rete li legge dai cloni locali dell'hub e di
 `RoccobotOS`. ⚠️ Se un nome è ambiguo (uno stile che l'indice non ha, o una variante che non
