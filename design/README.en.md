@@ -70,7 +70,8 @@ Roccobot's personal sign, drawn as a path (`design/assets/mark/`). It is always 
 - **Never modified**: the path is never redrawn, rounded, distorted or matched to other glyphs,
   not even where a product rule prescribes it for every other drawing. Only its color changes.
 - **Allowed colors**: `marchio` (turquoise) on the dark background, at 6.93, the main form;
-  turquoise on the light background, at 2.43, large only; `contenuto-su-accento` on turquoise, at 5.19; mint
+  turquoise on the light background, at 2.43 (2.06 on `servizio-fondo`, the light background of
+  service pages), large only; `contenuto-su-accento` on turquoise, at 5.19; mint
   on petrol, at 5.46.
 - **Weighted centering** (the official reference): center the **ideal square** of
   the sign, not the box of the drawing; some strokes stick out of it, and that is how the glyph
@@ -128,7 +129,14 @@ is the color of the icon.
   squares, because in a viewer transparency is information.
 - **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
   and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
-  with a touch of blue and green, not a green. The dark theme of service pages uses `fondo-intermedio`.
+  with a touch of blue and green, not a green.
+- **Service pages** (RoccoHub, the hub's `hub/` page): they have backgrounds of their own,
+  `servizio-fondo` and `servizio-scheda` (in the dark theme `fondo-intermedio` and
+  `scheda-intermedia`), so text colors of their own, in the `servizio-` family. Filled buttons use
+  `servizio-accento`, the accent reversed from `accento`: petrol with white text in the light
+  theme, turquoise with dark `servizio-su-accento` in the dark one, because white on turquoise
+  would read at 2.52. A used-up quota has three levels, `soglia-arancio` from 50%, `soglia-rosso`
+  from 70% and `soglia-rosso-intenso` from 90%, always with the number beside it.
 - **Text**: `testo` (16.55 and 14.21), `testo-secondario` for notes and captions, `contorno` for
   control borders, `linea` for dividers that carry no information.
 - **Aomidori palette**: `turchese-luce`, `menta-chiaro`, `ardesia`.
@@ -136,7 +144,8 @@ is the color of the icon.
   palette.
 - **Contrast**: 4.5:1 for text, 3:1 for graphics (icons, control borders, focus rings). It is
   measured on the component's real background and declared; the owner approves any exception, with
-  its number stated. The two declared exceptions are turquoise in the light theme (2.43) and the
+  its number stated. The two declared exceptions are turquoise in the light theme (2.43, and 2.06 on
+  `servizio-fondo`) and the
   AIV icon in the light theme (2.42).
 - **Color by role**: the accent is action, headings
   are structure, neutral is text, and a new element takes the color of its role, not the one that

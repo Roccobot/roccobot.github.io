@@ -71,7 +71,8 @@ Il segno personale di Roccobot, disegnato come tracciato (`design/assets/mark/`)
   si uniforma ad altri glifi, nemmeno dove la regola di un prodotto lo prescrive per tutti gli
   altri disegni. Cambia soltanto il colore.
 - **Colori ammessi**: `marchio` (turchese) sullo sfondo scuro, a 6,93, la forma principale;
-  turchese sullo sfondo chiaro, a 2,43, solo grande; `contenuto-su-accento` sul turchese, a 5,19; menta su
+  turchese sullo sfondo chiaro, a 2,43 (2,06 su `servizio-fondo`, il fondo chiaro delle pagine di
+  servizio), solo grande; `contenuto-su-accento` sul turchese, a 5,19; menta su
   petrolio, a 5,46.
 - **Centratura ponderata** (riferimento ufficiale): si centra il **quadrato
   ideale** del segno, e non il riquadro del disegno; alcuni tratti ne escono, ed è così che il
@@ -127,7 +128,14 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   `scacchiera` (12), perché in un visualizzatore la trasparenza è un'informazione.
 - **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine, `superficie` per schede e
   pannelli, `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
-  blu e verde, non un verde. Il tema scuro delle pagine di servizio usa `fondo-intermedio`.
+  blu e verde, non un verde.
+- **Pagine di servizio** (RoccoHub, `hub/` dell'hub): hanno fondi loro, `servizio-fondo` e
+  `servizio-scheda` (nello scuro `fondo-intermedio` e `scheda-intermedia`), quindi testi loro,
+  nella famiglia `servizio-`. I pulsanti pieni usano `servizio-accento`, l'accento rovesciato
+  rispetto ad `accento`: petrolio col testo bianco nel tema chiaro, turchese con
+  `servizio-su-accento` scuro in quello scuro, perché il bianco sul turchese leggerebbe a 2,52.
+  Una quota consumata ha tre livelli, `soglia-arancio` dal 50%, `soglia-rosso` dal 70% e
+  `soglia-rosso-intenso` dal 90%, sempre col numero accanto.
 - **Testo**: `testo` (16,55 e 14,21), `testo-secondario` per note e didascalie, `contorno` per i
   bordi dei controlli, `linea` per i separatori che non portano informazione.
 - **Tavolozza di Aomidori**: `turchese-luce`, `menta-chiaro`, `ardesia`.
@@ -136,7 +144,7 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
 - **Contrasti**: 4,5:1 per il testo, 3:1 per la grafica (icone, bordi dei controlli, anelli di
   fuoco). Si misurano sul fondo vero del componente e si dichiarano; un'eccezione la approva il
   titolare, col numero dichiarato. Le due eccezioni dichiarate sono il turchese nel tema chiaro
-  (2,43) e l'icona di AIV nel tema chiaro (2,42).
+  (2,43, e 2,06 su `servizio-fondo`) e l'icona di AIV nel tema chiaro (2,42).
 - **Il colore per ruolo**: l'accento è l'azione, i
   titoli sono la struttura, il neutro è il testo, e un elemento nuovo prende il colore del suo
   ruolo, non quello che sta meglio nel punto in cui capita. Una tinta sola a più profondità fa una

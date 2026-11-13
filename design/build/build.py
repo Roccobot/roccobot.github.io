@@ -175,11 +175,17 @@ def swatch_row(name):
 
 GROUPS = [
     (('Accenti', 'Accents'), ['turchese', 'petrolio', 'accento', 'contenuto-su-accento', 'testo-accento', 'marchio']),
-    (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-alta', 'fondo-intermedio', 'scheda-intermedia']),
+    (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-alta']),
     (('Testo e linee', 'Text and lines'), ['testo', 'testo-secondario', 'contorno', 'linea']),
     (('Tavolozza di Aomidori', 'Aomidori palette'), ['turchese-luce', 'menta-chiaro', 'ardesia', 'glifo-marchio']),
     (('Icone e tasti', 'Icons and buttons'), ['icona-aiv-fondo', 'icona-aiv-glifo', 'glifo-tondo-traslucido']),
     (('Veli e aiuti', 'Scrims and help'), ['velo', 'velo-aiuto', 'aiuto-arancio', 'aiuto-arancio-inchiostro', 'aiuto-tasto', 'aiuto-tasto-inchiostro']),
+    # RoccoHub and the other service pages: their own backgrounds, so their own text colors
+    (('Pagine di servizio', 'Service pages'), ['servizio-fondo', 'servizio-scheda', 'fondo-intermedio', 'scheda-intermedia',
+                                               'servizio-linea', 'servizio-testo', 'servizio-testo-secondario',
+                                               'servizio-testo-tenue', 'servizio-accento', 'servizio-su-accento',
+                                               'servizio-accento-attivo', 'servizio-etichetta', 'soglia-arancio',
+                                               'soglia-rosso', 'soglia-rosso-intenso']),
 ]
 
 
@@ -202,6 +208,13 @@ def pairs():
         ('testo-accento', 'fondo', False), ('testo-accento', 'superficie', False),
         ('contenuto-su-accento', 'accento', False), ('accento', 'fondo', True),
         ('contorno', 'fondo', True), ('icona-aiv-glifo', 'icona-aiv-fondo', True),
+        # the service pages, on their own backgrounds; the mark on servizio-fondo is the declared
+        # exception of the light theme
+        ('servizio-testo', 'servizio-fondo', False), ('servizio-testo-secondario', 'servizio-scheda', False),
+        ('servizio-testo-tenue', 'servizio-scheda', False), ('testo-accento', 'servizio-scheda', False),
+        ('servizio-su-accento', 'servizio-accento', False), ('servizio-su-accento', 'servizio-accento-attivo', False),
+        ('soglia-arancio', 'servizio-scheda', False), ('soglia-rosso', 'servizio-scheda', False),
+        ('soglia-rosso-intenso', 'servizio-scheda', False), ('marchio', 'servizio-fondo', True),
     ]
     body = []
     for fg, bg, graphic in rows:

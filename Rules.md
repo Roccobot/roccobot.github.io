@@ -135,19 +135,38 @@ numero per scelta dell'utente.
   `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
   2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Documenti di feedback'**, un riquadro per app col pulsante
   che apre il DF e, accanto al pulsante, i segni della piattaforma come nel titolo dei DF (la mela e
-  il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito; su un
-  telefono i segni vanno sopra il pulsante. **'Link utili'**, tessere con un titolo e una
+  il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito (in quello
+  di Aomidori anche il registro di Aomidori Flex); su un telefono i segni vanno sopra il pulsante.
+  Sul telefono il titolo di AIV va a capo dopo `AIV`, ed è voluto: il nome per esteso, `Astonishing
+  Image Viewer`, va a capo intero e mai una parola per volta (la regola delle parole sole vale per
+  i paragrafi, e questo è un titolo). **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
-  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). La tessera `GitHub
+  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP); la tessera `GitHub`
+  ha una seconda riga, `Repo principali`, verso `Repos.md` di `tools`. La tessera `GitHub
   Actions` (voce `Contatore`, dal 2026-11-08) mostra `<x> minuti gratuiti usati (<y>%)`
   e, a quota esaurita, al suo posto e sulla stessa riga, `Minuti extra: <x> (<y>% del budget)`
-  (sua precisazione: leggere i minuti extra dice già che i gratuiti sono finiti), dove il budget è il limite di
-  spesa di 25 euro (sua richiesta `Quota-01`: piano gratuito, limite da non toccare). Ogni riga ha
-  il colore della sua percentuale, sue soglie: quello di serie sotto il 50%, arancione dal 50%, rosso
-  dal 70%, rosso intenso dal 90%. GitHub fattura in dollari, e la quota del budget si calcola col
-  cambio del giorno della BCE letto da Frankfurter (senza cambio la riga dice i soli minuti, in
-  rosso intenso). Sotto, l'ultima corsa. I dati arrivano da
-  `GET /actions` del Worker `rules-proxy` (`Rules.md` di `tools`, `rev` 11-13). Solo italiano, coi valori del design system di `design/`, e due temi
+  (sua precisazione: leggere i minuti extra dice già che i gratuiti sono finiti), o `Minuti gratuiti
+  finiti` quando non c'è ancora un minuto extra.
+  - **La quota e il budget sono in dollari**, come li conta GitHub (dal 2026-11-13, giro `Vaglio`,
+    card `Cruscotto`): la quota sono i 12 dollari di calcolo del piano gratuito, e `<y>%` è la parte
+    spesa, arrotondata per difetto, così il 100% compare solo a quota finita; il budget è il limite
+    di spesa di 25 dollari per tutto Actions, spazio di artefatti e cache compreso (sua richiesta
+    `Quota-01`: piano gratuito, limite da non toccare; il 2026-11-13 ha precisato che sono dollari,
+    non euro). Fino a quel giorno la pagina convertiva il pagato in euro col cambio di Frankfurter.
+  - **Le soglie sono sue**: quello di serie sotto il 50%, arancione dal 50%, rosso dal 70%, rosso
+    intenso dal 90%. ⚠️ **Appena si paga, la riga è almeno arancione** (sua scelta `Spia-01`): prima
+    con la quota finita e l'8% del budget la riga tornava grigia. Senza l'importo pagato la riga dice
+    i soli minuti, in rosso intenso; se lo spazio si paga mentre ci sono ancora minuti gratuiti, la
+    riga dice anche la parte del budget.
+  - **Una risposta parziale del Worker** (la visibilità di un repo non letta, quindi un repo
+    pubblico forse contato) aggiunge `stima` fra le parentesi.
+  - Sotto, l'ultima corsa, o `in corso` se non è finita; la sua riga ha il suo posto da subito, così
+    niente si sposta quando arriva. Dopo otto secondi senza risposta la tessera dice `Minuti non
+    disponibili ora`. I dati arrivano da `GET /actions` del Worker `rules-proxy` (`Rules.md` di
+    `tools`, `rev` 11-15).
+
+  Solo italiano, coi colori del design system di `design/` (la famiglia `servizio-` e le tre
+  `soglia-` di `tokens.json`, scritti una volta con `light-dark()`), e due temi
   dal 2026-11-03 (sue scelte `Lingua-01`, `Avvio-01` e `Comando-01`): di serie quello del sistema,
   il tasto `T` lo rovescia per la sola pagina aperta, senza pulsanti e senza memorizzare niente. Lo
   scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
