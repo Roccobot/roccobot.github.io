@@ -96,18 +96,19 @@ button:focus, select:focus, input:focus { outline: none; }
        border-radius: 10px; padding: .7rem .8rem; font-size: .8rem; color: var(--muted); line-height: 1.45;
        box-shadow: 0 6px 20px rgb(0 0 0 / .12); text-wrap: pretty; }
 /* Entrance and exit, one panel at a time */
-.tabs { display: flex; gap: .4rem; }
+/* The tabs sit in the header, a little apart from the two buttons on their right */
+.tabs { display: flex; gap: .4rem; margin-right: .9rem; }
+.tools-top { flex-wrap: wrap; justify-content: flex-end; row-gap: .5rem; }
 .tabs .chip { min-height: 40px; padding: 0 1.1rem; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem; }
 .tabs .chip::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--pc); }
 .tabs .chip[aria-pressed="true"]::before { background: var(--on-accent); }
 /* The preview stays in view while the panels scroll, where the screen is tall enough to hold it whole */
 @media (min-width: 62rem) and (min-height: 58rem) { .stage { position: sticky; top: 1rem; } }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; min-width: 0; }
-.stage { display: flex; flex-direction: column; gap: .9rem; }
+.stage { display: flex; flex-direction: column; gap: .9rem; padding-top: 1.6rem; }
 .group { display: flex; flex-direction: column; gap: .4rem; }
 .group > .lab { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .row { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-.phase-now { font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; }
 
 /* The phone: AIV's screen at 412 x 892 dp, drawn smaller */
 .phone { position: relative; width: 100%; max-width: 15.5rem; aspect-ratio: 412 / 892; margin: 0 auto; border-radius: 28px;
@@ -182,14 +183,17 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       <span class="fullname">Roccobot's UI Animation Simulator&nbsp;<span class="ver" id="version"></span></span>
     </div>
     <div class="tools-top">
+      <div class="tabs" id="tabs" role="group">
+        <button class="chip in" type="button" data-v="in" data-t="in"></button>
+        <button class="chip out" type="button" data-v="out" data-t="out"></button>
+      </div>
       <button class="chip" type="button" id="copyall"></button>
       <button class="chip" type="button" id="reset" data-t="reset"></button>
     </div>
   </header>
 
   <div class="layout">
-    <aside class="card stage" aria-labelledby="stage-title">
-      <h2 id="stage-title" class="kicker" data-t="preview"></h2>
+    <aside class="card stage" id="stage">
       <button class="info" type="button" id="info" aria-expanded="false" aria-controls="tip">
         <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="7.35" y="7" width="1.3" height="4.5" rx=".6" fill="currentColor"/><circle cx="8" cy="4.9" r=".85" fill="currentColor"/></svg>
       </button>
@@ -208,7 +212,6 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
           <div class="btns"><span data-t="dlgNo"></span><span data-t="dlgYes"></span></div>
         </div>
       </div>
-      <div class="phase-now" id="phase-now" aria-live="off"></div>
       <div class="group">
         <span class="lab" data-t="component"></span>
         <div class="row one" id="comp">
@@ -246,12 +249,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       </div>
     </aside>
 
-    <div class="phases" id="phases">
-      <div class="tabs" id="tabs" role="group">
-        <button class="chip in" type="button" data-v="in" data-t="in"></button>
-        <button class="chip out" type="button" data-v="out" data-t="out"></button>
-      </div>
-    </div>
+    <div class="phases" id="phases"></div>
   </div>
 </div>
 
@@ -263,7 +261,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.20';
+  var VERSION = '1.21';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -279,7 +277,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       copy: 'Copia', copied: 'Copiato', copyFail: 'Selezionato: copialo con ⌘C', paste: 'Incolla una curva', apply: 'Applica',
       pasteHint: 'cubic-bezier(0.7, 0, 0.3, 0.1)', pasteErr: 'Scrivi quattro numeri, come cubic-bezier(0.7, 0, 0.3, 0.1).',
       preset: 'Curve pronte', duration: 'Durata', fade: 'Dissolvenza', fadeOn: 'Attiva', fadeBase: 'Misurata sul',
-      baseTime: 'tempo', basePath: 'percorso', fadeFrom: 'Da', fadeTo: 'A', trail: 'Scia (motion blur)', trailOn: 'Attiva', trailDp: 'Quantità al picco',
+      baseTime: 'Tempo', basePath: 'Percorso', fadeFrom: 'Da', fadeTo: 'A', trail: 'Scia (motion blur)', trailOn: 'Attiva', trailDp: 'Quantità al picco',
       scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
@@ -298,7 +296,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       copy: 'Copy', copied: 'Copied', copyFail: 'Selected: copy it with ⌘C', paste: 'Paste a curve', apply: 'Apply',
       pasteHint: 'cubic-bezier(0.7, 0, 0.3, 0.1)', pasteErr: 'Type four numbers, like cubic-bezier(0.7, 0, 0.3, 0.1).',
       preset: 'Presets', duration: 'Duration', fade: 'Fade', fadeOn: 'On', fadeBase: 'Measured on',
-      baseTime: 'time', basePath: 'travel', fadeFrom: 'From', fadeTo: 'To', trail: 'Trail (motion blur)', trailOn: 'On', trailDp: 'Amount at peak',
+      baseTime: 'Time', basePath: 'Travel', fadeFrom: 'From', fadeTo: 'To', trail: 'Trail (motion blur)', trailOn: 'On', trailDp: 'Amount at peak',
       scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
@@ -661,6 +659,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
     document.getElementById('hold').value = S.hold;
     document.getElementById('hold-v').textContent = num(S.hold) + ' ms';
     document.getElementById('tip').textContent = t('foot');
+    document.getElementById('stage').setAttribute('aria-label', t('preview'));
     document.getElementById('copyall').textContent = t('copyAll');
     document.getElementById('info').setAttribute('aria-label', t('info'));
     Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.tab)); });
@@ -809,7 +808,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       } else { P.headBz.setAttribute('cx', -20); P.headSp.setAttribute('x1', -10); P.headSp.setAttribute('x2', -10); }
     });
     var label = kind === 'in' ? t('phIn') + ': ' + Math.round(local) + ' ms' : kind === 'out' ? t('phOut') + ': ' + Math.round(local) + ' ms' : kind === 'open' ? t('phOpen') : t('phShut');
-    document.getElementById('phase-now').textContent = label + (S.rate !== 1 ? '  (' + t('rate025') + ')' : '');
+    phone.setAttribute('data-phase', label);
   }
   var clock = 0, last = 0, raf = 0;
   function total() { return timeline().reduce(function (s, p) { return s + p[1]; }, 0); }
