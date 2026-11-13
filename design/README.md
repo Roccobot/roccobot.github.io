@@ -141,7 +141,7 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
 - **Tavolozza di Aomidori**: `turchese-luce`, `menta-chiaro`, `ardesia`.
 - **Il tema scelto dentro un'app non è quello di sistema**: ogni colore passa dalla tavolozza
   dell'app.
-- **Contrasti**: 4,5:1 per il testo, 3:1 per la grafica (icone, bordi dei controlli, anelli di
+- **Contrasti**: 4,5:1 per il testo, 3:1 per la grafica (icone, bordi dei controlli, segno del
   fuoco). Si misurano sul fondo vero del componente e si dichiarano; un'eccezione la approva il
   titolare, col numero dichiarato. Le due eccezioni dichiarate sono il turchese nel tema chiaro
   (2,43, e 2,06 su `servizio-fondo`) e l'icona di AIV nel tema chiaro (2,42).
@@ -396,7 +396,9 @@ grigie.
 - I cursori dicono il loro valore; ogni icona ha una descrizione parlata.
 - Il Tondo si annuncia come `Comandi`, e ogni voce del menu Start col suo nome.
 - Un gesto che il lettore di schermo intercetta ha sempre un'alternativa visibile.
-- Sul web il fuoco della tastiera si vede, e il movimento rispetta `prefers-reduced-motion`.
+- Sul web il fuoco della tastiera si riconosce da un cambio discreto, come al passaggio del mouse
+  (colore o fondo), senza anello né link per saltare al contenuto; il movimento rispetta
+  `prefers-reduced-motion`.
 
 ## Voce e testi
 
