@@ -81,3 +81,7 @@ jobs:
       - name: Prove della parola delle regole, prima il file (Parola-01)
         if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_rules_password.py
+
+      - name: Prove della skill blend (nomi degli stili di casa)
+        if: github.event.repository.name == 'roccobot.github.io'
+        run: python3 roccobot.github.io/.memo/scripts/test_blend.py

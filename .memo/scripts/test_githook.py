@@ -167,5 +167,45 @@ class ScheduledRunTests(unittest.TestCase):
         self.assertEqual(code, 0)
 
 
+BRIEF_DIFF = """diff --git a/.memo/LATEST.md b/.memo/LATEST.md
+--- a/.memo/LATEST.md
++++ b/.memo/LATEST.md
+@@ -1,4 +1,4 @@
+ # Handoff - 2026-11-13
+{stamp}
+ ## In sospeso
+-- voce vecchia
++- voce nuova
+"""
+OLD_STAMP = ' > **Last turn**: 2026-11-08T12:35Z, Claude Code; tools 1111111'
+NEW_STAMP = ('-> **Last turn**: 2026-11-08T12:35Z, Claude Code; tools 1111111\n'
+             '+> **Last turn**: 2026-11-13T13:00Z, Claude Code; tools 2222222')
+OTHER_DIFF = """diff --git a/Rules.md b/Rules.md
+--- a/Rules.md
++++ b/Rules.md
+@@ -1 +1 @@
+-vecchia
++nuova
+"""
+
+
+class StampTests(unittest.TestCase):
+    """Vaglio, Regole-34: the brief changed in more than ten commits with its Last turn stamp
+    still at 2026-11-08, and nothing said so."""
+
+    def test_brief_without_new_stamp_warns(self):
+        self.assertTrue(githook.stale_stamp(BRIEF_DIFF.format(stamp=OLD_STAMP)))
+
+    def test_brief_with_new_stamp_is_quiet(self):
+        self.assertFalse(githook.stale_stamp(BRIEF_DIFF.format(stamp=NEW_STAMP)))
+
+    def test_other_files_are_quiet(self):
+        self.assertFalse(githook.stale_stamp(OTHER_DIFF))
+
+    def test_brief_after_another_file(self):
+        diff = OTHER_DIFF + BRIEF_DIFF.format(stamp=OLD_STAMP)
+        self.assertTrue(githook.stale_stamp(diff))
+
+
 if __name__ == '__main__':
     unittest.main()

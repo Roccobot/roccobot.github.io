@@ -242,20 +242,15 @@ l'`AGENTS.md` del repo in cui lavorano, col nucleo universale.
   variabile d'ambiente `RULES_PASSWORD`. Protocollo completo (formato POST,
   User-Agent da browser, bump SlimVer) nella sezione 'Worker `rules-proxy`' di
   `Roccobot.md`.
-- ⚠️ **Dove questo `CLAUDE.md` deroga alle regole di sviluppo** (`Roccobot.md`,
-  sezione '🏗️ Sviluppo software'). Non sono
-  dimenticanze: sono il modo di lavorare consolidato di questo repo, e la scala di
-  priorità qui sotto dà ragione a questo file. Da sapere prima di applicare quella
-  sezione alla lettera:
-  - **Niente Prospect né piano operativo prima di ogni ciclo o deploy**: qui vale il
-    **go-live automatico** (vedi 'Branch, allineamento e push'), e la conferma
-    preventiva si chiede solo per le modifiche pesanti o strutturali.
-  - **Niente snapshot (tag git) dopo ogni rilascio** e **nessun Report post-rilascio
-    dopo ogni release maggiore**: qui il passo all'intero successivo è frequente e non è un evento di
-    programma; l'archivio è la storia git.
+- ⚠️ **Dove questo file deroga alle regole di sviluppo** (`Roccobot.md`, sezione '🏗️ Sviluppo
+  software'), da sapere prima di applicare quella sezione alla lettera:
   - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
     primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
     lingua nel suo `Rules.md`.)
+  - Prospect, snapshot e Report post-rilascio non sono più una deroga: dal 2026-10-16 si fanno
+    solo quando l'utente li chiede, in ogni repo (`Roccobot.md` § '🏗️ Sviluppo software',
+    'Ciclo di lavoro'), e le due voci che li derogavano sono state tolte il 2026-11-13 (rilievo
+    Regole-46 di `Vaglio`).
 
   Resta invece pienamente valido tutto il resto: rigore tecnico, igiene del codice
   (niente codice morto), conferma esplicita per le operazioni ad alto impatto,
@@ -329,10 +324,13 @@ può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 | Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, '🧹 Bonifica e ottimizzazione degli asset' e 'Grafica' |
 | Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
-| Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, '🧪 Test e verifiche (siti e app web)' |
 | **Conferma esplicita** per le operazioni ad alto impatto | `Roccobot.md`, 'Automazione e interazioni' + qui, go-live |
 | **Allineamento al remoto prima di toccare un file**, col confronto dei ref: nessun progetto può allentarlo | `Roccobot.md`, 'Workflow git e versioni' |
 
+- **La regola del font reale non è in questa tabella dal 2026-11-13** (scelta `Fontreale-01`
+  dell'utente): vale nei soli repo con un'interfaccia, quelli dei gruppi `@web` e `@app` del
+  nucleo, e un repo senza interfaccia non ha impaginazioni da misurare (`Roccobot.md`
+  § '🧪 Test e verifiche (siti e app web)').
 - **'Mai `innerHTML`', formulazione completa**: il testo che finisce nel DOM si scrive con
   `textContent` o componendo nodi, mai assegnando `innerHTML`, nemmeno per contenuto che
   'sembra sicuro': è il canale classico delle iniezioni, e basta un dato inatteso a
@@ -536,20 +534,35 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   `Roccobot.md` § '🙂 Formule da non usare'.
 - ⚠️⚠️ **QUELLO CHE PUÒ FARE SOLO LUI DIVENTA UNA CARD NELLA LISTA `ADMIN` DELLA BACHECA, E IN
   CHAT NON SI RIPETE** (`Admin-01`, sua scelta del 2026-11-02: *basta con questo sistema, non serve
-  più. Adesso c'è Trello*). Ogni decisione da prendere, e ogni passo suo, è una card nella sua
-  colonna, che ha rinominato da `Richiede intervento` in `Admin`. ⚠️ **La card è assegnata a lui
+  più. Adesso c'è Trello*). Ogni passo suo, e ogni decisione che nessuno ha potuto chiedergli
+  (quella di una routine, `Routine-01`), è una card nella sua colonna, che ha rinominato da
+  `Richiede intervento` in `Admin`; le altre decisioni gli si chiedono subito, tutte di seguito a
+  scelta multipla, finché ognuna ha una risposta (`Roccobot.md` § '❓ Niente resta da decidere: le
+  decisioni si chiedono tutte, una dopo l'altra', regola del 2026-11-13). ⚠️ **La card è assegnata a lui
   solo se un'altra attività in corso è ferma ad aspettarla**, e solo allora gliela si può
   ricordare in chat (sua precisazione dello stesso giorno); le altre restano senza assegnazione. In
   chat una card nuova si nomina una volta, col collegamento, nel messaggio in cui nasce: tempi e
   ordine li decide lui. ⚠️ **Il riquadro `🟠 Cosa devi fare tu` in fondo ai messaggi è tolto** (era nato
   con `Coda-01` il 2026-10-25): un messaggio finisce col suo contenuto. Il testo completo è in
   `Roccobot.md` § '💬 Stile di comunicazione'.
+- ⚠️⚠️ **NIENTE RESTA DA DECIDERE O IN SOSPESO** (sua regola del 2026-11-13: *tutti i problemi
+  devono essere risolti e NIENTE deve restare 'da decidere' o in sospeso, salvo i task nati ex
+  novo in seguito ai lavori attuali, che vanno in nuove card da approvare*). Le sue decisioni gli
+  si propongono tutte di seguito, con lo strumento a scelta multipla, finché ognuna ha una
+  risposta che permette di proseguire; un compito nuovo nato dal lavoro è una card nella lista
+  dell'area, con 'da approvare' nella descrizione, e nessuno ci lavora prima del suo via
+  (`Decisioni-01`); la decisione trovata da una routine va in `Admin`, e la sessione titolare
+  dell'area gliela propone al primo turno (`Routine-01`). Il testo completo è in `Roccobot.md`
+  § '❓ Niente resta da decidere: le decisioni si chiedono tutte, una dopo l'altra'.
 - ⚠️⚠️ **`CAFFEINATE` SI DICE QUANDO PARTE, E SI FERMA A LAVORO FINITO** (sua regola del 2026-11-04,
   dopo una sessione che l'aveva lanciato per tre ore senza dirlo e lasciato acceso a card chiuse:
   *non dev'essere solo nella tua memoria: dev'essere una regola permanente*). All'avvio si scrive in
   chat per quanto; nel bilancio di chiusura, prima del resoconto, si ferma `caffeinate` con ogni
-  altro comando rimasto in sottofondo, e lo si dice. Il testo completo è in `Roccobot.md`
-  § '🧾 Il bilancio di chiusura' e § '☕ Le sessioni locali e `caffeinate`'.
+  altro comando rimasto in sottofondo, e lo si dice. Una sessione locale lo lancia sempre quando
+  lavora, e con `caffeinate` acceso le domande del cancello le decide lei, mentre l'alto impatto,
+  versione tonda compresa, resta a lui (`Conferme-02`); senza, cioè nel cloud o per eccezione in
+  locale, le domande del cancello si fanno a lui (`Conferme-03`, 2026-11-13). Il testo completo è
+  in `Roccobot.md` § '🧾 Il bilancio di chiusura' e § '☕ Le sessioni locali e `caffeinate`'.
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
@@ -635,10 +648,12 @@ poi divergerebbe.
     dubbio trattala come pesante'): qui basta sapere che il flusso dati di 'I Grandi di Arda' e
     di 'I Grandi di Terramare' (`dati.js` e il Worker, nei loro repo) rientra fra i casi
     pesanti.
-- **Dopo il go-live su branch `claude/*`: riallineare il branch**, remoto compreso.
-  ⚠️ **Regola universale in `Roccobot.md`**, § '🌿 Workflow git e versioni' (voce sullo
-  stop-hook), col comando e la ragione per cui riallineare il branch remoto **elimina la
-  causa** dell'avviso invece di farla interpretare ogni volta. Qui il branch principale è
+- **Dopo il go-live su branch `claude/*`: riallineare il branch locale e togliere il
+  riferimento al branch remoto** (`git fetch --prune origin`), che GitHub cancella da sé dopo il
+  merge. ⚠️ **Regola universale in `Roccobot.md`**, § '🌿 Workflow git e versioni' (voce sullo
+  stop-hook), col comando e la ragione per cui togliere quel riferimento **elimina la causa**
+  dell'avviso invece di farla interpretare ogni volta; il vecchio push che riallineava il branch
+  remoto lo ricreerebbe, ed è stato tolto dalla ricetta il 2026-11-13. Qui il branch principale è
   `master`.
 - ⚠️⚠️ **UNA PR CHE SI MERGIA SUBITO NON SI ISCRIVE E NON SI DISISCRIVE A MANO** (istruzione
   dell'utente, 2026-09-25: *sì, vai*): la sessione vi si iscrive da sé all'apertura e se ne
@@ -837,9 +852,10 @@ sessione:
 
 ## 🤖 Modello da usare
 
-⚠️ **Regola universale in `Roccobot.md`**, § '🤖 Modello da usare': sempre Claude Opus,
-l'ultima versione disponibile. Qui vale la parte tecnica: è **già forzato per tutto il repo**
-in `.claude/settings.json` (`"model": "opus"`), quindi non serve farlo a mano.
+⚠️ **Regola universale in `Roccobot.md`**, § '🤖 Modello da usare': Claude Opus di serie,
+l'ultima versione disponibile, e un altro modello solo come consiglio all'utente, che lo imposta
+lui (scelta `Modello-01`, 2026-11-13). Qui vale la parte tecnica: il passo 0 lo scrive nelle
+impostazioni utente (`"model": "opus"`), e `.claude/settings.json` di questo repo lo ripete.
 
 
 ## 🖼️ Artefatti

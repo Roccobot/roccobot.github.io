@@ -5,7 +5,7 @@ Usage:
   blend_css.py --elem A [B ...] [--color C [D ...]] [--out FILE] [--report FILE]
 
 A sheet is a local path, a URL, or a house alias (`RoccobotOS`, `RoccobotMD`,
-`AomidoriFlex`; see `resolve`). Sheets after `--elem` are in priority order: an element
+`AomidoriFlex`, `RoccobotOS Flex`; see `resolve`). Sheets after `--elem` are in priority order: an element
 (a selector inside its at-rule context) comes from the first sheet that styles it with
 something other than colour. Sheets after `--color` give the colours, again in priority
 order; without `--color` the colours come from the `--elem` sheets.
@@ -41,11 +41,16 @@ def resolve(name):
     title without spaces and punctuation (`RoccobotMD`, `Roccobot MD`).
     `AomidoriFlex` (or `Aomidori Flex`, `Flex`) is the default Aomidori style, and any other
     `Aomidori...` name a variant in /styles/.
+    `RoccobotOS Flex` is the derivative of Aomidori Flex that carries the RoccobotOS name
+    (/styles/RoccobotOS.css): it is checked before the RoccobotOS index, whose branch would
+    otherwise take every name that starts with `roccobot` and never reach it.
     """
     if re.match(r"https?://", name) or Path(name).expanduser().exists():
         return name
     norm = lambda text: re.sub(r"[\s._-]", "", text).lower()
     key = norm(name)
+    if key == "roccobotosflex":
+        return f"{SITE}/styles/RoccobotOS.css"
     if key.startswith("roccobot"):
         styles = json.loads(fetch(f"{SITE}/RoccobotOS/styles/index.json"))["styles"]
         chosen = styles[0] if key == "roccobotos" else next(

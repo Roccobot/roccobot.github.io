@@ -18,7 +18,8 @@
 | `hooks.py` | il dispatcher degli hook di Claude per tutti i repo clonati accanto all'hub |
 | `test_hooks.py` | le prove di `hooks.py`, che girano anche nell'Action `rules-check`: il blocco dei comandi che stampano l'ambiente o un segreto, la lettura della bacheca col segno per sessione, il promemoria sulla lingua, il passo 0 giornaliero, il riallineamento del turno e i suoi tempi, i controlli al commit lasciati agli hook di git |
 | `githook.py` | i controlli degli hook di git e dell'Action `rules-check`, per tutti gli agenti; prima di un commit di solo testo avvisa dei flussi di prove che farebbe partire (`Freno`) |
-| `test_githook.py` | le prove dell'avviso `Freno`: un filtro per esclusione si sveglia su `.scratch/`, uno per inclusione no |
+| `test_githook.py` | le prove dell'avviso `Freno` (un filtro per esclusione si sveglia su `.scratch/`, uno per inclusione no) e dell'avviso sul brief cambiato senza il timbro `Last turn` rifatto |
+| `test_blend.py` | le prove dei nomi di stile che la skill `blend` riconosce, senza scaricare niente (`RoccobotOS Flex` compreso) |
 | `shared.py` | i valori e i due aiuti di git che servono a più script, scritti una volta sola: quali file sono di regole, la bacheca, Rocco e il Worker, il ramo principale di un clone e il suo `fetch` (`Vaglio`, Macchine-17) |
 | `catchup.py` | che cosa è arrivato dopo il timbro `Last turn` del brief, e il timbro stesso (`--stamp`) |
 | `closecard.py` | chiude una card della bacheca in un comando solo: in cima a `Fatte`, spuntata, senza l'assegnazione all'utente e col commento dell'esito (`Contromisura-03`) |
