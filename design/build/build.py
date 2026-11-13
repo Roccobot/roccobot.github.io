@@ -183,7 +183,7 @@ GROUPS = [
     # RoccoHub and the other service pages: their own backgrounds, so their own text colors
     (('Pagine di servizio', 'Service pages'), ['servizio-fondo', 'servizio-scheda', 'fondo-intermedio', 'scheda-intermedia',
                                                'servizio-linea', 'servizio-testo', 'servizio-testo-secondario',
-                                               'servizio-testo-tenue', 'servizio-accento', 'servizio-su-accento',
+                                               'servizio-accento', 'servizio-su-accento',
                                                'servizio-accento-attivo', 'servizio-etichetta', 'soglia-arancio',
                                                'soglia-rosso', 'soglia-rosso-intenso']),
 ]
@@ -211,7 +211,7 @@ def pairs():
         # the service pages, on their own backgrounds; the mark on servizio-fondo is the declared
         # exception of the light theme
         ('servizio-testo', 'servizio-fondo', False), ('servizio-testo-secondario', 'servizio-scheda', False),
-        ('servizio-testo-tenue', 'servizio-scheda', False), ('testo-accento', 'servizio-scheda', False),
+        ('testo-accento', 'servizio-scheda', False),
         ('servizio-su-accento', 'servizio-accento', False), ('servizio-su-accento', 'servizio-accento-attivo', False),
         ('soglia-arancio', 'servizio-scheda', False), ('soglia-rosso', 'servizio-scheda', False),
         ('soglia-rosso-intenso', 'servizio-scheda', False), ('marchio', 'servizio-fondo', True),
