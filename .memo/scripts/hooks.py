@@ -47,11 +47,12 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import shared  # noqa: E402
+
 HUB = Path(__file__).resolve().parents[2]
 BASE = HUB.parent                      # la cartella che contiene i repo
 REFCHECK = HUB / '.memo' / 'scripts' / 'refcheck.py'
-# Il ramo principale quando il remoto non lo dice: l'hub è l'unico su `master`.
-RAMO_NOTO = {'roccobot.github.io': 'master'}
 TRATTINI = (chr(0x2014), chr(0x2013))
 
 
@@ -79,18 +80,10 @@ def radice(percorso):
     return Path(out) if rc == 0 and out else None
 
 
-def ramo_principale(repo):
-    rc, out = git(repo, 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD', timeout=5)
-    if rc == 0 and out.startswith('origin/'):
-        return out[len('origin/'):]
-    return RAMO_NOTO.get(repo.name, 'main')
-
-
-def aggiorna(repo, ramo):
-    # ⚠️ Il refspec è esplicito: un clone senza `remote.origin.fetch` (è successo con
-    # `earthsea`) aggiorna solo FETCH_HEAD, e `origin/main` resta fermo mentendo.
-    return git(repo, 'fetch', '--quiet', 'origin', f'+refs/heads/{ramo}:refs/remotes/origin/{ramo}',
-               timeout=25)[0] == 0
+# Il ramo principale di un clone e il fetch di quel ramo vivono in shared.py, che li dà anche a
+# catchup.py (Vaglio, Macchine-17).
+ramo_principale = shared.main_branch
+aggiorna = shared.fetch_main
 
 
 def pulito(repo):
@@ -269,14 +262,12 @@ def mode_start(ev):
 # rules-proxy Worker (route since its rev 10); every session sees everything, with the card's
 # labels, and acts only on its own area (choice Area-01).
 
-BACHECA = '6ae2176ecb8fb9cf1c9689a6'
-ROCCO = '6ae21589e5ae078f5f0a615d'
+BACHECA, ROCCO, WORKER = shared.BOARD, shared.ROCCO, shared.WORKER
 AGENTI = '6ae3acdf8660d605eb672abe'          # the agents' account, roccobot_ai
 TAG_AGENTI = '@roccobot_ai'
 LISTE_DI_RITORNO = {'Admin', 'Fatte'}       # his decisions: a card into or out of these lists
 FILTRO_AZIONI = 'commentCard,updateCard:idList,addMemberToCard'
 SEGNO_BACHECA = Path.home() / '.claude' / 'trello-since'
-WORKER = 'https://rules-proxy.roccobot-b90.workers.dev/'
 
 
 def azioni_di_rocco(azioni, etichette, brief=''):
@@ -321,7 +312,6 @@ def azioni_di_rocco(azioni, etichette, brief=''):
 def trello_get(path, query):
     """One GET to Trello through the Worker; None on any failure, so a slow Trello never blocks."""
     import urllib.request
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import rules_password
     parola = rules_password.read()
     if not parola:
@@ -329,8 +319,7 @@ def trello_get(path, query):
     corpo = json.dumps({'action': 'trello', 'password': parola, 'method': 'GET',
                         'path': path, 'query': query}).encode()
     req = urllib.request.Request(WORKER, data=corpo, method='POST', headers={
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/120 Safari/537.36'})
+        'Content-Type': 'application/json', 'User-Agent': shared.USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=6) as r:
             risposta = json.load(r)
@@ -697,9 +686,7 @@ def mode_bash(ev):
         # commit che non li cambia non ha niente da dire, e bloccarlo per un difetto di un altro
         # repo fermerebbe il lavoro (è successo il 2026-09-27 a una sessione su AIV).
         toccati = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
-        di_regole = any(t.endswith(('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')) or t.startswith(('rules/', 'snippets/', '.memo/', 'docs/'))
-                        for t in toccati)
-        if di_regole and not regole_viste:
+        if shared.touches_rules(toccati) and not regole_viste:
             regole_viste = True
             rc, out = refcheck()
             if rc:

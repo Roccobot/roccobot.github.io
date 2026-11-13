@@ -28,10 +28,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import shared  # noqa: E402
+
 REFCHECK = Path(__file__).resolve().parent / 'refcheck.py'
 DASHES = (chr(0x2014), chr(0x2013))
-RULE_SUFFIXES = ('CLAUDE.md', 'AGENTS.md', 'Rules.md', 'GEMINI.md', 'SKILL.md')
-RULE_PREFIXES = ('rules/', 'snippets/', '.memo/', 'docs/')
 
 
 def git(*args):
@@ -79,7 +80,7 @@ def check_diff(diff):
         problems.append('versione nuova di ' + ', '.join(bumped) + ' senza la sua riga in '
                         'rules/Changelog.md (data, file e versione, agente, una riga su che cosa '
                         'cambia).')
-    if any(t.endswith(RULE_SUFFIXES) or t.startswith(RULE_PREFIXES) for t in touched):
+    if shared.touches_rules(touched):
         rc, out = refcheck()
         if rc:
             problems.append('riferimenti incrociati rotti, o caratteri fuori regola, nei file di '
