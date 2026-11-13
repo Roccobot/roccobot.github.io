@@ -212,7 +212,9 @@ numero per scelta dell'utente.
   in After Effects, con le tacche dei fotogrammi, dentro un tondo dello stesso spessore, che ne taglia
   le code ai lati) e la versione SlimVer nella costante `VERSION`,
   scritta accanto al titolo; entrata e uscita si mostrano una per volta, con due linguette, e le note
-  tecniche sono nel tooltip della ℹ️ dell'anteprima. I valori di serie sono quelli del design system
+  tecniche sono nel tooltip della ℹ️ dell'anteprima. `Copia tutto` mette negli appunti un JSON con
+  ogni valore impostabile della pagina, per tutti e due i componenti e le due fasi, coi nomi in stile
+  token del design system. I valori di serie sono quelli del design system
   (`design/tokens.json`, famiglia `movimento`), e quando cambiano là si cambiano anche qui. Non va
   spostata né tolta per pulizia.
 - ⚠️ **`robots.txt` esclude dall'indicizzazione i file di regole (`.md`) e il brief (`.memo/`)**:

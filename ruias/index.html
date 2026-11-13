@@ -182,6 +182,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       <span class="fullname">Roccobot's UI Animation Simulator&nbsp;<span class="ver" id="version"></span></span>
     </div>
     <div class="tools-top">
+      <button class="chip" type="button" id="copyall"></button>
       <button class="chip" type="button" id="reset" data-t="reset"></button>
     </div>
   </header>
@@ -262,12 +263,12 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.11';
+  var VERSION = '1.20';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
-      reset: 'Valori del design system', info: 'Note tecniche',
+      reset: 'Valori del design system', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
       sequence: 'Sequenza', seqCycle: 'Entrata-uscita', seqIn: 'Entrata', seqOut: 'Uscita',
       speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
@@ -286,7 +287,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
       presets: { ds: 'Design system', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
-      reset: 'Design system values', info: 'Technical notes',
+      reset: 'Design system values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
       sequence: 'Sequence', seqCycle: 'Entrance-exit', seqIn: 'Entrance', seqOut: 'Exit',
       speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
@@ -660,6 +661,7 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
     document.getElementById('hold').value = S.hold;
     document.getElementById('hold-v').textContent = num(S.hold) + ' ms';
     document.getElementById('tip').textContent = t('foot');
+    document.getElementById('copyall').textContent = t('copyAll');
     document.getElementById('info').setAttribute('aria-label', t('info'));
     Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.tab)); });
     var v = S[S.comp].veil;
@@ -684,6 +686,34 @@ select { border: 1px solid var(--line); background: var(--field); border-radius:
   pick('comp', function (v) { S.comp = v; });
   pick('seq', function (v) { S.seq = v; });
   pick('rate', function (v) { S.rate = Number(v); });
+  // 'Copia tutto': every setting of the page as tokens, in the design system's naming (Italian,
+  // kebab-case, the unit in the name), for both components and both phases, plus the preview.
+  function composeOf(c) { return 'CubicBezierEasing(' + c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')'; }
+  function phaseTokens(comp, ph) {
+    var p = S[comp][ph], at = function (pc) { return Math.round((p.fade.base === 'time' ? pc / 100 : timeAt(p.c, pc / 100)) * p.ms); };
+    var o = { 'curva': cssOf(p.c), 'curva-compose': composeOf(p.c), 'bezier': p.c.slice(), 'durata-ms': p.ms,
+      'dissolvenza': { 'attiva': p.fade.on, 'misura': p.fade.base === 'time' ? 'tempo' : 'percorso',
+        'da-percento': p.fade.from, 'a-percento': p.fade.to, 'da-ms': at(p.fade.from), 'a-ms': at(p.fade.to) } };
+    if (comp === 'sheet') o['scia'] = { 'attiva': p.trail.on, 'picco-dp': p.trail.dp };
+    else o[ph === 'in' ? 'scala-partenza-percento' : 'scala-arrivo-percento'] = p.scale;
+    return o;
+  }
+  function veilTokens(comp) { var v = S[comp].veil; return { 'attivo': v.on, 'opacita-percento': v.op, 'sfocatura-dp': v.blur }; }
+  function allTokens() {
+    return {
+      'ruias': VERSION,
+      'scheda': { 'percorso-dp': 500, 'entrata': phaseTokens('sheet', 'in'), 'uscita': phaseTokens('sheet', 'out'), 'velo': veilTokens('sheet') },
+      'finestra': { 'entrata': phaseTokens('dialog', 'in'), 'uscita': phaseTokens('dialog', 'out'), 'velo': veilTokens('dialog') },
+      'anteprima': { 'componente': S.comp === 'sheet' ? 'scheda' : 'finestra', 'sequenza': { cycle: 'entrata-uscita', 'in': 'entrata', out: 'uscita' }[S.seq],
+        'velocita': S.rate, 'pausa-ms': S.hold, 'lingua': S.lang }
+    };
+  }
+  var copyAll = document.getElementById('copyall');
+  copyAll.addEventListener('click', function () {
+    var text = JSON.stringify(allTokens(), null, 2);
+    var done = function () { copyAll.textContent = t('copiedAll'); setTimeout(function () { copyAll.textContent = t('copyAll'); }, 1800); };
+    try { navigator.clipboard.writeText(text).then(done, function () {}); } catch (e) {}
+  });
   document.getElementById('reset').addEventListener('click', function () { var d = defaults(); d.lang = S.lang; d.comp = S.comp; d.seq = S.seq; d.rate = S.rate; S = d; clock = 0; save(); syncAll(); });
   document.getElementById('veil-on').addEventListener('change', function (e) { S[S.comp].veil.on = e.target.checked; save(); syncAll(); });
   document.getElementById('veil-op').addEventListener('input', function (e) { S[S.comp].veil.op = Number(e.target.value); save(); syncAll(); });
