@@ -830,8 +830,8 @@ sessione:
      a '🙂 Formule da non usare' compresa, 'Caratteri', e '⌨️ Comandi da terminale', che dice
      come si chiede all'utente di fare qualcosa sul suo computer; le righe esatte le dice il gancio
      di avvio di `hooks.py`, che le stampa all'avvio e dopo una compattazione. Si rileggono **per
-     intero e prima di rispondere**. Rileggere tutto il file costerebbe 75.000-90.000 token a
-     ogni compattazione.
+     intero e prima di rispondere**: sono una parte del file, e rileggerlo tutto a ogni
+     compattazione costerebbe molte volte tanto.
 6. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
    token (regola in `Roccobot.md`, sezione Worker `rules-proxy`): niente letture
    parziali, niente ricostruzioni a memoria. ⚠️ **L'eccezione è `Roccobot.md`, che dal
