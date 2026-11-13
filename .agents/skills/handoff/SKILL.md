@@ -182,11 +182,13 @@ cronaca dei rilasci. La regola c'era, e nessuna macchina la guardava: da quel gi
 `refcheck.py` blocca nel brief il segno ✅ e la formula 'fatta e pubblicata', e avvisa sopra
 le 400 righe.
 
-⚠️ **Il rovescio della regola: una domanda senza risposta si AGGIUNGE.** Se in sessione si è
-chiesta una conferma o proposta una scelta e l'utente non ha risposto entro un turno di botta
-e risposta, la voce va scritta in `Da decidere` (regola universale in `Roccobot.md`,
-§ '⚙️ Automazione e interazioni'). Le due regole lavorano insieme: si cancella ciò che è
-provato, si aggiunge ciò che è rimasto appeso, e il file resta la fotografia dell'aperto.
+⚠️ **Il rovescio della regola: una domanda senza risposta si AGGIUNGE, e si RIPROPONE.** Le
+decisioni dell'utente si chiedono tutte di seguito, a scelta multipla, finché ognuna ha una
+risposta (`Roccobot.md` § '❓ Niente resta da decidere: le decisioni si chiedono tutte, una dopo
+l'altra'); se una resta senza risposta perché il turno o la sessione si chiude, la voce va
+scritta in `Da decidere`, e la sessione dopo la ripropone al primo turno con lui. Le due regole
+lavorano insieme: si cancella ciò che è provato, si aggiunge ciò che è rimasto appeso, e il file
+resta la fotografia dell'aperto.
 
 ## 🧩 Repository, progetto, sessione: tre cose diverse
 
@@ -213,9 +215,11 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   pagina di download, l'appcast e l'archivio degli stili vivono nell'hub (`Aomidori/` e
   `styles/`), e le release in `Roccobot/Aomidori-releases`. Il sito nuovo di **Roccobot.me**, il
   portfolio di Rocco, vive in `Roccobot/rocco.bot` (dal 2026-11-08, ancora da costruire).
-  ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: di serie SlimVer (`x.xx`),
-  con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di `RoccobotOS.js`
-  per RoccobotOS e in `versionName` per AIV, che si pubblica come release e non come deploy;
+  ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: lo schema che dice il
+  progetto (SlimVer `x.xx` per il Web e per chi lo aveva già, SemVer per le app nuove e per AIV
+  dalla 1.0.0), con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di
+  `RoccobotOS.js` per RoccobotOS e in `versionName` per AIV, che si pubblica come release e non
+  come deploy;
   le liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer
   e il link di installazione da ripetere dopo ogni go-live.
 - **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
@@ -462,10 +466,12 @@ capo. Una riga ciascuna, con l'esito per le chiuse (`Setaccio-07 - liste OISD fe
 2.60`), mai il racconto. ⚠️ Se due lavori hanno usato le stesse sigle lettera-numero dello
 schema vecchio, dire a quale lavoro appartiene ognuna.
 
-## Da decidere                            [senza tetto - NON sono cose da fare]
-Le domande poste all'utente e rimaste **senza risposta** entro un turno di botta e risposta:
-finiscono qui per non perdersi al cambio di sessione (regola universale in `Roccobot.md`,
-§ '⚙️ Automazione e interazioni'). Per ognuna: la domanda, le opzioni, il parere dato e le sue
+## Da decidere                            [senza tetto - NON sono cose da fare; o 'Niente']
+Le domande poste all'utente e rimaste **senza risposta** quando il turno o la sessione si è
+chiusa: finiscono qui per non perdersi al cambio di sessione, e la sessione dopo le ripropone al
+primo turno, a scelta multipla (`Roccobot.md` § '❓ Niente resta da decidere: le decisioni si
+chiedono tutte, una dopo l'altra'). Se non ce ne sono, la sezione dice 'Niente' e resta, perché
+il riquadro in testa la nomina. Per ognuna: la domanda, le opzioni, il parere dato e le sue
 ragioni. ⚠️ Se il lavoro ha toccato un **altro repo**, la voce si scrive comunque qui,
 dichiarando di quale repo parla, perché il brief è uno solo. Risposta ottenuta → voce
 cancellata (regola n. 3).
@@ -615,7 +621,8 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 >    voce **non si cancella**: si riscrive dicendo che manca e come si otterrebbe.
 > 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nelle
 >    regole del repo (`Rules.md`, `AGENTS.md`) o in quelle universali, **non qui**; qui resta solo l'aperto. E una
->    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla.
+>    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla, e si
+>    ripropone al primo turno con l'utente.
 > 6. **Il brief include anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
 >    `.memo/files/`, accanto a questo file, e la sezione 'Allegati' dice a quale voce serve
 >    ognuno e come si riapre. Valgono le stesse tre sorti delle voci: evasa la voce, il file si
