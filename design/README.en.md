@@ -227,18 +227,16 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | Back gesture | 180 ms with the finger at the end, linear | `PredictiveBack.kt` |
 | Back into the thumbnail | 300 ms, quartic ease-out | `SWIPE_MS` |
 | Back on a menu | down to 90%; 100 ms if canceled | `BACK_SCALE` |
-| scrim behind panels | 320 ms, the entrance curve behind a menu or a window; behind the sheet it follows its travel; leaves with the panel | `Veil.kt`, `LabMotion.IN_MS`, `SHEET_BLUR` |
+| scrim behind panels | rises with the panel's movement and goes down with the fade; behind the sheet it follows its travel | `Veil.kt`, `LabMotion.IN_MS`, `Sheet.kt` |
 | menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
 | Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
-| entrance curve, of the window and of a menu's scrim | `cubic-bezier(0, 0.4, 0.2, 1)` | `LabMotion.IN` |
-| exit curve, of the window | `cubic-bezier(0.25, 0.08, 0.9, 0.5)` | `LabMotion.OUT` |
-| bottom sheet curve, for coming in and for leaving | `cubic-bezier(0.7, 0, 0.3, 1)` | `LabMotion.SHEET` |
-| bottom sheet entrance | 600 ms, the sheet curve, with the trail; opaque from 30 to 70% of the time (180 to 420 ms), linear ramp | `LabMotion.SHEET_MS`, `SHEET_FADE_IN_FROM`, `SHEET_FADE_IN_TO` |
-| bottom sheet exit | 600 ms, the sheet curve, with the trail; fade along the way, from 0 to 100% | `LabMotion.SHEET_MS`, `SHEET_TRAIL_OUT_DP` |
-| centred window entrance | 320 ms from 92%, the entrance curve; opaque in 64 ms, linear ramp; no trail | `lab_window_in.xml`, `WINDOW_FADE_IN_MS` |
-| centred window exit | 300 ms down to 92%, the exit curve; fade from 210 to 300 ms, linear ramp; no trail | `lab_window_out.xml`, `WINDOW_FADE_OUT_FROM_MS` |
-| trail of a travelling sheet | vertical blur, peak of 10 dp on entrance and 5 on exit, in proportion to the way the curve covers in one frame; past the edge it fades into transparency; where `Effetto movimento` has `Pannelli dal basso` on | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
+| movement spring, of the panels | stiffness 380, damping 1: 382 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` approximates it | `LabMotion.SPATIAL`, `SPATIAL_MS` |
+| fade spring, of the panels | stiffness 1600, damping 1: 186 ms, the same shape | `LabMotion.EFFECTS`, `EFFECTS_MS` |
+| bottom sheet entrance and exit | 382 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have the 186 ms one) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
+| centred window entrance | 382 ms from 92%, the movement spring; opaque on the 186 ms spring; no trail | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| centred window exit | 382 ms down to 92%, the same spring; fades on the 186 ms spring; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| trail of a travelling sheet | vertical blur, peak of 10 dp on entrance and 5 on exit, in proportion to the way the spring covers in one frame; past the edge it fades into transparency; where `Effetto movimento` has `Pannelli dal basso` on | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
 | Start menu, from its corner | 110 ms, the pill's curve | `BAR_IN_MS` |
@@ -261,18 +259,16 @@ code). The values are also in the tokens, family `movimento`, each with its cons
   be seen waits for the screen to arrive, and what arrives with the screen (a background, a band,
   the content) stays still.
 - **Duration follows distance.** A fixed time for short steps; for a sheet that travels its own
-  height a longer time (600 ms) on a curve that starts at rest, speeds up and arrives at rest; for a
-  long jump a duration that grows with the distance, with a cap.
-- **The exit is shorter than the entrance, except for the sheet.** A menu enters in 120 ms and exits
-  in 75, with a single fade; the centred window enters in 320 and exits in 300, on a curve that
-  speeds up until it leaves the screen; the bottom sheet enters and leaves in 600 ms on the same
-  curve, which starts and arrives at rest.
-- **Entrance and exit fades are measured in time**, not along the way: on the window's entrance
-  curve 20% of the way is covered in 5 ms, and a fade tied to the way would end in the first frame.
-  The leaving sheet is the exception, fading along its whole way, from the start to the end of the
-  run.
+  height a longer time (382 ms) on a spring that starts at rest, speeds up and arrives at rest, with
+  no bounce; for a long jump a duration that grows with the distance, with a cap.
+- **The exit has the same spring as the entrance, except for the menu.** The bottom sheet and the
+  centred window come in and leave on the movement spring (382 ms) and, where there is one, on the
+  fade spring (186 ms); a menu enters in 120 ms and exits in 75, with a single fade.
+- **The fade has a spring of its own**, shorter than the movement (186 ms against 382), and starts
+  together with it. The bottom sheet has no fade; the selection sheet, the notices and the centred
+  windows do.
 - **What travels has the trail, what stays centred grows and shrinks**: the sheet blurs along its
-  motion as fast as the curve runs, the centred window comes and goes from 92%.
+  motion as fast as the spring runs, the centred window comes and goes from 92%.
 - **No flashes between two surfaces.** The scrim does not go down while another surface is coming
   in, and a window that opens over a scrim already on screen blurs to full at once.
 - **A stand-in gives way with a fade**, in 150 ms: the thumbnail to the full image, the copy that
@@ -321,13 +317,16 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 12: below it, their settings stay off and grayed out. In AIV they live in `Blur effects` and in
 `Style of the main buttons`.
 
-- **Blur behind panels** (`sfocatura-pannelli`, `Effect behind menus and panels`), **on by
-  default**: behind menus, dialogs and sheets, `sfocatura-velo` (12 dp) with the `velo` scrim at
-  30%, black in the light theme and white in the dark one, which arrives in 320 ms behind a menu or
-  a dialog and follows the sheet's travel behind a bottom sheet (`sfocatura-velo-scheda`, 5 dp, for
-  the sheet instead of 12). Panels are bare: they stand out
-  by the surface color alone, with no border. When off, dialogs go back to Android's scrim (60%)
-  and menus have none. The system does the blur, and it costs only while a panel is open.
+- **Depth of panels**, three answers never together: shadow, blur or none. **The shadow**
+  (`ombra-pannelli`) **is the default**: behind menus, dialogs and sheets there is the shadow the
+  system casts from the panel's outline, with an elevation of 8 dp, the same for all (the bottom
+  sheet only on its two top corners); behind menus there is nothing else, and dialogs and sheets
+  have Android's dimming, 60%. At 12 dp the halo would read as a stain around the panel.
+- **Blur behind panels** (`sfocatura-pannelli`), **off by default**: behind menus, dialogs and
+  sheets, `sfocatura-velo` (8 dp) with the `velo` scrim at 30%, black in the light theme and white
+  in the dark one, which rises with the panel's movement and goes down with the fade (behind a
+  bottom sheet it follows its travel). Panels are bare: they stand out by the surface color alone,
+  with no border. The system does the blur, and it costs only while a panel is open.
 - **A blur that fades needs something leaving the scene**, or it reads as focusing: a menu exits
   with a single 75 ms fade, panel, blur and scrim together.
 - **Translucent main buttons** (`traslucido`), **the default style** among `Solid`,
@@ -362,7 +361,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   on the ink 22.7 above and 19 below; the ×
   is centered on the Tondo it replaces. These are ideal values, adapted in three cases the owner
   decides (see its sheet, with the spacing diagram and the examples).
-- **Card**: in the apps a panel that rises from the bottom, with AIV's sheet curve and the trail; on the web one
+- **Card**: in the apps a panel that rises from the bottom, with AIV's movement spring and the trail; on the web one
   object with a name, one line of explanation and a single action.
 - **Buttons**: pill-shaped, at least 44 tall; filled (`accento` with `contenuto-su-accento`) for the main
   action, one per screen, outlined for the others.
@@ -372,9 +371,9 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   proportion to each chip's text, in the current language. 'Full width' doesn't mean equal-width
   chips: they are equal only when the texts are the same length or the grid is declared (a fixed
   number per row). 8 between two chips and between two rows; no chip wraps before it has to.
-- **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet
-  `sfocatura-velo-scheda`, 5, which follows the sheet's travel); with the blur off a sheet's
-  scrim is at 60%. The panel stands out by its surface color alone, with no border.
+- **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet it
+  follows the sheet's travel); with the blur off, that is with the default shadow, dialogs and
+  sheets have the 60% dimming. The panel stands out by its surface color alone, with no border.
 - **Help overlays**: a dark scrim (`velo-aiuto`) with the sentence in white, at most 260 wide; what
   it explains is marked in orange and the key to tap is yellow, and any tap closes it; the owner
   writes the text.
