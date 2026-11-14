@@ -360,6 +360,11 @@ grigie.
   principale, uno per schermata, il contorno per le altre.
   La scheda dal basso ha gli angoli in alto di 28 (`raggio-scheda`), un rientro di 24 e il tasto di
   chiusura accanto al titolo.
+- **Gettoni**: una fila di gettoni di una scelta occupa tutta la larghezza, e lo spazio che avanza
+  si divide in proporzione al testo di ognuno, nella lingua in vigore. 'A larghezza piena' non vuol
+  dire gettoni larghi uguali: lo sono solo se i testi hanno la stessa misura o se la griglia è
+  dichiarata (un numero fisso per riga). Stacco di 8 fra due gettoni e fra due righe; nessun gettone
+  va a capo prima del necessario.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo`; con la sfocatura spenta il
   velo di una scheda è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.
 - **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con la frase in bianco, larga al massimo 260;

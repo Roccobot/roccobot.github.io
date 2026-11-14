@@ -238,6 +238,12 @@ td.kind { color: var(--testo-secondario); }
 .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25rem; border-radius: var(--raggio-pieno); font: 600 1rem/1 var(--tipo); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
 .btn-full { background: var(--accento); color: var(--contenuto-su-accento); }
 .btn-line { background: transparent; color: var(--testo); border-color: var(--contorno); }
+/* chips: the row fills the width and the leftover space is shared in proportion to each label,
+   so --it and --en hold each label's length in that language and the language switch reflows them */
+.gts { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.gt { flex: var(--it) 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border-radius: var(--raggio-pieno); border: 1px solid var(--contorno); font: 500 .9375rem/1 var(--tipo); white-space: nowrap; }
+:root[data-lang="en"] .gt { flex-grow: var(--en); }
+.gt[aria-current="true"] { border-color: var(--testo-accento); color: var(--testo-accento); }
 .card { width: 100%; padding: 1rem 1.1rem; border-radius: var(--raggio-scheda-web); border: 1px solid var(--linea); background: var(--superficie); display: flex; align-items: center; gap: 1rem; }
 .card-t { flex: 1 1 auto; min-width: 0; }
 .card-t b { font-weight: 600; }
@@ -783,6 +789,17 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
           <p lang="it">Il pieno per l'azione principale, uno per schermata; il contorno per le altre. A pillola e alti almeno 44 px.</p>
           <p lang="en">Filled for the main action, one per screen; outlined for the others. Pill-shaped and at least 44 px tall.</p>
           <div class="stage"><a class="btn btn-full" href="#componenti"><span lang="it">Apri</span><span lang="en">Open</span></a><a class="btn btn-line" href="#componenti"><span lang="it">Tutte le versioni</span><span lang="en">All versions</span></a></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Gettoni</span><span lang="en">Chips</span></h3>
+          <p lang="it">Una fila di gettoni occupa tutta la larghezza, e lo spazio che avanza si divide in proporzione al testo di ognuno, nella lingua in vigore. Larghi uguali solo se i testi hanno la stessa misura o la griglia è dichiarata. Stacco di 8 fra due gettoni e fra due righe; nessuno va a capo prima del necessario.</p>
+          <p lang="en">A row of chips fills the full width, and the leftover space is shared in proportion to each chip's text, in the current language. Equal widths only when the texts are the same length or the grid is declared. 8 between two chips and between two rows; no chip wraps before it has to.</p>
+          <div class="stage"><div class="gts" aria-hidden="true">
+            <span class="gt" aria-current="true" style="--it: 5; --en: 3"><span lang="it">Tutte</span><span lang="en">All</span></span>
+            <span class="gt" style="--it: 4; --en: 6"><span lang="it">Foto</span><span lang="en">Photos</span></span>
+            <span class="gt" style="--it: 5; --en: 6"><span lang="it">Video</span><span lang="en">Videos</span></span>
+            <span class="gt" style="--it: 17; --en: 16"><span lang="it">Documenti recenti</span><span lang="en">Recent documents</span></span>
+          </div></div>
         </div>
         <div class="comp">
           <h3><span lang="it">Scheda</span><span lang="en">Card</span></h3>
