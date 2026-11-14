@@ -95,7 +95,13 @@ CORTO = 1e-3
 # col disegno identico, a zero pixel. Raccordarli vorrebbe dire cambiarli. Si riconoscono dal
 # commento che ne dichiara l'origine, in testa al file, e non dal nome: è il commento a dire che il
 # disegno è di Material così com'è.
-RE_MATERIAL = re.compile(r'<!-- Material: Icons\.[A-Za-z.]+ [0-9.]+ -->')
+# ⚠️ **Due forme del commento** (dalla 1.3.0 di AIV, `Leva`): quella della libreria di allora
+# (`Icons.Rounded.Lock 1.7.8`) e quella di Material Symbols scaricati dal repository di Google
+# (`Material Symbols Rounded arrow_back, 24 px, weight 600`). Prima si riconosceva solo la prima, e
+# `ic_m_arrow_drop_down_rounded` della 1.2.0 risultava con una punta viva da raccordare.
+RE_MATERIAL = re.compile(
+    r'<!-- Material: (Icons\.[A-Za-z.]+ [0-9.]+ -->|Material Symbols (Rounded|Outlined|Sharp) [a-z0-9_]+, )'
+)
 # ⚠️⚠️ **E I DISEGNI CHE L'UTENTE CONSEGNA COL PATTO 'SENZA TOCCARE IL DISEGNO' NEMMENO** (7.10,
 # `Insegna`, sua istruzione sulle due icone della tendina: *senza toccare il disegno, niente
 # ritaglio, niente pixel spostati*): il tracciato è il suo, carattere per carattere, e un raccordo
