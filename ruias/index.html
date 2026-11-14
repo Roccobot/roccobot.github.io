@@ -75,15 +75,23 @@ h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; lin
 .tools-top { display: flex; gap: .5rem; align-items: center; }
 button, select, input { font: inherit; color: inherit; }
 .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 0 .95rem; min-height: 36px; cursor: pointer; font-size: .9rem; }
-.chip:hover { border-color: var(--accent); }
+.chip:hover, .chip:focus-visible { border-color: var(--accent); outline: none; }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 /* Play and pause: a round button with the glyph alone, the triangle or the two bars */
 .playbtn { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent);
            display: inline-grid; place-items: center; cursor: pointer; padding: 0; margin-left: auto; }
-.playbtn:hover { background: var(--accent-hover); }
+.playbtn:hover, .playbtn:focus-visible { background: var(--accent-hover); outline: none; }
 .playbtn svg { width: 22px; height: 22px; fill: currentColor; }
-/* No focus rings on the controls (the owner's choice): a click or a key leaves no frame behind */
-button:focus, select:focus, input:focus { outline: none; }
+/* No focus ring anywhere (the owner's rule, Roccobot.md 'La navigazione con la tastiera non si vede'):
+   a control reached with Tab changes as it does under the mouse. Controls with no hover of their own
+   get a change for the keyboard only: the dropdowns and the text field the accent border of a pill,
+   the sliders and the checkboxes the accent's hover shade, a slider's value the label colour too, and a
+   pressed pill, whose border is already the accent, 14% of its text's colour in its fill (as in the
+   feedback documents). */
+select:focus-visible, input[type="text"]:focus-visible { border-color: var(--accent); outline: none; }
+.ctrl input[type="range"]:focus-visible, .sw input[type="checkbox"]:focus-visible { accent-color: var(--accent-hover); outline: none; }
+.ctrl:has(input[type="range"]:focus-visible) .val { color: var(--label); }
+.chip[aria-pressed="true"]:focus-visible { background: color-mix(in srgb, var(--on-accent) 14%, var(--accent)); }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
 @media (min-width: 62rem) { .layout { grid-template-columns: 23.5rem minmax(0, 1fr); } }
 .stage .chip { padding: 0 .8rem; }
@@ -93,7 +101,7 @@ button:focus, select:focus, input:focus { outline: none; }
 .stage { position: relative; }
 .info { position: absolute; top: .55rem; right: .6rem; width: 26px; height: 26px; border: 0; background: none; padding: 0;
         color: var(--muted); opacity: .35; cursor: help; display: grid; place-items: center; }
-.info:hover, .info[aria-expanded="true"] { opacity: .8; }
+.info:hover, .info:focus-visible, .info[aria-expanded="true"] { opacity: .8; outline: none; }
 .info svg { width: 16px; height: 16px; }
 .tip { position: absolute; top: 2.3rem; right: .6rem; left: .6rem; z-index: 5; background: var(--card); border: 1px solid var(--line);
        border-radius: 10px; padding: .7rem .8rem; font-size: .8rem; color: var(--muted); line-height: 1.45;
@@ -277,7 +285,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.23';
+  var VERSION = '1.24';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
