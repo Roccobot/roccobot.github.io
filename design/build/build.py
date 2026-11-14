@@ -361,17 +361,25 @@ def fluido_chart():
                        'The speed of the Fluido curve over time: it starts at 4 times the average and falls to zero')
 
 
-def entrance_chart():
-    """The entrance curve over the sheet's entrance time: it starts at its top speed and brakes to rest."""
+def sheet_chart():
+    """The sheet curve over the sheet's time: it starts and arrives at rest, with its peak halfway."""
     ms = _motion('scheda-entrata')['value'].split(' ')[0]
+    return speed_chart([(tuple(_motion('curva-scheda')['bezier']), 'fl-speed')], ms,
+                       'La velocità della curva della scheda nel tempo: parte ferma, a metà tocca 3,3 volte la media e arriva ferma',
+                       'The speed of the sheet curve over time: it starts at rest, halfway reaches 3.3 times the average and arrives at rest')
+
+
+def entrance_chart():
+    """The entrance curve over the window's entrance time: it starts at its top speed and brakes to rest."""
+    ms = _motion('finestra-entrata')['value'].split(' ')[0]
     return speed_chart([(tuple(_motion('curva-entrata')['bezier']), 'fl-speed')], ms,
                        "La velocità della curva d'entrata nel tempo: parte alla velocità più alta e scende fino a zero",
                        'The speed of the entrance curve over time: it starts at its top speed and falls to zero')
 
 
 def exit_chart():
-    """The exit curve over the sheet's exit time: it starts almost at rest and leaves at 5 times the average."""
-    ms = _motion('scheda-uscita')['value'].split(' ')[0]
+    """The exit curve over the window's exit time: it starts almost at rest and leaves at 5 times the average."""
+    ms = _motion('finestra-uscita')['value'].split(' ')[0]
     return speed_chart([(tuple(_motion('curva-uscita')['bezier']), 'fl-speed')], ms,
                        "La velocità della curva d'uscita nel tempo: parte quasi ferma e cresce oltre 4 volte la media",
                        'The speed of the exit curve over time: it starts almost at rest and grows past 4 times the average')
@@ -543,6 +551,7 @@ def main():
         'effects': effects(),
         'motion': motion(),
         'fluido': fluido_chart(),
+        'scheda': sheet_chart(),
         'entrata': entrance_chart(),
         'uscita': exit_chart(),
         'rilascio': release_chart(),

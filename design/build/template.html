@@ -260,6 +260,7 @@ td.kind { color: var(--testo-secondario); }
 .mock-grid i:nth-child(3n) { background: color-mix(in srgb, var(--testo) 22%, var(--superficie)); }
 .mock-grid i:nth-child(4n+2) { background: color-mix(in srgb, var(--accento) 55%, var(--superficie)); }
 .mock-veil { position: absolute; inset: 0; background: var(--velo); backdrop-filter: blur(var(--sfocatura-velo)); -webkit-backdrop-filter: blur(var(--sfocatura-velo)); }
+.mock-veil-sheet { backdrop-filter: blur(var(--sfocatura-velo-scheda)); -webkit-backdrop-filter: blur(var(--sfocatura-velo-scheda)); }
 .mock-bar { display: block; height: .5rem; border-radius: .25rem; background: color-mix(in srgb, var(--testo) 14%, transparent); }
 .mock-sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: .75rem 1.5rem 1.5rem; display: grid; gap: .75rem; background: var(--superficie); border-radius: var(--raggio-scheda) var(--raggio-scheda) 0 0; }
 .mock-sheet-head { display: flex; align-items: center; justify-content: space-between; }
@@ -682,19 +683,24 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       </div>
       <div class="pal-group">
         <h3 id="h-mov-curve"><span lang="it">Le curve d'entrata e d'uscita</span><span lang="en">The entrance and exit curves</span></h3>
-        <p lang="it">Quello che entra (la scheda dal basso, la finestra al centro, il velo) usa <code>cubic-bezier(0, 0.4, 0.2, 1)</code> in 320&nbsp;ms: parte alla velocità più alta, frena sempre e arriva ferma, e a metà del tempo ha già fatto il 90% della strada. Quello che esce usa <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> in 300&nbsp;ms: parte quasi ferma, accelera sempre e lascia lo schermo a 5 volte la velocità media.</p>
-        <p lang="en">What comes in (the bottom sheet, the centred window, the scrim) uses <code>cubic-bezier(0, 0.4, 0.2, 1)</code> over 320&nbsp;ms: it starts at its top speed, keeps braking and arrives at rest, and halfway through the time it has already covered 90% of the way. What leaves uses <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> over 300&nbsp;ms: it starts almost at rest, keeps speeding up and leaves the screen at 5 times the average speed.</p>
-        <p lang="it">Le dissolvenze si misurano sul tempo, con una rampa lineare: la scheda diventa opaca nei primi 96&nbsp;ms, la finestra nei primi 64, e la finestra sfuma negli ultimi 90&nbsp;ms. La scheda in uscita sfuma fra il 65 e il 90% del percorso, quando è già quasi fuori. La scheda che si sposta ha la scia, una sfocatura verticale fino a 20&nbsp;dp che segue la velocità della curva; la finestra al centro non si sposta, cresce dal 92% ed esce stringendosi fino al 92%.</p>
-        <p lang="en">Fades are measured in time, on a linear ramp: the sheet turns opaque in the first 96&nbsp;ms, the window in the first 64, and the window fades out in the last 90&nbsp;ms. The leaving sheet fades between 65 and 90% of the way, when it is almost out. A travelling sheet has the trail, a vertical blur of up to 20&nbsp;dp that follows the curve's speed; the centred window does not travel, it grows from 92% and leaves shrinking down to 92%.</p>
+        <p lang="it">La scheda dal basso ha una curva sua, <code>cubic-bezier(0.7, 0, 0.3, 1)</code>, per entrare e per uscire in 600&nbsp;ms: parte ferma, accelera, a metà tocca 3,3 volte la velocità media e arriva ferma. La finestra al centro e il velo di un menu usano la curva d'entrata <code>cubic-bezier(0, 0.4, 0.2, 1)</code> in 320&nbsp;ms, che parte alla velocità più alta, frena sempre e a metà del tempo ha già fatto il 90% della strada, e la curva d'uscita <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> in 300&nbsp;ms, che parte quasi ferma, accelera sempre e lascia lo schermo a 5 volte la velocità media.</p>
+        <p lang="en">The bottom sheet has a curve of its own, <code>cubic-bezier(0.7, 0, 0.3, 1)</code>, for coming in and for leaving over 600&nbsp;ms: it starts at rest, speeds up, halfway reaches 3.3 times the average speed and arrives at rest. The centred window and a menu's scrim use the entrance curve <code>cubic-bezier(0, 0.4, 0.2, 1)</code> over 320&nbsp;ms, which starts at its top speed, keeps braking and halfway through the time has already covered 90% of the way, and the exit curve <code>cubic-bezier(0.25, 0.08, 0.9, 0.5)</code> over 300&nbsp;ms, which starts almost at rest, keeps speeding up and leaves the screen at 5 times the average speed.</p>
+        <p lang="it">Le dissolvenze di entrata si misurano sul tempo, con una rampa lineare: la scheda diventa opaca fra il 30 e il 70% (da 180 a 420&nbsp;ms), la finestra nei primi 64&nbsp;ms, e la finestra sfuma negli ultimi 90&nbsp;ms. La scheda in uscita sfuma lungo tutto il percorso, dall'inizio alla fine. La scheda che si sposta ha la scia, una sfocatura verticale che segue la velocità della curva, con un picco di 10&nbsp;dp in entrata e di 5 in uscita; la finestra al centro non si sposta, cresce dal 92% ed esce stringendosi fino al 92%.</p>
+        <p lang="en">Entrance fades are measured in time, on a linear ramp: the sheet turns opaque between 30 and 70% (180 to 420&nbsp;ms), the window in the first 64&nbsp;ms, and the window fades out in the last 90&nbsp;ms. The leaving sheet fades along its whole way, from the start to the end. A travelling sheet has the trail, a vertical blur that follows the curve's speed, with a peak of 10&nbsp;dp on entrance and 5 on exit; the centred window does not travel, it grows from 92% and leaves shrinking down to 92%.</p>
+        <figure class="fl">
+          <!--@scheda-->
+          <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
+          <figcaption><span lang="it">La curva della scheda: velocità nel tempo, in multipli della media (la linea tratteggiata); parte e arriva ferma, con il picco a metà.<br>La scheda di 600&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The sheet curve: speed over time, in multiples of the average (the dashed line); it starts and arrives at rest, with the peak halfway.<br>The 600&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+        </figure>
         <figure class="fl">
           <!--@entrata-->
           <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
-          <figcaption><span lang="it">La curva d'entrata: velocità nel tempo, in multipli della media (la linea tratteggiata); nei primi istanti è oltre il grafico.<br>La scheda di 320&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The entrance curve: speed over time, in multiples of the average (the dashed line); in the first instants it is past the chart.<br>The 320&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+          <figcaption><span lang="it">La curva d'entrata della finestra: velocità nel tempo, in multipli della media (la linea tratteggiata); nei primi istanti è oltre il grafico.<br>La finestra di 320&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The window's entrance curve: speed over time, in multiples of the average (the dashed line); in the first instants it is past the chart.<br>The 320&nbsp;ms window, slowed down 5&nbsp;times.</span></figcaption>
         </figure>
         <figure class="fl">
           <!--@uscita-->
           <div class="fl-track" aria-hidden="true"><span class="fl-block"></span></div>
-          <figcaption><span lang="it">La curva d'uscita, che finisce a 5 volte la media, oltre il grafico.<br>La scheda di 300&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The exit curve, which ends at 5 times the average, past the chart.<br>The 300&nbsp;ms sheet, slowed down 5&nbsp;times.</span></figcaption>
+          <figcaption><span lang="it">La curva d'uscita della finestra, che finisce a 5 volte la media, oltre il grafico.<br>La finestra di 300&nbsp;ms, rallentata 5&nbsp;volte.</span><span lang="en">The window's exit curve, which ends at 5 times the average, past the chart.<br>The 300&nbsp;ms window, slowed down 5&nbsp;times.</span></figcaption>
         </figure>
       </div>
       <div class="pal-group">
@@ -809,14 +815,14 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Scheda dal basso</span><span lang="en">Bottom sheet</span></h3>
-          <p lang="it">Nelle app sale dal basso con la curva d'entrata e la scia, sopra il velo: angoli in alto di 28, un rientro di 24 e il tasto di chiusura accanto al titolo.</p>
-          <p lang="en">In the apps it rises from the bottom on the entrance curve with the trail, above the scrim: 28 top corners, a 24 inset and the close button next to the title.</p>
-          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-sheet"><div class="mock-sheet-head"><span class="mock-bar"></span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></div><span class="mock-bar"></span><span class="mock-bar" style="width:70%"></span></div></div></div>
+          <p lang="it">Nelle app sale dal basso con la curva della scheda e la scia, sopra il velo: angoli in alto di 28, un rientro di 24 e il tasto di chiusura accanto al titolo.</p>
+          <p lang="en">In the apps it rises from the bottom on the sheet curve with the trail, above the scrim: 28 top corners, a 24 inset and the close button next to the title.</p>
+          <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil mock-veil-sheet"></div><div class="mock-sheet"><div class="mock-sheet-head"><span class="mock-bar"></span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></div><span class="mock-bar"></span><span class="mock-bar" style="width:70%"></span></div></div></div>
         </div>
         <div class="comp">
           <h3><span lang="it">Velo</span><span lang="en">Scrim</span></h3>
-          <p lang="it">Dietro ogni pannello, al 30% con 12 di sfocatura: nero nel tema chiaro, bianco in quello scuro. Il pannello si stacca col solo colore della superficie; con la sfocatura spenta, il velo di una scheda sale al 60%.</p>
-          <p lang="en">Behind every panel, at 30% with a 12 blur: black in the light theme, white in the dark one. The panel stands out by its surface color alone; with the blur off, a sheet's scrim goes up to 60%.</p>
+          <p lang="it">Dietro ogni pannello, al 30% con 12 di sfocatura (5 dietro una scheda dal basso, dove segue la corsa della scheda): nero nel tema chiaro, bianco in quello scuro. Il pannello si stacca col solo colore della superficie; con la sfocatura spenta, il velo di una scheda sale al 60%.</p>
+          <p lang="en">Behind every panel, at 30% with a 12 blur (5 behind a bottom sheet, where it follows the sheet's travel): black in the light theme, white in the dark one. The panel stands out by its surface color alone; with the blur off, a sheet's scrim goes up to 60%.</p>
           <div class="stage mock-stage"><div class="mock" aria-hidden="true"><div class="mock-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-veil"></div><div class="mock-menu"><span class="mock-bar"></span><span class="mock-bar" style="width:80%"></span><span class="mock-bar" style="width:60%"></span></div></div></div>
         </div>
         <div class="comp">

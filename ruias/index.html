@@ -285,7 +285,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.24';
+  var VERSION = '1.25';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -334,14 +334,17 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     ['std', [0.2, 0, 0, 1]], ['back', [0.34, 1.56, 0.64, 1]]
   ];
   // The Roccobot Design System values (design/tokens.json, famiglia movimento).
-  var DS_IN = [0, 0.4, 0.2, 1], DS_OUT = [0.25, 0.08, 0.9, 0.5];
+  // The window's entrance and exit curves, and the sheet's one curve for both (the sheet has its own).
+  var DS_IN = [0, 0.4, 0.2, 1], DS_OUT = [0.25, 0.08, 0.9, 0.5], DS_SHEET = [0.7, 0, 0.3, 1];
+  // The design system curve a preset 'Design system' picks, for the component being edited.
+  function dsCurve(ph) { return S.comp === 'sheet' ? DS_SHEET : (ph === 'in' ? DS_IN : DS_OUT); }
   function defaults() {
     return {
       comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000, tab: 'in',
       sheet: {
-        in: { c: DS_IN.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 30 }, trail: { on: true, dp: 20 } },
-        out: { c: DS_OUT.slice(), ms: 300, fade: { on: true, base: 'path', from: 65, to: 90 }, trail: { on: true, dp: 20 } },
-        veil: { on: true, op: 30, blur: 12 }
+        in: { c: DS_SHEET.slice(), ms: 600, fade: { on: true, base: 'time', from: 30, to: 70 }, trail: { on: true, dp: 10 } },
+        out: { c: DS_SHEET.slice(), ms: 600, fade: { on: true, base: 'path', from: 0, to: 100 }, trail: { on: true, dp: 5 } },
+        veil: { on: true, op: 30, blur: 5 }
       },
       dialog: {
         in: { c: DS_IN.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 20 }, scale: 92 },
@@ -502,7 +505,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.pre.addEventListener('change', function () {
       var p = PRESETS[Number(P.pre.value)];
       if (!p) return;
-      cur(ph).c = (p[1] || (ph === 'in' ? DS_IN : DS_OUT)).slice();
+      cur(ph).c = (p[1] || dsCurve(ph)).slice();
       changed(ph);
     });
     P.dur.input.addEventListener('input', function () { cur(ph).ms = Number(P.dur.input.value); changed(ph); });
@@ -649,7 +652,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     }
     P.pre.options[0].textContent = '...';
     PRESETS.forEach(function (p2, i) { P.pre.options[i + 1].textContent = t('presets')[p2[0]] + (p2[1] ? '  ' + cssOf(p2[1]) : ''); });
-    var match = PRESETS.findIndex(function (p2) { var c2 = p2[1] || (ph === 'in' ? DS_IN : DS_OUT); return c2.every(function (v, i) { return Math.abs(v - p.c[i]) < 1e-6; }); });
+    var match = PRESETS.findIndex(function (p2) { var c2 = p2[1] || dsCurve(ph); return c2.every(function (v, i) { return Math.abs(v - p.c[i]) < 1e-6; }); });
     P.pre.value = match >= 0 ? String(match) : '';
     P.dur.lab.textContent = t('duration'); P.dur.input.value = p.ms; P.dur.val.textContent = p.ms + ' ms';
     P.fadeTitle.textContent = t('fade'); P.fadeOnLab.textContent = t('fadeOn'); P.fadeOn.checked = p.fade.on;
