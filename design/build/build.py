@@ -11,6 +11,7 @@ Author: Rocco Casadei, a.k.a. Roccobot
 """
 import html
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -322,20 +323,31 @@ def _dbez(a, b, t):
 
 
 def speed_chart(curves, ms, aria_it, aria_en):
-    """`curves`: (bezier, css class); the first one also drives the block on the track, if any."""
+    """`curves`: (curve, css class); the first one also drives the block on the track, if any.
+    A curve is a Bezier tuple (x1, y1, x2, y2) or, for a critically damped spring from rest, the number
+    a = omega * seconds: progress `1 - (1 + a*u) * exp(-a*u)` over the unit time u, divided by its value at 1."""
     L, R, T, B = FLUIDO_PLOT
     px = lambda u: L + u * (R - L)
     py = lambda s: B - min(s, FLUIDO_TOP_SPEED) / FLUIDO_TOP_SPEED * (B - T)
     lines, dots = [], []
-    for i, ((x1, y1, x2, y2), cls) in enumerate(curves):
+    for i, (spec, cls) in enumerate(curves):
         pts = []
-        for k in range(201):
-            t = k / 200
-            dx, dy = _dbez(x1, x2, t), _dbez(y1, y2, t)
-            # A vertical tangent (x1 = 0, the entrance curve at its start) is the top speed, not zero.
-            speed = dy / dx if dx > 1e-9 else (FLUIDO_TOP_SPEED if dy > 1e-9 else 0.0)
-            pts.append(f'{px(_bez(x1, x2, t)):.2f},{py(speed):.2f}')
-        lines.append(f'<polyline class="{cls}" data-bezier="{x1:g},{y1:g},{x2:g},{y2:g}" points="{" ".join(pts)}"/>')
+        if isinstance(spec, tuple):
+            x1, y1, x2, y2 = spec
+            for k in range(201):
+                t = k / 200
+                dx, dy = _dbez(x1, x2, t), _dbez(y1, y2, t)
+                # A vertical tangent (x1 = 0, the entrance curve at its start) is the top speed, not zero.
+                speed = dy / dx if dx > 1e-9 else (FLUIDO_TOP_SPEED if dy > 1e-9 else 0.0)
+                pts.append(f'{px(_bez(x1, x2, t)):.2f},{py(speed):.2f}')
+            attr = f'data-bezier="{x1:g},{y1:g},{x2:g},{y2:g}"'
+        else:
+            end = 1 - (1 + spec) * math.exp(-spec)
+            for k in range(201):
+                u = k / 200
+                pts.append(f'{px(u):.2f},{py(spec * spec * u * math.exp(-spec * u) / end):.2f}')
+            attr = f'data-spring="{spec:.6f}"'
+        lines.append(f'<polyline class="{cls}" {attr} points="{" ".join(pts)}"/>')
         dots.append(f'<circle class="fl-dot {cls}-dot" r="4.5" cx="0" cy="{B}" data-i="{i}"/>')
     grid = ''.join(f'<line class="fl-grid" x1="{L}" x2="{R}" y1="{py(s):.2f}" y2="{py(s):.2f}"/>' for s in (2, 3, 4))
     nums = ''.join(f'<text class="fl-num" x="{L - 6}" y="{py(s) + 4:.2f}" text-anchor="end">{s}×</text>' for s in (0, 1, 2, 3, 4))
@@ -361,28 +373,13 @@ def fluido_chart():
                        'The speed of the Fluido curve over time: it starts at 4 times the average and falls to zero')
 
 
-def sheet_chart():
-    """The sheet curve over the sheet's time: it starts and arrives at rest, with its peak halfway."""
-    ms = _motion('scheda-entrata')['value'].split(' ')[0]
-    return speed_chart([(tuple(_motion('curva-scheda')['bezier']), 'fl-speed')], ms,
-                       'La velocità della curva della scheda nel tempo: parte ferma, a metà tocca 3,3 volte la media e arriva ferma',
-                       'The speed of the sheet curve over time: it starts at rest, halfway reaches 3.3 times the average and arrives at rest')
-
-
-def entrance_chart():
-    """The entrance curve over the window's entrance time: it starts at its top speed and brakes to rest."""
-    ms = _motion('finestra-entrata')['value'].split(' ')[0]
-    return speed_chart([(tuple(_motion('curva-entrata')['bezier']), 'fl-speed')], ms,
-                       "La velocità della curva d'entrata nel tempo: parte alla velocità più alta e scende fino a zero",
-                       'The speed of the entrance curve over time: it starts at its top speed and falls to zero')
-
-
-def exit_chart():
-    """The exit curve over the window's exit time: it starts almost at rest and leaves at 5 times the average."""
-    ms = _motion('finestra-uscita')['value'].split(' ')[0]
-    return speed_chart([(tuple(_motion('curva-uscita')['bezier']), 'fl-speed')], ms,
-                       "La velocità della curva d'uscita nel tempo: parte quasi ferma e cresce oltre 4 volte la media",
-                       'The speed of the exit curve over time: it starts almost at rest and grows past 4 times the average')
+def spring_chart():
+    """The movement spring over its own time: it starts and arrives at rest, with its peak early on."""
+    spring = _motion('molla-movimento')['molla']
+    a = math.sqrt(spring['rigidita']) * spring['ms'] / 1000
+    return speed_chart([(a, 'fl-speed')], str(spring['ms']),
+                       'La velocità della molla del movimento nel tempo: parte ferma, al 13% del tempo tocca 2,75 volte la media e torna a zero',
+                       'The speed of the movement spring over time: it starts at rest, at 13% of the time reaches 2.75 times the average and returns to zero')
 
 
 def release_chart():
@@ -551,9 +548,7 @@ def main():
         'effects': effects(),
         'motion': motion(),
         'fluido': fluido_chart(),
-        'scheda': sheet_chart(),
-        'entrata': entrance_chart(),
-        'uscita': exit_chart(),
+        'molla': spring_chart(),
         'rilascio': release_chart(),
         'version': version(),
         'version-full': version_full(),
