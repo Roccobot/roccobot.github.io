@@ -318,8 +318,9 @@ grigie.
 - **Profondità dei pannelli**, tre risposte mai insieme: l'ombra, la sfocatura o niente. **L'ombra**
   (`ombra-pannelli`) **è di fabbrica**: dietro menu, dialoghi e schede c'è l'ombra che il sistema
   getta dal contorno del pannello, con un'elevazione di 8 dp uguale per tutti (la scheda in fondo
-  solo sui due angoli in cima); dietro i menu non c'è altro, e i dialoghi e le schede hanno lo
-  scurimento di Android, il 60%. A 12 dp l'alone si leggerebbe come una macchia intorno al pannello.
+  solo sui due angoli in cima); dietro i menu non c'è altro (salvo quello della pressione lunga nel
+  visualizzatore, che ha lo scurimento), e i dialoghi e le schede hanno lo scurimento di Android,
+  il 60%, anche con niente dietro. A 12 dp l'alone si leggerebbe come una macchia intorno al pannello.
 - **Sfocatura dietro i pannelli** (`sfocatura-pannelli`), **spenta di fabbrica**: dietro menu,
   dialoghi e schede, `sfocatura-velo` (8 dp) col `velo` al 30%, nero nel tema chiaro e bianco in
   quello scuro, che sale col movimento del pannello e scende con la dissolvenza (dietro una scheda
@@ -370,8 +371,8 @@ grigie.
   dichiarata (un numero fisso per riga). Stacco di 8 fra due gettoni e fra due righe; nessun gettone
   va a capo prima del necessario.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo` (dietro una scheda dal basso
-  segue la corsa della scheda); con la sfocatura spenta, cioè con l'ombra di fabbrica, il
-  velo di dialoghi e schede è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.
+  segue la corsa della scheda); con la sfocatura spenta, cioè con l'ombra di fabbrica o con niente dietro,
+  il velo di dialoghi e schede è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.
 - **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con la frase in bianco, larga al massimo 260;
   quello che spiega è segnato in arancio, il tasto da toccare è giallo, e un tocco qualunque lo
   chiude; il testo lo scrive il titolare.

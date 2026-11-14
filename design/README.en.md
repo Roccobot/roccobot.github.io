@@ -320,8 +320,9 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - **Depth of panels**, three answers never together: shadow, blur or none. **The shadow**
   (`ombra-pannelli`) **is the default**: behind menus, dialogs and sheets there is the shadow the
   system casts from the panel's outline, with an elevation of 8 dp, the same for all (the bottom
-  sheet only on its two top corners); behind menus there is nothing else, and dialogs and sheets
-  have Android's dimming, 60%. At 12 dp the halo would read as a stain around the panel.
+  sheet only on its two top corners); behind menus there is nothing else (except the long-press one
+  in the viewer, which is dimmed), and dialogs and sheets have Android's dimming, 60%, also with
+  nothing behind. At 12 dp the halo would read as a stain around the panel.
 - **Blur behind panels** (`sfocatura-pannelli`), **off by default**: behind menus, dialogs and
   sheets, `sfocatura-velo` (8 dp) with the `velo` scrim at 30%, black in the light theme and white
   in the dark one, which rises with the panel's movement and goes down with the fade (behind a
@@ -372,7 +373,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   chips: they are equal only when the texts are the same length or the grid is declared (a fixed
   number per row). 8 between two chips and between two rows; no chip wraps before it has to.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet it
-  follows the sheet's travel); with the blur off, that is with the default shadow, dialogs and
+  follows the sheet's travel); with the blur off, that is with the default shadow or with nothing behind, dialogs and
   sheets have the 60% dimming. The panel stands out by its surface color alone, with no border.
 - **Help overlays**: a dark scrim (`velo-aiuto`) with the sentence in white, at most 260 wide; what
   it explains is marked in orange and the key to tap is yellow, and any tap closes it; the owner
