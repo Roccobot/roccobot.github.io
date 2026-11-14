@@ -226,17 +226,18 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | gesto Indietro | 180 ms col dito in fondo, lineare | `PredictiveBack.kt` |
 | Indietro verso la miniatura | 300 ms, quartica in uscita | `SWIPE_MS` |
 | Indietro su un menu | fino al 90%; 100 ms se si annulla | `BACK_SCALE` |
-| velo dietro i pannelli | 320 ms, la curva d'entrata; esce col pannello | `Veil.kt`, `LabMotion.IN_MS` |
+| velo dietro i pannelli | 320 ms, la curva d'entrata dietro un menu o una finestra; dietro la scheda segue la sua corsa; esce col pannello | `Veil.kt`, `LabMotion.IN_MS`, `SHEET_BLUR` |
 | entrata di un menu | 120 ms da scala 0,96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
 | curva Fluido, i movimenti senza dito che non sono un'entrata o un'uscita | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
-| curva d'entrata | `cubic-bezier(0, 0.4, 0.2, 1)` | `LabMotion.IN` |
-| curva d'uscita | `cubic-bezier(0.25, 0.08, 0.9, 0.5)` | `LabMotion.OUT` |
-| entrata della scheda in fondo | 320 ms, la curva d'entrata, con la scia; opaca in 96 ms, rampa lineare | `LabMotion.IN_MS`, `SHEET_FADE_IN_MS` |
-| uscita della scheda in fondo | 300 ms, la curva d'uscita, con la scia; dissolvenza fra il 65 e il 90% del percorso, da 252 a 292 ms | `LabMotion.OUT_MS`, `FADE_OUT_FROM`, `FADE_OUT_TO` |
+| curva d'entrata, della finestra e del velo di un menu | `cubic-bezier(0, 0.4, 0.2, 1)` | `LabMotion.IN` |
+| curva d'uscita, della finestra | `cubic-bezier(0.25, 0.08, 0.9, 0.5)` | `LabMotion.OUT` |
+| curva della scheda in fondo, per entrare e per uscire | `cubic-bezier(0.7, 0, 0.3, 1)` | `LabMotion.SHEET` |
+| entrata della scheda in fondo | 600 ms, la curva della scheda, con la scia; opaca dal 30 al 70% del tempo (da 180 a 420 ms), rampa lineare | `LabMotion.SHEET_MS`, `SHEET_FADE_IN_FROM`, `SHEET_FADE_IN_TO` |
+| uscita della scheda in fondo | 600 ms, la curva della scheda, con la scia; dissolvenza sul percorso, dallo 0 al 100% | `LabMotion.SHEET_MS`, `SHEET_TRAIL_OUT_DP` |
 | entrata della finestra al centro | 320 ms dal 92%, la curva d'entrata; opaca in 64 ms, rampa lineare; senza scia | `lab_window_in.xml`, `WINDOW_FADE_IN_MS` |
 | uscita della finestra al centro | 300 ms fino al 92%, la curva d'uscita; dissolvenza da 210 a 300 ms, rampa lineare; senza scia | `lab_window_out.xml`, `WINDOW_FADE_OUT_FROM_MS` |
-| scia di una scheda che si sposta | sfocatura verticale fino a 20 dp, in proporzione alla strada che la curva fa in un fotogramma; oltre il bordo sfuma nel trasparente | `PEAK_BLUR_DP`, `LabMotion.blurDp`, `verticalTrail` |
+| scia di una scheda che si sposta | sfocatura verticale, picco di 10 dp in entrata e di 5 in uscita, in proporzione alla strada che la curva fa in un fotogramma; oltre il bordo sfuma nel trasparente; dove `Effetto movimento` ha acceso `Pannelli dal basso` | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
 | menu Start, dal suo angolo | 110 ms, la curva della pillola | `BAR_IN_MS` |
@@ -259,14 +260,16 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
   solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello
   che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.
 - **La durata segue la distanza.** Un tempo fisso per i passi corti; per una scheda che percorre la
-  sua altezza un tempo più lungo con la curva d'entrata, che parte veloce e arriva ferma; per un salto
-  lungo una durata che cresce con la corsa, con un tetto.
-- **L'uscita è più breve dell'entrata.** Un menu entra in 120 ms ed esce in 75, con una dissolvenza
-  sola; la scheda e la finestra al centro entrano in 320 ed escono in 300, con una curva che accelera
-  fino a lasciare lo schermo.
+  sua altezza un tempo più lungo (600 ms) con una curva che parte ferma, accelera e arriva ferma; per
+  un salto lungo una durata che cresce con la corsa, con un tetto.
+- **L'uscita è più breve dell'entrata, salvo la scheda.** Un menu entra in 120 ms ed esce in 75, con
+  una dissolvenza sola; la finestra al centro entra in 320 ed esce in 300, con una curva che accelera
+  fino a lasciare lo schermo; la scheda dal basso entra e esce in 600 ms con la stessa curva, che
+  parte e arriva ferma.
 - **Le dissolvenze di entrata e uscita si misurano sul tempo**, non sul percorso: con la curva
-  d'entrata il 20% della strada arriva in 5 ms, e una dissolvenza legata al percorso finirebbe nel
-  primo fotogramma. Fa eccezione l'uscita della scheda, che sfuma quando è già quasi fuori.
+  d'entrata della finestra il 20% della strada arriva in 5 ms, e una dissolvenza legata al percorso
+  finirebbe nel primo fotogramma. Fa eccezione l'uscita della scheda, che sfuma lungo tutto il
+  percorso, dall'inizio alla fine della corsa.
 - **Quello che si sposta ha la scia, quello che resta al centro cresce e si stringe**: la scheda
   sfoca nel verso del movimento quanto corre la curva, la finestra al centro va e viene dal 92%.
 - **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando, e
@@ -317,8 +320,9 @@ pannelli e bordo'; `docs/Folders.md` di AIV, la voce sullo stile dei pulsanti pr
 grigie.
 
 - **Sfocatura dietro i pannelli** (`sfocatura-pannelli`), **accesa di fabbrica**: dietro menu,
-  dialoghi e schede, `sfocatura-velo` (12 dp) col `velo` al 30%, nero nel tema chiaro e bianco in
-  quello scuro, che arriva in 800 ms. I pannelli sono nudi: staccano col solo colore della superficie, senza
+  dialoghi e schede, `sfocatura-velo` (12 dp, o `sfocatura-velo-scheda`, 5 dp, dietro una scheda dal
+  basso) col `velo` al 30%, nero nel tema chiaro e bianco in quello scuro, che arriva in 320 ms
+  dietro un menu o un dialogo e segue la corsa della scheda dietro una scheda. I pannelli sono nudi: staccano col solo colore della superficie, senza
   bordo. Spenta, i dialoghi tornano al velo di Android (60%) e i menu restano senza. La esegue il
   sistema, e si paga solo a pannello aperto.
 - **Una sfocatura che cala vuole in scena qualcosa che se ne va**, o si legge come una messa a
@@ -354,7 +358,7 @@ grigie.
   sopra e 19 sotto; la × si centra
   sul Tondo che sostituisce. Sono valori ideali, che si adattano in tre casi decisi dal titolare
   (vedi la sua scheda, con lo schema delle distanze e gli esempi).
-- **Scheda**: nelle app un pannello che sale dal basso, con la curva d'entrata di AIV e la scia; sul web un oggetto
+- **Scheda**: nelle app un pannello che sale dal basso, con la curva della scheda di AIV e la scia; sul web un oggetto
   con un nome, una riga di spiegazione e una sola azione.
 - **Pulsanti**: a pillola, alti almeno 44; il pieno (`accento` con `contenuto-su-accento`) per l'azione
   principale, uno per schermata, il contorno per le altre.
@@ -365,7 +369,8 @@ grigie.
   dire gettoni larghi uguali: lo sono solo se i testi hanno la stessa misura o se la griglia è
   dichiarata (un numero fisso per riga). Stacco di 8 fra due gettoni e fra due righe; nessun gettone
   va a capo prima del necessario.
-- **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo`; con la sfocatura spenta il
+- **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo` (dietro una scheda dal basso
+  `sfocatura-velo-scheda`, 5, che segue la corsa della scheda); con la sfocatura spenta il
   velo di una scheda è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.
 - **Veli d'aiuto**: un velo scuro (`velo-aiuto`) con la frase in bianco, larga al massimo 260;
   quello che spiega è segnato in arancio, il tasto da toccare è giallo, e un tocco qualunque lo
