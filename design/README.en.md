@@ -363,6 +363,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   action, one per screen, outlined for the others.
   The bottom sheet has 28 top corners (`raggio-scheda`), a 24 inset and the close button next to
   the title.
+- **Chips**: a row of chips for a choice fills the full width, and the leftover space is shared in
+  proportion to each chip's text, in the current language. 'Full width' doesn't mean equal-width
+  chips: they are equal only when the texts are the same length or the grid is declared (a fixed
+  number per row). 8 between two chips and between two rows; no chip wraps before it has to.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo`; with the blur off a sheet's
   scrim is at 60%. The panel stands out by its surface color alone, with no border.
 - **Help overlays**: a dark scrim (`velo-aiuto`) with the sentence in white, at most 260 wide; what
