@@ -231,7 +231,12 @@ numero per scelta dell'utente.
   Fino alla 1.35 era `1 - molla`, che perde metà dell'opacità nel primo quarto della durata con
   qualunque molla, ed è il motivo per cui nessun valore la rendeva morbida. I valori di serie
   dell'uscita sono quelli di AIV, rigidità 710 su 280 ms, il doppio dell'entrata (con Bézier la rampa
-  dal 40 al 90% del tempo); `Copia tutto` dice il verso della dissolvenza.
+  dal 40 al 90% del tempo); `Copia tutto` dice il verso della dissolvenza. Dalla 1.37 (voce
+  `Indugio`, sua scelta `Velo-01` dello stesso giorno) il velo della finestra segue la sua
+  dissolvenza, o il movimento se la dissolvenza è spenta, come in AIV e nel design system; quello
+  della scheda segue la sua corsa. Fino alla 1.36 seguiva il movimento anche dietro la finestra,
+  quindi in uscita lo schermo si schiariva mentre la finestra era ancora quasi opaca (misurato: a
+  104 ms velo al 9% su 30, finestra al 95%), e il confronto con AIV ne risultava falsato.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in
