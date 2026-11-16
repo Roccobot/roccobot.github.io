@@ -224,7 +224,14 @@ numero per scelta dell'utente.
   giorno) subito a destra di `Bézier` c'è `Azzera`, una parola senza pillola che riporta tutto ai
   valori di AIV (curve, componente, sequenza, velocità e linguetta; resta la sola lingua); su un
   telefono è in fondo alla seconda riga, dopo `Copia tutto`. Prende il posto del tasto `Valori del
-  design system`, che faceva la stessa cosa: un comando solo per ogni cosa.
+  design system`, che faceva la stessa cosa: un comando solo per ogni cosa. ⚠️ Dalla 1.36 (voce
+  `Indugio`, sua richiesta del 2026-11-16: *la dissolvenza in uscita è sempre troppo repentina,
+  qualunque siano i valori*) **con le molle la dissolvenza in uscita è l'entrata riprodotta
+  all'indietro**: l'opacità a ogni istante è quella che la molla ha nel punto speculare del tempo.
+  Fino alla 1.35 era `1 - molla`, che perde metà dell'opacità nel primo quarto della durata con
+  qualunque molla, ed è il motivo per cui nessun valore la rendeva morbida. I valori di serie
+  dell'uscita sono quelli di AIV, rigidità 710 su 280 ms, il doppio dell'entrata (con Bézier la rampa
+  dal 40 al 90% del tempo); `Copia tutto` dice il verso della dissolvenza.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in
