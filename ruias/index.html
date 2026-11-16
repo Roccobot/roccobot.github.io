@@ -304,7 +304,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.33';
+  var VERSION = '1.34';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -779,7 +779,9 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var avg = D * 1000 / p.ms, top = niceMax(Math.max(maxV, avg) * 1.08 || 1), bot = minV < 0 ? -niceMax(-minV * 1.08) : 0;
     var X = function (u) { return GS.L + u * (GS.R - GS.L); }, Y = function (v) { return GS.B - (v - bot) / (top - bot) * (GS.B - GS.T); };
     while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var ticks = [bot, 0, top / 2, top].filter(function (v, i, a) { return a.indexOf(v) === i; });
+    // A small negative speed (a spring coming back from its bounce) would put its label on top of the
+    // zero's: below the axis a tick is drawn only when it has room
+    var ticks = [bot, 0, top / 2, top].filter(function (v, i, a) { return a.indexOf(v) === i && (v >= 0 || Y(v) - Y(0) >= 12); });
     ticks.forEach(function (v) {
       svg.appendChild(sv('line', { 'class': 'gridl', x1: GS.L, x2: GS.R, y1: Y(v), y2: Y(v) }));
       var tx = sv('text', { 'class': 'tick', x: GS.L - 5, y: Y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = Math.abs(v) >= 100 ? num(v) : fmt(v, 1); svg.appendChild(tx);
