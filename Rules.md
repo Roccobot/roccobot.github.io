@@ -210,7 +210,12 @@ numero per scelta dell'utente.
   durata sono legate a doppio filo** (dalla 1.31, sua scelta `Legame-01` dello stesso giorno): la
   durata è il tempo che serve alla molla per arrivare (quando manca meno dello 0,5% della corsa),
   quindi muovendo una cambia l'altra, e lo smorzamento cambia la durata. Slegate, la pagina
-  lasciava impostare coppie che non sono una molla, come rigidità 1600 con 140 ms.
+  lasciava impostare coppie che non sono una molla, come rigidità 1600 con 140 ms. Dalla 1.32 (sue
+  richieste dello stesso giorno, col suo mockup) l'interruttore `Molle / Bézier` è nell'intestazione,
+  sopra il riquadro principale e allineato al suo bordo sinistro (su un telefono: una riga con
+  l'interruttore e le linguette, e sotto le due azioni), e ogni regolazione principale (movimento e
+  dissolvenza, con le molle e con Bézier) ha nella sua tendina il valore pronto di AIV, che si chiama
+  `Molla AIV` o `Curva AIV`.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in

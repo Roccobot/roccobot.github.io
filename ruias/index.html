@@ -65,9 +65,16 @@
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--font); }
 .wrap { max-width: 78rem; margin: 0 auto; padding-block: 1.1rem .5rem;
         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-/* The title row: RUIAS, then the full name and the version in small type on the same baseline, and
-   the design system pill at the end of the same row */
-header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .6rem 1.5rem; margin-bottom: 1rem; }
+/* The header follows the page's two columns: the title (RUIAS, then the full name and the version in
+   small type on the same baseline) above the preview, and above the main panel a bar with the
+   springs/Bezier switch at its start and the tabs and the two actions at its end */
+header.top { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: .6rem 1.2rem; margin-bottom: 1rem; }
+@media (min-width: 62rem) {
+  header.top { grid-template-columns: 23.5rem minmax(0, 1fr); }
+  .title { flex-wrap: nowrap; white-space: nowrap; }
+}
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; min-width: 0; }
+.modes { display: flex; gap: .4rem; }
 .title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; min-width: 0; }
 h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.1; }
 .fullname { font-size: .95rem; color: var(--muted); }
@@ -191,14 +198,15 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 .msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
 #reset .short { display: none; }
-/* The phone: the title block centred, and the four header pills on one row, a little tighter, with
-   the design system pill in its short form */
+/* The phone: the title block centred, then two rows of pills, a little tighter: the switch and the
+   tabs, and under them the two actions, half the width each, the design system one in its short form */
 @media (max-width: 40rem) {
-  header.top { justify-content: center; }
   .title { justify-content: center; text-align: center; }
-  .tools-top { flex-wrap: nowrap; justify-content: center; gap: .3rem; }
-  .tools-top .chip { padding: 0 .55rem; font-size: .82rem; white-space: nowrap; }
-  .tabs { gap: .3rem; margin-right: .2rem; }
+  .bar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; }
+  .tools-top { display: contents; }
+  .modes { justify-self: start; gap: .3rem; }
+  .tabs { justify-self: end; gap: .3rem; margin-right: 0; }
+  .bar .chip { padding: 0 .55rem; font-size: .82rem; white-space: nowrap; }
   .tabs .chip { padding: 0 .6rem; gap: .35rem; }
   #reset .long { display: none; }
   #reset .short { display: inline; }
@@ -211,6 +219,11 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       <h1>RUIAS</h1>
       <span class="fullname">Roccobot's UI Animation Simulator&nbsp;<span class="ver" id="version"></span></span>
     </div>
+    <div class="bar">
+    <div class="modes" id="mode" role="group">
+      <button class="chip" type="button" data-v="spring" data-t="modeSpring"></button>
+      <button class="chip" type="button" data-v="bezier" data-t="modeBezier"></button>
+    </div>
     <div class="tools-top">
       <div class="tabs" id="tabs" role="group">
         <button class="chip in" type="button" data-v="in" data-t="in"></button>
@@ -218,6 +231,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       </div>
       <button class="chip" type="button" id="copyall"></button>
       <button class="chip" type="button" id="reset"><span class="long" data-t="reset"></span><span class="short" data-t="resetShort"></span></button>
+    </div>
     </div>
   </header>
 
@@ -239,13 +253,6 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
           <b data-t="dlgTitle"></b>
           <p data-t="dlgText"></p>
           <div class="btns"><span data-t="dlgNo"></span><span data-t="dlgYes"></span></div>
-        </div>
-      </div>
-      <div class="group">
-        <span class="lab" data-t="mode"></span>
-        <div class="row one" id="mode">
-          <button class="chip" type="button" data-v="spring" data-t="modeSpring"></button>
-          <button class="chip" type="button" data-v="bezier" data-t="modeBezier"></button>
         </div>
       </div>
       <div class="group">
@@ -297,7 +304,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.31';
+  var VERSION = '1.32';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -306,7 +313,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       mode: 'Curve', modeSpring: 'Molle', modeBezier: 'Bézier', curveSpring: 'Curva della molla',
       stiffness: 'Rigidità', damping: 'Smorzamento', presetSpring: 'Molle pronte',
       springCut: 'A {ms} ms la molla non è ancora arrivata, e la curva è allungata fino al 100%. Da sé arriva in {t} ms.',
-      springs: { ds: 'Design system', expDef: 'Material 3 Expressive, movimento', expFast: 'Material 3 Expressive, movimento rapido', expSlow: 'Material 3 Expressive, movimento lento', stdDef: 'Material 3 standard, movimento', stdFast: 'Material 3 standard, movimento rapido', stdSlow: 'Material 3 standard, movimento lento' },
+      springs: { ds: 'Molla AIV', expDef: 'Material 3 Expressive, movimento', expFast: 'Material 3 Expressive, movimento rapido', expSlow: 'Material 3 Expressive, movimento lento', stdDef: 'Material 3 standard, movimento', stdFast: 'Material 3 standard, movimento rapido', stdSlow: 'Material 3 standard, movimento lento', fx: 'Material 3, effetti', fxFast: 'Material 3, effetti rapidi', fxSlow: 'Material 3, effetti lenti' },
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
       sequence: 'Sequenza', seqCycle: 'Entrata-uscita', seqIn: 'Entrata', seqOut: 'Uscita',
       speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
@@ -322,14 +329,14 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
       foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro (il rimbalzo), e cambia anche la durata. La dissolvenza ha una molla sua, senza rimbalzo. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
-      presets: { ds: 'Design system (molla di Material 3, approssimata)', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
+      presets: { ds: 'Curva AIV', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
       reset: 'Design system values', resetShort: 'DS values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
       mode: 'Curves', modeSpring: 'Springs', modeBezier: 'Bézier', curveSpring: 'Spring curve',
       stiffness: 'Stiffness', damping: 'Damping', presetSpring: 'Spring presets',
       springCut: 'At {ms} ms the spring has not arrived yet, and the curve is stretched to 100%. On its own it arrives in {t} ms.',
-      springs: { ds: 'Design system', expDef: 'Material 3 Expressive, default spatial', expFast: 'Material 3 Expressive, fast spatial', expSlow: 'Material 3 Expressive, slow spatial', stdDef: 'Material 3 standard, default spatial', stdFast: 'Material 3 standard, fast spatial', stdSlow: 'Material 3 standard, slow spatial' },
+      springs: { ds: 'AIV spring', expDef: 'Material 3 Expressive, default spatial', expFast: 'Material 3 Expressive, fast spatial', expSlow: 'Material 3 Expressive, slow spatial', stdDef: 'Material 3 standard, default spatial', stdFast: 'Material 3 standard, fast spatial', stdSlow: 'Material 3 standard, slow spatial', fx: 'Material 3, default effects', fxFast: 'Material 3, fast effects', fxSlow: 'Material 3, slow effects' },
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
       sequence: 'Sequence', seqCycle: 'Entrance-exit', seqIn: 'Entrance', seqOut: 'Exit',
       speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
@@ -345,7 +352,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
       foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back (the bounce), and the duration changes too. The fade has its own spring, with no bounce. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
-      presets: { ds: 'Design system (Material 3 spring, approximated)', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
+      presets: { ds: 'AIV curve', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
     }
   };
   var PRESETS = [
@@ -360,6 +367,11 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     ['ds', 540, 1], ['expDef', 380, 0.8], ['expFast', 800, 0.6], ['expSlow', 200, 0.8],
     ['stdDef', 700, 0.9], ['stdFast', 1400, 0.9], ['stdSlow', 300, 0.9]
   ];
+  // The fade's ready-made values. With springs: the design system's, then Material's effects springs,
+  // the same in MotionScheme.expressive() and MotionScheme.standard(). With Bezier curves the fade is a
+  // linear ramp (what it is measured on, from, to): the one closest to the design system's fade spring.
+  var FADE_SPRINGS = [['ds', 2820], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
+  var FADE_RAMPS = [['ds', 'time', 0, 44]];
   // The Roccobot Design System values (design/tokens.json, famiglia movimento): the panels move on
   // springs with no bounce, the movement with stiffness 540 over 320 ms and the fade with stiffness 2820
   // over 140 ms, the same for both components and both phases. With Bezier curves the page starts
@@ -572,6 +584,10 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     // With springs the fade has a spring of its own, with no bounce: stiffness and duration
     var fk = slider(ph + '-fk', 30, 6000, 10, 'stiffness'), fms = slider(ph + '-fms', 50, 1500, 10, 'duration');
     ctrls.appendChild(fk.box); ctrls.appendChild(fms.box);
+    // One dropdown of ready-made fades, for the springs or for the ramps as the page is set
+    var fpreLab = el('label', { 'for': ph + '-fpreset' });
+    var fpre = el('select', { id: ph + '-fpreset' });
+    ctrls.appendChild(el('div', { cls: 'ctrl' }, [fpreLab, fpre]));
     var fnote = el('p', { cls: 'note' });
     ctrls.appendChild(fnote);
     // Trail (sheet) or scale (dialog)
@@ -592,7 +608,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       pasteIn: pasteIn, pasteBtn: pasteBtn, pasteLab: pasteLab, pasteErr: pasteErr, pre: pre, preLab: preLab, dur: dur,
       fadeTitle: fadeTitle, fadeOn: fadeOn, fadeOnLab: fadeOnLab, base: base, baseLab: baseLab, ff: ff, ft: ft, fadeRange: fadeRange,
       trailTitle: trailTitle, trailOn: trailOn, trailOnLab: trailOnLab, trailSw: trailSw, tdp: tdp, sc: sc,
-      sk: sk, sz: sz, spre: spre, spreLab: spreLab, note: note, fk: fk, fms: fms, fnote: fnote };
+      sk: sk, sz: sz, spre: spre, spreLab: spreLab, note: note, fk: fk, fms: fms, fnote: fnote, fpre: fpre, fpreLab: fpreLab };
     wirePanel(P);
     return P;
   }
@@ -633,6 +649,13 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.fk.input.addEventListener('input', function () { var p = cur(ph); p.fade.k = Number(P.fk.input.value); p.fade.ms = Math.min(settleMs(p.fade.k, 1), p.ms); changed(ph); });
     P.fms.input.addEventListener('input', function () { var p = cur(ph); p.fade.ms = Math.min(Number(P.fms.input.value), p.ms); p.fade.k = stiffFor(p.fade.ms, 1); changed(ph); });
     P.fadeOn.addEventListener('change', function () { cur(ph).fade.on = P.fadeOn.checked; changed(ph); });
+    P.fpre.addEventListener('change', function () {
+      var p = cur(ph), f = P.fpre.value === '' ? null : (S.mode === 'spring' ? FADE_SPRINGS : FADE_RAMPS)[Number(P.fpre.value)];
+      if (!f) return;
+      if (S.mode === 'spring') { p.fade.k = f[1]; p.fade.ms = Math.min(settleMs(f[1], 1), p.ms); }
+      else { p.fade.base = f[1]; p.fade.from = f[2]; p.fade.to = f[3]; }
+      changed(ph);
+    });
     P.base.addEventListener('change', function () { cur(ph).fade.base = P.base.value; changed(ph); });
     P.ff.input.addEventListener('input', function () { cur(ph).fade.from = Number(P.ff.input.value); if (cur(ph).fade.to < cur(ph).fade.from) cur(ph).fade.to = cur(ph).fade.from; changed(ph); });
     P.ft.input.addEventListener('input', function () { cur(ph).fade.to = Number(P.ft.input.value); if (cur(ph).fade.from > cur(ph).fade.to) cur(ph).fade.from = cur(ph).fade.to; changed(ph); });
@@ -796,6 +819,16 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.fk.lab.textContent = t('stiffness'); P.fk.input.value = p.fade.k; P.fk.val.textContent = num(p.fade.k);
     P.fms.lab.textContent = t('duration'); P.fms.input.max = p.ms; P.fms.input.value = p.fade.ms; P.fms.val.textContent = p.fade.ms + ' ms';
     [P.fk, P.fms].forEach(function (s) { s.input.disabled = !p.fade.on; s.box.classList.toggle('dim', !p.fade.on); });
+    var flist = spring ? FADE_SPRINGS : FADE_RAMPS;
+    P.fpreLab.textContent = spring ? t('presetSpring') : t('preset');
+    while (P.fpre.firstChild) P.fpre.removeChild(P.fpre.firstChild);
+    P.fpre.appendChild(el('option', { value: '', text: '...' }));
+    flist.forEach(function (f, i) {
+      P.fpre.appendChild(el('option', { value: String(i), text: spring ? t('springs')[f[0]] + '  ' + num(f[1]) : t('presets')[f[0]] + '  ' + f[2] + '-' + f[3] + '%' }));
+    });
+    var fmatch = flist.findIndex(function (f) { return spring ? f[1] === p.fade.k : f[1] === p.fade.base && f[2] === p.fade.from && f[3] === p.fade.to; });
+    P.fpre.value = fmatch >= 0 ? String(fmatch) : '';
+    P.fpre.disabled = !p.fade.on; P.fpre.parentNode.classList.toggle('dim', !p.fade.on);
     P.fnote.textContent = spring && p.fade.on ? tie(springNote(p.fade.k, 1, p.fade.ms)) : ''; P.fnote.hidden = !P.fnote.textContent;
     ['x1', 'y1', 'x2', 'y2'].forEach(function (k, i) { P.sl[k].input.value = p.c[i]; P.sl[k].val.textContent = fmt(p.c[i]); });
     P.pasteLab.textContent = t('paste'); P.pasteBtn.textContent = t('apply'); P.pasteIn.placeholder = t('pasteHint');
@@ -845,6 +878,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     document.getElementById('stage').setAttribute('aria-label', t('preview'));
     document.getElementById('copyall').textContent = t('copyAll');
     document.getElementById('info').setAttribute('aria-label', t('info'));
+    document.getElementById('mode').setAttribute('aria-label', t('mode'));
     Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.tab)); });
     var v = S[S.comp].veil;
     document.getElementById('veil-on').checked = v.on;
