@@ -310,7 +310,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.35';
+  var VERSION = '1.36';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -334,7 +334,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
-      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro, e cambia anche la durata. Il rimbalzo è lo stesso valore letto al contrario: di quanto la molla supera il traguardo, in percentuale della corsa, quindi muovendo uno cambia l'altro. La dissolvenza ha una molla sua, senza rimbalzo. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
+      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro, e cambia anche la durata. Il rimbalzo è lo stesso valore letto al contrario: di quanto la molla supera il traguardo, in percentuale della corsa, quindi muovendo uno cambia l'altro. La dissolvenza ha una molla sua, senza rimbalzo; in uscita la molla è riprodotta all'indietro, quindi l'opacità resta quasi piena all'inizio e cala verso la fine. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
       presets: { ds: 'Curva AIV', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
@@ -357,7 +357,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
-      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back, and the duration changes too. The bounce is the same value read the other way: how far the spring passes the end, as a percentage of the way, so moving one changes the other. The fade has its own spring, with no bounce. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
+      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back, and the duration changes too. The bounce is the same value read the other way: how far the spring passes the end, as a percentage of the way, so moving one changes the other. The fade has its own spring, with no bounce; on the exit the spring is played backwards, so the opacity stays nearly full at first and drops toward the end. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
       presets: { ds: 'AIV curve', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
     }
   };
@@ -378,15 +378,25 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   // linear ramp (what it is measured on, from, to): the one closest to the design system's fade spring.
   var FADE_SPRINGS = [['ds', 2820], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
   var FADE_RAMPS = [['ds', 'time', 0, 44]];
+  // The exit has its own: the AIV exit fade is the 710 spring over 280 ms played backwards, twice the
+  // entrance (1.36, `Indugio`); its closest ramp on a 320 ms phase is 40-90%, off it by 8% at most.
+  var FADE_SPRINGS_OUT = [['ds', 710], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
+  var FADE_RAMPS_OUT = [['ds', 'time', 40, 90]];
+  function fadeList(ph) {
+    return S.mode === 'spring' ? (ph === 'out' ? FADE_SPRINGS_OUT : FADE_SPRINGS) : (ph === 'out' ? FADE_RAMPS_OUT : FADE_RAMPS);
+  }
   // The Roccobot Design System values (design/tokens.json, famiglia movimento): the panels move on
   // springs with no bounce, the movement with stiffness 540 over 320 ms and the fade with stiffness 2820
-  // over 140 ms, the same for both components and both phases. With Bezier curves the page starts
-  // from the cubic Bezier closest to the movement spring, off it by 1.5% of the run at most, and from
-  // a linear fade over the first 44% of the time (140 ms of 320).
+  // over 140 ms, the same for both components and both phases; the exit fade is the spring of stiffness
+  // 710 over 280 ms, played backwards (1.36). With Bezier curves the page starts from the cubic Bezier
+  // closest to the movement spring, off it by 1.5% of the run at most, and from a linear fade over the
+  // first 44% of the time (140 ms of 320), from 40 to 90% on the exit.
   var DS_BEZIER = [0.26, 0.28, 0.12, 1];
   function defaults() {
-    var phase = function (fadeOn, extra) {
-      var p = { c: DS_BEZIER.slice(), k: 540, z: 1, ms: 320, fade: { on: fadeOn, base: 'time', from: 0, to: 44, k: 2820, ms: 140 } };
+    var phase = function (fadeOn, extra, exit) {
+      var p = { c: DS_BEZIER.slice(), k: 540, z: 1, ms: 320, fade: exit ?
+        { on: fadeOn, base: 'time', from: 40, to: 90, k: 710, ms: 280 } :
+        { on: fadeOn, base: 'time', from: 0, to: 44, k: 2820, ms: 140 } };
       for (var key in extra) p[key] = extra[key];
       return p;
     };
@@ -394,23 +404,24 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       mode: 'spring', comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000, tab: 'in',
       sheet: {
         in: phase(false, { trail: { on: true, dp: 10 } }),
-        out: phase(false, { trail: { on: true, dp: 5 } }),
+        out: phase(false, { trail: { on: true, dp: 5 } }, true),
         veil: { on: true, op: 30, blur: 8 }
       },
       dialog: {
         in: phase(true, { scale: 92 }),
-        out: phase(true, { scale: 92 }),
+        out: phase(true, { scale: 92 }, true),
         veil: { on: true, op: 30, blur: 8 }
       }
     };
   }
 
   // ── State, kept in this browser only ──
-  // The key changes when the saved values change meaning: with the springs (1.30) and when stiffness and
-  // duration were tied (1.31). A state saved before goes.
-  var KEY = 'ruias-3';
+  // The key changes when the saved values change meaning: with the springs (1.30), when stiffness and
+  // duration were tied (1.31) and when the exit fade became the entrance played backwards (1.36). A
+  // state saved before goes.
+  var KEY = 'ruias-4';
   var S = defaults();
-  try { localStorage.removeItem('ruias-1'); localStorage.removeItem('ruias-2'); } catch (e) {}
+  try { ['ruias-1', 'ruias-2', 'ruias-3'].forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
   try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.sheet && saved.dialog && saved.mode) S = saved; } catch (e) {}
   if (typeof S.hold !== 'number') S.hold = 1000;
   if (S.tab !== 'in' && S.tab !== 'out') S.tab = 'in';
@@ -671,7 +682,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.fms.input.addEventListener('input', function () { var p = cur(ph); p.fade.ms = Math.min(Number(P.fms.input.value), p.ms); p.fade.k = stiffFor(p.fade.ms, 1); changed(ph); });
     P.fadeOn.addEventListener('change', function () { cur(ph).fade.on = P.fadeOn.checked; changed(ph); });
     P.fpre.addEventListener('change', function () {
-      var p = cur(ph), f = P.fpre.value === '' ? null : (S.mode === 'spring' ? FADE_SPRINGS : FADE_RAMPS)[Number(P.fpre.value)];
+      var p = cur(ph), f = P.fpre.value === '' ? null : fadeList(ph)[Number(P.fpre.value)];
       if (!f) return;
       if (S.mode === 'spring') { p.fade.k = f[1]; p.fade.ms = Math.min(settleMs(f[1], 1), p.ms); }
       else { p.fade.base = f[1]; p.fade.from = f[2]; p.fade.to = f[3]; }
@@ -846,7 +857,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.fk.lab.textContent = t('stiffness'); P.fk.input.value = p.fade.k; P.fk.val.textContent = num(p.fade.k);
     P.fms.lab.textContent = t('duration'); P.fms.input.max = p.ms; P.fms.input.value = p.fade.ms; P.fms.val.textContent = p.fade.ms + ' ms';
     [P.fk, P.fms].forEach(function (s) { s.input.disabled = !p.fade.on; s.box.classList.toggle('dim', !p.fade.on); });
-    var flist = spring ? FADE_SPRINGS : FADE_RAMPS;
+    var flist = fadeList(ph);
     P.fpreLab.textContent = spring ? t('presetSpring') : t('preset');
     while (P.fpre.firstChild) P.fpre.removeChild(P.fpre.firstChild);
     P.fpre.appendChild(el('option', { value: '', text: '...' }));
@@ -938,7 +949,8 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var p = S[comp][ph], at = function (pc) { return Math.round((p.fade.base === 'time' ? pc / 100 : timeAt(p.c, pc / 100)) * p.ms); };
     var o = S.mode === 'spring' ?
       { 'molla': { 'rigidita': p.k, 'smorzamento': p.z, 'rimbalzo-percento': Math.round(bounceOf(p.z) * 10) / 10 }, 'molla-compose': composeSpring(p.k, p.z), 'durata-ms': p.ms,
-        'dissolvenza': { 'attiva': p.fade.on, 'molla': { 'rigidita': p.fade.k, 'smorzamento': 1 }, 'durata-ms': p.fade.ms } } :
+        'dissolvenza': { 'attiva': p.fade.on, 'molla': { 'rigidita': p.fade.k, 'smorzamento': 1 }, 'durata-ms': p.fade.ms,
+          'verso': ph === 'in' ? 'avanti' : 'indietro' } } :
       { 'curva': cssOf(p.c), 'curva-compose': composeOf(p.c), 'bezier': p.c.slice(), 'durata-ms': p.ms,
         'dissolvenza': { 'attiva': p.fade.on, 'misura': p.fade.base === 'time' ? 'tempo' : 'percorso',
           'da-percento': p.fade.from, 'a-percento': p.fade.to, 'da-ms': at(p.fade.from), 'a-ms': at(p.fade.to) } };
@@ -1014,8 +1026,14 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   }
   function fadeAlpha(p, x, path, entering) {
     if (!p.fade.on) return 1;
-    // With springs the fade runs on its own spring from the start of the phase, over its own duration
-    if (S.mode === 'spring') { var s = springFn(p.fade.k, 1, p.fade.ms)(x * p.ms / p.fade.ms); return entering ? s : 1 - s; }
+    // With springs the fade runs on its own spring from the start of the phase, over its own duration.
+    // The exit plays it backwards: the opacity at each instant is the spring's at the mirrored point in
+    // time (1.36, `Indugio`). Until 1.35 it was 1 - spring, which loses half the opacity in the first
+    // quarter of the duration whatever the spring, so no value made the exit gentle.
+    if (S.mode === 'spring') {
+      var sf = springFn(p.fade.k, 1, p.fade.ms), u = Math.min(1, x * p.ms / p.fade.ms);
+      return entering ? sf(u) : sf(1 - u);
+    }
     var v = p.fade.base === 'time' ? x : path, a = p.fade.from / 100, b = p.fade.to / 100;
     var k = b <= a ? (v >= a ? 1 : 0) : Math.min(1, Math.max(0, (v - a) / (b - a)));
     return entering ? k : 1 - k;
