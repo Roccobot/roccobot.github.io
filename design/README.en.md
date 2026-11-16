@@ -232,7 +232,7 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
 | Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
 | movement spring, of the panels | stiffness 540, damping 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` approximates it | `LabMotion.SPATIAL`, `SPATIAL_MS` |
-| fade spring, of the panels | stiffness 1600, damping 1, written over 140 ms (at 97.6% of the way, stretched to 100%) | `LabMotion.EFFECTS`, `EFFECTS_MS` |
+| fade spring, of the panels | stiffness 2820, damping 1: 140 ms, the same shape | `LabMotion.EFFECTS`, `EFFECTS_MS` |
 | bottom sheet entrance and exit | 320 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have the 140 ms one) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
 | centred window entrance | 320 ms from 92%, the movement spring; opaque on the 140 ms spring; no trail | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
 | centred window exit | 320 ms down to 92%, the same spring; fades on the 140 ms spring; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |

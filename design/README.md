@@ -231,7 +231,7 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
 | curva Fluido, i movimenti senza dito che non sono un'entrata o un'uscita | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
 | molla del movimento, dei pannelli | rigidità 540, smorzamento 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` la approssima | `LabMotion.SPATIAL`, `SPATIAL_MS` |
-| molla della dissolvenza, dei pannelli | rigidità 1600, smorzamento 1, scritta su 140 ms (al 97,6% della corsa, allungata fino al 100%) | `LabMotion.EFFECTS`, `EFFECTS_MS` |
+| molla della dissolvenza, dei pannelli | rigidità 2820, smorzamento 1: 140 ms, la stessa forma | `LabMotion.EFFECTS`, `EFFECTS_MS` |
 | entrata e uscita della scheda in fondo | 320 ms, la molla del movimento, con la scia; senza dissolvenza (la scheda della selezione e gli avvisi hanno anche quella di 140 ms) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
 | entrata della finestra al centro | 320 ms dal 92%, la molla del movimento; opaca con la molla di 140 ms; senza scia | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
 | uscita della finestra al centro | 320 ms fino al 92%, la stessa molla; sfuma con la molla di 140 ms; senza scia | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
