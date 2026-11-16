@@ -220,7 +220,11 @@ numero per scelta dell'utente.
   la molla supera il traguardo in percentuale della corsa: sono lo stesso valore letto in due modi,
   e muovendo uno cambia l'altro. ⚠️ Una molla che rimbalza si disegna con la sua forma vera, picco
   compreso: dividerla per il suo valore finale, come si fa per quella senza rimbalzo, toglieva mezzo
-  punto al rimbalzo (1,0% disegnato contro 1,5% dichiarato).
+  punto al rimbalzo (1,0% disegnato contro 1,5% dichiarato). Dalla 1.35 (sua richiesta dello stesso
+  giorno) subito a destra di `Bézier` c'è `Azzera`, una parola senza pillola che riporta tutto ai
+  valori di AIV (curve, componente, sequenza, velocità e linguetta; resta la sola lingua); su un
+  telefono è in fondo alla seconda riga, dopo `Copia tutto`. Prende il posto del tasto `Valori del
+  design system`, che faceva la stessa cosa: un comando solo per ogni cosa.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in

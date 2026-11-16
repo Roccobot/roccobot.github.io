@@ -73,8 +73,13 @@ header.top { display: grid; grid-template-columns: minmax(0, 1fr); align-items: 
   header.top { grid-template-columns: 23.5rem minmax(0, 1fr); }
   .title { flex-wrap: nowrap; white-space: nowrap; }
 }
-.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; min-width: 0; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; min-width: 0; }
+.bar .tools-top { margin-left: auto; }
 .modes { display: flex; gap: .4rem; }
+/* 'Azzera', beside the switch: a plain word with no pill, since it is the one command here that throws
+   work away. Under the mouse and with Tab it takes the accent, as a link does. */
+.plain { border: 0; background: none; padding: 0 .3rem; min-height: 36px; font-size: .9rem; color: var(--muted); cursor: pointer; }
+.plain:hover, .plain:focus-visible { color: var(--accent); outline: none; }
 .title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; min-width: 0; }
 h1 { font-size: 1.9rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.1; }
 .fullname { font-size: .95rem; color: var(--muted); }
@@ -197,19 +202,20 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 .note { grid-column: 1 / -1; margin: 0; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; text-wrap: pretty; }
 .msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
-#reset .short { display: none; }
-/* The phone: the title block centred, then two rows of pills, a little tighter: the switch and the
-   tabs, and under them the two actions, half the width each, the design system one in its short form */
+/* The phone: the title block centred, then two rows, a little tighter: the switch and the tabs, and
+   under them 'Copia tutto' at the start and 'Azzera' at the end, out of the way of the two choices */
 @media (max-width: 40rem) {
   .title { justify-content: center; text-align: center; }
   .bar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; }
   .tools-top { display: contents; }
-  .modes { justify-self: start; gap: .3rem; }
+  .modes { justify-self: start; gap: .3rem; order: 1; }
+  .tabs { order: 2; }
+  #copyall { order: 3; justify-self: start; }
+  /* No padding at its end: the word, not its box, lines up with the edge of the tabs above */
+  #reset { order: 4; justify-self: end; font-size: .82rem; padding-right: 0; }
   .tabs { justify-self: end; gap: .3rem; margin-right: 0; }
   .bar .chip { padding: 0 .55rem; font-size: .82rem; white-space: nowrap; }
   .tabs .chip { padding: 0 .6rem; gap: .35rem; }
-  #reset .long { display: none; }
-  #reset .short { display: inline; }
 }
 </style>
 
@@ -224,13 +230,13 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       <button class="chip" type="button" data-v="spring" data-t="modeSpring"></button>
       <button class="chip" type="button" data-v="bezier" data-t="modeBezier"></button>
     </div>
+    <button class="plain" type="button" id="reset" data-t="reset"></button>
     <div class="tools-top">
       <div class="tabs" id="tabs" role="group">
         <button class="chip in" type="button" data-v="in" data-t="in"></button>
         <button class="chip out" type="button" data-v="out" data-t="out"></button>
       </div>
       <button class="chip" type="button" id="copyall"></button>
-      <button class="chip" type="button" id="reset"><span class="long" data-t="reset"></span><span class="short" data-t="resetShort"></span></button>
     </div>
     </div>
   </header>
@@ -304,12 +310,12 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.34';
+  var VERSION = '1.35';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
-      reset: 'Valori del design system', resetShort: 'Valori DS', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
+      reset: 'Azzera', resetTip: 'Riporta tutti i valori a quelli di AIV', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
       mode: 'Curve', modeSpring: 'Molle', modeBezier: 'Bézier', curveSpring: 'Curva della molla',
       stiffness: 'Rigidità', damping: 'Smorzamento', bounce: 'Rimbalzo', presetSpring: 'Molle pronte',
       springCut: 'A {ms} ms la molla non è ancora arrivata, e la curva è allungata fino al 100%. Da sé arriva in {t} ms.',
@@ -332,7 +338,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       presets: { ds: 'Curva AIV', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
-      reset: 'Design system values', resetShort: 'DS values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
+      reset: 'Reset', resetTip: 'Puts every value back to AIV\'s', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
       mode: 'Curves', modeSpring: 'Springs', modeBezier: 'Bézier', curveSpring: 'Spring curve',
       stiffness: 'Stiffness', damping: 'Damping', bounce: 'Bounce', presetSpring: 'Spring presets',
       springCut: 'At {ms} ms the spring has not arrived yet, and the curve is stretched to 100%. On its own it arrives in {t} ms.',
@@ -900,6 +906,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     document.getElementById('copyall').textContent = t('copyAll');
     document.getElementById('info').setAttribute('aria-label', t('info'));
     document.getElementById('mode').setAttribute('aria-label', t('mode'));
+    document.getElementById('reset').title = t('resetTip');
     Array.prototype.forEach.call(document.querySelectorAll('#tabs [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.tab)); });
     var v = S[S.comp].veil;
     document.getElementById('veil-on').checked = v.on;
@@ -955,7 +962,9 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var done = function () { copyAll.textContent = t('copiedAll'); setTimeout(function () { copyAll.textContent = t('copyAll'); }, 1800); };
     try { navigator.clipboard.writeText(text).then(done, function () {}); } catch (e) {}
   });
-  document.getElementById('reset').addEventListener('click', function () { var d = defaults(); d.lang = S.lang; d.comp = S.comp; d.seq = S.seq; d.rate = S.rate; S = d; clock = 0; save(); syncAll(); });
+  // 'Azzera' puts everything back to the design system's values, AIV's: the curves, the component, the
+  // sequence, the speed, the tab. Only the language stays, which is not a value of the animation.
+  document.getElementById('reset').addEventListener('click', function () { var d = defaults(); d.lang = S.lang; S = d; clock = 0; save(); syncAll(); });
   document.getElementById('veil-on').addEventListener('change', function (e) { S[S.comp].veil.on = e.target.checked; save(); syncAll(); });
   document.getElementById('veil-op').addEventListener('input', function (e) { S[S.comp].veil.op = Number(e.target.value); save(); syncAll(); });
   document.getElementById('veil-blur').addEventListener('input', function (e) { S[S.comp].veil.blur = Number(e.target.value); save(); syncAll(); });
