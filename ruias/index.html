@@ -13,7 +13,8 @@
 <!--
   RUIAS, Roccobot's User Interface Animation Simulator: a service page of the hub. The curves,
   durations, fades, trail and scrim of AIV's bottom sheet and dialog, for the entrance and the exit,
-  with the Bezier graph and an After Effects style speed graph. Colours and type from the Roccobot
+  drawn by springs (stiffness and damping, as in Material 3 Expressive) or by cubic Bezier curves, with
+  the curve graph and an After Effects style speed graph. Colours and type from the Roccobot
   Design System (design/tokens.json); the T key turns the theme over for the open page only.
   Author: Rocco Casadei, a.k.a. Roccobot
 -->
@@ -21,7 +22,7 @@
 <body>
 <style>
 /* RUIAS: the preview phone on the left, as tall as the panel beside it, the entrance and exit panels on the
-   right, each with its Bezier graph, its After Effects style speed graph and its controls.
+   right, each with its curve graph, its After Effects style speed graph and its controls.
    Colours and type from the Roccobot Design System, servizio- family (design/tokens.json). */
 :root {
   --bg: #e3eae7;          /* servizio-fondo */
@@ -128,6 +129,8 @@ select:focus-visible, input[type="text"]:focus-visible { border-color: var(--acc
 .blurback { position: absolute; inset: 0; pointer-events: none; }
 .sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 56%; background: var(--surface); border-radius: 18px 18px 0 0;
          padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; will-change: transform, opacity, filter; }
+/* Below the sheet, more of its surface: a spring that bounces lifts the sheet past its place */
+.sheet::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 40%; background: inherit; }
 .sheet .grab { width: 30px; height: 4px; border-radius: 2px; background: var(--line); align-self: center; margin-bottom: 4px; }
 .sheet b, .dialog b { font-size: .9rem; font-weight: 600; }
 .sheet .r { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding-top: 5px; font-size: .68rem; color: var(--muted); }
@@ -183,6 +186,8 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 .sw { display: inline-flex; align-items: center; gap: .45rem; font-size: .85rem; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink); }
 .sw input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; margin: 0; }
 .dim { opacity: .45; }
+/* What a spring does at the chosen duration, under its controls */
+.note { grid-column: 1 / -1; margin: 0; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; text-wrap: pretty; }
 .msg { font-size: .82rem; color: var(--label); min-height: 1.2em; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
 #reset .short { display: none; }
@@ -237,6 +242,13 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
         </div>
       </div>
       <div class="group">
+        <span class="lab" data-t="mode"></span>
+        <div class="row one" id="mode">
+          <button class="chip" type="button" data-v="spring" data-t="modeSpring"></button>
+          <button class="chip" type="button" data-v="bezier" data-t="modeBezier"></button>
+        </div>
+      </div>
+      <div class="group">
         <span class="lab" data-t="component"></span>
         <div class="row one" id="comp">
           <button class="chip" type="button" data-v="sheet" data-t="compSheet"></button>
@@ -285,12 +297,17 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.27';
+  var VERSION = '1.30';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
       reset: 'Valori del design system', resetShort: 'Valori DS', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
+      mode: 'Curve', modeSpring: 'Molle', modeBezier: 'Bézier', curveSpring: 'Curva della molla',
+      stiffness: 'Rigidità', damping: 'Smorzamento', presetSpring: 'Molle pronte',
+      springOk: 'La molla arriva da sé in {t} ms.',
+      springCut: 'A {ms} ms la molla è al {pc}% della corsa, e la curva è allungata fino al 100%. Da sé arriva in {t} ms.',
+      springs: { ds: 'Design system', expDef: 'Material 3 Expressive, movimento', expFast: 'Material 3 Expressive, movimento rapido', expSlow: 'Material 3 Expressive, movimento lento', stdDef: 'Material 3 standard, movimento', stdFast: 'Material 3 standard, movimento rapido', stdSlow: 'Material 3 standard, movimento lento' },
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
       sequence: 'Sequenza', seqCycle: 'Entrata-uscita', seqIn: 'Entrata', seqOut: 'Uscita',
       speed: 'Velocità', rate1: 'Reale', rate025: '0,25x', play: 'Pausa', resume: 'Riproduci', hold: 'Pausa fra entrata e uscita',
@@ -305,11 +322,16 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
-      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. I valori di serie approssimano le molle di AIV 1.4.0 (senza rimbalzo) con una curva di Bézier, che si scosta dalla molla al massimo dell'1,5% della corsa, e la dissolvenza con una rampa lineare nel primo 58% del tempo. I valori si salvano solo in questo browser.",
+      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose (smorzamento 1: nessun rimbalzo), scritta sulla durata scelta e allungata perché arrivi al 100%, come in AIV; la dissolvenza ha una molla sua, senza rimbalzo. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
       presets: { ds: 'Design system (molla di Material 3, approssimata)', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
       reset: 'Design system values', resetShort: 'DS values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
+      mode: 'Curves', modeSpring: 'Springs', modeBezier: 'Bézier', curveSpring: 'Spring curve',
+      stiffness: 'Stiffness', damping: 'Damping', presetSpring: 'Spring presets',
+      springOk: 'The spring arrives on its own in {t} ms.',
+      springCut: 'At {ms} ms the spring is at {pc}% of the way, and the curve is stretched to 100%. On its own it arrives in {t} ms.',
+      springs: { ds: 'Design system', expDef: 'Material 3 Expressive, default spatial', expFast: 'Material 3 Expressive, fast spatial', expSlow: 'Material 3 Expressive, slow spatial', stdDef: 'Material 3 standard, default spatial', stdFast: 'Material 3 standard, fast spatial', stdSlow: 'Material 3 standard, slow spatial' },
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
       sequence: 'Sequence', seqCycle: 'Entrance-exit', seqIn: 'Entrance', seqOut: 'Exit',
       speed: 'Speed', rate1: 'Real', rate025: '0.25x', play: 'Pause', resume: 'Play', hold: 'Pause between entrance and exit',
@@ -324,7 +346,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
-      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. The default values approximate the springs of AIV 1.4.0 (no bounce) with a Bézier curve, which differs from the spring by 1.5% of the run at most, and the fade with a linear ramp over the first 58% of the time. Values are saved in this browser only.',
+      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose (damping 1: no bounce), written over the chosen duration and stretched to arrive at 100%, as in AIV; the fade has its own spring, with no bounce. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
       presets: { ds: 'Design system (Material 3 spring, approximated)', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
     }
   };
@@ -333,32 +355,47 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     ['easeOut', [0, 0, 0.58, 1]], ['easeInOut', [0.42, 0, 0.58, 1]], ['emph', [0.05, 0.7, 0.1, 1]], ['emphA', [0.3, 0, 0.8, 0.15]],
     ['std', [0.2, 0, 0, 1]], ['back', [0.34, 1.56, 0.64, 1]]
   ];
-  // The Roccobot Design System values (design/tokens.json, famiglia movimento).
-  // AIV 1.4.0 moves its panels on critically damped springs (movement: stiffness 541, 320 ms; fade:
-  // stiffness 1600, 186 ms, the same shape), which this simulator cannot draw: it plays the closest cubic
-  // Bezier, off the spring by 1.5% of the run at most, and the fade as a linear ramp over the first 58%
-  // of the time (186 ms of 320). The same curve serves both components and both phases.
-  var DS_SPRING = [0.26, 0.28, 0.12, 1];
+  // The ready-made springs: name, stiffness, damping ratio and, where the spring has one, its duration.
+  // Material's are the spatial springs of MotionScheme.expressive() and MotionScheme.standard()
+  // (androidx, ExpressiveMotionTokens.kt and StandardMotionTokens.kt); they have no duration of their
+  // own, so a preset takes the time the spring needs to arrive.
+  var SPRINGS = [
+    ['ds', 540, 1, 320], ['expDef', 380, 0.8], ['expFast', 800, 0.6], ['expSlow', 200, 0.8],
+    ['stdDef', 700, 0.9], ['stdFast', 1400, 0.9], ['stdSlow', 300, 0.9]
+  ];
+  // The Roccobot Design System values (design/tokens.json, famiglia movimento): the panels move on
+  // springs with no bounce, the movement with stiffness 540 over 320 ms and the fade with stiffness 1600
+  // over 140 ms, the same for both components and both phases. With Bezier curves the page starts
+  // from the cubic Bezier closest to the movement spring, off it by 1.5% of the run at most, and from
+  // a linear fade over the first 44% of the time (140 ms of 320).
+  var DS_BEZIER = [0.26, 0.28, 0.12, 1];
   function defaults() {
+    var phase = function (fadeOn, extra) {
+      var p = { c: DS_BEZIER.slice(), k: 540, z: 1, ms: 320, fade: { on: fadeOn, base: 'time', from: 0, to: 44, k: 1600, ms: 140 } };
+      for (var key in extra) p[key] = extra[key];
+      return p;
+    };
     return {
-      comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000, tab: 'in',
+      mode: 'spring', comp: 'sheet', seq: 'cycle', rate: 1, lang: 'it', hold: 1000, tab: 'in',
       sheet: {
-        in: { c: DS_SPRING.slice(), ms: 320, fade: { on: false, base: 'time', from: 0, to: 58 }, trail: { on: true, dp: 10 } },
-        out: { c: DS_SPRING.slice(), ms: 320, fade: { on: false, base: 'time', from: 0, to: 58 }, trail: { on: true, dp: 5 } },
+        in: phase(false, { trail: { on: true, dp: 10 } }),
+        out: phase(false, { trail: { on: true, dp: 5 } }),
         veil: { on: true, op: 30, blur: 8 }
       },
       dialog: {
-        in: { c: DS_SPRING.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 58 }, scale: 92 },
-        out: { c: DS_SPRING.slice(), ms: 320, fade: { on: true, base: 'time', from: 0, to: 58 }, scale: 92 },
+        in: phase(true, { scale: 92 }),
+        out: phase(true, { scale: 92 }),
         veil: { on: true, op: 30, blur: 8 }
       }
     };
   }
 
   // ── State, kept in this browser only ──
-  var KEY = 'ruias-1';
+  // The key changed with the springs (1.30): a state saved before has no spring values, and goes.
+  var KEY = 'ruias-2';
   var S = defaults();
-  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.sheet && saved.dialog) S = saved; } catch (e) {}
+  try { localStorage.removeItem('ruias-1'); } catch (e) {}
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.sheet && saved.dialog && saved.mode) S = saved; } catch (e) {}
   if (typeof S.hold !== 'number') S.hold = 1000;
   if (S.tab !== 'in' && S.tab !== 'out') S.tab = 'in';
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -373,22 +410,60 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (bz(c[0], c[2], m) < x) lo = m; else hi = m; }
     return bz(c[1], c[3], (lo + hi) / 2);
   }
+  // ── Spring maths ──
+  // A spring that starts at rest and pulls towards 1 (unit mass), t seconds after the start: stiffness k
+  // and damping ratio z as in Compose's spring(). At z = 1 it never passes the arrival; below, it bounces.
+  function springRaw(k, z, t) {
+    var w = Math.sqrt(k);
+    if (z >= 1) return 1 - (1 + w * t) * Math.exp(-w * t);
+    var wd = w * Math.sqrt(1 - z * z);
+    return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t));
+  }
+  // The spring written over a duration, as AIV does (LabMotion.Critical): the curve is stretched so that
+  // it arrives exactly at the end, so stiffness and duration are two separate controls.
+  function springFn(k, z, ms) {
+    var T = ms / 1000, end = springRaw(k, z, T);
+    return function (x) { return x <= 0 ? 0 : x >= 1 ? 1 : end > 1e-6 ? springRaw(k, z, x * T) / end : x; };
+  }
+  // The time after which the spring stays within 0.5% of the arrival (AIV's SETTLE), in ms
+  function settleMs(k, z) { for (var ms = 6000; ms > 0; ms--) if (Math.abs(1 - springRaw(k, z, ms / 1000)) > 0.005) return ms + 1; return 1; }
+  // The curve of a phase, as a function of the time from 0 to 1: the spring or the Bezier, as the page is set
+  function fnOf(p) { return S.mode === 'spring' ? springFn(p.k, p.z, p.ms) : function (x) { return ease(p.c, x); }; }
   var FRAME = 1000 / 60;
   // Speed in fractions of the way per ms, over one 60 Hz frame centred on x: what the eye sees, and
   // finite where the curve starts with a vertical tangent (the entrance curve, x1 = 0).
-  function speed(c, ms, x) {
+  function speed(E, ms, x) {
     // The window is always one frame wide, shifted inwards at the two ends, so the line has no step there
     var w = Math.min(1, FRAME / ms), a = Math.min(Math.max(0, x - w / 2), 1 - w), b = a + w;
-    return (ease(c, b) - ease(c, a)) / ((b - a) * ms);
+    return (E(b) - E(a)) / ((b - a) * ms);
   }
-  function step(c, ms, x) { var h = FRAME / ms, a = Math.min(Math.max(x, 0), Math.max(0, 1 - h)); return Math.abs(ease(c, a + h) - ease(c, a)); }
-  function peakStep(c, ms) { var p = 0, n = Math.max(ms, 60); for (var i = 0; i <= n; i++) p = Math.max(p, step(c, ms, i / n)); return p || 1; }
+  function step(E, ms, x) { var h = FRAME / ms, a = Math.min(Math.max(x, 0), Math.max(0, 1 - h)); return Math.abs(E(a + h) - E(a)); }
+  function peakStep(E, ms) { var p = 0, n = Math.max(ms, 60); for (var i = 0; i <= n; i++) p = Math.max(p, step(E, ms, i / n)); return p || 1; }
   // Trailing zeros go only after a decimal point: 100000 stays 100000.
   function fmt(n, d) { var s = n.toFixed(d === undefined ? 2 : d); if (s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, ''); return s === '-0' ? '0' : s; }
   // A whole number with the thousands separator of the page's language (10.000, 10,000)
   function num(v) { return Math.round(v).toLocaleString(S.lang === 'it' ? 'it-IT' : 'en-US'); }
   function timeAt(c, path) { var lo = 0, hi = 1; for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (ease(c, m) < path) lo = m; else hi = m; } return hi; }
+  // In the page's paragraphs no short word is left alone at a line's end, no sentence starts on a line's
+  // last word, no number parts from its unit and the last line has two words at least (Roccobot.md,
+  // 'Caratteri'): a no-break space ties them, whatever the width.
+  function tie(s) {
+    return s.replace(/(?<![A-Za-zÀ-ÿ0-9'])([A-Za-zÀ-ÿ]{1,2}) /g, '$1 ').replace(/(\d) (ms|dp|Hz)\b/g, '$1 $2')
+      .replace(/([.;:] \S{1,9}) /g, '$1 ').replace(/ (\S{1,9})$/, ' $1');
+  }
+  // A decimal number as the page's language writes it (0,8 or 0.8), outside code
+  function dec(v, d) { var s = fmt(v, d); return S.lang === 'it' ? s.replace('.', ',') : s; }
   function cssOf(c) { return 'cubic-bezier(' + c.map(function (v) { return fmt(v); }).join(', ') + ')'; }
+  function composeOf(c) { return 'CubicBezierEasing(' + c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')'; }
+  function composeSpring(k, z) { return 'spring(dampingRatio = ' + fmt(z) + 'f, stiffness = ' + fmt(k, 0) + 'f)'; }
+  // CSS has no spring: its linear() easing takes the curve as points, here one every 1/32 of the time
+  function cssLinear(E) { var pts = []; for (var i = 0; i <= 32; i++) pts.push(fmt(E(i / 32), 3)); return 'linear(' + pts.join(', ') + ')'; }
+  // What the spring does at the chosen duration: arrived, or cut short and stretched
+  function springNote(k, z, ms) {
+    var settle = settleMs(k, z);
+    if (ms >= settle) return t('springOk').replace('{t}', num(settle));
+    return t('springCut').replace('{ms}', num(ms)).replace('{pc}', dec(springRaw(k, z, ms / 1000) * 100, 1)).replace('{t}', num(settle));
+  }
   function parseCurve(s) {
     var nums = String(s).replace(/[fF](?=\s*[,)]|\s*$)/g, '').match(/-?\d*\.?\d+(?:e-?\d+)?/gi);
     if (!nums || nums.length !== 4) return null;
@@ -449,6 +524,9 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       var s = slider(ph + '-' + k, i % 2 ? -1 : 0, i % 2 ? 2 : 1, 0.01, k);
       s.lab.textContent = k; sl[k] = s; ctrls.appendChild(s.box);
     });
+    // The spring's controls take the place of the Bezier ones when the page draws springs
+    var sk = slider(ph + '-k', 50, 4000, 10, 'stiffness'), sz = slider(ph + '-z', 0.2, 1, 0.01, 'damping');
+    ctrls.appendChild(sk.box); ctrls.appendChild(sz.box);
     var pasteIn = el('input', { type: 'text', id: ph + '-paste', spellcheck: 'false', autocomplete: 'off' });
     var pasteBtn = el('button', { cls: 'chip', type: 'button' });
     var pasteLab = el('label', { 'for': ph + '-paste', cls: 'sub' });
@@ -458,8 +536,13 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var preLab = el('label', { 'for': ph + '-preset' });
     var pre = el('select', { id: ph + '-preset' });
     ctrls.appendChild(el('div', { cls: 'ctrl' }, [preLab, pre]));
+    var spreLab = el('label', { 'for': ph + '-spring' });
+    var spre = el('select', { id: ph + '-spring' });
+    ctrls.appendChild(el('div', { cls: 'ctrl' }, [spreLab, spre]));
     var dur = slider(ph + '-ms', 50, 1500, 10, 'duration');
     ctrls.appendChild(dur.box);
+    var note = el('p', { cls: 'note' });
+    ctrls.appendChild(note);
     // Fade
     var fadeSub = el('div', { cls: 'sub' });
     var fadeTitle = el('span');
@@ -473,6 +556,11 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var ff = slider(ph + '-ff', 0, 100, 1, 'from'), ft = slider(ph + '-ft', 0, 100, 1, 'to');
     var fadeRange = el('div', { cls: 'ctrl' }, [ff.box, ft.box]);
     ctrls.appendChild(fadeRange);
+    // With springs the fade has a spring of its own, with no bounce: stiffness and duration
+    var fk = slider(ph + '-fk', 100, 4000, 10, 'stiffness'), fms = slider(ph + '-fms', 50, 1500, 10, 'duration');
+    ctrls.appendChild(fk.box); ctrls.appendChild(fms.box);
+    var fnote = el('p', { cls: 'note' });
+    ctrls.appendChild(fnote);
     // Trail (sheet) or scale (dialog)
     var trailSub = el('div', { cls: 'sub' });
     var trailTitle = el('span');
@@ -490,7 +578,8 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var P = { ph: ph, sec: sec, h2: h2, code: code, copyBtn: copyBtn, copyK: copyK, msg: msg, bz: bz, sp: sp, gBz: gBz, gSp: gSp, sl: sl,
       pasteIn: pasteIn, pasteBtn: pasteBtn, pasteLab: pasteLab, pasteErr: pasteErr, pre: pre, preLab: preLab, dur: dur,
       fadeTitle: fadeTitle, fadeOn: fadeOn, fadeOnLab: fadeOnLab, base: base, baseLab: baseLab, ff: ff, ft: ft, fadeRange: fadeRange,
-      trailTitle: trailTitle, trailOn: trailOn, trailOnLab: trailOnLab, trailSw: trailSw, tdp: tdp, sc: sc };
+      trailTitle: trailTitle, trailOn: trailOn, trailOnLab: trailOnLab, trailSw: trailSw, tdp: tdp, sc: sc,
+      sk: sk, sz: sz, spre: spre, spreLab: spreLab, note: note, fk: fk, fms: fms, fnote: fnote };
     wirePanel(P);
     return P;
   }
@@ -504,12 +593,26 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.pasteBtn.addEventListener('click', function () { applyPaste(P); });
     P.pasteIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyPaste(P); });
     P.pre.addEventListener('change', function () {
-      var p = PRESETS[Number(P.pre.value)];
+      var p = P.pre.value === '' ? null : PRESETS[Number(P.pre.value)];
       if (!p) return;
-      cur(ph).c = (p[1] || DS_SPRING).slice();
+      cur(ph).c = (p[1] || DS_BEZIER).slice();
       changed(ph);
     });
-    P.dur.input.addEventListener('input', function () { cur(ph).ms = Number(P.dur.input.value); changed(ph); });
+    P.sk.input.addEventListener('input', function () { cur(ph).k = Number(P.sk.input.value); changed(ph); });
+    P.sz.input.addEventListener('input', function () { cur(ph).z = Number(P.sz.input.value); changed(ph); });
+    P.spre.addEventListener('change', function () {
+      var s = P.spre.value === '' ? null : SPRINGS[Number(P.spre.value)];
+      if (!s) return;
+      var p = cur(ph);
+      p.k = s[1]; p.z = s[2];
+      p.ms = s[3] || Math.min(1500, Math.ceil(settleMs(s[1], s[2]) / 10) * 10);
+      p.fade.ms = Math.min(p.fade.ms, p.ms);
+      changed(ph);
+    });
+    // The fade's spring never lasts longer than the movement: the phase ends with the movement
+    P.dur.input.addEventListener('input', function () { var p = cur(ph); p.ms = Number(P.dur.input.value); p.fade.ms = Math.min(p.fade.ms, p.ms); changed(ph); });
+    P.fk.input.addEventListener('input', function () { cur(ph).fade.k = Number(P.fk.input.value); changed(ph); });
+    P.fms.input.addEventListener('input', function () { cur(ph).fade.ms = Math.min(Number(P.fms.input.value), cur(ph).ms); changed(ph); });
     P.fadeOn.addEventListener('change', function () { cur(ph).fade.on = P.fadeOn.checked; changed(ph); });
     P.base.addEventListener('change', function () { cur(ph).fade.base = P.base.value; changed(ph); });
     P.ff.input.addEventListener('input', function () { cur(ph).fade.from = Number(P.ff.input.value); if (cur(ph).fade.to < cur(ph).fade.from) cur(ph).fade.to = cur(ph).fade.from; changed(ph); });
@@ -517,8 +620,8 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.trailOn.addEventListener('change', function () { cur(ph).trail.on = P.trailOn.checked; changed(ph); });
     P.tdp.input.addEventListener('input', function () { cur(ph).trail.dp = Number(P.tdp.input.value); changed(ph); });
     P.sc.input.addEventListener('input', function () { cur(ph).scale = Number(P.sc.input.value); changed(ph); });
-    P.copyBtn.addEventListener('click', function () { copy(cssOf(cur(ph).c), P); });
-    P.copyK.addEventListener('click', function () { copy('CubicBezierEasing(' + cur(ph).c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')', P); });
+    P.copyBtn.addEventListener('click', function () { var p = cur(ph); copy(S.mode === 'spring' ? cssLinear(fnOf(p)) : cssOf(p.c), P); });
+    P.copyK.addEventListener('click', function () { var p = cur(ph); copy(S.mode === 'spring' ? composeSpring(p.k, p.z) : composeOf(p.c), P); });
     dragHandles(P);
   }
   function applyPaste(P) {
@@ -536,21 +639,22 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   }
   function selectCode(P) { try { var r = document.createRange(); r.selectNodeContents(P.code); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
 
-  // ── The Bezier graph: y range grows with the handles, as on the reference ──
+  // ── The curve graph: y range grows with the handles, as on the reference, or with a spring's bounce ──
   // The graphs' drawing box: a little lower than wide, so the page fits a full-screen window
   var VW = 260, VH = 220;
   var G = { L: 34, R: 248, T: 12, B: 194 };
   function yRange(c) { return [Math.min(0, c[1], c[3]) - 0.08, Math.max(1, c[1], c[3]) + 0.08]; }
-  function bzMap(c) {
-    var yr = yRange(c);
+  function springRange(E) { var lo = 0, hi = 1; for (var i = 0; i <= 120; i++) { var v = E(i / 120); if (v < lo) lo = v; if (v > hi) hi = v; } return [lo - 0.08, hi + 0.08]; }
+  function mapOf(yr) {
     return {
       x: function (v) { return G.L + v * (G.R - G.L); },
       y: function (v) { return G.B - (v - yr[0]) / (yr[1] - yr[0]) * (G.B - G.T); },
       inv: function (px, py) { return [(px - G.L) / (G.R - G.L), yr[0] + (G.B - py) / (G.B - G.T) * (yr[1] - yr[0])]; }
     };
   }
-  function drawBezier(P) {
-    var c = cur(P.ph).c, m = bzMap(c), svg = P.bz;
+  function drawCurve(P) {
+    var p = cur(P.ph), c = p.c, spring = S.mode === 'spring', E = fnOf(p), m = mapOf(spring ? springRange(E) : yRange(c)), svg = P.bz;
+    P.map = m;
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
       svg.appendChild(sv('line', { 'class': 'gridl', x1: m.x(v), x2: m.x(v), y1: G.T, y2: G.B }));
@@ -561,16 +665,23 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       var tx = sv('text', { 'class': 'tick', x: G.L - 5, y: m.y(v) + 3.5, 'text-anchor': 'end' }); tx.textContent = v.toFixed(1); svg.appendChild(tx);
     });
     svg.appendChild(sv('line', { 'class': 'lin', x1: m.x(0), y1: m.y(0), x2: m.x(1), y2: m.y(1) }));
-    svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(0), y1: m.y(0), x2: m.x(c[0]), y2: m.y(c[1]) }));
-    svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(1), y1: m.y(1), x2: m.x(c[2]), y2: m.y(c[3]) }));
-    svg.appendChild(sv('path', { 'class': 'curve', d: 'M' + m.x(0) + ' ' + m.y(0) + ' C' + m.x(c[0]) + ' ' + m.y(c[1]) + ' ' + m.x(c[2]) + ' ' + m.y(c[3]) + ' ' + m.x(1) + ' ' + m.y(1) }));
+    if (spring) {
+      // A spring has no handles: the curve is drawn point by point
+      var pts = [];
+      for (var i = 0; i <= 120; i++) pts.push(m.x(i / 120).toFixed(1) + ',' + m.y(E(i / 120)).toFixed(1));
+      svg.appendChild(sv('polyline', { 'class': 'curve', points: pts.join(' ') }));
+    } else {
+      svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(0), y1: m.y(0), x2: m.x(c[0]), y2: m.y(c[1]) }));
+      svg.appendChild(sv('line', { 'class': 'arm', x1: m.x(1), y1: m.y(1), x2: m.x(c[2]), y2: m.y(c[3]) }));
+      svg.appendChild(sv('path', { 'class': 'curve', d: 'M' + m.x(0) + ' ' + m.y(0) + ' C' + m.x(c[0]) + ' ' + m.y(c[1]) + ' ' + m.x(c[2]) + ' ' + m.y(c[3]) + ' ' + m.x(1) + ' ' + m.y(1) }));
+    }
     P.headBz = sv('circle', { 'class': 'head-dot', r: 4, cx: -20, cy: -20 });
     svg.appendChild(P.headBz);
-    [[0, 1], [2, 3]].forEach(function (ix, n) {
+    if (!spring) [[0, 1], [2, 3]].forEach(function (ix, n) {
       svg.appendChild(sv('circle', { 'class': 'hit', r: 16, cx: m.x(c[ix[0]]), cy: m.y(c[ix[1]]), 'data-h': n }));
       svg.appendChild(sv('circle', { 'class': 'handle', r: 7, cx: m.x(c[ix[0]]), cy: m.y(c[ix[1]]), 'data-h': n }));
     });
-    P.bz.setAttribute('aria-label', t('curve') + ' ' + cssOf(c));
+    P.bz.setAttribute('aria-label', spring ? t('curveSpring') + ' ' + composeSpring(p.k, p.z) : t('curve') + ' ' + cssOf(c));
   }
   function dragHandles(P) {
     // With ⇧ held the handle keeps to one axis, as in Photoshop: the one along which the pointer has
@@ -579,7 +690,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     P.bz.addEventListener('pointerdown', function (e) {
       var h = e.target.getAttribute && e.target.getAttribute('data-h');
       if (h === null || h === undefined) return;
-      active = Number(h); frozen = bzMap(cur(P.ph).c);
+      active = Number(h); frozen = mapOf(yRange(cur(P.ph).c));
       start = [e.clientX, e.clientY]; startXY = [cur(P.ph).c[active * 2], cur(P.ph).c[active * 2 + 1]];
       P.bz.setPointerCapture(e.pointerId); e.preventDefault();
     });
@@ -605,9 +716,9 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   // The speed graph has a wider left margin than the Bezier one: its labels reach five digits (20.000).
   var GS = { L: 48, R: 248, T: 12, B: 194 };
   function drawSpeed(P) {
-    var p = cur(P.ph), svg = P.sp, D = travel(P.ph), N = 160;
+    var p = cur(P.ph), svg = P.sp, D = travel(P.ph), N = 160, E = fnOf(p);
     var vals = [], maxV = 0, minV = 0, peakAt = 0;
-    for (var i = 0; i <= N; i++) { var x = i / N, v = speed(p.c, p.ms, x) * D * 1000; vals.push(v); if (v > maxV) { maxV = v; peakAt = x; } if (v < minV) minV = v; }
+    for (var i = 0; i <= N; i++) { var x = i / N, v = speed(E, p.ms, x) * D * 1000; vals.push(v); if (v > maxV) { maxV = v; peakAt = x; } if (v < minV) minV = v; }
     var avg = D * 1000 / p.ms, top = niceMax(Math.max(maxV, avg) * 1.08 || 1), bot = minV < 0 ? -niceMax(-minV * 1.08) : 0;
     var X = function (u) { return GS.L + u * (GS.R - GS.L); }, Y = function (v) { return GS.B - (v - bot) / (top - bot) * (GS.B - GS.T); };
     while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -636,14 +747,37 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 
   // ── Fill controls from the state ──
   function syncPanel(P) {
-    var p = cur(P.ph), ph = P.ph;
+    var p = cur(P.ph), ph = P.ph, spring = S.mode === 'spring', E = fnOf(p);
     P.h2.textContent = t(ph);
-    P.code.textContent = cssOf(p.c);
+    P.code.textContent = spring ? composeSpring(p.k, p.z) : cssOf(p.c);
     P.copyBtn.textContent = t('copy') + ' CSS';
     P.copyK.textContent = t('copy') + ' Compose';
-    P.gBz.querySelector('.gt').textContent = t('curve');
+    P.gBz.querySelector('.gt').textContent = spring ? t('curveSpring') : t('curve');
     P.gSp.querySelector('.gt').textContent = t('speedGraph');
-    P.gBz.querySelector('.cap').textContent = '25% → ' + Math.round(ease(p.c, 0.25) * 100) + '%  ·  50% → ' + Math.round(ease(p.c, 0.5) * 100) + '%';
+    P.gBz.querySelector('.cap').textContent = '25% → ' + Math.round(E(0.25) * 100) + '%  ·  50% → ' + Math.round(E(0.5) * 100) + '%';
+    // One set of controls at a time: the Bezier's or the spring's
+    ['x1', 'y1', 'x2', 'y2'].forEach(function (k) { P.sl[k].box.hidden = spring; });
+    P.pasteLab.hidden = spring; P.pasteIn.parentNode.hidden = spring; P.pre.parentNode.hidden = spring;
+    if (spring) P.pasteErr.textContent = '';
+    P.sk.box.hidden = !spring; P.sz.box.hidden = !spring; P.spre.parentNode.hidden = !spring; P.note.hidden = !spring;
+    P.base.parentNode.hidden = spring; P.fadeRange.hidden = spring;
+    P.fk.box.hidden = !spring; P.fms.box.hidden = !spring; P.fnote.hidden = !spring || !p.fade.on;
+    P.sk.lab.textContent = t('stiffness'); P.sk.input.value = p.k; P.sk.val.textContent = num(p.k);
+    P.sz.lab.textContent = t('damping'); P.sz.input.value = p.z; P.sz.val.textContent = dec(p.z);
+    P.spreLab.textContent = t('presetSpring');
+    if (P.spre.options.length !== SPRINGS.length + 1) {
+      while (P.spre.firstChild) P.spre.removeChild(P.spre.firstChild);
+      P.spre.appendChild(el('option', { value: '' })); SPRINGS.forEach(function (s, i) { P.spre.appendChild(el('option', { value: String(i) })); });
+    }
+    P.spre.options[0].textContent = '...';
+    SPRINGS.forEach(function (s, i) { P.spre.options[i + 1].textContent = t('springs')[s[0]] + '  ' + num(s[1]) + ' · ' + dec(s[2]); });
+    var smatch = SPRINGS.findIndex(function (s) { return s[1] === p.k && Math.abs(s[2] - p.z) < 1e-6; });
+    P.spre.value = smatch >= 0 ? String(smatch) : '';
+    P.note.textContent = spring ? tie(springNote(p.k, p.z, p.ms)) : '';
+    P.fk.lab.textContent = t('stiffness'); P.fk.input.value = p.fade.k; P.fk.val.textContent = num(p.fade.k);
+    P.fms.lab.textContent = t('duration'); P.fms.input.max = p.ms; P.fms.input.value = p.fade.ms; P.fms.val.textContent = p.fade.ms + ' ms';
+    [P.fk, P.fms].forEach(function (s) { s.input.disabled = !p.fade.on; s.box.classList.toggle('dim', !p.fade.on); });
+    P.fnote.textContent = spring && p.fade.on ? tie(springNote(p.fade.k, 1, p.fade.ms)) : '';
     ['x1', 'y1', 'x2', 'y2'].forEach(function (k, i) { P.sl[k].input.value = p.c[i]; P.sl[k].val.textContent = fmt(p.c[i]); });
     P.pasteLab.textContent = t('paste'); P.pasteBtn.textContent = t('apply'); P.pasteIn.placeholder = t('pasteHint');
     P.preLab.textContent = t('preset');
@@ -653,7 +787,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     }
     P.pre.options[0].textContent = '...';
     PRESETS.forEach(function (p2, i) { P.pre.options[i + 1].textContent = t('presets')[p2[0]] + (p2[1] ? '  ' + cssOf(p2[1]) : ''); });
-    var match = PRESETS.findIndex(function (p2) { var c2 = p2[1] || DS_SPRING; return c2.every(function (v, i) { return Math.abs(v - p.c[i]) < 1e-6; }); });
+    var match = PRESETS.findIndex(function (p2) { var c2 = p2[1] || DS_BEZIER; return c2.every(function (v, i) { return Math.abs(v - p.c[i]) < 1e-6; }); });
     P.pre.value = match >= 0 ? String(match) : '';
     P.dur.lab.textContent = t('duration'); P.dur.input.value = p.ms; P.dur.val.textContent = p.ms + ' ms';
     P.fadeTitle.textContent = t('fade'); P.fadeOnLab.textContent = t('fadeOn'); P.fadeOn.checked = p.fade.on;
@@ -675,20 +809,20 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     } else {
       P.sc.lab.textContent = ph === 'in' ? t('scaleFrom') : t('scaleTo'); P.sc.input.value = p.scale; P.sc.val.textContent = p.scale + '%';
     }
-    drawBezier(P); drawSpeed(P);
+    drawCurve(P); drawSpeed(P);
   }
   function syncAll() {
     document.documentElement.lang = S.lang;
     Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (n) { var v = t(n.getAttribute('data-t')); if (typeof v === 'string') n.textContent = v; });
     document.title = S.lang === 'it' ? 'RUIAS - Simulatore di animazioni per componenti UI' : 'RUIAS - UI component animation simulator';
     fillSheet();
-    [['comp', S.comp], ['seq', S.seq], ['rate', String(S.rate)]].forEach(function (g) {
+    [['mode', S.mode], ['comp', S.comp], ['seq', S.seq], ['rate', String(S.rate)]].forEach(function (g) {
       Array.prototype.forEach.call(document.querySelectorAll('#' + g[0] + ' [data-v]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === g[1])); });
     });
     playIcon();
     document.getElementById('hold').value = S.hold;
     document.getElementById('hold-v').textContent = num(S.hold) + ' ms';
-    document.getElementById('tip').textContent = t('foot');
+    document.getElementById('tip').textContent = tie(t('foot'));
     document.getElementById('stage').setAttribute('aria-label', t('preview'));
     document.getElementById('copyall').textContent = t('copyAll');
     document.getElementById('info').setAttribute('aria-label', t('info'));
@@ -712,17 +846,21 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       b.addEventListener('click', function () { fn(b.getAttribute('data-v')); clock = 0; save(); syncAll(); });
     });
   }
+  // The global switch: springs or Bezier curves, for both components and both phases
+  pick('mode', function (v) { S.mode = v; });
   pick('comp', function (v) { S.comp = v; });
   pick('seq', function (v) { S.seq = v; });
   pick('rate', function (v) { S.rate = Number(v); });
   // 'Copia tutto': every setting of the page as tokens, in the design system's naming (Italian,
   // kebab-case, the unit in the name), for both components and both phases, plus the preview.
-  function composeOf(c) { return 'CubicBezierEasing(' + c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')'; }
   function phaseTokens(comp, ph) {
     var p = S[comp][ph], at = function (pc) { return Math.round((p.fade.base === 'time' ? pc / 100 : timeAt(p.c, pc / 100)) * p.ms); };
-    var o = { 'curva': cssOf(p.c), 'curva-compose': composeOf(p.c), 'bezier': p.c.slice(), 'durata-ms': p.ms,
-      'dissolvenza': { 'attiva': p.fade.on, 'misura': p.fade.base === 'time' ? 'tempo' : 'percorso',
-        'da-percento': p.fade.from, 'a-percento': p.fade.to, 'da-ms': at(p.fade.from), 'a-ms': at(p.fade.to) } };
+    var o = S.mode === 'spring' ?
+      { 'molla': { 'rigidita': p.k, 'smorzamento': p.z }, 'molla-compose': composeSpring(p.k, p.z), 'durata-ms': p.ms,
+        'dissolvenza': { 'attiva': p.fade.on, 'molla': { 'rigidita': p.fade.k, 'smorzamento': 1 }, 'durata-ms': p.fade.ms } } :
+      { 'curva': cssOf(p.c), 'curva-compose': composeOf(p.c), 'bezier': p.c.slice(), 'durata-ms': p.ms,
+        'dissolvenza': { 'attiva': p.fade.on, 'misura': p.fade.base === 'time' ? 'tempo' : 'percorso',
+          'da-percento': p.fade.from, 'a-percento': p.fade.to, 'da-ms': at(p.fade.from), 'a-ms': at(p.fade.to) } };
     if (comp === 'sheet') o['scia'] = { 'attiva': p.trail.on, 'picco-dp': p.trail.dp };
     else o[ph === 'in' ? 'scala-partenza-percento' : 'scala-arrivo-percento'] = p.scale;
     return o;
@@ -730,7 +868,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   function veilTokens(comp) { var v = S[comp].veil; return { 'attivo': v.on, 'opacita-percento': v.op, 'sfocatura-dp': v.blur }; }
   function allTokens() {
     return {
-      'ruias': VERSION,
+      'ruias': VERSION, 'curve': S.mode === 'spring' ? 'molle' : 'bezier',
       'scheda': { 'percorso-dp': 500, 'entrata': phaseTokens('sheet', 'in'), 'uscita': phaseTokens('sheet', 'out'), 'velo': veilTokens('sheet') },
       'finestra': { 'entrata': phaseTokens('dialog', 'in'), 'uscita': phaseTokens('dialog', 'out'), 'velo': veilTokens('dialog') },
       'anteprima': { 'componente': S.comp === 'sheet' ? 'scheda' : 'finestra', 'sequenza': { cycle: 'entrata-uscita', 'in': 'entrata', out: 'uscita' }[S.seq],
@@ -793,24 +931,30 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   }
   function fadeAlpha(p, x, path, entering) {
     if (!p.fade.on) return 1;
+    // With springs the fade runs on its own spring from the start of the phase, over its own duration
+    if (S.mode === 'spring') { var s = springFn(p.fade.k, 1, p.fade.ms)(x * p.ms / p.fade.ms); return entering ? s : 1 - s; }
     var v = p.fade.base === 'time' ? x : path, a = p.fade.from / 100, b = p.fade.to / 100;
     var k = b <= a ? (v >= a ? 1 : 0) : Math.min(1, Math.max(0, (v - a) / (b - a)));
     return entering ? k : 1 - k;
   }
   var peaks = {};
-  function peakOf(ph) { var p = cur(ph), key = S.comp + ph + p.c.join() + p.ms; if (!peaks[key]) peaks[key] = peakStep(p.c, p.ms); return peaks[key]; }
+  function peakOf(ph) {
+    var p = cur(ph), key = S.mode + S.comp + ph + (S.mode === 'spring' ? p.k + '/' + p.z : p.c.join()) + '/' + p.ms;
+    if (!peaks[key]) peaks[key] = peakStep(fnOf(p), p.ms);
+    return peaks[key];
+  }
   function paint(ms) {
     var tl = timeline(), acc = 0, seg = tl[tl.length - 1], local = 0;
     for (var i = 0; i < tl.length; i++) { if (ms < acc + tl[i][1]) { seg = tl[i]; local = ms - acc; break; } acc += tl[i][1]; }
-    var kind = seg[0], open = 1, alpha = 1, blurDp = 0, x = -1, ph = null, scale = 1;
+    var kind = seg[0], open = 1, alpha = 1, blurDp = 0, x = -1, ph = null, scale = 1, f = 0;
     var scalePx = phone.clientWidth / 412;
     if (kind === 'shut') { open = 0; alpha = 0; }
     else if (kind === 'in' || kind === 'out') {
-      ph = kind; var p = cur(ph); x = Math.min(1, local / p.ms); var f = ease(p.c, x);
+      ph = kind; var p = cur(ph), E = fnOf(p); x = Math.min(1, local / p.ms); f = E(x);
       // f is the fraction of the way covered in this phase, also what a fade on the travel reads
       open = kind === 'in' ? f : 1 - f;
       alpha = fadeAlpha(p, x, f, kind === 'in');
-      if (S.comp === 'sheet' && p.trail.on) blurDp = p.trail.dp * step(p.c, p.ms, x) / peakOf(ph);
+      if (S.comp === 'sheet' && p.trail.on) blurDp = p.trail.dp * step(E, p.ms, x) / peakOf(ph);
       if (S.comp === 'dialog') { var s0 = p.scale / 100; scale = kind === 'in' ? s0 + (1 - s0) * f : 1 + (s0 - 1) * f; }
     }
     var v = S[S.comp].veil, vo = Math.max(0, Math.min(1, open));
@@ -832,8 +976,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       var P = panels[k];
       if (!P || !P.headBz) return;
       if (ph === k) {
-        var c = cur(k).c, m = bzMap(c);
-        P.headBz.setAttribute('cx', m.x(x)); P.headBz.setAttribute('cy', m.y(ease(c, x)));
+        P.headBz.setAttribute('cx', P.map.x(x)); P.headBz.setAttribute('cy', P.map.y(f));
         var hx = P.spMap.X(x); P.headSp.setAttribute('x1', hx); P.headSp.setAttribute('x2', hx);
       } else { P.headBz.setAttribute('cx', -20); P.headSp.setAttribute('x1', -10); P.headSp.setAttribute('x2', -10); }
     });
