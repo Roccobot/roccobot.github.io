@@ -230,11 +230,11 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | entrata di un menu | 120 ms da scala 0,96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | uscita di un menu | 75 ms, lineare | `MENU_OUT_MS` |
 | curva Fluido, i movimenti senza dito che non sono un'entrata o un'uscita | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
-| molla del movimento, dei pannelli | rigidità 541, smorzamento 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` la approssima | `LabMotion.SPATIAL`, `SPATIAL_MS` |
-| molla della dissolvenza, dei pannelli | rigidità 1600, smorzamento 1: 186 ms, la stessa forma | `LabMotion.EFFECTS`, `EFFECTS_MS` |
-| entrata e uscita della scheda in fondo | 320 ms, la molla del movimento, con la scia; senza dissolvenza (la scheda della selezione e gli avvisi hanno anche quella di 186 ms) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
-| entrata della finestra al centro | 320 ms dal 92%, la molla del movimento; opaca con la molla di 186 ms; senza scia | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
-| uscita della finestra al centro | 320 ms fino al 92%, la stessa molla; sfuma con la molla di 186 ms; senza scia | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| molla del movimento, dei pannelli | rigidità 540, smorzamento 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` la approssima | `LabMotion.SPATIAL`, `SPATIAL_MS` |
+| molla della dissolvenza, dei pannelli | rigidità 1600, smorzamento 1, scritta su 140 ms (al 97,6% della corsa, allungata fino al 100%) | `LabMotion.EFFECTS`, `EFFECTS_MS` |
+| entrata e uscita della scheda in fondo | 320 ms, la molla del movimento, con la scia; senza dissolvenza (la scheda della selezione e gli avvisi hanno anche quella di 140 ms) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
+| entrata della finestra al centro | 320 ms dal 92%, la molla del movimento; opaca con la molla di 140 ms; senza scia | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| uscita della finestra al centro | 320 ms fino al 92%, la stessa molla; sfuma con la molla di 140 ms; senza scia | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
 | scia di una scheda che si sposta | sfocatura verticale, picco di 10 dp in entrata e di 5 in uscita, in proporzione alla strada che la molla fa in un fotogramma; oltre il bordo sfuma nel trasparente; dove `Effetto movimento` ha acceso `Pannelli dal basso` | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
@@ -262,8 +262,8 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
   salto lungo una durata che cresce con la corsa, con un tetto.
 - **L'uscita ha la stessa molla dell'entrata, salvo il menu.** La scheda dal basso e la finestra al
   centro entrano e escono con la molla del movimento (320 ms) e, dove c'è, con quella della
-  dissolvenza (186 ms); un menu entra in 120 ms ed esce in 75, con una dissolvenza sola.
-- **La dissolvenza ha una molla sua**, più breve del movimento (186 ms contro 320), e parte insieme
+  dissolvenza (140 ms); un menu entra in 120 ms ed esce in 75, con una dissolvenza sola.
+- **La dissolvenza ha una molla sua**, più breve del movimento (140 ms contro 320), e parte insieme
   a lui. La scheda dal basso non ha dissolvenza; la scheda della selezione, gli avvisi e le finestre
   al centro sì.
 - **Quello che si sposta ha la scia, quello che resta al centro cresce e si stringe**: la scheda

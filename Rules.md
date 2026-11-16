@@ -202,8 +202,11 @@ numero per scelta dell'utente.
   Animation Simulator, voce `Cinescopio`, sua richiesta del 2026-11-13): uno strumento con funzioni,
   quindi un'eccezione dichiarata a 'qui non vivono progetti', voluta da lui (`Ospite-01`: lo vuole
   sull'hub, come pagina di servizio, e non in un repo suo come RatioLab). Simula la scheda dal basso
-  e la finestra di dialogo di AIV con curve di Bézier, durate, dissolvenze, scia e velo separati per
-  entrata e uscita, col grafico della curva e quello della velocità nello stile di After Effects.
+  e la finestra di dialogo di AIV con durate, dissolvenze, scia e velo separati per entrata e uscita,
+  col grafico della curva e quello della velocità nello stile di After Effects. Dalla 1.30 (voce
+  `Elastico`, sua richiesta del 2026-11-16) un interruttore globale sceglie come nascono le curve:
+  con le molle di Material 3 Expressive (rigidità, smorzamento e durata, e una molla sua per la
+  dissolvenza), che sono il valore di serie, o con le curve di Bézier.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in

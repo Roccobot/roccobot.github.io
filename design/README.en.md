@@ -231,11 +231,11 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
 | Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
-| movement spring, of the panels | stiffness 541, damping 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` approximates it | `LabMotion.SPATIAL`, `SPATIAL_MS` |
-| fade spring, of the panels | stiffness 1600, damping 1: 186 ms, the same shape | `LabMotion.EFFECTS`, `EFFECTS_MS` |
-| bottom sheet entrance and exit | 320 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have the 186 ms one) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
-| centred window entrance | 320 ms from 92%, the movement spring; opaque on the 186 ms spring; no trail | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
-| centred window exit | 320 ms down to 92%, the same spring; fades on the 186 ms spring; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| movement spring, of the panels | stiffness 540, damping 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` approximates it | `LabMotion.SPATIAL`, `SPATIAL_MS` |
+| fade spring, of the panels | stiffness 1600, damping 1, written over 140 ms (at 97.6% of the way, stretched to 100%) | `LabMotion.EFFECTS`, `EFFECTS_MS` |
+| bottom sheet entrance and exit | 320 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have the 140 ms one) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
+| centred window entrance | 320 ms from 92%, the movement spring; opaque on the 140 ms spring; no trail | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| centred window exit | 320 ms down to 92%, the same spring; fades on the 140 ms spring; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
 | trail of a travelling sheet | vertical blur, peak of 10 dp on entrance and 5 on exit, in proportion to the way the spring covers in one frame; past the edge it fades into transparency; where `Effetto movimento` has `Pannelli dal basso` on | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
@@ -263,8 +263,8 @@ code). The values are also in the tokens, family `movimento`, each with its cons
   no bounce; for a long jump a duration that grows with the distance, with a cap.
 - **The exit has the same spring as the entrance, except for the menu.** The bottom sheet and the
   centred window come in and leave on the movement spring (320 ms) and, where there is one, on the
-  fade spring (186 ms); a menu enters in 120 ms and exits in 75, with a single fade.
-- **The fade has a spring of its own**, shorter than the movement (186 ms against 320), and starts
+  fade spring (140 ms); a menu enters in 120 ms and exits in 75, with a single fade.
+- **The fade has a spring of its own**, shorter than the movement (140 ms against 320), and starts
   together with it. The bottom sheet has no fade; the selection sheet, the notices and the centred
   windows do.
 - **What travels has the trail, what stays centred grows and shrinks**: the sheet blurs along its
