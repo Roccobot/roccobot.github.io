@@ -304,14 +304,14 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.32';
+  var VERSION = '1.33';
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
     it: {
       reset: 'Valori del design system', resetShort: 'Valori DS', info: 'Note tecniche', copyAll: 'Copia tutto', copiedAll: 'Copiato',
       mode: 'Curve', modeSpring: 'Molle', modeBezier: 'Bézier', curveSpring: 'Curva della molla',
-      stiffness: 'Rigidità', damping: 'Smorzamento', presetSpring: 'Molle pronte',
+      stiffness: 'Rigidità', damping: 'Smorzamento', bounce: 'Rimbalzo', presetSpring: 'Molle pronte',
       springCut: 'A {ms} ms la molla non è ancora arrivata, e la curva è allungata fino al 100%. Da sé arriva in {t} ms.',
       springs: { ds: 'Molla AIV', expDef: 'Material 3 Expressive, movimento', expFast: 'Material 3 Expressive, movimento rapido', expSlow: 'Material 3 Expressive, movimento lento', stdDef: 'Material 3 standard, movimento', stdFast: 'Material 3 standard, movimento rapido', stdSlow: 'Material 3 standard, movimento lento', fx: 'Material 3, effetti', fxFast: 'Material 3, effetti rapidi', fxSlow: 'Material 3, effetti lenti' },
       preview: 'Anteprima', component: 'Componente', compSheet: 'Scheda dal basso', compDialog: 'Finestra di dialogo',
@@ -328,13 +328,13 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
-      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro (il rimbalzo), e cambia anche la durata. La dissolvenza ha una molla sua, senza rimbalzo. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
+      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo segue il componente. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro, e cambia anche la durata. Il rimbalzo è lo stesso valore letto al contrario: di quanto la molla supera il traguardo, in percentuale della corsa, quindi muovendo uno cambia l'altro. La dissolvenza ha una molla sua, senza rimbalzo. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
       presets: { ds: 'Curva AIV', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
       reset: 'Design system values', resetShort: 'DS values', info: 'Technical notes', copyAll: 'Copy all', copiedAll: 'Copied',
       mode: 'Curves', modeSpring: 'Springs', modeBezier: 'Bézier', curveSpring: 'Spring curve',
-      stiffness: 'Stiffness', damping: 'Damping', presetSpring: 'Spring presets',
+      stiffness: 'Stiffness', damping: 'Damping', bounce: 'Bounce', presetSpring: 'Spring presets',
       springCut: 'At {ms} ms the spring has not arrived yet, and the curve is stretched to 100%. On its own it arrives in {t} ms.',
       springs: { ds: 'AIV spring', expDef: 'Material 3 Expressive, default spatial', expFast: 'Material 3 Expressive, fast spatial', expSlow: 'Material 3 Expressive, slow spatial', stdDef: 'Material 3 standard, default spatial', stdFast: 'Material 3 standard, fast spatial', stdSlow: 'Material 3 standard, slow spatial', fx: 'Material 3, default effects', fxFast: 'Material 3, fast effects', fxSlow: 'Material 3, slow effects' },
       preview: 'Preview', component: 'Component', compSheet: 'Bottom sheet', compDialog: 'Dialog',
@@ -351,7 +351,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
-      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back (the bounce), and the duration changes too. The fade has its own spring, with no bounce. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
+      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The scrim follows the component. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back, and the duration changes too. The bounce is the same value read the other way: how far the spring passes the end, as a percentage of the way, so moving one changes the other. The fade has its own spring, with no bounce. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
       presets: { ds: 'AIV curve', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
     }
   };
@@ -429,11 +429,19 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var wd = w * Math.sqrt(1 - z * z);
     return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t));
   }
-  // The spring written over a duration, as AIV does (LabMotion.Critical): the curve is divided by its
-  // value at the end, so that it arrives exactly there.
+  // The spring written over a duration, so that it arrives exactly at the end. With no bounce the curve
+  // is divided by its value at the end, as AIV does (LabMotion.Critical). A spring that bounces keeps its
+  // true shape, peak included, and the little it is off at the end (within 0.5% once it has arrived) is
+  // taken up smoothly over the last fifth of the time: dividing would take that much off the bounce.
   function springFn(k, z, ms) {
     var T = ms / 1000, end = springRaw(k, z, T);
-    return function (x) { return x <= 0 ? 0 : x >= 1 ? 1 : end > 1e-6 ? springRaw(k, z, x * T) / end : x; };
+    if (z >= 1) return function (x) { return x <= 0 ? 0 : x >= 1 ? 1 : end > 1e-6 ? springRaw(k, z, x * T) / end : x; };
+    return function (x) {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      var s = x > 0.8 ? (x - 0.8) / 0.2 : 0;
+      return springRaw(k, z, x * T) + (1 - end) * s * s * (3 - 2 * s);
+    };
   }
   // The time after which a spring stays within 0.5% of the arrival (AIV's SETTLE), for stiffness 1: a
   // spring's motion depends on the time multiplied by the root of the stiffness, so any other stiffness
@@ -444,6 +452,11 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     if (!taus[key]) { var s = 80; while (s > 0 && Math.abs(1 - springRaw(1, z, s)) <= 0.005) s -= 0.001; taus[key] = s + 0.001; }
     return taus[key];
   }
+  // The bounce: how far past the arrival the spring goes at its first peak, in % of the way. It depends
+  // on the damping alone, exp(-z·pi / sqrt(1 - z²)), so the two are one value read two ways: damping 1
+  // is no bounce, Material Expressive's 0.8 is 1.5%.
+  function bounceOf(z) { return z >= 1 ? 0 : Math.exp(-z * Math.PI / Math.sqrt(1 - z * z)) * 100; }
+  function dampingFor(b) { if (b <= 0) return 1; var l = Math.log(b / 100); return Math.min(1, Math.max(0.2, Math.round(-l / Math.sqrt(Math.PI * Math.PI + l * l) * 1000) / 1000)); }
   // A spring's duration, in ms: the time it needs to arrive. Stiffness and duration are tied both ways.
   function settleMs(k, z) { return Math.ceil(settleTau(z) / Math.sqrt(k) * 1000 - 1e-6); }
   // The stiffness for a duration: the smallest ten with which the spring has arrived in time (540 for
@@ -479,7 +492,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   function dec(v, d) { var s = fmt(v, d); return S.lang === 'it' ? s.replace('.', ',') : s; }
   function cssOf(c) { return 'cubic-bezier(' + c.map(function (v) { return fmt(v); }).join(', ') + ')'; }
   function composeOf(c) { return 'CubicBezierEasing(' + c.map(function (v) { return fmt(v) + 'f'; }).join(', ') + ')'; }
-  function composeSpring(k, z) { return 'spring(dampingRatio = ' + fmt(z) + 'f, stiffness = ' + fmt(k, 0) + 'f)'; }
+  function composeSpring(k, z) { return 'spring(dampingRatio = ' + fmt(z, 3) + 'f, stiffness = ' + fmt(k, 0) + 'f)'; }
   // CSS has no spring: its linear() easing takes the curve as points, here one every 1/32 of the time
   function cssLinear(E) { var pts = []; for (var i = 0; i <= 32; i++) pts.push(fmt(E(i / 32), 3)); return 'linear(' + pts.join(', ') + ')'; }
   // A spring too slow for its duration (at the limits of the sliders, or a fade as long as its movement)
@@ -551,7 +564,8 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     });
     // The spring's controls take the place of the Bezier ones when the page draws springs
     var sk = slider(ph + '-k', 30, 6000, 10, 'stiffness'), sz = slider(ph + '-z', 0.2, 1, 0.01, 'damping');
-    ctrls.appendChild(sk.box); ctrls.appendChild(sz.box);
+    var sb = slider(ph + '-b', 0, 52, 0.5, 'bounce');
+    ctrls.appendChild(sk.box); ctrls.appendChild(sz.box); ctrls.appendChild(sb.box);
     var pasteIn = el('input', { type: 'text', id: ph + '-paste', spellcheck: 'false', autocomplete: 'off' });
     var pasteBtn = el('button', { cls: 'chip', type: 'button' });
     var pasteLab = el('label', { 'for': ph + '-paste', cls: 'sub' });
@@ -608,7 +622,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       pasteIn: pasteIn, pasteBtn: pasteBtn, pasteLab: pasteLab, pasteErr: pasteErr, pre: pre, preLab: preLab, dur: dur,
       fadeTitle: fadeTitle, fadeOn: fadeOn, fadeOnLab: fadeOnLab, base: base, baseLab: baseLab, ff: ff, ft: ft, fadeRange: fadeRange,
       trailTitle: trailTitle, trailOn: trailOn, trailOnLab: trailOnLab, trailSw: trailSw, tdp: tdp, sc: sc,
-      sk: sk, sz: sz, spre: spre, spreLab: spreLab, note: note, fk: fk, fms: fms, fnote: fnote, fpre: fpre, fpreLab: fpreLab };
+      ctrls: ctrls, sk: sk, sz: sz, sb: sb, spre: spre, spreLab: spreLab, note: note, fk: fk, fms: fms, fnote: fnote, fpre: fpre, fpreLab: fpreLab };
     wirePanel(P);
     return P;
   }
@@ -633,6 +647,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     var byStiffness = function (p) { p.ms = Math.min(1500, Math.max(50, settleMs(p.k, p.z))); fitFade(p); };
     P.sk.input.addEventListener('input', function () { var p = cur(ph); p.k = Number(P.sk.input.value); byStiffness(p); changed(ph); });
     P.sz.input.addEventListener('input', function () { var p = cur(ph); p.z = Number(P.sz.input.value); byStiffness(p); changed(ph); });
+    P.sb.input.addEventListener('input', function () { var p = cur(ph); p.z = dampingFor(Number(P.sb.input.value)); byStiffness(p); changed(ph); });
     P.spre.addEventListener('change', function () {
       var s = P.spre.value === '' ? null : SPRINGS[Number(P.spre.value)];
       if (!s) return;
@@ -801,11 +816,15 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
     ['x1', 'y1', 'x2', 'y2'].forEach(function (k) { P.sl[k].box.hidden = spring; });
     P.pasteLab.hidden = spring; P.pasteIn.parentNode.hidden = spring; P.pre.parentNode.hidden = spring;
     if (spring) P.pasteErr.textContent = '';
-    P.sk.box.hidden = !spring; P.sz.box.hidden = !spring; P.spre.parentNode.hidden = !spring;
+    P.sk.box.hidden = !spring; P.sz.box.hidden = !spring; P.sb.box.hidden = !spring; P.spre.parentNode.hidden = !spring;
+    // With springs the duration sits beside the stiffness it is tied to, and the damping beside the
+    // bounce; with Bezier curves it goes back beside the ready-made curves
+    P.ctrls.insertBefore(P.dur.box, spring ? P.sz.box : P.note);
     P.base.parentNode.hidden = spring; P.fadeRange.hidden = spring;
     P.fk.box.hidden = !spring; P.fms.box.hidden = !spring;
     P.sk.lab.textContent = t('stiffness'); P.sk.input.value = p.k; P.sk.val.textContent = num(p.k);
-    P.sz.lab.textContent = t('damping'); P.sz.input.value = p.z; P.sz.val.textContent = dec(p.z);
+    P.sz.lab.textContent = t('damping'); P.sz.input.value = p.z; P.sz.val.textContent = dec(p.z, 3);
+    P.sb.lab.textContent = t('bounce'); P.sb.input.value = bounceOf(p.z); P.sb.val.textContent = dec(bounceOf(p.z), 1) + '%';
     P.spreLab.textContent = t('presetSpring');
     if (P.spre.options.length !== SPRINGS.length + 1) {
       while (P.spre.firstChild) P.spre.removeChild(P.spre.firstChild);
@@ -909,7 +928,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   function phaseTokens(comp, ph) {
     var p = S[comp][ph], at = function (pc) { return Math.round((p.fade.base === 'time' ? pc / 100 : timeAt(p.c, pc / 100)) * p.ms); };
     var o = S.mode === 'spring' ?
-      { 'molla': { 'rigidita': p.k, 'smorzamento': p.z }, 'molla-compose': composeSpring(p.k, p.z), 'durata-ms': p.ms,
+      { 'molla': { 'rigidita': p.k, 'smorzamento': p.z, 'rimbalzo-percento': Math.round(bounceOf(p.z) * 10) / 10 }, 'molla-compose': composeSpring(p.k, p.z), 'durata-ms': p.ms,
         'dissolvenza': { 'attiva': p.fade.on, 'molla': { 'rigidita': p.fade.k, 'smorzamento': 1 }, 'durata-ms': p.fade.ms } } :
       { 'curva': cssOf(p.c), 'curva-compose': composeOf(p.c), 'bezier': p.c.slice(), 'durata-ms': p.ms,
         'dissolvenza': { 'attiva': p.fade.on, 'misura': p.fade.base === 'time' ? 'tempo' : 'percorso',

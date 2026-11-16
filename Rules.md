@@ -215,7 +215,12 @@ numero per scelta dell'utente.
   sopra il riquadro principale e allineato al suo bordo sinistro (su un telefono: una riga con
   l'interruttore e le linguette, e sotto le due azioni), e ogni regolazione principale (movimento e
   dissolvenza, con le molle e con Bézier) ha nella sua tendina il valore pronto di AIV, che si chiama
-  `Molla AIV` o `Curva AIV`.
+  `Molla AIV` o `Curva AIV`. Dalla 1.33 (sua richiesta dello stesso giorno: *l'importante è che
+  siano interdipendenti in modo corretto*) accanto allo smorzamento c'è il rimbalzo, cioè di quanto
+  la molla supera il traguardo in percentuale della corsa: sono lo stesso valore letto in due modi,
+  e muovendo uno cambia l'altro. ⚠️ Una molla che rimbalza si disegna con la sua forma vera, picco
+  compreso: dividerla per il suo valore finale, come si fa per quella senza rimbalzo, toglieva mezzo
+  punto al rimbalzo (1,0% disegnato contro 1,5% dichiarato).
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in
