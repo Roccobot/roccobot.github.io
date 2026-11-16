@@ -206,7 +206,11 @@ numero per scelta dell'utente.
   col grafico della curva e quello della velocità nello stile di After Effects. Dalla 1.30 (voce
   `Elastico`, sua richiesta del 2026-11-16) un interruttore globale sceglie come nascono le curve:
   con le molle di Material 3 Expressive (rigidità, smorzamento e durata, e una molla sua per la
-  dissolvenza), che sono il valore di serie, o con le curve di Bézier.
+  dissolvenza), che sono il valore di serie, o con le curve di Bézier. ⚠️ **Con le molle rigidità e
+  durata sono legate a doppio filo** (dalla 1.31, sua scelta `Legame-01` dello stesso giorno): la
+  durata è il tempo che serve alla molla per arrivare (quando manca meno dello 0,5% della corsa),
+  quindi muovendo una cambia l'altra, e lo smorzamento cambia la durata. Slegate, la pagina
+  lasciava impostare coppie che non sono una molla, come rigidità 1600 con 140 ms.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in
