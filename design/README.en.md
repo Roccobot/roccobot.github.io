@@ -227,7 +227,7 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | Back gesture | 180 ms with the finger at the end, linear | `PredictiveBack.kt` |
 | Back into the thumbnail | 300 ms, quartic ease-out | `SWIPE_MS` |
 | Back on a menu | down to 90%; 100 ms if canceled | `BACK_SCALE` |
-| scrim behind panels | rises with the panel's movement and goes down with the fade; behind the sheet it follows its travel | `Veil.kt`, `LabMotion.IN_MS`, `Sheet.kt` |
+| scrim behind panels | rises with the panel's movement and goes down in a straight line over 270 ms; behind the sheet it follows its travel | `Veil.kt`, `LabMotion.IN_MS`, `LabMotion.VEIL_OUT_MS`, `Sheet.kt` |
 | menu entrance | 120 ms from scale 0.96, `CubicBezier(0.2, 0, 0, 1)` | `MENU_IN` |
 | menu exit | 75 ms, linear | `MENU_OUT_MS` |
 | Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
