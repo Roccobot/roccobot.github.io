@@ -310,7 +310,9 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
 (function () {
   'use strict';
   // The version, SlimVer: its one source, shown beside the title.
-  var VERSION = '1.37';
+  var VERSION = '1.38';
+  // How long the scrim behind the dialog takes to go down, in a straight line: AIV's LabMotion.VEIL_OUT_MS.
+  var VEIL_OUT_MS = 270;
   document.getElementById('version').textContent = VERSION;
   // ── Texts, in Italian and English ──
   var T = {
@@ -334,7 +336,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scala', scaleFrom: 'Scala di partenza', scaleTo: "Scala d'arrivo",
       peak: 'picco', avg: 'media', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrata', phOut: 'Uscita', phOpen: 'Aperto', phShut: 'Chiuso',
-      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo della scheda segue la sua corsa; quello della finestra segue la sua dissolvenza, o il movimento se la dissolvenza è spenta, come in AIV. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro, e cambia anche la durata. Il rimbalzo è lo stesso valore letto al contrario: di quanto la molla supera il traguardo, in percentuale della corsa, quindi muovendo uno cambia l'altro. La dissolvenza ha una molla sua, senza rimbalzo; in uscita la molla è riprodotta all'indietro, quindi l'opacità resta quasi piena all'inizio e cala verso la fine. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
+      foot: "La scheda percorre la sua altezza, 500 dp su uno schermo di 412 x 892 dp; la finestra cresce o si stringe sulla scala. La scia è una sfocatura verticale proporzionale alla strada che la curva fa in un fotogramma a 60 Hz, piena dove la curva corre di più. Il velo della scheda segue la sua corsa; quello della finestra entra con la sua dissolvenza, o col movimento se la dissolvenza è spenta, ed esce in linea retta in 270 ms, come in AIV. Con 'Molle' la curva è quella di una molla che parte ferma, con rigidità e smorzamento come in Compose. La durata è il tempo dopo il quale alla molla manca meno dello 0,5% della corsa, quindi è legata alla rigidità: muovendo una cambia l'altra, e dalla durata la rigidità prende la decina più piccola con cui la molla arriva in tempo. Lo smorzamento dice quanto la molla frena: a 1 arriva senza superare il traguardo, sotto 1 lo supera e torna indietro, e cambia anche la durata. Il rimbalzo è lo stesso valore letto al contrario: di quanto la molla supera il traguardo, in percentuale della corsa, quindi muovendo uno cambia l'altro. La dissolvenza ha una molla sua, senza rimbalzo; in uscita la molla è riprodotta all'indietro, quindi l'opacità resta quasi piena all'inizio e cala verso la fine. I valori di serie sono quelli del design system. Con 'Bézier' la curva di serie è la più vicina alla molla del design system, da cui si scosta al massimo dell'1,5% della corsa. I valori si salvano solo in questo browser.",
       presets: { ds: 'Curva AIV', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (rimbalzo)' }
     },
     en: {
@@ -357,7 +359,7 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       scale: 'Scale', scaleFrom: 'Start scale', scaleTo: 'End scale',
       peak: 'peak', avg: 'average', unitSheet: 'dp/s', unitDialog: '%/s',
       phIn: 'Entrance', phOut: 'Exit', phOpen: 'Open', phShut: 'Closed',
-      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The sheet\'s scrim follows its travel; the dialog\'s follows its fade, or the movement when the fade is off, as in AIV. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back, and the duration changes too. The bounce is the same value read the other way: how far the spring passes the end, as a percentage of the way, so moving one changes the other. The fade has its own spring, with no bounce; on the exit the spring is played backwards, so the opacity stays nearly full at first and drops toward the end. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
+      foot: 'The sheet travels its own height, 500 dp on a 412 x 892 dp screen; the dialog grows or shrinks on its scale. The trail is a vertical blur in proportion to the way the curve covers in one 60 Hz frame, full where the curve runs fastest. The sheet\'s scrim follows its travel; the dialog\'s comes in with its fade, or with the movement when the fade is off, and goes out in a straight line over 270 ms, as in AIV. With \'Springs\' the curve is that of a spring starting at rest, with stiffness and damping as in Compose. The duration is the time after which the spring is within 0.5% of the way, so it is tied to the stiffness: moving one changes the other, and from the duration the stiffness takes the smallest ten with which the spring arrives in time. Damping says how much the spring brakes: at 1 it arrives without passing the end, below 1 it passes it and comes back, and the duration changes too. The bounce is the same value read the other way: how far the spring passes the end, as a percentage of the way, so moving one changes the other. The fade has its own spring, with no bounce; on the exit the spring is played backwards, so the opacity stays nearly full at first and drops toward the end. The default values are the design system\'s. With \'Bézier\' the default curve is the closest to the design system\'s spring, off it by 1.5% of the run at most. Values are saved in this browser only.',
       presets: { ds: 'AIV curve', fluido: 'Fluido (AIV)', linear: 'linear', ease: 'ease', easeIn: 'ease-in', easeOut: 'ease-out', easeInOut: 'ease-in-out', emph: 'Material 3, emphasized decelerate', emphA: 'Material 3, emphasized accelerate', std: 'Material 3, standard', back: 'Back out (overshoot)' }
     }
   };
@@ -378,24 +380,25 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
   // linear ramp (what it is measured on, from, to): the one closest to the design system's fade spring.
   var FADE_SPRINGS = [['ds', 2820], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
   var FADE_RAMPS = [['ds', 'time', 0, 44]];
-  // The exit has its own: the AIV exit fade is the 710 spring over 280 ms played backwards, twice the
-  // entrance (1.36, `Indugio`); its closest ramp on a 320 ms phase is 40-90%, off it by 8% at most.
-  var FADE_SPRINGS_OUT = [['ds', 710], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
-  var FADE_RAMPS_OUT = [['ds', 'time', 40, 90]];
+  // The exit has its own: the AIV exit fade is the 1150 spring over 220 ms played backwards (1.38, AIV
+  // 1.8.0; until 1.37 the 710 spring over 280 ms); its closest ramp on a 320 ms phase is 32-70%, off it
+  // by 9% at most.
+  var FADE_SPRINGS_OUT = [['ds', 1150], ['fx', 1600], ['fxFast', 3800], ['fxSlow', 800]];
+  var FADE_RAMPS_OUT = [['ds', 'time', 32, 70]];
   function fadeList(ph) {
     return S.mode === 'spring' ? (ph === 'out' ? FADE_SPRINGS_OUT : FADE_SPRINGS) : (ph === 'out' ? FADE_RAMPS_OUT : FADE_RAMPS);
   }
   // The Roccobot Design System values (design/tokens.json, famiglia movimento): the panels move on
   // springs with no bounce, the movement with stiffness 540 over 320 ms and the fade with stiffness 2820
   // over 140 ms, the same for both components and both phases; the exit fade is the spring of stiffness
-  // 710 over 280 ms, played backwards (1.36). With Bezier curves the page starts from the cubic Bezier
+  // 1150 over 220 ms, played backwards. With Bezier curves the page starts from the cubic Bezier
   // closest to the movement spring, off it by 1.5% of the run at most, and from a linear fade over the
-  // first 44% of the time (140 ms of 320), from 40 to 90% on the exit.
+  // first 44% of the time (140 ms of 320), from 32 to 70% on the exit.
   var DS_BEZIER = [0.26, 0.28, 0.12, 1];
   function defaults() {
     var phase = function (fadeOn, extra, exit) {
       var p = { c: DS_BEZIER.slice(), k: 540, z: 1, ms: 320, fade: exit ?
-        { on: fadeOn, base: 'time', from: 40, to: 90, k: 710, ms: 280 } :
+        { on: fadeOn, base: 'time', from: 32, to: 70, k: 1150, ms: 220 } :
         { on: fadeOn, base: 'time', from: 0, to: 44, k: 2820, ms: 140 } };
       for (var key in extra) p[key] = extra[key];
       return p;
@@ -1058,11 +1061,14 @@ select { appearance: none; border: 1px solid var(--line); background: var(--fiel
       if (S.comp === 'sheet' && p.trail.on) blurDp = p.trail.dp * step(E, p.ms, x) / peakOf(ph);
       if (S.comp === 'dialog') { var s0 = p.scale / 100; scale = kind === 'in' ? s0 + (1 - s0) * f : 1 + (s0 - 1) * f; }
     }
-    // The scrim behind the sheet follows its travel; behind the dialog it follows the dialog's fade, or
-    // the movement when the fade is off, as in AIV (1.37): there the dialog's scrim comes in with the
-    // entrance fade and goes with the exit fade played backwards. Until 1.36 it followed the movement
-    // for both, so on the dialog's exit the screen cleared while the window was still nearly opaque.
-    var v = S[S.comp].veil, follow = S.comp === 'dialog' && ph && cur(ph).fade.on ? alpha : open;
+    // The scrim behind the sheet follows its travel. Behind the dialog it comes in with the entrance
+    // fade, or the movement when the fade is off (1.37), and goes down to zero in a straight line over
+    // VEIL_OUT_MS from the start of the exit, as in AIV 1.8.0 (1.38): 50 ms longer than the exit fade,
+    // so the background turns sharp after the window is gone. Until 1.37 it went with the exit fade, and
+    // until 1.36 it followed the movement for both phases.
+    var v = S[S.comp].veil, follow;
+    if (S.comp === 'dialog' && ph === 'out') follow = 1 - local / VEIL_OUT_MS;
+    else follow = S.comp === 'dialog' && ph && cur(ph).fade.on ? alpha : open;
     var vo = Math.max(0, Math.min(1, follow));
     scrim.style.opacity = v.on ? (v.op / 100 * vo).toFixed(3) : '0';
     var bb = v.on ? v.blur * scalePx * vo : 0;

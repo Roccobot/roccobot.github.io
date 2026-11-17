@@ -230,13 +230,17 @@ numero per scelta dell'utente.
   all'indietro**: l'opacità a ogni istante è quella che la molla ha nel punto speculare del tempo.
   Fino alla 1.35 era `1 - molla`, che perde metà dell'opacità nel primo quarto della durata con
   qualunque molla, ed è il motivo per cui nessun valore la rendeva morbida. I valori di serie
-  dell'uscita sono quelli di AIV, rigidità 710 su 280 ms, il doppio dell'entrata (con Bézier la rampa
-  dal 40 al 90% del tempo); `Copia tutto` dice il verso della dissolvenza. Dalla 1.37 (voce
-  `Indugio`, sua scelta `Velo-01` dello stesso giorno) il velo della finestra segue la sua
-  dissolvenza, o il movimento se la dissolvenza è spenta, come in AIV e nel design system; quello
-  della scheda segue la sua corsa. Fino alla 1.36 seguiva il movimento anche dietro la finestra,
-  quindi in uscita lo schermo si schiariva mentre la finestra era ancora quasi opaca (misurato: a
-  104 ms velo al 9% su 30, finestra al 95%), e il confronto con AIV ne risultava falsato.
+  dell'uscita sono quelli di AIV, dalla 1.38 rigidità 1150 su 220 ms (AIV 1.8.0, sua scelta
+  `Uscita-02`; fino alla 1.37 710 su 280 ms; con Bézier la rampa dal 32 al 70% del tempo, prima dal
+  40 al 90%); `Copia tutto` dice il verso della dissolvenza. Dalla 1.37 (voce `Indugio`, sua scelta
+  `Velo-01` dello stesso giorno) il velo della finestra entra con la sua dissolvenza, o col movimento
+  se la dissolvenza è spenta; quello della scheda segue la sua corsa. Fino alla 1.36 seguiva il
+  movimento anche dietro la finestra, quindi in uscita lo schermo si schiariva mentre la finestra era
+  ancora quasi opaca (misurato: a 104 ms velo al 9% su 30, finestra al 95%), e il confronto con AIV
+  ne risultava falsato. ⚠️ Dalla 1.38, come in AIV 1.8.0 (`Uscita-02`), **in uscita il velo della
+  finestra scende a zero in linea retta in 270 ms** dall'inizio dell'uscita, 50 ms più della
+  dissolvenza, così lo sfondo torna nitido dopo che la finestra è sparita; nella 1.37 scendeva con la
+  dissolvenza.
   Italiano e inglese (`Parlata-02`), il tasto `L` per la lingua e `T` per il tema, senza tasti a
   schermo; la barra spaziatrice è della pagina e fa da Play/Pausa, senza scorrere né premere il
   controllo che ha il fuoco (fuori dal campo di testo); fuori dalla mappa e dall'indicizzazione (`noindex`, `Recinto-01`); in
