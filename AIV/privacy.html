@@ -12,12 +12,17 @@
   THE PRIVACY POLICY OF AIV, since 5.70 (owner's choices A1 and C1, 2026-10-11).
   Google Play wants one address for it, and an app that reads photos and videos
   cannot be listed without one. It covers BOTH variants, because the honest answer
-  differs in one point only: AIV GitHub asks GitHub for the latest release.
+  differs in two points only: AIV GitHub asks GitHub for the latest release, and AIV
+  Play sells Fabulous through Google Play Billing (`play/.../Shop.kt`).
 
   ⚠️ Every sentence here is a claim about the code, and the code is what makes it
   true: no analytics, ads or crash reporting library (`app/build.gradle.kts`), and
   the network is opened only for an address the person chose (`ImageSource`,
-  `ImageActions`, `WebSeries`) or, in AIV GitHub only, by `Updater`. Whoever adds a
+  `ImageActions`, `WebSeries`) or, in AIV GitHub only, by `Updater`; in AIV Play the
+  Billing library talks to the Google Play app, never to a server of ours. Android's
+  backup takes what `res/xml/data_extraction_rules.xml` lists (settings and recent web
+  addresses in `datastore`, styles, the watermark logo), and not the covers, which are
+  reduced copies of the photos (owner's choice Informativa-01). Whoever adds a
   library or a request that sends something must change this page in the same
   release, and the answers for Play's 'Data safety' with it (`docs/Store.md`).
 
@@ -48,22 +53,26 @@
 
 <section id="it" lang="it">
   <h1>AIV: informativa sulla privacy</h1>
-  <p class="data">Aggiornata l'11 ottobre 2026</p>
+  <p class="data">Aggiornata il 18 novembre 2026</p>
 
   <p>AIV (Astonishing Image Viewer) è un'app per Android di Rocco Casadei (Roccobot). Esiste in due varianti: AIV Play, distribuita su Google Play, e AIV GitHub, scaricabile da questo sito. Questa informativa vale per tutte e due.</p>
 
   <h2>In breve</h2>
-  <p>AIV non raccoglie, non conserva e non condivide dati personali. Non ha account, pubblicità, statistiche d'uso né rapporti sugli errori, e non contiene librerie di terze parti che lo facciano.</p>
+  <p>AIV non raccoglie, non conserva e non condivide dati personali. Non ha account, pubblicità, statistiche d'uso né rapporti sugli errori, e non contiene librerie di terze parti che lo facciano. L'acquisto di Fabulous in AIV Play lo gestisce Google Play.</p>
 
   <h2>Le tue immagini</h2>
   <p>AIV chiede di accedere a foto e video per mostrarli, organizzarli e modificarli. Le immagini restano sul tuo telefono: AIV non le carica da nessuna parte. Se concedi l'accesso solo ad alcune foto, AIV vede solo quelle.</p>
 
   <h2>Le impostazioni</h2>
-  <p>Impostazioni, copertine e stili restano nella memoria dell'app sul telefono. Escono dal telefono solo se li esporti tu in un file, e solo dove scegli tu.</p>
+  <p>Impostazioni, copertine e stili restano nella memoria dell'app sul telefono, e li puoi esportare tu in un file, dove scegli tu.</p>
+  <p>Se sul telefono è acceso il backup di Android, il sistema salva le impostazioni, gli stili, il logo della filigrana e l'elenco degli indirizzi web aperti di recente, per ripristinarli quando reinstalli AIV o cambi telefono. Le copertine e le immagini non entrano nel backup. Il backup lo gestisce Android, nel tuo account Google, e si spegne dalle impostazioni del telefono.</p>
 
   <h2>La rete</h2>
   <p>AIV si collega a internet solo quando apri un'immagine da un indirizzo web: la richiesta va al sito di quell'indirizzo, che come per ogni navigatore vede l'indirizzo IP del telefono. AIV non manda altro.</p>
   <p>AIV GitHub, se l'aggiornamento automatico è acceso, una volta al giorno chiede a GitHub qual è l'ultima versione pubblicata, e scarica l'aggiornamento solo se lo confermi. AIV Play non lo fa: gli aggiornamenti li gestisce Google Play.</p>
+
+  <h2>Gli acquisti</h2>
+  <p>In AIV Play puoi acquistare Fabulous. L'acquisto passa da Google Play Billing, il sistema di pagamento di Google, col tuo account Google e alle condizioni di Google Play. AIV chiede a Google Play solo se hai acquistato Fabulous e qual è il suo prezzo, quando si apre e ogni volta che torni nell'app; non vede i tuoi dati di pagamento e non manda niente altrove. AIV GitHub non ha acquisti.</p>
 
   <h2>Modifiche</h2>
   <p>Se il comportamento di AIV cambia, questa pagina cambia nella stessa versione, con la data aggiornata in testa.</p>
@@ -76,22 +85,26 @@
 
 <section id="en" lang="en">
   <h1>AIV: privacy policy</h1>
-  <p class="data">Updated October 11, 2026</p>
+  <p class="data">Updated November 18, 2026</p>
 
   <p>AIV (Astonishing Image Viewer) is an Android app by Rocco Casadei (Roccobot). It comes in two variants: AIV Play, distributed on Google Play, and AIV GitHub, downloadable from this site. This policy covers both.</p>
 
   <h2>In short</h2>
-  <p>AIV does not collect, store or share personal data. It has no accounts, ads, usage analytics or crash reports, and it contains no third-party library that does.</p>
+  <p>AIV does not collect, store or share personal data. It has no accounts, ads, usage analytics or crash reports, and it contains no third-party library that does. Google Play handles the purchase of Fabulous in AIV Play.</p>
 
   <h2>Your images</h2>
   <p>AIV asks for access to photos and videos to show, organize and edit them. Your images stay on your phone: AIV does not upload them anywhere. If you grant access to some photos only, AIV sees only those.</p>
 
   <h2>Settings</h2>
-  <p>Settings, covers and styles stay in the app's storage on the phone. They leave the phone only if you export them to a file, and only where you choose.</p>
+  <p>Settings, covers and styles stay in the app's storage on the phone, and you can export them to a file, wherever you choose.</p>
+  <p>If Android backup is on for your phone, the system saves your settings, your styles, the watermark logo and the list of recently opened web addresses, to restore them when you reinstall AIV or change phones. Covers and images are not part of the backup. Android manages the backup, in your Google account, and you can turn it off in your phone's settings.</p>
 
   <h2>Network</h2>
   <p>AIV connects to the internet only when you open an image from a web address: the request goes to the site at that address, which, as with any browser, sees the phone's IP address. AIV sends nothing else.</p>
   <p>AIV GitHub, when automatic update is on, asks GitHub once a day for the latest published version, and downloads the update only if you confirm. AIV Play does not: Google Play handles its updates.</p>
+
+  <h2>Purchases</h2>
+  <p>In AIV Play you can buy Fabulous. The purchase goes through Google Play Billing, Google's payment system, with your Google account and under Google Play's terms. AIV asks Google Play only whether you have bought Fabulous and what it costs, when it opens and each time you return to the app; it does not see your payment details and sends nothing anywhere else. AIV GitHub has no purchases.</p>
 
   <h2>Changes</h2>
   <p>If AIV's behavior changes, this page changes in the same version, with the date at the top updated.</p>
