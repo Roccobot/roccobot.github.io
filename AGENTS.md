@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.30
+> **Versione**: 3.31
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -205,7 +205,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   versione della correzione.
 - **Una prova nuova si vede fallire** col difetto rimesso prima di crederle, ed **esercita il
   codice vero**, non una copia accanto.
-- **Una prova rossa non si aggira mai**: se è sbagliata si corregge la prova, scrivendo perché.
+- **Una prova rossa non si aggira mai**: se è sbagliata si corregge la prova, scrivendo perché. Un
+  banco intermittente è rosso, e ferma merge e rilascio finché non se ne sa la causa.
 - **Prima di un commit si lancia `refcheck.py`** (`.memo/scripts/` di `roccobot.github.io`) sui
   file di regole, sul diff e sul messaggio, e in ogni clone si attivano gli hook di git
   (`git config core.hooksPath .githooks`). Un testo composto dentro una chiamata a uno strumento
