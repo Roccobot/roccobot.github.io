@@ -207,5 +207,19 @@ class StampTests(unittest.TestCase):
         self.assertTrue(githook.stale_stamp(diff))
 
 
+class NonUtf8Diff(unittest.TestCase):
+    """A staged file in Latin-1 (the case of Little CMS in AIV, 2026-11-18): reading the diff
+    stopped the hook with a UnicodeDecodeError, and with it every commit of that repo."""
+
+    def test_latin1_file_is_read(self):
+        import subprocess
+        root = Path(tempfile.mkdtemp())
+        subprocess.run(['git', 'init', '-q', str(root)], check=True)
+        (root / 'cmscgats.c').write_bytes('/* Copyright Martí Maria */\n'.encode('latin-1'))
+        subprocess.run(['git', '-C', str(root), 'add', 'cmscgats.c'], check=True)
+        diff = githook.git('-C', str(root), 'diff', '--cached', '-M')
+        self.assertIn('Copyright Mart', diff)
+
+
 if __name__ == '__main__':
     unittest.main()
