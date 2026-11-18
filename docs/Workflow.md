@@ -249,6 +249,13 @@
     workflow di minificazione, non lo seguiva nessuno. Adesso una dipendenza fissata così entra nel
     registro con `in_use`, cioè il file e il modello che ne leggono la versione. A mano si lancia
     dalla radice del repo: `python3 ../roccobot.github.io/.memo/scripts/check-dependencies.py`.
+  - ⚠️ **Dal 2026-11-18 (`Scandaglio`) segue anche gli strumenti dell'SDK di Android**: l'NDK e
+    CMake che compilano la libreria nativa del colore di AIV (Little CMS, dalla 1.8.5) si
+    installano con `sdkmanager`, che né Maven né GitHub elencano, quindi nessuno li seguiva. La
+    sorgente `android-sdk` legge il catalogo dei pacchetti di Google (`repository2-3.xml`), col solo
+    canale stabile e le versioni confrontate numero per numero; le prove sono in
+    `.memo/scripts/test_check_dependencies.py`. Uno strumento nuovo fissato nella build entra nel
+    registro allo stesso modo, nel commit che lo fissa.
   - ⚠️ **Lo script esce 1 anche quando va in errore**, non solo quando trova una versione nuova:
     il workflow distingue i due casi dalle righe `NEW` e `STALE` dell'uscita, e un errore senza
     quelle righe fa rossa la run invece di aprire una issue vuota.
