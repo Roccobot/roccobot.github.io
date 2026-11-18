@@ -36,7 +36,9 @@ DASHES = (chr(0x2014), chr(0x2013))
 
 
 def git(*args):
-    r = subprocess.run(['git', *args], capture_output=True, text=True)
+    # A diff can hold bytes that are not UTF-8 (third-party sources in Latin-1, like Little CMS in
+    # AIV): they are replaced, so the hook checks the rest instead of stopping on a decode error.
+    r = subprocess.run(['git', *args], capture_output=True, text=True, errors='replace')
     return r.stdout
 
 
