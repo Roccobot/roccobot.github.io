@@ -14,8 +14,9 @@ The version in use comes from where it is set: scripts/markdown/package.json for
 packages, Package.resolved for the Swift packages, what an `in_use` entry names (a pattern in
 a file, such as a version catalogue, or a font file's own version), the register itself for
 what was ported or followed. GitHub is read with `gh` (authenticated), npm with `npm view`, and
-Google Fonts, the font files, Maven (Google and Central), Gradle and swift.org's list of Swift
-releases (source `swift`) with `curl`. Nothing is changed:
+Google Fonts, the font files, Maven (Google and Central), Gradle, swift.org's list of Swift
+releases (source `swift`) and Google's catalogue of the Android SDK packages, NDK and CMake
+(source `android-sdk`), with `curl`. Nothing is changed:
 after reading a newer version, its number goes in the register (or the manifest) by hand, in
 the commit that brings in what was worth taking.
 
@@ -213,6 +214,30 @@ def swift_latest(releases):
     return newest['name'], iso(newest['date'] + 'T00:00:00Z')
 
 
+ANDROID_REPOSITORY = 'https://dl.google.com/android/repository/'
+
+
+def android_sdk_latest(package, catalogue, dated=None):
+    """The newest stable version of a package of Google's Android SDK catalogue (`ndk`, `cmake`)
+    and the date of its Linux archive. Since Scandaglio (2026-11-18, Rocco's approval of the card that
+    the 1.8.5 of AIV opened): the NDK and CMake that build AIV's native code come from
+    `sdkmanager`, which neither Maven nor GitHub lists, so nothing followed them. Only the stable
+    channel counts (`channel-0`); versions compare number by number, so 30.0.16248370 beats 29.x."""
+    found = []
+    pattern = r'<remotePackage path="' + re.escape(package) + r';([^"]+)">(.*?)</remotePackage>'
+    for version, body in re.findall(pattern, catalogue, re.S):
+        if 'ref="channel-0"' not in body:
+            continue
+        archive = re.search(r'<url>([^<]*linux[^<]*)</url>', body)
+        found.append((tuple(int(n) for n in re.findall(r'\d+', version)), version,
+                      archive[1] if archive else None))
+    if not found:
+        return '?', None
+    _, version, archive = max(found)
+    dated = dated or last_modified
+    return version, dated(ANDROID_REPOSITORY + archive) if archive else None
+
+
 def in_use(dependency, manifests, resolved):
     if 'font' in dependency.get('in_use', {}):
         return font_version((ROOT / dependency['in_use']['font']).read_bytes())
@@ -250,6 +275,8 @@ def latest(dependency):
         return current['version'], datetime.strptime(current['buildTime'], '%Y%m%d%H%M%S%z')
     if source == 'swift':
         return swift_latest(json.loads(fetch('https://www.swift.org/api/v1/install/releases.json')))
+    if source == 'android-sdk':
+        return android_sdk_latest(dependency['package'], fetch(ANDROID_REPOSITORY + 'repository2-3.xml').decode())
     raise SystemExit(f'unknown source: {source}')
 
 
