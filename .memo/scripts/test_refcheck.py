@@ -82,6 +82,18 @@ class CaporaliTests(unittest.TestCase):
                                 cwd=refcheck.TOOLS)
         self.assertEqual(result.returncode, 1, result.stdout)
 
+    def test_diff_reads_a_latin1_file_on_disk(self):
+        # A third-party source in Latin-1 (cmscgats.c of Little CMS in AIV, 2026-11-18): reading
+        # it from disk stopped the --diff mode, and with it every commit of that repo.
+        work = refcheck.TOOLS / 'latin1'
+        work.mkdir(exist_ok=True)
+        (work / 'cmscgats.c').write_bytes('/* Copyright Martí Maria */\n'.encode('latin-1'))
+        diff = ('diff --git a/cmscgats.c b/cmscgats.c\nnew file mode 100644\n--- /dev/null\n'
+                '+++ b/cmscgats.c\n@@ -0,0 +1 @@\n+/* Copyright Mart� Maria */\n')
+        result = subprocess.run([sys.executable, str(self.command_script), '--diff'],
+                                input=diff, text=True, capture_output=True, cwd=work)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_diff_allows_only_registered_quote(self):
         for quote, expected in (('\u00abTutte le cose hanno un nome\u00bb', 0),
                                 ('\u00abUna frase nuova\u00bb', 1)):

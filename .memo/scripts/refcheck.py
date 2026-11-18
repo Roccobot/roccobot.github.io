@@ -1751,7 +1751,10 @@ def main_diff():
         # retain their existing source-language and string-literal filtering.
         path = Path.cwd() / f
         hunks = contexts[f]
-        source = path.read_text(encoding="utf-8").splitlines() if path.is_file() else []
+        # A third-party source can be Latin-1 (Little CMS in AIV): its bytes that are not UTF-8
+        # are replaced, as git's diff does, so the check reads the rest instead of stopping.
+        source = (path.read_text(encoding="utf-8", errors="replace").splitlines()
+                  if path.is_file() else [])
         added = [(number, line) for hunk in hunks for number, line, yes in hunk if yes]
         matches_file = all(0 < number <= len(source) and source[number - 1] == line
                            for number, line in added)
