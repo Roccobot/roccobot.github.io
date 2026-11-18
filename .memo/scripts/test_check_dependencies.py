@@ -74,5 +74,39 @@ class SwiftTests(unittest.TestCase):
         self.assertEqual(when, datetime(2026, 10, 29, tzinfo=timezone.utc))
 
 
+CATALOGUE = """<sdk:sdk-repository>
+<remotePackage path="ndk;29.0.14206865"><channelRef ref="channel-0"/>
+<archives><archive><complete><url>android-ndk-r29-linux.zip</url></complete></archive></archives></remotePackage>
+<remotePackage path="ndk;31.0.17000000-beta1"><channelRef ref="channel-1"/>
+<archives><archive><complete><url>android-ndk-r31-beta1-linux.zip</url></complete></archive></archives></remotePackage>
+<remotePackage path="ndk;30.0.16248370"><channelRef ref="channel-0"/>
+<archives><archive><complete><url>android-ndk-r30-darwin.dmg</url></complete></archive>
+<archive><complete><url>android-ndk-r30-linux.zip</url></complete></archive></archives></remotePackage>
+<remotePackage path="cmake;3.6.4111459"><channelRef ref="channel-0"/>
+<archives><archive><complete><url>cmake-3.6.4111459-linux-x86_64.zip</url></complete></archive></archives></remotePackage>
+<remotePackage path="cmake;3.31.6"><channelRef ref="channel-0"/>
+<archives><archive><complete><url>cmake-3.31.6-linux.zip</url></complete></archive></archives></remotePackage>
+</sdk:sdk-repository>"""
+
+
+class AndroidSdkTests(unittest.TestCase):
+    """The 'android-sdk' source (Scandaglio, 2026-11-18): Google's catalogue of the SDK packages,
+    for the NDK and CMake that build AIV's native code, which no other source lists."""
+
+    def test_the_newest_stable_version_and_its_linux_archive(self):
+        asked = []
+        version, _ = check.android_sdk_latest('ndk', CATALOGUE, dated=asked.append)
+        self.assertEqual(version, '30.0.16248370')
+        self.assertEqual(asked, [check.ANDROID_REPOSITORY + 'android-ndk-r30-linux.zip'])
+
+    def test_versions_compare_number_by_number(self):
+        # 3.6.4111459 is older than 3.31.6, though as text it comes after it.
+        version, _ = check.android_sdk_latest('cmake', CATALOGUE, dated=lambda url: None)
+        self.assertEqual(version, '3.31.6')
+
+    def test_an_unknown_package(self):
+        self.assertEqual(check.android_sdk_latest('emulator', CATALOGUE, dated=lambda url: None), ('?', None))
+
+
 if __name__ == '__main__':
     unittest.main()
