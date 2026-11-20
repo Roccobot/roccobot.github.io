@@ -264,8 +264,6 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
 | menu Start, dal suo angolo | 110 ms, la curva della pillola | `START_IN_MS` |
-| tocco sul Tondo | giù in 30 ms, su in 60, al 70%; × in 90 ms, colore in 55 | `RIMBALZO` |
-| Tondo che se ne va | 100 ms, una curva che parte veloce | `VIA_MS` |
 | salto in cima e in fondo | 280 ms più 0,16 ms per pixel, al massimo 800 | `Jump.kt` |
 | strisciata e assestamento dell'immagine, e cambio di spazio per la barra delle info | 220 ms; col dito fermo la curva Fluido, col dito in movimento `cubic-bezier(0.3, 0.3 x v, 0.3, 1)`, con v la velocità del dito divisa per quella media, fra 0 e 3 | `SNAP_MS`, `BAR_ROOM_MS`, `releaseEasing` |
 | sostituto che lascia il posto | 150 ms | `THUMB_FADE_MS` |

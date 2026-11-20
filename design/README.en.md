@@ -264,8 +264,6 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
 | Start menu, from its corner | 110 ms, the pill's curve | `START_IN_MS` |
-| tap on the Tondo | down in 30 ms, up in 60, to 70%; × in 90 ms, color in 55 | `RIMBALZO` |
-| Tondo leaving | 100 ms, a curve that starts fast | `VIA_MS` |
 | jump to top and bottom | 280 ms plus 0.16 ms per pixel, at most 800 | `Jump.kt` |
 | swipe and image settling, and the change of space for the info bar | 220 ms; with the finger still the Fluido curve, with the finger moving `cubic-bezier(0.3, 0.3 x v, 0.3, 1)`, with v the finger's speed divided by the average speed, between 0 and 3 | `SNAP_MS`, `BAR_ROOM_MS`, `releaseEasing` |
 | stand-in giving way | 150 ms | `THUMB_FADE_MS` |
