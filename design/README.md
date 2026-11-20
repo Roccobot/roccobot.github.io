@@ -122,13 +122,24 @@ I due **accenti primari** sono `turchese` (`#43B59E`) e `petrolio` (`#00727B`), 
 il turchese si legge sullo sfondo scuro (6,93), il petrolio su quello chiaro (5,50). `accento`
 vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'icona.
 
-- **Testo e accento**: l'accento non porta mai testo corrente. Per il testo d'accento si usa
-  `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra l'accento pieno `contenuto-su-accento`.
+- **Testo e accento**: l'accento non porta mai testo corrente, e nemmeno la grafica sottile, cioè
+  i segni che sul loro fondo restano sotto 3:1 (una linea fine, una staffa, una maniglia). Per il
+  testo d'accento e per quei segni si usa `testo-accento` (`#0B6B5B` e `#4FD9BE`), e sopra
+  l'accento pieno `contenuto-su-accento`.
 - **La scacchiera**: dietro un'immagine trasparente c'è una scacchiera di quadretti da
   `scacchiera` (12), perché in un visualizzatore la trasparenza è un'informazione.
-- **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine, `superficie` per schede e
-  pannelli, `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
+- **Uno sfondo col suo tema**: testi e segni scritti direttamente sopra uno sfondo che ha un tema
+  suo (il nero del visualizzatore, la scacchiera) prendono i colori di quel tema, non quelli
+  dell'app: col tema chiaro dell'app e lo sfondo scuro, un messaggio scuro non si leggerebbe.
+- **Fondi**: `fondo` (`#FCFBF8`, `#151B1A`) per schermate e pagine; `superficie` per le schede
+  delle pagine web; `superficie-scheda` (`#F3F1EE`, `#283130`) per le schede dal basso, le
+  finestre, i pannelli e gli editor delle app, che è anche il fondo di serie delle finestre di
+  Material 3; `superficie-alta` per campi e righe evidenziate. Il fondo scuro è un grigio appena
   blu e verde, non un verde.
+- **Errore**: `errore` (`#B3261E`, `#F2B8B5`, il rosso di serie di Material 3) per gli errori e
+  per il tasto che fa ciò che non si disfa (`Elimina`, `Scarta`); l'accento resta per le azioni.
+  Sul fondo delle finestre (`superficie-scheda`) legge a 5,80 e 7,82, sul fondo a 6,32 e 10,22.
+  Il rosso delle quote consumate, nelle pagine di servizio, è `soglia-rosso-intenso`.
 - **Pagine di servizio** (RoccoHub, `hub/` dell'hub): hanno fondi loro, `servizio-fondo` e
   `servizio-scheda` (nello scuro `fondo-intermedio` e `scheda-intermedia`), quindi testi loro,
   nella famiglia `servizio-`. I pulsanti pieni usano `servizio-accento`, l'accento rovesciato
@@ -138,6 +149,9 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   `soglia-rosso-intenso` dal 90%, sempre col numero accanto.
 - **Testo**: `testo` (16,55 e 14,21), `testo-secondario` per note e didascalie, `contorno` per i
   bordi dei controlli, `linea` per i separatori che non portano informazione.
+- **Il binario di un cursore regge 3:1 sul fondo su cui si trova**: il colore di serie della
+  corsa spenta sparisce su un fondo più scuro, e su `superficie-scheda` il binario è `contorno`
+  (3,55 e 4,27). Un cursore su un fondo nuovo riceve il suo colore, misurato.
 - **Tavolozza di Aomidori**: `turchese-luce`, `menta-chiaro`, `ardesia`.
 - **Il tema scelto dentro un'app non è quello di sistema**: ogni colore passa dalla tavolozza
   dell'app.
@@ -195,6 +209,9 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
 - **Lettura in Aomidori**: la scrivono gli stili (Aomidori Flex e derivati) in Roboto Flex; versi
   e citazioni in Noto Serif; codice in JetBrains Mono. `Carattere personalizzato` sceglie fra
   Literata, Noto Serif, Roboto Flex e Inter.
+- **Cifre a larghezza fissa dove cambiano** (un tempo che scorre, un valore che si regola,
+  `tnum`): con le cifre proporzionali il numero cambia larghezza a ogni passo e sposta quello che
+  ha accanto.
 - **Nessuna parola resta sola a un capo della frase** nei paragrafi: si lega con lo spazio
   unificatore, sul web si usano `text-wrap: pretty` per i paragrafi e `text-wrap: balance` per i
   titoli, e un segno consequenziale (`→`, `>`, `›`) va a capo insieme alle parole vicine. Dove non
@@ -211,6 +228,13 @@ vale turchese nel tema chiaro e petrolio in quello scuro, ed è il colore dell'i
   massimo 520 e si trova il 15% più in basso del centro, con `aria-dialogo` intorno.
 - Sul web il testo corrente è largo al massimo `misura-testo` (40 rem), le schede hanno
   `raggio-scheda-web` (14) e i pulsanti sono a pillola (`raggio-pieno`).
+- **Niente si sposta perché un contenuto cambia o arriva dopo**: le cifre che cambiano hanno la
+  larghezza fissa; un pannello che scambia due contenuti è alto quanto il più alto dei due; il
+  nome sotto una miniatura tiene sempre le sue righe, anche corto o non ancora arrivato; quello
+  che arriva dopo ha il suo posto riservato da subito.
+- **Un testo su una riga scende di corpo fino a un minimo**, che ogni elemento dichiara, e solo
+  sotto quel minimo va a capo; si taglia solo come ultima risorsa, e quello che non si vede resta
+  nella descrizione per il lettore di schermo.
 
 ## Movimento
 
@@ -239,7 +263,7 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 | scia di una scheda che si sposta | sfocatura verticale, picco di 10 dp in entrata e di 5 in uscita, in proporzione alla strada che la molla fa in un fotogramma; oltre il bordo sfuma nel trasparente; dove `Effetto movimento` ha acceso `Pannelli dal basso` | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | finestra che scorre con la tastiera | 250 ms, la curva Fluido | `GLIDE_MS` |
 | pillola, apertura e chiusura | 160 ms, esponenziale | `PILL_OPEN_MS` |
-| menu Start, dal suo angolo | 110 ms, la curva della pillola | `BAR_IN_MS` |
+| menu Start, dal suo angolo | 110 ms, la curva della pillola | `START_IN_MS` |
 | tocco sul Tondo | giù in 30 ms, su in 60, al 70%; × in 90 ms, colore in 55 | `RIMBALZO` |
 | Tondo che se ne va | 100 ms, una curva che parte veloce | `VIA_MS` |
 | salto in cima e in fondo | 280 ms più 0,16 ms per pixel, al massimo 800 | `Jump.kt` |
@@ -269,13 +293,20 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
   con qualunque molla, e l'uscita sembrerebbe un taglio. Il velo e la sfocatura dietro una finestra
   al centro scendono in linea retta in 270 ms, 50 ms più di lei, così lo sfondo torna nitido dopo
   che la finestra è sparita.
+- **Eccezione dichiarata: la finestra che ne apre un'altra sopra di sé** (un avviso, un
+  pannellino) non esce, si fa da parte e torna. Resta piena finché l'altra non è entrata del
+  tutto, poi si dissolve in 140 ms con la molla d'entrata; quando l'altra esce torna piena, con la
+  stessa molla. Resta in scena per tutto il tempo, quindi nessun fotogramma è senza pannello e il
+  velo non scende; nascosta, il lettore di schermo non la legge. Le due dissolvenze vanno in fila:
+  insieme, per un attimo si vedrebbe lo sfondo attraverso le due finestre.
 - **La dissolvenza ha una molla sua**, più breve del movimento (140 ms contro 320), e parte insieme
   a lui. La scheda dal basso non ha dissolvenza; la scheda della selezione, gli avvisi e le finestre
   al centro sì.
 - **Quello che si sposta ha la scia, quello che resta al centro cresce e si stringe**: la scheda
   sfoca nel verso del movimento quanto corre la molla, la finestra al centro va e viene dal 92%.
-- **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando, e
-  una finestra che si apre con un velo già in scena sfoca subito al pieno.
+- **Fra due superfici niente lampi.** Il velo non scende finché un'altra superficie sta entrando,
+  una finestra che si apre con un velo già in scena sfoca subito al pieno, e il velo di chi arriva
+  riparte da quello già dipinto.
 - **Un sostituto lascia il posto sfumando**, in 150 ms: la miniatura all'immagine piena, la copia
   che arriva tardi, la copertura di un video al primo fotogramma.
 - **Due glifi che si incrociano usano un esponente sotto uno** (0,8): con due opacità lineari, a
@@ -303,7 +334,8 @@ codice). I valori sono anche nei token, famiglia `movimento`, ognuno con la sua 
 - **Dal visualizzatore alla griglia la foto torna nella sua miniatura**, quella toccata per aprirla
   (per un fumetto, la sua copertina), in 300 ms: parte veloce, frena e si ferma esattamente sulla
   miniatura senza rimpicciolirsi oltre, e solo lì sfuma in tre fotogrammi. Un video porta il suo
-  fotogramma; se la miniatura non è più in vista, la foto si restringe verso il centro.
+  fotogramma; se la miniatura non è più in vista, la foto si restringe verso il centro. Una foto
+  più piccola della sua cella non cresce per raggiungerla: torna alla griglia con una dissolvenza.
 - **Al rilascio la curva continua**: la transizione finisce da sola rallentando, e annullando il
   gesto si torna indietro dalla frazione raggiunta.
 - **La schermata che arriva va sotto tutte quelle già in scena**, anche dopo più gesti di seguito.
@@ -329,23 +361,37 @@ grigie.
   il 60%, anche con niente dietro. A 12 dp l'alone si leggerebbe come una macchia intorno al pannello.
 - **Sfocatura dietro i pannelli** (`sfocatura-pannelli`), **spenta di fabbrica**: dietro menu,
   dialoghi e schede, `sfocatura-velo` (8 dp) col `velo` al 30%, nero nel tema chiaro e bianco in
-  quello scuro, che sale col movimento del pannello e scende con la dissolvenza (dietro una scheda
-  dal basso ne segue la corsa). I pannelli sono nudi: staccano col solo colore della superficie,
+  quello scuro, che sale col movimento del pannello e scende in linea retta in 270 ms, con la
+  sfocatura (dietro una scheda dal basso ne segue la corsa). I pannelli sono nudi: staccano col solo colore della superficie,
   senza bordo. La esegue il sistema, e si paga solo a pannello aperto.
 - **Una sfocatura che cala vuole in scena qualcosa che se ne va**, o si legge come una messa a
   fuoco: un menu esce con una dissolvenza sola di 75 ms, pannello, sfocatura e velo insieme.
+- **Un menu che cambia quello che si vede dietro di lui si apre senza velo né sfocatura**, con
+  qualunque profondità: chi sceglie lo stile di un elemento deve vedere l'elemento mentre sceglie.
 - **Traslucido dei pulsanti principali** (`traslucido`), **lo stile di fabbrica** fra Solido,
   Trasparente (colore all'80%) e Traslucido, per Tondo, pillola e menu inferiore: raggio 16 dp,
   intensità 300%, opacità 40%, scostamento 35, che scurisce sul chiaro e schiarisce sullo scuro.
   Il colore è l'accento dell'altro tema, `#00727B` sul chiaro e `#43B59E` sullo scuro; sotto la
   copia sfocata c'è il fondo della pagina, e il glifo ha un colore fisso
   (`glifo-tondo-traslucido`).
-- **Barra superiore** (`barra-superiore`), **spenta di fabbrica**: miniature e righe scorrono
-  sotto la barra in alto, sfocate di 20 dp e velate al 60% col colore della pagina, da un bordo
-  all'altro della finestra.
+- **Barra superiore** (`barra-superiore`), **spenta di fabbrica in AIV GitHub, accesa in AIV
+  Play**, dove è una funzione di Fabulous: miniature e righe scorrono sotto la barra in alto,
+  sfocate di 20 dp e velate al 60% col colore della pagina, da un bordo all'altro della finestra, e
+  la barra finisce netta sul suo bordo.
+- **Barra superiore sfumata** (`barra-superiore-sfumata`), **spenta di fabbrica nelle due
+  varianti**, con `Barra superiore` attiva: la barra sfuma verso il basso. Velo e sfocatura sono
+  pieni dal bordo dello schermo e scendono a zero; il velo ha il colore del fondo dell'app.
+  - **Nella schermata principale**: velo al 90% fino a zero a 70 dp, sfocatura di 12 dp fino a
+    zero a 50 dp, con la curva che resta piena più a lungo (il coseno sul quadrato della
+    posizione), perché le icone della barra di sistema si leggano.
+  - **In una cartella, tema scuro**: velo al 95% e sfocatura di 16 dp, tutti e due fino a zero a
+    160 dp, con la curva coseno, morbida ai due capi.
+  - **In una cartella, tema chiaro**: velo pieno fino a zero a 170 dp e sfocatura di 20 dp fino a
+    zero a 160 dp, con la stessa curva: al 95% le foto si vedevano attraverso la cima.
 - **Intestazione animata** (`intestazione-animata`), **spenta di fabbrica**: chiudendosi, la
   fascia dell'intestazione si sfoca da zero al 55% della chiusura fino a 4 dp, con valori fissi.
-- **Sfumatura inferiore** (`sfumatura-inferiore`), **spenta di fabbrica**: la fascia della griglia
+- **Sfumatura inferiore** (`sfumatura-inferiore`), **spenta di fabbrica in AIV GitHub, accesa in
+  AIV Play**, dove è una funzione di Fabulous: la fascia della griglia
   in fondo si sfoca da zero, 80 dp sopra il fondo, fino al pieno sull'ultimo pixel, con una salita
   al quadrato; il raggio va da 1 a 4 dp e vale 2,6 alla prima accensione; in selezione è spenta.
 - **Effetto movimento** (`effetto-movimento`), **solo AIV GitHub, spento di fabbrica**: una scia
@@ -371,6 +417,44 @@ grigie.
   principale, uno per schermata, il contorno per le altre.
   La scheda dal basso ha gli angoli in alto di 28 (`raggio-scheda`), un rientro di 24 e il tasto di
   chiusura accanto al titolo.
+- **Tasti testuali**, in fondo a una finestra o a un pannello: la parola in `testo-accento`, mai
+  nell'accento, e un bersaglio di almeno 48 che cresce verso l'interno. L'ultima lettera del tasto
+  più alla fine cade sul margine del testo della finestra: il tasto sporge nel bordo di quanto vale
+  il suo respiro (12), nel verso della lingua. Un tasto da solo in fondo a un pannello prende tutta
+  la riga, con la parola al centro. Un tasto può avere anche una pressione lunga, che vibra e si
+  annuncia come le altre.
+- **Finestre di conferma**: il titolo è la domanda (`Vuoi scartare le modifiche?`), e il corpo c'è
+  solo se aggiunge qualcosa al titolo. Il corpo dice quello che succede davvero in quel caso: 'senza
+  passare dal cestino' solo quando il file lo salta davvero. `Annulla` a sinistra, l'azione a
+  destra; il tocco fuori vale `Annulla`, l'esito sicuro, perché una conferma non è una modale (lo
+  sono solo le finestre che raccolgono un testo scritto). L'azione che non si disfa ha il colore
+  `errore`.
+- **Uscire da un editor**: si esce con la freccia in alto o col gesto Indietro, che sono una porta
+  sola e chiedono conferma solo se ci sono modifiche da perdere (`Vuoi scartare le modifiche?`, con
+  `Annulla` e `Scarta`); senza modifiche si esce subito. La posizione di `Salva` è propria di ogni
+  editor. Un pannello dentro un editor, come quello della GIF, ha `Annulla` accanto alla sua azione.
+- **Cursori**: un tondo con l'alone del colore della superficie sotto, che lo stacca dal binario
+  senza un'ombra. Dove il valore ha uno zero, lo zero è al centro con la sua tacca, e il doppio
+  tocco e la pressione lunga lo azzerano. Nelle impostazioni il valore è a destra, in fondo alla
+  linea del cursore. Nelle lingue da destra a sinistra la corsa parte da destra. Il binario regge
+  3:1 sul suo fondo, e il lettore di schermo sente il nome e il valore.
+- **Menu a tendina**: si aggancia alla voce scelta e alla sua freccia, non a tutta la riga. La sua
+  fine è allineata alla fine della freccia; la cima è sulla cima della voce, o il fondo sul fondo
+  della voce se sotto non c'è posto.
+- **Due tasti che scalano un valore**: `-` a sinistra e `+` a destra, come su una scala che cresce
+  verso destra.
+- **Targhette sulle miniature**, in tutte le app: nero al 60%, angoli di 4, respiro di 4 ai lati e
+  di 2 sopra e sotto, staccate 4 dal bordo della miniatura; testo bianco nel corpo `labelSmall`
+  (11 sp) su una riga alta 12, e segni di 12.
+  - In basso, dalla parte della fine della riga, un'etichetta sola: il segno del file (la durata
+    di un filmato, il fumetto, l'animazione) con l'estensione davanti, staccata di 4; `GIF` prende
+    il posto del segno dell'animazione. Dalla parte dell'inizio, `HDR` da sola.
+  - **Precedenze**: la durata vince sull'estensione e su `HDR`, che si tolgono intere quando non
+    c'è posto; il segno dell'ultimo elemento visto cede a ogni etichetta del suo angolo.
+  - Lo spazio si misura col testo vero, perché una miniatura stretta è stretta a qualunque numero
+    di colonne. La durata resta su una riga e scende fino a 8 sp; solo sotto si taglia.
+  - Quello che non entra resta nella descrizione della miniatura per il lettore di schermo, e tutto
+    segue il verso della lingua.
 - **Gettoni**: una fila di gettoni di una scelta occupa tutta la larghezza, e lo spazio che avanza
   si divide in proporzione al testo di ognuno, nella lingua in vigore. 'A larghezza piena' non vuol
   dire gettoni larghi uguali: lo sono solo se i testi hanno la stessa misura o se la griglia è
@@ -410,7 +494,13 @@ grigie.
   gli altri non si spostano sotto il pollice.
 - **Un tocco lungo vibra una volta** (`HapticFeedbackType.LongPress`) e si annuncia al lettore di
   schermo, che dice che cosa fa (`onLongClickLabel`).
-- I cursori dicono il loro valore; ogni icona ha una descrizione parlata.
+- Un cursore dice il suo nome e il suo valore; ogni icona ha una descrizione parlata.
+- **Due comandi diversi non si chiamano allo stesso modo per chi ascolta**: il segno che disfa un
+  passo si chiama `Annulla l'ultima modifica`, perché accanto può esserci un tasto `Annulla`.
+- **Ogni gesto ha la sua azione per il lettore di schermo**, col nome di quello che fa: una
+  pressione lunga che azzera un cursore si raggiunge anche da lì.
+- **Un velo che prende i tocchi non annuncia un clic che non fa niente**: li prende senza
+  un'azione di clic, o per il lettore di schermo diventerebbe un tasto muto.
 - Il Tondo si annuncia come `Comandi`, e ogni voce del menu Start col suo nome.
 - Un gesto che il lettore di schermo intercetta ha sempre un'alternativa visibile.
 - Sul web il fuoco della tastiera si riconosce da un cambio discreto, come al passaggio del mouse
@@ -423,6 +513,10 @@ grigie.
   americano, con `/microcopy-it` e `/microcopy-en`, e si validano nel collaudo.
 - Una funzione si chiama con l'etichetta della sua voce, alla lettera; un avviso dice che cosa è
   successo (`Salvata in Download`).
+- **Un comando nominato in una frase si mostra in grassetto, senza apici**: per un vero cambio di
+  formato scegli **Esporta/Converti**.
+- **Il perché di un errore si scrive con una frase dell'app**, tradotta in ogni lingua, mai col
+  messaggio grezzo del sistema o del server.
 - Apici dritti, accenti veri, tre punti; nei testi delle app i puntini di sospensione sono il
   carattere unico. Niente trattini lunghi, caporali o virgolette curve.
 

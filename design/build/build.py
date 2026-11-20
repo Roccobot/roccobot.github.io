@@ -176,8 +176,10 @@ def swatch_row(name):
 
 GROUPS = [
     (('Accenti', 'Accents'), ['turchese', 'petrolio', 'accento', 'contenuto-su-accento', 'testo-accento', 'marchio']),
-    (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-alta']),
+    (('Fondi e superfici', 'Backgrounds and surfaces'), ['fondo', 'superficie', 'superficie-scheda', 'superficie-alta']),
     (('Testo e linee', 'Text and lines'), ['testo', 'testo-secondario', 'contorno', 'linea']),
+    # the apps' error red: errors and the button that does what can't be undone
+    (('Errore', 'Error'), ['errore']),
     (('Tavolozza di Aomidori', 'Aomidori palette'), ['turchese-luce', 'menta-chiaro', 'ardesia', 'glifo-marchio']),
     (('Icone e tasti', 'Icons and buttons'), ['icona-aiv-fondo', 'icona-aiv-glifo', 'glifo-tondo-traslucido']),
     (('Veli e aiuti', 'Scrims and help'), ['velo', 'velo-aiuto', 'aiuto-arancio', 'aiuto-arancio-inchiostro', 'aiuto-tasto', 'aiuto-tasto-inchiostro']),
@@ -209,6 +211,10 @@ def pairs():
         ('testo-accento', 'fondo', False), ('testo-accento', 'superficie', False),
         ('contenuto-su-accento', 'accento', False), ('accento', 'fondo', True),
         ('contorno', 'fondo', True), ('icona-aiv-glifo', 'icona-aiv-fondo', True),
+        # the apps' sheets, windows and editors: their text, a slider's rail and the error red
+        ('testo', 'superficie-scheda', False), ('testo-accento', 'superficie-scheda', False),
+        ('contorno', 'superficie-scheda', True), ('errore', 'superficie-scheda', False),
+        ('errore', 'fondo', False),
         # the service pages, on their own backgrounds; the mark on servizio-fondo is the declared
         # exception of the light theme
         ('servizio-testo', 'servizio-fondo', False), ('servizio-testo-secondario', 'servizio-scheda', False),
