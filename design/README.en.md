@@ -123,13 +123,24 @@ The two **primary accents** are `turchese`, turquoise (`#43B59E`), and `petrolio
 on the light one (5.50). `accento` is turquoise in the light theme and petrol in the dark one, and it
 is the color of the icon.
 
-- **Text and accent**: the accent never carries body text. Accent text uses `testo-accento`
-  (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses `contenuto-su-accento`.
+- **Text and accent**: the accent never carries body text, nor thin graphics, that is marks that
+  stay below 3:1 on their background (a thin line, a bracket, a handle). Accent text and those
+  marks use `testo-accento` (`#0B6B5B` and `#4FD9BE`), and text on the filled accent uses
+  `contenuto-su-accento`.
 - **The checkerboard**: behind a transparent image there is a checkerboard of `scacchiera` (12)
   squares, because in a viewer transparency is information.
-- **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages, `superficie` for cards
-  and panels, `superficie-alta` for fields and highlighted rows. The dark background is a gray
-  with a touch of blue and green, not a green.
+- **A background with its own theme**: text and marks drawn straight on a background that has a
+  theme of its own (the viewer's black, the checkerboard) take that theme's colors, not the app's:
+  with the app's light theme and a dark background, a dark message would be unreadable.
+- **Backgrounds**: `fondo` (`#FCFBF8`, `#151B1A`) for screens and pages; `superficie` for the
+  cards of web pages; `superficie-scheda` (`#F3F1EE`, `#283130`) for bottom sheets, windows, panels
+  and editors in the apps, which is also Material 3's default window background; `superficie-alta`
+  for fields and highlighted rows. The dark background is a gray with a touch of blue and green,
+  not a green.
+- **Error**: `errore` (`#B3261E`, `#F2B8B5`, Material 3's default red) for errors and for the
+  button that does what can't be undone (`Delete`, `Discard`); the accent stays for actions. On the
+  window background (`superficie-scheda`) it reads at 5.80 and 7.82, on the background at 6.32 and
+  10.22. The red of used-up quotas, on service pages, is `soglia-rosso-intenso`.
 - **Service pages** (RoccoHub, the hub's `hub/` page): they have backgrounds of their own,
   `servizio-fondo` and `servizio-scheda` (in the dark theme `fondo-intermedio` and
   `scheda-intermedia`), so text colors of their own, in the `servizio-` family. Filled buttons use
@@ -139,6 +150,9 @@ is the color of the icon.
   from 70% and `soglia-rosso-intenso` from 90%, always with the number beside it.
 - **Text**: `testo` (16.55 and 14.21), `testo-secondario` for notes and captions, `contorno` for
   control borders, `linea` for dividers that carry no information.
+- **A slider's rail holds 3:1 on the background it sits on**: the default color of the off track
+  disappears on a darker background, and on `superficie-scheda` the rail is `contorno` (3.55 and
+  4.27). A slider on a new background gets its own color, measured.
 - **Aomidori palette**: `turchese-luce`, `menta-chiaro`, `ardesia`.
 - **The theme chosen inside an app isn't the system one**: every color goes through the app's
   palette.
@@ -196,6 +210,8 @@ is the color of the icon.
 - **Reading in Aomidori**: set by the styles (Aomidori Flex and its variants) in Roboto Flex; verse
   and quotations in Noto Serif; code in JetBrains Mono. The `Carattere personalizzato` setting
   (custom typeface) chooses among Literata, Noto Serif, Roboto Flex and Inter.
+- **Fixed-width digits where they change** (a running time, a value being adjusted, `tnum`): with
+  proportional digits the number changes width at every step and moves what sits next to it.
 - **No word is left alone at either end of a sentence** in paragraphs: it is tied with a
   non-breaking space, on the web paragraphs use `text-wrap: pretty` and headings
   `text-wrap: balance`, and a consequence sign (`→`, `>`, `›`) wraps together with the words next to
@@ -212,6 +228,13 @@ is the color of the icon.
   and sits 15% below the center, with `aria-dialogo` around it.
 - On the web body text is at most `misura-testo` (40 rem) wide, cards have `raggio-scheda-web`
   (14) and buttons are pills (`raggio-pieno`).
+- **Nothing moves because some content changes or arrives later**: digits that change have a fixed
+  width; a panel that swaps two contents is as tall as the taller one; the name under a thumbnail
+  always keeps its lines, even when short or not there yet; what arrives later has its place
+  reserved from the start.
+- **A one-line text shrinks down to a minimum size**, which each element declares, and only below
+  that minimum does it wrap; it is cut only as a last resort, and what doesn't show stays in the
+  screen reader's description.
 
 ## Motion
 
@@ -233,13 +256,14 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 | Fluido curve, motion with no finger that is neither an entrance nor an exit | `cubic-bezier(0.25, 1, 1, 1)` | `GENTLE` |
 | movement spring, of the panels | stiffness 540, damping 1: 320 ms; `cubic-bezier(0.26, 0.28, 0.12, 1)` approximates it | `LabMotion.SPATIAL`, `SPATIAL_MS` |
 | fade spring, of the panels | stiffness 2820, damping 1: 140 ms, the same shape | `LabMotion.EFFECTS`, `EFFECTS_MS` |
-| bottom sheet entrance and exit | 320 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have the 140 ms one) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
+| exit fade spring | stiffness 1150, damping 1: 220 ms, played backwards | `LabMotion.EFFECTS_OUT`, `EFFECTS_OUT_MS`, `lab_fade_out.xml` |
+| bottom sheet entrance and exit | 320 ms, the movement spring, with the trail; no fade (the selection sheet and the notices also have it, 140 ms on entrance and 220 on exit) | `LabMotion.SHEET`, `SHEET_MS`, `Sheet.kt` |
 | centred window entrance | 320 ms from 92%, the movement spring; opaque on the 140 ms spring; no trail | `lab_window_in.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
-| centred window exit | 320 ms down to 92%, the same spring; fades on the 140 ms spring; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_MS` |
+| centred window exit | 320 ms down to 92%, the same spring; fades on the exit spring, 220 ms played backwards; no trail | `lab_window_out.xml`, `SPATIAL_MS`, `EFFECTS_OUT_MS` |
 | trail of a travelling sheet | vertical blur, peak of 10 dp on entrance and 5 on exit, in proportion to the way the spring covers in one frame; past the edge it fades into transparency; where `Effetto movimento` has `Pannelli dal basso` on | `SHEET_TRAIL_IN_DP`, `SHEET_TRAIL_OUT_DP`, `LabMotion.blurDp`, `verticalTrail` |
 | window gliding with the keyboard | 250 ms, the Fluido curve | `GLIDE_MS` |
 | pill, opening and closing | 160 ms, exponential | `PILL_OPEN_MS` |
-| Start menu, from its corner | 110 ms, the pill's curve | `BAR_IN_MS` |
+| Start menu, from its corner | 110 ms, the pill's curve | `START_IN_MS` |
 | tap on the Tondo | down in 30 ms, up in 60, to 70%; × in 90 ms, color in 55 | `RIMBALZO` |
 | Tondo leaving | 100 ms, a curve that starts fast | `VIA_MS` |
 | jump to top and bottom | 280 ms plus 0.16 ms per pixel, at most 800 | `Jump.kt` |
@@ -261,16 +285,29 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 - **Duration follows distance.** A fixed time for short steps; for a sheet that travels its own
   height a longer time (320 ms) on a spring that starts at rest, speeds up and arrives at rest, with
   no bounce; for a long jump a duration that grows with the distance, with a cap.
-- **The exit has the same spring as the entrance, except for the menu.** The bottom sheet and the
-  centred window come in and leave on the movement spring (320 ms) and, where there is one, on the
-  fade spring (140 ms); a menu enters in 120 ms and exits in 75, with a single fade.
+- **The exit has the same movement spring as the entrance, except for the menu.** The bottom sheet
+  and the centred window come in and leave on the movement spring (320 ms); a menu enters in 120 ms
+  and exits in 75, with a single fade.
+- **The exit fade is the entrance played backwards** (220 ms against 140): the opacity stays nearly
+  full in the first half and drops in the last third. Flipping the entrance in value (`1 - spring`)
+  would take away half the opacity in the first quarter of the duration, with any spring, and the
+  exit would look like a cut. The scrim and the blur behind a centred window go down in a straight
+  line over 270 ms, 50 ms longer than the window, so the background turns sharp after the window
+  is gone.
+- **Declared exception: a window that opens another one on top of itself** (a notice, a small
+  panel) doesn't leave, it steps aside and comes back. It stays full until the other one has fully
+  come in, then fades out in 140 ms on the entrance spring; when the other one leaves it comes back
+  full, on the same spring. It stays on screen the whole time, so no frame is without a panel and
+  the scrim doesn't go down; while hidden, the screen reader doesn't read it. The two fades run one
+  after the other: together, for a moment the background would show through both windows.
 - **The fade has a spring of its own**, shorter than the movement (140 ms against 320), and starts
   together with it. The bottom sheet has no fade; the selection sheet, the notices and the centred
   windows do.
 - **What travels has the trail, what stays centred grows and shrinks**: the sheet blurs along its
   motion as fast as the spring runs, the centred window comes and goes from 92%.
 - **No flashes between two surfaces.** The scrim does not go down while another surface is coming
-  in, and a window that opens over a scrim already on screen blurs to full at once.
+  in, a window that opens over a scrim already on screen blurs to full at once, and the arriving
+  surface's scrim starts from the one already painted.
 - **A stand-in gives way with a fade**, in 150 ms: the thumbnail to the full image, the copy that
   arrives late, a video's cover to its first frame.
 - **Two crossing glyphs use an exponent below one** (0.8): with two linear opacities, halfway
@@ -298,7 +335,8 @@ code). The values are also in the tokens, family `movimento`, each with its cons
 - **From the viewer to the grid the photo goes back into its thumbnail**, the one tapped to open it
   (for a comic, its cover), in 300 ms: it starts fast, slows down and stops exactly on the
   thumbnail without shrinking further, and only there fades out in three frames. A video brings
-  its frame; if the thumbnail is no longer in view, the photo shrinks toward the center.
+  its frame; if the thumbnail is no longer in view, the photo shrinks toward the center. A photo
+  smaller than its cell doesn't grow to reach it: it goes back to the grid with a fade.
 - **On release the curve goes on**: the transition finishes by itself, slowing down, and canceling
   the gesture goes back from the fraction reached.
 - **The arriving screen goes below every screen already there**, even after several gestures in a
@@ -325,23 +363,37 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   nothing behind. At 12 dp the halo would read as a stain around the panel.
 - **Blur behind panels** (`sfocatura-pannelli`), **off by default**: behind menus, dialogs and
   sheets, `sfocatura-velo` (8 dp) with the `velo` scrim at 30%, black in the light theme and white
-  in the dark one, which rises with the panel's movement and goes down with the fade (behind a
-  bottom sheet it follows its travel). Panels are bare: they stand out by the surface color alone,
+  in the dark one, which rises with the panel's movement and goes down in a straight line over
+  270 ms, with the blur (behind a bottom sheet it follows its travel). Panels are bare: they stand out by the surface color alone,
   with no border. The system does the blur, and it costs only while a panel is open.
 - **A blur that fades needs something leaving the scene**, or it reads as focusing: a menu exits
   with a single 75 ms fade, panel, blur and scrim together.
+- **A menu that changes what shows behind it opens with no scrim and no blur**, with any depth:
+  whoever picks the style of an element has to see the element while picking.
 - **Translucent main buttons** (`traslucido`), **the default style** among `Solid`,
   `Transparent` (color at 80%) and `Translucent`, for the Tondo, the pill and the bottom menu:
   `Radius` 16 dp, `Intensity` 300%, `Opacity` 40%, `Offset` 35, which darkens on light and
   lightens on dark. The color is the accent of the other theme, `#00727B` on light and `#43B59E`
   on dark; the page background sits under the blurred copy, and the glyph has a fixed color
   (`glifo-tondo-traslucido`).
-- **Top bar** (`barra-superiore`, `Top bar`), **off by default**: thumbnails and rows scroll under
-  the top bar, blurred by 20 dp and tinted at 60% with the page color, from one edge of the window
-  to the other.
+- **Top bar** (`barra-superiore`, `Top bar`), **off by default in AIV GitHub, on in AIV Play**,
+  where it is a Fabulous feature: thumbnails and rows scroll under the top bar, blurred by 20 dp
+  and tinted at 60% with the page color, from one edge of the window to the other, and the bar ends
+  sharp on its edge.
+- **Faded top bar** (`barra-superiore-sfumata`, `Faded top bar`), **off by default in
+  both variants**, with `Top bar` on: the bar fades toward the bottom. Scrim and blur are full at
+  the screen's edge and fall to zero; the scrim has the app's background color.
+  - **On the main screen**: scrim at 90% down to zero at 70 dp, 12 dp blur down to zero at 50 dp,
+    on the curve that stays full longer (the cosine of the squared position), so the system bar
+    icons stay readable.
+  - **In a folder, dark theme**: scrim at 95% and 16 dp blur, both down to zero at 160 dp, on the
+    cosine curve, soft at both ends.
+  - **In a folder, light theme**: full scrim down to zero at 170 dp and 20 dp blur down to zero at
+    160 dp, on the same curve: at 95% the photos showed through at the top.
 - **Animated header** (`intestazione-animata`, `Animated header`), **off by default**: as it
   closes, the header band blurs from zero at 55% of the closing to 4 dp, with fixed values.
-- **Bottom fade** (`sfumatura-inferiore`, `Bottom fade`), **off by default**: the bottom band of
+- **Bottom fade** (`sfumatura-inferiore`, `Bottom fade`), **off by default in AIV GitHub, on in
+  AIV Play**, where it is a Fabulous feature: the bottom band of
   the grid blurs from zero, 80 dp above the bottom, to full strength on the last pixel, with a
   square curve; the radius goes from 1 to 4 dp and is 2.6 when first turned on; it is off during
   selection.
@@ -368,6 +420,44 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   action, one per screen, outlined for the others.
   The bottom sheet has 28 top corners (`raggio-scheda`), a 24 inset and the close button next to
   the title.
+- **Text buttons**, at the bottom of a window or a panel: the word in `testo-accento`, never in the
+  accent, and a target of at least 48 that grows inward. The last letter of the button nearest
+  the end falls on the margin of the window's text: the button reaches into the edge by its own
+  padding (12), in the direction of the language. A button alone at the bottom of a panel takes the
+  whole row, with the word in the center. A button can also have a long press, which vibrates and
+  is announced like the others.
+- **Confirmations**: the title is the question (`Discard changes?`), and there is a body only if it
+  adds something to the title. The body says what really happens in that case: 'without going
+  through the trash' only when the file really skips it. `Cancel` on the left, the action on the
+  right; a tap outside counts as `Cancel`, the safe outcome, because a confirmation isn't modal
+  (only windows that collect typed text are). The action that can't be undone has the `errore`
+  color.
+- **Leaving an editor**: you leave with the arrow at the top or with the Back gesture, which are a
+  single door and ask for confirmation only if there are changes to lose (`Discard changes?`, with
+  `Cancel` and `Discard`); with no changes you leave at once. Where `Save` sits is up to each
+  editor. A panel inside an editor, like the GIF one, has `Cancel` next to its action.
+- **Sliders**: a round knob with a halo in the color of the surface below, which sets it apart from
+  the rail without a shadow. Where the value has a zero, the zero is in the middle with its tick,
+  and a double tap and a long press reset it. In settings the value is on the right, at the end of
+  the slider's line. In right-to-left languages the track starts from the right. The rail holds
+  3:1 on its background, and the screen reader hears the name and the value.
+- **Dropdown menus**: hang from the chosen item and its arrow, not from the whole row. The menu's
+  end lines up with the arrow's end; its top is on the item's top, or its bottom on the item's
+  bottom when there is no room below.
+- **Two buttons that step a value**: `-` on the left and `+` on the right, like a scale growing to
+  the right.
+- **Thumbnail badges**, in every app: black at 60%, 4 corners, 4 of padding at the sides and 2
+  above and below, 4 from the thumbnail's edge; white text in the `labelSmall` size (11 sp) on a
+  12-tall line, and 12 marks.
+  - At the bottom, on the side where the line ends, a single label: the file's mark (a clip's
+    length, the comic, the animation) with the extension before it, 4 apart; `GIF` takes the place
+    of the animation mark. On the side where the line starts, `HDR` alone.
+  - **Precedence**: the length wins over the extension and over `HDR`, which drop out whole when
+    there is no room; the last-seen mark gives way to any label in its corner.
+  - Room is measured with the real text, because a narrow thumbnail is narrow at any number of
+    columns. The length stays on one line and shrinks down to 8 sp; only below that is it cut.
+  - What doesn't fit stays in the thumbnail's description for the screen reader, and everything
+    follows the direction of the language.
 - **Chips**: a row of chips for a choice fills the full width, and the leftover space is shared in
   proportion to each chip's text, in the current language. 'Full width' doesn't mean equal-width
   chips: they are equal only when the texts are the same length or the grid is declared (a fixed
@@ -406,7 +496,14 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   others don't move under the thumb.
 - **A long press vibrates once** (`HapticFeedbackType.LongPress`) and is announced to the screen
   reader, which says what it does (`onLongClickLabel`).
-- Sliders say their value; every icon has a spoken description.
+- A slider says its name and its value; every icon has a spoken description.
+- **Two different commands never share a name for those who listen**: the mark that undoes a step
+  is called `Undo last change`, because in Italian, and in other languages, a plain 'undo' would
+  be the same word as the `Cancel` button next to it.
+- **Every gesture has its own action for the screen reader**, named after what it does: a long
+  press that resets a slider is reachable from there too.
+- **A scrim that takes touches doesn't announce a click that does nothing**: it takes them with no
+  click action, or for the screen reader it would become a silent button.
 - The Tondo is announced as `Comandi` (Commands), and every Start menu item by its name.
 - A gesture the screen reader intercepts always has a visible alternative.
 - On the web keyboard focus is recognized by a discreet change, as on mouse hover (color or
@@ -419,6 +516,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   round.
 - A feature is called by the label of its item, word for word; a notice says what happened
   (`Saved to Downloads`).
+- **A command named in a sentence shows in bold, without quotes**: for a real format change
+  use **Export and convert**.
+- **The reason for an error is written with one of the app's sentences**, translated in every
+  language, never with the raw message of the system or the server.
 - Straight quotes, real accents, three dots; in app text the ellipsis is the single character. No
   em or en dashes, guillemets or curly quotes.
 

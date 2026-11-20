@@ -453,8 +453,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         <div class="d3"><span lang="it">Verde scuro su turchese</span><span lang="en">Dark green on turquoise</span></div>
         <div class="d4"><span lang="it">Turchese su sfondo scuro</span><span lang="en">Turquoise on dark background</span></div>
       </div>
-      <p class="note" lang="it">Il turchese è anche il colore di Aomidori, il cui nome vuol dire turchese in giapponese, ed è quasi identico all'accento del sito roccobot.me (<code>hsl(170, 46%, 49%)</code>). Per un testo d'accento si usa sempre <code>testo-accento</code>, che vale 6,21 sullo sfondo chiaro e 9,97 su quello scuro.</p>
-      <p class="note" lang="en">Turquoise is also the color of Aomidori, whose name means turquoise in Japanese, and it is almost identical to the accent of the roccobot.me site (<code>hsl(170, 46%, 49%)</code>). Accent text always uses <code>testo-accento</code>, at 6.21 on the light background and 9.97 on the dark one.</p>
+      <p class="note" lang="it">Il turchese è anche il colore di Aomidori, il cui nome vuol dire turchese in giapponese, ed è quasi identico all'accento del sito roccobot.me (<code>hsl(170, 46%, 49%)</code>). Per un testo d'accento si usa sempre <code>testo-accento</code>, che vale 6,21 sullo sfondo chiaro e 9,97 su quello scuro, e lo stesso vale per la grafica sottile, cioè i segni che sul loro fondo restano sotto 3:1 (una linea fine, una staffa, una maniglia).</p>
+      <p class="note" lang="en">Turquoise is also the color of Aomidori, whose name means turquoise in Japanese, and it is almost identical to the accent of the roccobot.me site (<code>hsl(170, 46%, 49%)</code>). Accent text always uses <code>testo-accento</code>, at 6.21 on the light background and 9.97 on the dark one, and so do thin graphics, that is marks that stay below 3:1 on their background (a thin line, a bracket, a handle).</p>
     </section>
 
     <section id="marchio" aria-labelledby="h-mar">
@@ -614,6 +614,21 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <ul class="legend"><li><i class="l-day"></i><span lang="it">a sinistra, chiaro</span><span lang="en">left, light</span></li><li><i class="l-night"></i><span lang="it">a destra, scuro</span><span lang="en">right, dark</span></li></ul>
       <!--@palette-->
       <div class="pal-group">
+        <h3><span lang="it">Dove va ogni colore</span><span lang="en">Where each color goes</span></h3>
+        <ul class="steps" lang="it">
+          <li><strong>Le superfici delle app</strong>: le schede dal basso, le finestre, i pannelli e gli editor hanno <code>superficie-scheda</code>, che è anche il fondo di serie delle finestre di Material&nbsp;3; <code>superficie</code> resta per le schede delle pagine web.</li>
+          <li><strong>L'errore non è l'accento</strong>: gli errori e il tasto che fa ciò che non si disfa (<code>Elimina</code>, <code>Scarta</code>) hanno <code>errore</code>, e l'accento resta per le azioni. Nelle pagine di servizio il rosso delle quote consumate resta <code>soglia-rosso-intenso</code>.</li>
+          <li><strong>Il binario di un cursore regge 3:1 sul fondo su cui si trova</strong>: sopra <code>superficie-scheda</code> prende <code>contorno</code>, e un cursore su un fondo nuovo riceve il suo colore, misurato.</li>
+          <li><strong>Uno sfondo col suo tema</strong> (il nero del visualizzatore, la scacchiera) dà i suoi colori ai testi e ai segni scritti sopra di lui, non quelli dell'app: col tema chiaro dell'app e lo sfondo scuro, un messaggio scuro non si leggerebbe.</li>
+        </ul>
+        <ul class="steps" lang="en">
+          <li><strong>App surfaces</strong>: bottom sheets, windows, panels and editors use <code>superficie-scheda</code>, which is also Material&nbsp;3's default window background; <code>superficie</code> stays for the cards of web pages.</li>
+          <li><strong>Error isn't the accent</strong>: errors and the button that does what can't be undone (<code>Delete</code>, <code>Discard</code>) use <code>errore</code>, and the accent stays for actions. On service pages the red of used-up quotas stays <code>soglia-rosso-intenso</code>.</li>
+          <li><strong>A slider's rail holds 3:1 on the background it sits on</strong>: on <code>superficie-scheda</code> it is <code>contorno</code>, and a slider on a new background gets its own color, measured.</li>
+          <li><strong>A background with its own theme</strong> (the viewer's black, the checkerboard) gives its colors to the text and marks drawn on it, not the app's: with the app's light theme and a dark background, a dark message would be unreadable.</li>
+        </ul>
+      </div>
+      <div class="pal-group">
         <h3><span lang="it">Come si aggiunge un colore</span><span lang="en">How to add a color</span></h3>
         <ol class="steps" lang="it">
           <li>Si stabilisce il suo ruolo: azione, struttura o testo. Un elemento nuovo prende il colore del suo ruolo, non quello che sta meglio nel punto in cui capita.</li>
@@ -645,6 +660,21 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
           <tbody><!--@pairs--></tbody>
         </table>
       </div>
+      <div class="pal-group">
+        <h3><span lang="it">Per chi ascolta</span><span lang="en">For those who listen</span></h3>
+        <ul class="steps" lang="it">
+          <li><strong>Un cursore dice il suo nome e il suo valore</strong>, e ogni icona ha una descrizione parlata.</li>
+          <li><strong>Due comandi diversi non si chiamano allo stesso modo</strong>: il segno che disfa un passo è <code>Annulla l'ultima modifica</code>, perché accanto può esserci un tasto <code>Annulla</code>.</li>
+          <li><strong>Ogni gesto ha la sua azione per il lettore di schermo</strong>, col nome di quello che fa: una pressione lunga che azzera un cursore si raggiunge anche da lì.</li>
+          <li><strong>Un velo che prende i tocchi non annuncia un clic che non fa niente</strong>: li prende senza un'azione di clic, o diventerebbe un tasto muto.</li>
+        </ul>
+        <ul class="steps" lang="en">
+          <li><strong>A slider says its name and its value</strong>, and every icon has a spoken description.</li>
+          <li><strong>Two different commands never share a name</strong>: the mark that undoes a step is <code>Undo last change</code>, because in Italian, and in other languages, a plain 'undo' would be the same word as the <code>Cancel</code> button next to it.</li>
+          <li><strong>Every gesture has its own action for the screen reader</strong>, named after what it does: a long press that resets a slider is reachable from there too.</li>
+          <li><strong>A scrim that takes touches doesn't announce a click that does nothing</strong>: it takes them with no click action, or it would become a silent button.</li>
+        </ul>
+      </div>
     </section>
 
     <section id="caratteri" aria-labelledby="h-car">
@@ -655,6 +685,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <!--@type-->
       <p class="note" lang="it">Le app seguono la scala dei caratteri di Android; la pagina di Aomidori ignora la scala di sistema e ha la sua dimensione del testo, fino al triplo di quella di partenza.</p>
       <p class="note" lang="en">The apps follow Android's font scale; the Aomidori page ignores the system scale and has its own text size, up to three times the starting one.</p>
+      <p class="note" lang="it">Dove le cifre cambiano (un tempo che scorre, un valore che si regola) hanno la larghezza fissa, <code>tnum</code>: con le cifre proporzionali il numero cambia larghezza a ogni passo e sposta quello che ha accanto.</p>
+      <p class="note" lang="en">Where digits change (a running time, a value being adjusted) they have a fixed width, <code>tnum</code>: with proportional digits the number changes width at every step and moves what sits next to it.</p>
     </section>
 
     <section id="misure" aria-labelledby="h-mis">
@@ -666,6 +698,17 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         <div><h3><span lang="it">Spazi</span><span lang="en">Spacing</span></h3><!--@spacing--></div>
         <div><h3><span lang="it">Raggi</span><span lang="en">Radii</span></h3><!--@radius--></div>
         <div><h3><span lang="it">Misure</span><span lang="en">Sizes</span></h3><!--@misura--></div>
+      </div>
+      <div class="pal-group">
+        <h3><span lang="it">Niente si sposta</span><span lang="en">Nothing moves</span></h3>
+        <ul class="steps" lang="it">
+          <li><strong>Niente si sposta perché un contenuto cambia o arriva dopo.</strong> Le cifre che cambiano hanno la larghezza fissa; un pannello che scambia due contenuti è alto quanto il più alto dei due; il nome sotto una miniatura tiene sempre le sue righe, anche corto o non ancora arrivato; quello che arriva dopo ha il suo posto riservato da subito.</li>
+          <li><strong>Un testo su una riga scende di corpo fino a un minimo</strong>, che ogni elemento dichiara, e solo sotto quel minimo va a capo. Si taglia solo come ultima risorsa, e quello che non si vede resta nella descrizione per il lettore di schermo.</li>
+        </ul>
+        <ul class="steps" lang="en">
+          <li><strong>Nothing moves because some content changes or arrives later.</strong> Digits that change have a fixed width; a panel that swaps two contents is as tall as the taller one; the name under a thumbnail always keeps its lines, even when short or not there yet; what arrives later has its place reserved from the start.</li>
+          <li><strong>A one-line text shrinks down to a minimum size</strong>, which each element declares, and only below that minimum does it wrap. It is cut only as a last resort, and what doesn't show stays in the screen reader's description.</li>
+        </ul>
       </div>
     </section>
 
@@ -713,8 +756,10 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <ul class="steps" lang="it">
         <li><strong>Le opacità si moltiplicano.</strong> Un'animazione giocata sotto la dissolvenza di schermata si vede solo per la coda: quello che deve farsi vedere aspetta che la schermata sia arrivata, e quello che arriva con la schermata (uno sfondo, una fascia, il contenuto) resta fermo.</li>
         <li><strong>La durata segue la distanza.</strong> Un tempo fisso per i passi corti; per una scheda che percorre la sua altezza un tempo più lungo (320&nbsp;ms), con una molla che parte ferma e arriva ferma, senza rimbalzo; per un salto lungo una durata che cresce con la corsa, con un tetto.</li>
-        <li><strong>L'uscita ha la stessa molla dell'entrata, salvo il menu.</strong> La scheda dal basso e la finestra al centro entrano ed escono con la molla del movimento (320&nbsp;ms) e, dove c'è, con quella della dissolvenza (140); un menu entra in 120&nbsp;ms ed esce in 75, con una dissolvenza sola.</li>
-        <li><strong>Fra due superfici niente lampi.</strong> Il velo non scende finché un'altra superficie sta entrando, e una finestra che si apre con un velo già in scena sfoca subito al pieno.</li>
+        <li><strong>L'uscita ha la stessa molla del movimento dell'entrata, salvo il menu.</strong> La scheda dal basso e la finestra al centro entrano ed escono con la molla del movimento (320&nbsp;ms); un menu entra in 120&nbsp;ms ed esce in 75, con una dissolvenza sola.</li>
+        <li><strong>La dissolvenza in uscita è l'entrata riprodotta all'indietro</strong> (220&nbsp;ms contro 140): l'opacità resta quasi piena nella prima metà e cala nell'ultimo terzo. Il velo e la sfocatura dietro una finestra al centro scendono in linea retta in 270&nbsp;ms, così lo sfondo torna nitido dopo che la finestra è sparita.</li>
+        <li><strong>Eccezione dichiarata: la finestra che ne apre un'altra sopra di sé non esce, si fa da parte e torna.</strong> Resta piena finché l'altra non è entrata del tutto, poi si dissolve in 140&nbsp;ms con la molla d'entrata, e torna piena con la stessa molla quando l'altra esce. Resta in scena per tutto il tempo, quindi nessun fotogramma è senza pannello e il velo non scende. Le due dissolvenze vanno in fila: insieme, per un attimo si vedrebbe lo sfondo attraverso le due finestre.</li>
+        <li><strong>Fra due superfici niente lampi.</strong> Il velo non scende finché un'altra superficie sta entrando, una finestra che si apre con un velo già in scena sfoca subito al pieno, e il velo di chi arriva riparte da quello già dipinto.</li>
         <li><strong>Un sostituto lascia il posto sfumando</strong>, in 150&nbsp;ms: la miniatura all'immagine piena, la copertura di un video al primo fotogramma.</li>
         <li><strong>Due glifi che si incrociano usano un esponente sotto uno</strong> (0,8): con due opacità lineari, a metà corsa i glifi sono al 9% e il tasto resta vuoto.</li>
         <li><strong>Una dissolvenza di pochi fotogrammi si conta in fotogrammi</strong>, non in millisecondi, così dura uguale a 60 e a 120&nbsp;Hz.</li>
@@ -724,8 +769,10 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <ul class="steps" lang="en">
         <li><strong>Opacities multiply.</strong> An animation played under the screen fade shows only its tail: what must be seen waits for the screen to arrive, and what arrives with the screen (a background, a band, the content) stays still.</li>
         <li><strong>Duration follows distance.</strong> A fixed time for short steps; for a sheet that travels its own height a longer time (320&nbsp;ms), on a spring that starts and arrives at rest, with no bounce; for a long jump a duration that grows with the distance, with a cap.</li>
-        <li><strong>The exit has the same spring as the entrance, except for the menu.</strong> The bottom sheet and the centred window come in and leave on the movement spring (320&nbsp;ms) and, where there is one, on the fade spring (140); a menu enters in 120&nbsp;ms and exits in 75, with a single fade.</li>
-        <li><strong>No flashes between two surfaces.</strong> The scrim does not go down while another surface is coming in, and a window that opens over a scrim already on screen blurs to full at once.</li>
+        <li><strong>The exit has the same movement spring as the entrance, except for the menu.</strong> The bottom sheet and the centred window come in and leave on the movement spring (320&nbsp;ms); a menu enters in 120&nbsp;ms and exits in 75, with a single fade.</li>
+        <li><strong>The exit fade is the entrance played backwards</strong> (220&nbsp;ms against 140): the opacity stays nearly full in the first half and drops in the last third. The scrim and the blur behind a centred window go down in a straight line over 270&nbsp;ms, so the background turns sharp after the window is gone.</li>
+        <li><strong>Declared exception: a window that opens another one on top of itself doesn't leave, it steps aside and comes back.</strong> It stays full until the other one has fully come in, then fades out in 140&nbsp;ms on the entrance spring, and comes back full on the same spring when the other one leaves. It stays on screen the whole time, so no frame is without a panel and the scrim doesn't go down. The two fades run one after the other: together, for a moment the background would show through both windows.</li>
+        <li><strong>No flashes between two surfaces.</strong> The scrim does not go down while another surface is coming in, a window that opens over a scrim already on screen blurs to full at once, and the arriving surface's scrim starts from the one already painted.</li>
         <li><strong>A stand-in gives way with a fade</strong>, in 150&nbsp;ms: the thumbnail to the full image, a video's cover to its first frame.</li>
         <li><strong>Two crossing glyphs use an exponent below one</strong> (0.8): with two linear opacities, halfway through both glyphs are at 9% and the button looks empty.</li>
         <li><strong>A fade of a few frames is counted in frames</strong>, not milliseconds, so it lasts the same at 60 and at 120&nbsp;Hz.</li>
@@ -739,7 +786,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         <li><strong>È la dissolvenza del cambio di schermata, guidata dal dito.</strong> Il pulsante Indietro e la navigazione a tre tasti, che non hanno passi, cambiano schermata con la dissolvenza di sempre.</li>
         <li><strong>Fuori dal visualizzatore</strong> la schermata che lascia sfuma sul posto; quella che arriva entra sfocata di 6&nbsp;dp e al 97%, ed è intera all'80% del gesto, qualche fotogramma prima della fine. Sotto Android&nbsp;12 non si sfoca: sfuma e cresce soltanto.</li>
         <li><strong>Un gesto netto</strong>, meno di 200&nbsp;ms dal primo passo al rilascio, toglie sfocatura e scala entro un quinto della corsa che resta, dal valore che avevano, e il resto è una dissolvenza.</li>
-        <li><strong>Dal visualizzatore alla griglia la foto torna nella sua miniatura</strong>, quella toccata per aprirla (per un fumetto, la sua copertina); un video porta il suo fotogramma. Se la miniatura non è più in vista, la foto si restringe verso il centro.</li>
+        <li><strong>Dal visualizzatore alla griglia la foto torna nella sua miniatura</strong>, quella toccata per aprirla (per un fumetto, la sua copertina); un video porta il suo fotogramma. Se la miniatura non è più in vista, la foto si restringe verso il centro; una foto più piccola della sua cella non cresce per raggiungerla, e torna alla griglia con una dissolvenza.</li>
         <li><strong>Al rilascio la curva continua</strong>: la transizione finisce da sola rallentando, e annullando il gesto si torna indietro dalla frazione raggiunta.</li>
         <li><strong>La schermata che arriva va sotto tutte quelle già in scena</strong>, anche dopo più gesti di seguito.</li>
         <li><strong>Prima si chiude quello che è aperto</strong> (un menu, la pillola, il menu Start, una selezione), poi si risale la navigazione un gradino per volta; le impostazioni hanno due livelli al massimo.</li>
@@ -748,7 +795,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         <li><strong>It is the screen-change fade, driven by the finger.</strong> The Back button and three-button navigation, which have no steps, change screen with the usual fade.</li>
         <li><strong>Outside the viewer</strong> the leaving screen fades in place; the arriving one comes in blurred by 6&nbsp;dp and at 97%, and is whole at 80% of the gesture, a few frames before the end. Below Android&nbsp;12 there is no blur: it only fades and grows.</li>
         <li><strong>A flick</strong>, under 200&nbsp;ms from the first step to the release, drops blur and scale within a fifth of the remaining way, from the values they had, and the rest is a fade.</li>
-        <li><strong>From the viewer to the grid the photo goes back into its thumbnail</strong>, the one tapped to open it (for a comic, its cover); a video brings its frame. If the thumbnail is no longer in view, the photo shrinks toward the center.</li>
+        <li><strong>From the viewer to the grid the photo goes back into its thumbnail</strong>, the one tapped to open it (for a comic, its cover); a video brings its frame. If the thumbnail is no longer in view, the photo shrinks toward the center; a photo smaller than its cell doesn't grow to reach it, and goes back to the grid with a fade.</li>
         <li><strong>On release the curve goes on</strong>: the transition finishes by itself, slowing down, and canceling the gesture goes back from the fraction reached.</li>
         <li><strong>The arriving screen goes below every screen already there</strong>, even after several gestures in a row.</li>
         <li><strong>What is open closes first</strong> (a menu, the pill, the Start menu, a selection), then navigation goes back one step at a time; settings are at most two levels deep.</li>
@@ -767,8 +814,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
           <tbody><!--@effects--></tbody>
         </table>
       </div>
-      <p class="note" lang="it">Una sfocatura che cala vuole in scena qualcosa che se ne va, o si legge come una messa a fuoco: per questo un menu esce con una dissolvenza sola di 75 ms, pannello, sfocatura e velo insieme. Sul web il vetro è lo stesso: la barra in alto di questa pagina sfoca di 12 px sopra il fondo all'88%.</p>
-      <p class="note" lang="en">A blur that fades needs something leaving the scene, or it reads as focusing: that is why a menu exits with a single 75 ms fade, panel, blur and scrim together. On the web the glass is the same: this page's top bar blurs by 12 px over the background at 88%.</p>
+      <p class="note" lang="it">Una sfocatura che cala vuole in scena qualcosa che se ne va, o si legge come una messa a fuoco: per questo un menu esce con una dissolvenza sola di 75 ms, pannello, sfocatura e velo insieme. Un menu che cambia quello che si vede dietro di lui si apre senza velo né sfocatura, con qualunque profondità: chi sceglie lo stile di un elemento deve vedere l'elemento mentre sceglie. Sul web il vetro è lo stesso: la barra in alto di questa pagina sfoca di 12 px sopra il fondo all'88%.</p>
+      <p class="note" lang="en">A blur that fades needs something leaving the scene, or it reads as focusing: that is why a menu exits with a single 75 ms fade, panel, blur and scrim together. A menu that changes what shows behind it opens with no scrim and no blur, with any depth: whoever picks the style of an element has to see the element while picking. On the web the glass is the same: this page's top bar blurs by 12 px over the background at 88%.</p>
     </section>
 
     <section id="componenti" aria-labelledby="h-comp">
@@ -784,6 +831,43 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
           <p lang="it">Il pieno per l'azione principale, uno per schermata; il contorno per le altre. A pillola e alti almeno 44 px.</p>
           <p lang="en">Filled for the main action, one per screen; outlined for the others. Pill-shaped and at least 44 px tall.</p>
           <div class="stage"><a class="btn btn-full" href="#componenti"><span lang="it">Apri</span><span lang="en">Open</span></a><a class="btn btn-line" href="#componenti"><span lang="it">Tutte le versioni</span><span lang="en">All versions</span></a></div>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Tasti testuali</span><span lang="en">Text buttons</span></h3>
+          <p lang="it">In fondo a una finestra o a un pannello: la parola in <code>testo-accento</code>, mai nell'accento, e un bersaglio di almeno 48 che cresce verso l'interno. L'ultima lettera del tasto più alla fine cade sul margine del testo della finestra: il tasto sporge nel bordo del suo respiro, 12, nel verso della lingua. Un tasto da solo in fondo a un pannello prende tutta la riga, con la parola al centro. Può avere anche una pressione lunga, che vibra e si annuncia.</p>
+          <p lang="en">At the bottom of a window or a panel: the word in <code>testo-accento</code>, never in the accent, and a target of at least 48 that grows inward. The last letter of the button nearest the end falls on the margin of the window's text: the button reaches into the edge by its padding, 12, in the direction of the language. A button alone at the bottom of a panel takes the whole row, with the word in the center. It can also have a long press, which vibrates and is announced.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Finestre di conferma</span><span lang="en">Confirmations</span></h3>
+          <p lang="it">Il titolo è la domanda (<code>Vuoi scartare le modifiche?</code>), e il corpo c'è solo se aggiunge qualcosa: dice quello che succede davvero in quel caso. <code>Annulla</code> a sinistra, l'azione a destra; il tocco fuori vale <code>Annulla</code>, l'esito sicuro, perché sono modali solo le finestre che raccolgono un testo scritto. L'azione che non si disfa ha il colore <code>errore</code>.</p>
+          <p lang="en">The title is the question (<code>Discard changes?</code>), and there is a body only if it adds something: it says what really happens in that case. <code>Cancel</code> on the left, the action on the right; a tap outside counts as <code>Cancel</code>, the safe outcome, because only windows that collect typed text are modal. The action that can't be undone has the <code>errore</code> color.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Uscire da un editor</span><span lang="en">Leaving an editor</span></h3>
+          <p lang="it">Con la freccia in alto o col gesto Indietro, che sono una porta sola e chiedono conferma solo se ci sono modifiche da perdere; senza modifiche si esce subito. La posizione di <code>Salva</code> è propria di ogni editor. Un pannello dentro un editor, come quello della GIF, ha <code>Annulla</code> accanto alla sua azione.</p>
+          <p lang="en">With the arrow at the top or with the Back gesture, which are a single door and ask for confirmation only if there are changes to lose; with no changes you leave at once. Where <code>Save</code> sits is up to each editor. A panel inside an editor, like the GIF one, has <code>Cancel</code> next to its action.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Cursori</span><span lang="en">Sliders</span></h3>
+          <p lang="it">Un tondo con l'alone del colore della superficie sotto, che lo stacca dal binario senza un'ombra. Dove il valore ha uno zero, lo zero è al centro con la sua tacca, e il doppio tocco e la pressione lunga lo azzerano. Nelle impostazioni il valore è a destra, in fondo alla linea. Nelle lingue da destra a sinistra la corsa parte da destra. Il binario regge 3:1 sul suo fondo, e il lettore di schermo sente il nome e il valore.</p>
+          <p lang="en">A round knob with a halo in the color of the surface below, which sets it apart from the rail without a shadow. Where the value has a zero, the zero is in the middle with its tick, and a double tap and a long press reset it. In settings the value is on the right, at the end of the line. In right-to-left languages the track starts from the right. The rail holds 3:1 on its background, and the screen reader hears the name and the value.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Menu a tendina</span><span lang="en">Dropdown menus</span></h3>
+          <p lang="it">Si aggancia alla voce scelta e alla sua freccia, non a tutta la riga. La sua fine è allineata alla fine della freccia; la cima è sulla cima della voce, o il fondo sul fondo della voce se sotto non c'è posto.</p>
+          <p lang="en">It hangs from the chosen item and its arrow, not from the whole row. Its end lines up with the arrow's end; its top is on the item's top, or its bottom on the item's bottom when there is no room below.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Meno e più</span><span lang="en">Minus and plus</span></h3>
+          <p lang="it">Due tasti che scalano un valore: <code>-</code> a sinistra e <code>+</code> a destra, come su una scala che cresce verso destra.</p>
+          <p lang="en">Two buttons that step a value: <code>-</code> on the left and <code>+</code> on the right, like a scale growing to the right.</p>
+        </div>
+        <div class="comp">
+          <h3><span lang="it">Targhette sulle miniature</span><span lang="en">Thumbnail badges</span></h3>
+          <p lang="it">In tutte le app: nero al 60%, angoli di 4, respiro di 4 ai lati e di 2 sopra e sotto, a 4 dal bordo; testo bianco nel corpo <code>labelSmall</code> (11 sp) su una riga alta 12, e segni di 12. In basso, dalla parte della fine della riga, un'etichetta sola: il segno del file (durata, fumetto, animazione) con l'estensione davanti; <code>GIF</code> prende il posto del segno dell'animazione. Dalla parte dell'inizio, <code>HDR</code> da sola.</p>
+          <p lang="it">La durata vince sull'estensione e su <code>HDR</code>, che si tolgono intere; il segno dell'ultimo elemento visto cede a ogni etichetta del suo angolo. Lo spazio si misura col testo vero; la durata scende fino a 8 sp, e solo sotto si taglia. Quello che non entra resta nella descrizione per il lettore di schermo.</p>
+          <p lang="en">In every app: black at 60%, 4 corners, 4 of padding at the sides and 2 above and below, 4 from the edge; white text in the <code>labelSmall</code> size (11 sp) on a 12-tall line, and 12 marks. At the bottom, on the side where the line ends, a single label: the file's mark (length, comic, animation) with the extension before it; <code>GIF</code> takes the place of the animation mark. On the side where the line starts, <code>HDR</code> alone.</p>
+          <p lang="en">The length wins over the extension and over <code>HDR</code>, which drop out whole; the last-seen mark gives way to any label in its corner. Room is measured with the real text; the length shrinks down to 8 sp, and only below that is it cut. What doesn't fit stays in the description for the screen reader.</p>
         </div>
         <div class="comp">
           <h3><span lang="it">Gettoni</span><span lang="en">Chips</span></h3>
@@ -876,12 +960,16 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
             <li>Dire che cosa succede: <code>Salvata in Download</code>.</li>
             <li>Apici dritti, accenti veri, tre punti; nei testi delle app i puntini sono il carattere unico.</li>
             <li>Legare le parole corte alla successiva, perché nessuna resti sola a un capo della riga.</li>
+            <li>Un comando nominato in una frase in grassetto, senza apici: per un vero cambio di formato scegli <strong>Esporta/Converti</strong>.</li>
+            <li>Il perché di un errore con una frase dell'app, tradotta in ogni lingua, mai col messaggio grezzo del sistema o del server.</li>
           </ul>
           <ul lang="en">
             <li>Call a feature by the label of its item, word for word.</li>
             <li>Say what happened: <code>Saved to Downloads</code>.</li>
             <li>Straight quotes, real accents, three dots; in app text the ellipsis is the single character.</li>
             <li>Tie short words to the next one, so no word is left alone at either end of a line.</li>
+            <li>A command named in a sentence in bold, without quotes: to really change its format, use <strong>Export and convert</strong>.</li>
+            <li>The reason for an error with one of the app's sentences, translated in every language, never with the raw message of the system or the server.</li>
           </ul>
         </div>
         <div class="say">
