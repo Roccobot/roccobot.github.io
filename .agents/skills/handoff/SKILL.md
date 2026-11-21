@@ -214,7 +214,9 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `Roccobot/Aomidori`, privato, col documento di feedback sul Worker `aomidori-feedback`; la sua
   pagina di download, l'appcast e l'archivio degli stili vivono nell'hub (`Aomidori/` e
   `styles/`), e le release in `Roccobot/Aomidori-releases`. Il sito nuovo di **Roccobot.me**, il
-  portfolio di Rocco, vive in `Roccobot/rocco.bot` (dal 2026-11-08, ancora da costruire).
+  portfolio di Rocco, vive in `Roccobot/rocco.bot` (dal 2026-11-08, ancora da costruire). **Haul**, l'app per macOS
+  che dà un'interfaccia nativa a gallery-dl, vive in `Roccobot/Haul`, pubblico (dal 2026-11-21,
+  ancora da costruire).
   ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: lo schema che dice il
   progetto (SlimVer `x.xx` per il Web e per chi lo aveva già, SemVer per le app nuove e per AIV
   dalla 1.0.0), con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di

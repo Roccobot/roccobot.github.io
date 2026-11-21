@@ -87,7 +87,7 @@ def _clone(nome):
 AIV = _clone("AIV")
 PROGETTI = {nome: _clone(nome) for nome in (
     "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
-    "cheparolae", "Aomidori", "rocco.bot")}
+    "cheparolae", "Aomidori", "rocco.bot", "Haul")}
 
 RULEFILES = [
     SITO / "CLAUDE.md",
@@ -819,7 +819,8 @@ def stato_in_repo(p):
 NOMI_PROGETTI = {"earthsea": ("Terramare",), "arda": ("Arda",), "ratiolab": ("RatioLab",),
                  "CleanSVG": ("CleanSVG",), "ABP": ("ABP",), "RoccobotOS": ("RoccobotOS",),
                  "Aomidori": ("Aomidori", "Aomidroid"), "userscripts": ("userscript", "userscripts"),
-                 "cheparolae": ("Ma che parola è", "cheparolae"), "rocco.bot": ("Roccobot.me", "rocco.bot")}
+                 "cheparolae": ("Ma che parola è", "cheparolae"), "rocco.bot": ("Roccobot.me", "rocco.bot"),
+                 "Haul": ("Haul",)}
 
 
 def cita_progetto_assente(righe, i, intorno=1):
