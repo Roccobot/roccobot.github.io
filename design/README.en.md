@@ -439,9 +439,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   and a double tap and a long press reset it. In settings the value is on the right, at the end of
   the slider's line. In right-to-left languages the track starts from the right. The rail holds
   3:1 on its background, and the screen reader hears the name and the value.
-- **Dropdown menus**: hang from the chosen item and its arrow, not from the whole row. The menu's
-  end lines up with the arrow's end; its top is on the item's top, or its bottom on the item's
-  bottom when there is no room below.
+- **Dropdown menus**: stay attached to their button, the chosen item with its arrow, and never
+  come loose from the screen. The menu opens centered on the button, below it and flush with it, or
+  above when there is no room below. Behind it there is no scrim and no blur, whatever the panel
+  depth; a light shadow sets it apart from the background, the same as menus (elevation 8).
 - **Two buttons that step a value**: `-` on the left and `+` on the right, like a scale growing to
   the right.
 - **Thumbnail badges**, in every app: black at 60%, 4 corners, 4 of padding at the sides and 2
@@ -518,6 +519,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   use **Export and convert**.
 - **The reason for an error is written with one of the app's sentences**, translated in every
   language, never with the raw message of the system or the server.
+- **A path wraps only after a slash**, and a folder name stays whole: `/storage/emulated/0/DCIM/`
+  and below it `Misc & LOL`, never `Misc &` and below it `LOL`. It is done with the word joiner
+  (U+2060) inside names and the zero-width space (U+200B) after slashes; whoever copies the path
+  gets the real one, without the two characters.
 - Straight quotes, real accents, three dots; in app text the ellipsis is the single character. No
   em or en dashes, guillemets or curly quotes.
 
