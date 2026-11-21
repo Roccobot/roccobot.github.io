@@ -436,9 +436,10 @@ grigie.
   tocco e la pressione lunga lo azzerano. Nelle impostazioni il valore è a destra, in fondo alla
   linea del cursore. Nelle lingue da destra a sinistra la corsa parte da destra. Il binario regge
   3:1 sul suo fondo, e il lettore di schermo sente il nome e il valore.
-- **Menu a tendina**: si aggancia alla voce scelta e alla sua freccia, non a tutta la riga. La sua
-  fine è allineata alla fine della freccia; la cima è sulla cima della voce, o il fondo sul fondo
-  della voce se sotto non c'è posto.
+- **Menu a tendina**: resta attaccato al suo tasto, la voce scelta con la sua freccia, e non si
+  stacca dalla schermata. Si apre centrato sul tasto, sotto e a filo del tasto, o sopra se sotto non
+  c'è posto. Dietro non ha né velo né sfocatura, con qualunque profondità dei pannelli; lo stacca
+  dal fondo un'ombra leggera, la stessa dei menu (elevazione 8).
 - **Due tasti che scalano un valore**: `-` a sinistra e `+` a destra, come su una scala che cresce
   verso destra.
 - **Targhette sulle miniature**, in tutte le app: nero al 60%, angoli di 4, respiro di 4 ai lati e
@@ -515,6 +516,10 @@ grigie.
   formato scegli **Esporta/Converti**.
 - **Il perché di un errore si scrive con una frase dell'app**, tradotta in ogni lingua, mai col
   messaggio grezzo del sistema o del server.
+- **Un percorso va a capo solo dopo una barra**, e il nome di una cartella resta intero:
+  `/storage/emulated/0/DCIM/` e sotto `Misc & LOL`, mai `Misc &` e sotto `LOL`. Si ottiene con lo
+  zero di unione (U+2060) dentro i nomi e lo spazio di larghezza zero (U+200B) dopo le barre; chi
+  copia il percorso riceve quello vero, senza i due caratteri.
 - Apici dritti, accenti veri, tre punti; nei testi delle app i puntini di sospensione sono il
   carattere unico. Niente trattini lunghi, caporali o virgolette curve.
 
