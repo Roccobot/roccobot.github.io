@@ -438,8 +438,8 @@ grigie.
   3:1 sul suo fondo, e il lettore di schermo sente il nome e il valore.
 - **Menu a tendina**: resta attaccato al suo tasto, la voce scelta con la sua freccia, e non si
   stacca dalla schermata. Si apre centrato sul tasto, sotto e a filo del tasto, o sopra se sotto non
-  c'è posto. Dietro non ha né velo né sfocatura, con qualunque profondità dei pannelli; lo stacca
-  dal fondo un'ombra leggera, la stessa dei menu (elevazione 8).
+  c'è posto. Non ha né velo né sfocatura dietro, né ombra né bagliore, con qualunque profondità dei
+  pannelli: lo stacca dal fondo il solo colore della sua superficie, quella dei menu.
 - **Due tasti che scalano un valore**: `-` a sinistra e `+` a destra, come su una scala che cresce
   verso destra.
 - **Targhette sulle miniature**, in tutte le app: nero al 60%, angoli di 4, respiro di 4 ai lati e

@@ -441,8 +441,9 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   3:1 on its background, and the screen reader hears the name and the value.
 - **Dropdown menus**: stay attached to their button, the chosen item with its arrow, and never
   come loose from the screen. The menu opens centered on the button, below it and flush with it, or
-  above when there is no room below. Behind it there is no scrim and no blur, whatever the panel
-  depth; a light shadow sets it apart from the background, the same as menus (elevation 8).
+  above when there is no room below. It has no scrim or blur behind it and no shadow or glow,
+  whatever the panel depth: only the color of its surface, the menus' one, sets it apart from the
+  background.
 - **Two buttons that step a value**: `-` on the left and `+` on the right, like a scale growing to
   the right.
 - **Thumbnail badges**, in every app: black at 60%, 4 corners, 4 of padding at the sides and 2
