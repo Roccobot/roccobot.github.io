@@ -516,6 +516,29 @@ class SymbolTests(unittest.TestCase):
         self.assertEqual(refcheck.char_defects('Ruota immagine a sinistra ⟲, a destra ⟳.'), [])
 
 
+class FeedbackLabelTests(unittest.TestCase):
+    """A label of a feedback document is written as the app shows it, ellipsis included.
+
+    On 2026-11-22 AIV's session had to write `Esporta GIF...` with three dots in `docs/Feedback.md`
+    of the 1.15.0 round, because the rule-file check refused the single character that the
+    interface rule of 2026-10-15 wants there. The exemption covers the label lines only.
+    """
+
+    DF = ('# DF\n\nUna prova con … nel testo.\n\n## Etichette testuali\n\n'
+          '### e-clip_export_gif · Il tasto … della GIF\nEsporta GIF…\n\n'
+          '## Aggiornamenti recenti\n\nRiga … dopo le etichette.\n')
+
+    def ellipses(self, path):
+        return [n for n, _, ch, _ in refcheck.char_defects(self.DF, path) if ch == '…']
+
+    def test_label_text_passes_and_prose_does_not(self):
+        self.assertEqual(self.ellipses(Path('docs/Feedback.md')), [3, 7, 12])
+
+    def test_other_files_keep_the_ban(self):
+        self.assertEqual(self.ellipses(Path('docs/Editor.md')), [3, 7, 8, 12])
+        self.assertEqual(self.ellipses(None), [3, 7, 8, 12])
+
+
 class LexiconTests(unittest.TestCase):
     """The user's lexical corrections block a commit, and a word named in code still passes.
 

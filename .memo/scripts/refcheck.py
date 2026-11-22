@@ -1107,6 +1107,26 @@ def approved_quote_positions(text, path):
     return positions
 
 
+def feedback_label_lines(text, path):
+    """Line numbers of the label texts in a feedback document's source (`docs/Feedback.md`).
+
+    A label of the `## Etichette testuali` section is the exact interface text the app will show,
+    and there the single ellipsis character stays, as the system convention wants (`Roccobot.md`,
+    § 'Caratteri', exception of 2026-10-11 and the rule of 2026-10-15 on feedback documents).
+    Only the text lines count: the `###` heading that names and describes a label is prose.
+    Until 2026-11-22 (card Puntini) the rule-file check refused the character there too.
+    """
+    if path is None or Path(path).name != "Feedback.md":
+        return set()
+    lines, inside = set(), False
+    for n, line in enumerate(text.splitlines(), 1):
+        if line.startswith("## "):
+            inside = line.strip() == "## Etichette testuali"
+        elif inside and line.strip() and not line.startswith("#"):
+            lines.add(n)
+    return lines
+
+
 def char_defects(text, path=None):
     """Difetti di carattere in un testo: [(riga, colonna, carattere, motivo)].
 
@@ -1117,6 +1137,7 @@ def char_defects(text, path=None):
     """
     out = []
     approved = approved_quote_positions(text, path)
+    labels = feedback_label_lines(text, path)
     in_fence = False
     for n, line in enumerate(text.splitlines(), 1):
         if line.lstrip().startswith("```"):
@@ -1162,7 +1183,8 @@ def char_defects(text, path=None):
                 continue
             nome = unicodedata.name(ch, "?")
             if ch in VIETATI:
-                if not in_code and not (ch in "\u00ab\u00bb" and (n, col) in approved):
+                if not in_code and not (ch in "\u00ab\u00bb" and (n, col) in approved) \
+                        and not (ch == "\u2026" and n in labels):
                     out.append((n, col, ch, VIETATI[ch]))
                 continue
             if any(a <= cp <= b for a, b in SIMBOLI_OK):
