@@ -460,6 +460,10 @@ grigie.
   lingua in vigore e alla larghezza di quel momento, quindi la stessa fila può essere a parti uguali
   su uno schermo largo e secondo il testo su uno stretto. Stacco di 8 fra due gettoni e fra due
   righe; nessun gettone va a capo prima del necessario.
+- **Suggerimenti dei tasti a icona**: ogni tasto che mostra solo un'icona, senza testo visibile,
+  mostra il suo nome in un suggerimento al tocco prolungato, e nelle pagine Web anche al passaggio
+  del mouse. Il testo è quello che il tasto dà al lettore di schermo; il suggerimento non toglie il
+  tocco semplice né un'azione che il tasto ha già sul tocco prolungato.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo` (dietro una scheda dal basso
   segue la corsa della scheda); con la sfocatura spenta, cioè con l'ombra di fabbrica o con niente dietro,
   il velo di dialoghi e schede è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.

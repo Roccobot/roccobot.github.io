@@ -463,6 +463,10 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   proportion to each chip's text. It is measured with the real text, in the current language and at
   the width of the moment, so the same row can have equal parts on a wide screen and follow the text
   on a narrow one. 8 between two chips and between two lines; no chip wraps before it has to.
+- **Icon button tooltips**: every button that shows only an icon, with no visible text, shows its
+  name in a tooltip on long press, and on web pages on hover too. The text is the one the button
+  gives the screen reader; the tooltip takes away neither the plain tap nor an action the button
+  already has on long press.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet it
   follows the sheet's travel); with the blur off, that is with the default shadow or with nothing behind, dialogs and
   sheets have the 60% dimming. The panel stands out by its surface color alone, with no border.
