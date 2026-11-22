@@ -30,6 +30,7 @@
 | **AIV**, l'app Android 'Astonishing Image Viewer' (repo **privato** dal 2026-10-19, passo 5 di `Serratura`; la paginetta di download e l'informativa vivono qui, in `AIV/`, copiate da `publish/` del suo repo, e le release nel repo pubblico `Roccobot/AIV-releases`) | repo `Roccobot/AIV` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Roccobot.me**, il sito-portfolio di Rocco, rifatto da zero (repo nato il 2026-11-08, pubblico e ancora da costruire; il sito di oggi è su Squarespace) | repo `Roccobot/rocco.bot` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Haul**, l'app per macOS che dà un'interfaccia nativa a gallery-dl (repo nato il 2026-11-21, pubblico e ancora da costruire, con la mappa di `/wayfinder`) | repo `Roccobot/Haul` | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **ArtCraft Quick Look**, l'app per macOS che mostra nel Finder miniature e anteprime dei file della suite ArtCraft (repo pubblico, principale dal 2026-11-22, sessione titolare `CraftWorks`; le versioni escono come release del repo) | repo `Roccobot/artcraft-quick-look` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e
