@@ -454,11 +454,12 @@ grigie.
     di colonne. La durata resta su una riga e scende fino a 8 sp; solo sotto si taglia.
   - Quello che non entra resta nella descrizione della miniatura per il lettore di schermo, e tutto
     segue il verso della lingua.
-- **Gettoni**: una fila di gettoni di una scelta occupa tutta la larghezza, e lo spazio che avanza
-  si divide in proporzione al testo di ognuno, nella lingua in vigore. 'A larghezza piena' non vuol
-  dire gettoni larghi uguali: lo sono solo se i testi hanno la stessa misura o se la griglia è
-  dichiarata (un numero fisso per riga). Stacco di 8 fra due gettoni e fra due righe; nessun gettone
-  va a capo prima del necessario.
+- **Gettoni**: una fila di gettoni di una scelta occupa tutta la larghezza. In ogni riga i gettoni
+  sono larghi uguali se il testo di ognuno entra nella sua parte; se anche uno solo non entra, lo
+  spazio che avanza si divide in proporzione al testo di ognuno. Si misura col testo vero, nella
+  lingua in vigore e alla larghezza di quel momento, quindi la stessa fila può essere a parti uguali
+  su uno schermo largo e secondo il testo su uno stretto. Stacco di 8 fra due gettoni e fra due
+  righe; nessun gettone va a capo prima del necessario.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo` (dietro una scheda dal basso
   segue la corsa della scheda); con la sfocatura spenta, cioè con l'ombra di fabbrica o con niente dietro,
   il velo di dialoghi e schede è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.

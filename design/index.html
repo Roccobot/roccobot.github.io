@@ -392,9 +392,13 @@ td.kind { color: var(--testo-secondario); }
 .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25rem; border-radius: var(--raggio-pieno); font: 600 1rem/1 var(--tipo); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
 .btn-full { background: var(--accento); color: var(--contenuto-su-accento); }
 .btn-line { background: transparent; color: var(--testo); border-color: var(--contorno); }
-/* chips: the row fills the width and the leftover space is shared in proportion to each label,
-   so --it and --en hold each label's length in that language and the language switch reflows them */
+/* chips: the row fills the width; in each line the chips are equal when every label fits its
+   share (.even, set by the script, which measures the labels at their natural width with .measure),
+   otherwise the leftover space is shared in proportion to each label, so --it and --en hold each
+   label's length in that language and the language switch reflows them */
 .gts { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.gts .gt.even { flex: 1 1 0; }
+.gts.measure .gt { flex: 0 0 auto; }
 .gt { flex: var(--it) 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border-radius: var(--raggio-pieno); border: 1px solid var(--contorno); font: 500 .9375rem/1 var(--tipo); white-space: nowrap; }
 :root[data-lang="en"] .gt { flex-grow: var(--en); }
 .gt[aria-current="true"] { border-color: var(--testo-accento); color: var(--testo-accento); }
@@ -536,7 +540,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   <div class="bar-in">
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
-    <span class="bar-ver">v45</span>
+    <span class="bar-ver">v46</span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
@@ -1028,8 +1032,8 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Gettoni</span><span lang="en">Chips</span></h3>
-          <p lang="it">Una fila di&nbsp;gettoni occupa tutta la&nbsp;larghezza, e&nbsp;lo&nbsp;spazio che avanza si&nbsp;divide in&nbsp;proporzione al&nbsp;testo di&nbsp;ognuno, nella lingua&nbsp;in&nbsp;vigore. Larghi uguali solo se&nbsp;i&nbsp;testi hanno la&nbsp;stessa misura o&nbsp;la&nbsp;griglia è&nbsp;dichiarata. Stacco di&nbsp;8&nbsp;fra due gettoni e&nbsp;fra due righe; nessuno va&nbsp;a&nbsp;capo prima del necessario.</p>
-          <p lang="en">A&nbsp;row of&nbsp;chips fills the full width, and the leftover space is&nbsp;shared in&nbsp;proportion to&nbsp;each chip's&nbsp;text, in&nbsp;the current&nbsp;language. Equal widths only when the texts are the same length or&nbsp;the grid is&nbsp;declared. 8&nbsp;between two chips and between two rows; no&nbsp;chip wraps before&nbsp;it&nbsp;has&nbsp;to.</p>
+          <p lang="it">Una fila di&nbsp;gettoni occupa tutta la&nbsp;larghezza. I&nbsp;gettoni sono larghi uguali se&nbsp;il&nbsp;testo di&nbsp;ognuno entra nella sua parte; se&nbsp;anche uno solo non entra, lo&nbsp;spazio che avanza si&nbsp;divide in&nbsp;proporzione al&nbsp;testo, nella lingua&nbsp;in&nbsp;vigore. Stacco di&nbsp;8&nbsp;fra due gettoni e&nbsp;fra due righe; nessuno va&nbsp;a&nbsp;capo prima del necessario. Stringi la&nbsp;finestra per vedere il&nbsp;passaggio.</p>
+          <p lang="en">A&nbsp;row of&nbsp;chips fills the full&nbsp;width. The chips are equal widths if&nbsp;every label fits its share; if&nbsp;even one doesn't, the leftover space is&nbsp;shared in&nbsp;proportion to&nbsp;the text, in&nbsp;the current&nbsp;language. 8&nbsp;between two chips and between two lines; no&nbsp;chip wraps before&nbsp;it&nbsp;has&nbsp;to. Narrow the window to&nbsp;see the&nbsp;switch.</p>
           <div class="stage"><div class="gts" aria-hidden="true">
             <span class="gt" aria-current="true" style="--it: 5; --en: 3"><span lang="it">Tutte</span><span lang="en">All</span></span>
             <span class="gt" style="--it: 4; --en: 6"><span lang="it">Foto</span><span lang="en">Photos</span></span>
@@ -1177,7 +1181,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <footer class="end">
         <span><svg viewBox="13.96 5.77 152.11 143.75" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei,&nbsp;a.k.a.&nbsp;Roccobot</span>
         <a href="https://roccobot.me">roccobot.me</a>
-        <span><span lang="it">Versione&nbsp;45, 22&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;45, November&nbsp;22,&nbsp;2026</span></span>
+        <span><span lang="it">Versione&nbsp;46, 22&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;46, November&nbsp;22,&nbsp;2026</span></span>
       </footer>
     </section>
   </main>
@@ -1272,6 +1276,35 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   var asked = null;
   try { asked = new URL(window.location.href).searchParams.get('lang'); } catch (err) { asked = null; }
   if (asked === 'en') setLang('en'); else paint();
+
+  // Chips: in each line, equal widths when every label fits its share, otherwise sized by their
+  // text. The labels are measured at their natural width, in the language shown and at the current
+  // width, and the lines are the ones they wrap into at that width.
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.gts'));
+  function fit(row) {
+    var chips = Array.prototype.slice.call(row.children);
+    if (!chips.length) return;
+    row.classList.add('measure');
+    var boxes = chips.map(function (c) { return c.getBoundingClientRect(); });
+    row.classList.remove('measure');
+    var gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+    var lines = [];
+    boxes.forEach(function (b, i) {
+      var last = lines[lines.length - 1];
+      if (last && Math.abs(boxes[last[0]].top - b.top) < 1) last.push(i); else lines.push([i]);
+    });
+    lines.forEach(function (line) {
+      var share = (row.clientWidth - gap * (line.length - 1)) / line.length;
+      var even = line.every(function (i) { return boxes[i].width <= share + 0.5; });
+      line.forEach(function (i) { chips[i].classList.toggle('even', even); });
+    });
+  }
+  function fitAll() { rows.forEach(fit); }
+  if (window.ResizeObserver) rows.forEach(function (r) { new ResizeObserver(function () { fit(r); }).observe(r); });
+  else window.addEventListener('resize', fitAll);
+  new MutationObserver(fitAll).observe(root, { attributes: true, attributeFilter: ['data-lang'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+  fitAll();
 
   // The section index on narrow windows (the RoccobotOS behavior, and the fixed controls of this
   // design system): the button shows while scrolling and for 3 seconds after, never while the
