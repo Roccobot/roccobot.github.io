@@ -463,7 +463,13 @@ grigie.
 - **Suggerimenti dei tasti a icona**: ogni tasto che mostra solo un'icona, senza testo visibile,
   mostra il suo nome in un suggerimento al tocco prolungato, e nelle pagine Web anche al passaggio
   del mouse. Il testo è quello che il tasto dà al lettore di schermo; il suggerimento non toglie il
-  tocco semplice né un'azione che il tasto ha già sul tocco prolungato.
+  tocco semplice né un'azione che il tasto ha già sul tocco prolungato. Conta quello che il tasto
+  mostra alla larghezza del momento: un tasto che su un telefono nasconde il suo testo lo ha lì, e
+  non dove il testo si vede. Nelle pagine Web è il suggerimento semplice di Material 3: il colore del
+  testo come fondo e quello del fondo come testo, angoli di 4, corpo 12 su una riga alta 16, respiro
+  di 8 ai lati e di 4 sopra e sotto, a 8 dal tasto, sopra o sotto se sopra non c'è posto. Compare
+  dopo mezzo secondo, anche col fuoco della tastiera, e dopo un tocco prolungato resta un secondo e
+  mezzo da quando il dito si alza.
 - **Velo**: dietro ogni pannello, `velo` al 30% con `sfocatura-velo` (dietro una scheda dal basso
   segue la corsa della scheda); con la sfocatura spenta, cioè con l'ombra di fabbrica o con niente dietro,
   il velo di dialoghi e schede è al 60%. Il pannello si stacca col solo colore della superficie, senza bordo.

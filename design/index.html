@@ -518,10 +518,16 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 .fl-track { position: relative; height: 1.5rem; margin: .75rem 0 0 calc(40 / 320 * 100%); width: calc(272 / 320 * 100%); border-radius: .75rem; background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linea); }
 .fl-block { position: absolute; left: 0; top: .25rem; width: 1rem; height: 1rem; border-radius: .5rem; background: var(--testo-accento); }
 .fl figcaption { margin-top: .6rem; font-size: .875rem; opacity: .8; text-wrap: pretty; }
+/* The tooltip of icon-only buttons: the plain tooltip of Material 3, on the inverse surface. A long
+   press shows it, so a button never selects its text or opens the system callout. */
+button { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.tip { position: fixed; top: 0; left: 0; z-index: 30; max-width: min(18rem, calc(100vw - 1rem)); padding: .25rem .5rem; border-radius: 4px; background: var(--testo); color: var(--fondo); font: 400 .75rem/1rem var(--tipo); pointer-events: none; opacity: 0; }
+.tip[data-on] { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
   .ctl, .btn, .toc a { transition: background-color .16s, border-color .16s, color .16s; }
   .toc-btn { transition: opacity .16s, transform .16s; }
+  .tip { transition: opacity .1s; }
 }
 </style>
 </head>
@@ -540,7 +546,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
   <div class="bar-in">
     <svg class="bar-mark" viewBox="13.96 5.77 152.11 143.75" role="img" aria-label="Il marchio di Roccobot" data-label-en="The Roccobot mark"><use href="#tian"/></svg>
     <span class="bar-name">Design&nbsp;System</span>
-    <span class="bar-ver">v47</span>
+    <span class="bar-ver">v48</span>
     <button class="ctl lang" id="lang" type="button" aria-label="Mostra la pagina in inglese">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
       <span class="ctl-label ctl-stack" id="lang-label"><span>English</span><span>Italiano</span></span><span class="ctl-code ctl-stack" id="lang-code"><span>EN</span><span>IT</span></span><kbd>L</kbd>
@@ -1025,8 +1031,10 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
         </div>
         <div class="comp">
           <h3><span lang="it">Suggerimenti dei tasti&nbsp;a&nbsp;icona</span><span lang="en">Icon button&nbsp;tooltips</span></h3>
-          <p lang="it">Ogni tasto che mostra solo un'icona mostra il&nbsp;suo nome in&nbsp;un&nbsp;suggerimento al&nbsp;tocco prolungato, e&nbsp;nelle pagine Web anche al&nbsp;passaggio&nbsp;del&nbsp;mouse. Il&nbsp;testo è&nbsp;quello del lettore di&nbsp;schermo; il&nbsp;tocco semplice resta del tasto, e&nbsp;un'azione che il&nbsp;tasto ha&nbsp;già sul tocco prolungato resta&nbsp;quella.</p>
-          <p lang="en">Every button that shows only an&nbsp;icon shows its name in&nbsp;a&nbsp;tooltip on&nbsp;long press, and on&nbsp;web pages on&nbsp;hover&nbsp;too. The text is&nbsp;the screen reader's; the plain tap stays the button's, and an&nbsp;action the button already has on&nbsp;long press stays&nbsp;as&nbsp;it&nbsp;is.</p>
+          <p lang="it">Ogni tasto che mostra solo un'icona mostra il&nbsp;suo nome in&nbsp;un&nbsp;suggerimento al&nbsp;tocco prolungato, e&nbsp;nelle pagine Web anche al&nbsp;passaggio&nbsp;del&nbsp;mouse. Il&nbsp;testo è&nbsp;quello del lettore di&nbsp;schermo; il&nbsp;tocco semplice resta del tasto, e&nbsp;un'azione che il&nbsp;tasto ha&nbsp;già sul tocco prolungato resta&nbsp;quella. Conta quello che il&nbsp;tasto mostra alla larghezza del&nbsp;momento.</p>
+          <p lang="it">Nelle pagine Web è&nbsp;il&nbsp;suggerimento semplice di&nbsp;Material&nbsp;3: il&nbsp;colore del testo come fondo e&nbsp;quello del fondo come testo, angoli di&nbsp;4, corpo&nbsp;12, a&nbsp;8&nbsp;dal tasto, sopra o&nbsp;sotto se&nbsp;sopra non&nbsp;c'è&nbsp;posto. Compare dopo mezzo secondo, anche col fuoco della tastiera, e&nbsp;dopo un&nbsp;tocco prolungato resta un&nbsp;secondo&nbsp;e&nbsp;mezzo. In&nbsp;questa pagina lo&nbsp;hanno il&nbsp;tasto dell'indice&nbsp;e, su&nbsp;un&nbsp;telefono, quello&nbsp;del&nbsp;tema.</p>
+          <p lang="en">Every button that shows only an&nbsp;icon shows its name in&nbsp;a&nbsp;tooltip on&nbsp;long press, and on&nbsp;web pages on&nbsp;hover&nbsp;too. The text is&nbsp;the screen reader's; the plain tap stays the button's, and an&nbsp;action the button already has on&nbsp;long press stays&nbsp;as&nbsp;it&nbsp;is. What counts is&nbsp;what the button shows at&nbsp;the current&nbsp;width.</p>
+          <p lang="en">On&nbsp;web pages it&nbsp;is&nbsp;the plain tooltip of&nbsp;Material&nbsp;3: the text color as&nbsp;background and the background color as&nbsp;text, corners of&nbsp;4, size&nbsp;12, 8&nbsp;from the button, above it&nbsp;or&nbsp;below if&nbsp;there is&nbsp;no&nbsp;room&nbsp;above. It&nbsp;shows after half a&nbsp;second, on&nbsp;keyboard focus too, and after a&nbsp;long press it&nbsp;stays a&nbsp;second and&nbsp;a&nbsp;half. On&nbsp;this page the index button has it&nbsp;and, on&nbsp;a&nbsp;phone, the theme&nbsp;button.</p>
         </div>
         <div class="comp">
           <h3><span lang="it">Targhette sulle&nbsp;miniature</span><span lang="en">Thumbnail&nbsp;badges</span></h3>
@@ -1186,7 +1194,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
       <footer class="end">
         <span><svg viewBox="13.96 5.77 152.11 143.75" aria-hidden="true"><use href="#tian"/></svg>Rocco Casadei,&nbsp;a.k.a.&nbsp;Roccobot</span>
         <a href="https://roccobot.me">roccobot.me</a>
-        <span><span lang="it">Versione&nbsp;47, 22&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;47, November&nbsp;22,&nbsp;2026</span></span>
+        <span><span lang="it">Versione&nbsp;48, 22&nbsp;novembre&nbsp;2026</span><span lang="en">Version&nbsp;48, November&nbsp;22,&nbsp;2026</span></span>
       </footer>
     </section>
   </main>
@@ -1195,6 +1203,7 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
 <button class="toc-btn" id="toc-btn" type="button" aria-label="Mostra le sezioni" data-label-en="Show the sections" aria-expanded="false" tabindex="-1" aria-hidden="true">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7h11M8 12h11M8 17h11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4.5" cy="7" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="17" r="1.2" fill="currentColor"/></svg>
 </button>
+<div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
 
 <script>
 // Theme and language. The theme follows the system until the viewer picks one with the button or
@@ -1344,6 +1353,76 @@ footer.end svg { width: 1.25rem; height: auto; color: var(--marchio); vertical-a
     still = setTimeout(function () { moving = false; tocButton(); }, 3000);
   }, { passive: true });
   narrow.addEventListener('change', function () { moving = false; closeToc(); tocButton(); });
+
+  // Tooltips of icon-only buttons: a button that shows only its icon at the current width shows its
+  // name, the text it gives the screen reader, on hover, on keyboard focus and on long press. The
+  // plain tap stays the button's; a long press shows the name, and the click it ends with is dropped.
+  var tip = document.getElementById('tip');
+  var tipFor = null, hoverFor = null, hoverWait = null, pressFor = null, pressWait = null, hideWait = null, swallow = false;
+  var TIP_DELAY = 500, TIP_LINGER = 1500, TIP_GAP = 8;
+  function iconOnly(b) { return !!b && !!b.getAttribute('aria-label') && b.innerText.trim() === ''; }
+  function buttonOf(ev) { return ev.target && ev.target.closest ? ev.target.closest('button') : null; }
+  function showTip(b) {
+    clearTimeout(hideWait);
+    tipFor = b;
+    tip.textContent = b.getAttribute('aria-label');
+    tip.setAttribute('data-on', '');
+    var r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+    var top = r.top - t.height - TIP_GAP;
+    if (top < TIP_GAP) top = r.bottom + TIP_GAP;
+    var left = Math.min(Math.max(r.left + r.width / 2 - t.width / 2, TIP_GAP), window.innerWidth - t.width - TIP_GAP);
+    tip.style.top = top + 'px';
+    tip.style.left = left + 'px';
+  }
+  function hideTip() {
+    clearTimeout(hoverWait);
+    clearTimeout(hideWait);
+    tipFor = null;
+    hoverFor = null;
+    tip.removeAttribute('data-on');
+  }
+  document.addEventListener('pointerover', function (ev) {
+    if (ev.pointerType !== 'mouse') return;
+    var b = buttonOf(ev);
+    if (!b || b === hoverFor || !iconOnly(b)) return;
+    hideTip();
+    hoverFor = b;
+    hoverWait = setTimeout(function () { showTip(b); }, TIP_DELAY);
+  });
+  document.addEventListener('pointerout', function (ev) {
+    if (ev.pointerType !== 'mouse') return;
+    var b = buttonOf(ev);
+    if (b && b === hoverFor && !b.contains(ev.relatedTarget)) hideTip();
+  });
+  document.addEventListener('focusin', function (ev) {
+    var b = buttonOf(ev);
+    if (b && iconOnly(b) && b.matches(':focus-visible')) showTip(b);
+  });
+  // a tap moves the focus too, so only the button that loses it closes its own tooltip
+  document.addEventListener('focusout', function (ev) { if (tipFor && buttonOf(ev) === tipFor) hideTip(); });
+  document.addEventListener('pointerdown', function (ev) {
+    swallow = false;
+    if (ev.pointerType === 'mouse') { hideTip(); return; }
+    var b = buttonOf(ev);
+    if (!b || !iconOnly(b)) return;
+    pressFor = b;
+    pressWait = setTimeout(function () { swallow = true; showTip(b); }, TIP_DELAY);
+  });
+  function release() {
+    clearTimeout(pressWait);
+    if (tipFor && tipFor === pressFor) hideWait = setTimeout(hideTip, TIP_LINGER);
+    pressFor = null;
+  }
+  document.addEventListener('pointerup', release);
+  document.addEventListener('pointercancel', release);
+  document.addEventListener('click', function (ev) {
+    if (!swallow) return;
+    swallow = false;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+  }, true);
+  document.addEventListener('contextmenu', function (ev) { if (pressFor || tipFor) ev.preventDefault(); });
+  window.addEventListener('scroll', function () { if (tipFor && tipFor !== pressFor) hideTip(); }, { passive: true });
 
   // Copy a hex value; the label says so for two seconds, in the page's language.
   document.querySelectorAll('.copy').forEach(function (b) {
