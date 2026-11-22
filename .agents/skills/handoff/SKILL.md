@@ -216,7 +216,7 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `styles/`), e le release in `Roccobot/Aomidori-releases`. Il sito nuovo di **Roccobot.me**, il
   portfolio di Rocco, vive in `Roccobot/rocco.bot` (dal 2026-11-08, ancora da costruire). **Haul**, l'app per macOS
   che dà un'interfaccia nativa a gallery-dl, vive in `Roccobot/Haul`, pubblico (dal 2026-11-21,
-  ancora da costruire). **ArtCraft Quick Look**, l'app per macOS che mostra nel Finder le anteprime
+  ancora da costruire). **CraftLook** (fino alla 0.2.5 'ArtCraft Quick Look'), l'app per macOS che mostra nel Finder le anteprime
   dei file della suite ArtCraft, vive in `Roccobot/CraftLook`, pubblico (principale dal
   2026-11-22, sessione titolare `CraftWorks`).
   ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: lo schema che dice il
