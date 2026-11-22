@@ -458,10 +458,11 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
     columns. The length stays on one line and shrinks down to 8 sp; only below that is it cut.
   - What doesn't fit stays in the thumbnail's description for the screen reader, and everything
     follows the direction of the language.
-- **Chips**: a row of chips for a choice fills the full width, and the leftover space is shared in
-  proportion to each chip's text, in the current language. 'Full width' doesn't mean equal-width
-  chips: they are equal only when the texts are the same length or the grid is declared (a fixed
-  number per row). 8 between two chips and between two rows; no chip wraps before it has to.
+- **Chips**: a row of chips for a choice fills the full width. In each line the chips are equal
+  widths if every label fits its share; if even one doesn't, the leftover space is shared in
+  proportion to each chip's text. It is measured with the real text, in the current language and at
+  the width of the moment, so the same row can have equal parts on a wide screen and follow the text
+  on a narrow one. 8 between two chips and between two lines; no chip wraps before it has to.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet it
   follows the sheet's travel); with the blur off, that is with the default shadow or with nothing behind, dialogs and
   sheets have the 60% dimming. The panel stands out by its surface color alone, with no border.
