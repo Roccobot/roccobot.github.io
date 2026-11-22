@@ -466,7 +466,12 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - **Icon button tooltips**: every button that shows only an icon, with no visible text, shows its
   name in a tooltip on long press, and on web pages on hover too. The text is the one the button
   gives the screen reader; the tooltip takes away neither the plain tap nor an action the button
-  already has on long press.
+  already has on long press. What counts is what the button shows at the current width: a button
+  that hides its text on a phone has a tooltip there, and not where its text shows. On web pages it
+  is the plain tooltip of Material 3: the text color as background and the background color as text,
+  corners of 4, size 12 on a 16 line, 8 of padding at the sides and 4 above and below, 8 from the
+  button, above it or below if there is no room above. It shows after half a second, on keyboard
+  focus too, and after a long press it stays a second and a half from when the finger lifts.
 - **Scrim**: behind every panel, `velo` at 30% with `sfocatura-velo` (behind a bottom sheet it
   follows the sheet's travel); with the blur off, that is with the default shadow or with nothing behind, dialogs and
   sheets have the 60% dimming. The panel stands out by its surface color alone, with no border.
