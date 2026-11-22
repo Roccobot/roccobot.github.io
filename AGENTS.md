@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.31
+> **Versione**: 3.32
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -265,9 +265,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Nelle pagine Web la navigazione con la tastiera non si vede**: niente anello del fuoco né link
   'salta al contenuto'; il comando raggiunto col Tab cambia come al passaggio del mouse
   (§ '⌨️ La navigazione con la tastiera non si vede').
-- **Gettoni a larghezza piena, larghi secondo il testo**: lo spazio che avanza si divide in
-  proporzione al testo, in ogni lingua; larghi uguali solo le griglie dichiarate
-  (§ '↔️ Gettoni a larghezza piena: larghi secondo il testo').
+- **Gettoni a larghezza piena, uguali se i testi entrano**: in una riga i gettoni sono larghi
+  uguali se ogni testo entra nella sua parte, se no lo spazio che avanza si divide in proporzione
+  al testo, in ogni lingua (§ '↔️ Gettoni a larghezza piena').
 
 <!-- core:end -->
 
