@@ -108,5 +108,16 @@ class AndroidSdkTests(unittest.TestCase):
         self.assertEqual(check.android_sdk_latest('emulator', CATALOGUE, dated=lambda url: None), ('?', None))
 
 
+class GitHubChannelTests(unittest.TestCase):
+    def test_the_any_channel_takes_a_prerelease_but_not_a_nightly(self):
+        releases = [
+            {'tag_name': 'v0.46.2-nightly.20261122.155.1', 'prerelease': True, 'draft': False},
+            {'tag_name': 'v0.47.0', 'prerelease': False, 'draft': True},
+            {'tag_name': 'v0.46.2', 'prerelease': True, 'draft': False},
+            {'tag_name': 'v0.45.0', 'prerelease': False, 'draft': False},
+        ]
+        self.assertEqual(check.newest_release(releases)['tag_name'], 'v0.46.2')
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -188,7 +188,15 @@ def font_version(data):
     return '?'
 
 
-# A pre-release is skipped unless the entry follows that channel too ("channel": "any").
+# A pre-release is skipped unless the entry follows that channel too ("channel": "any"), on Maven
+# and on GitHub releases; a nightly build never counts, not even there.
+NIGHTLY = re.compile(r'nightly', re.IGNORECASE)
+
+
+def newest_release(releases):
+    """The newest GitHub release, pre-releases included, drafts and nightly builds left out
+    (CraftLook takes every renderer at its latest version, betas too: Rocco, 2026-11-22)."""
+    return next(r for r in releases if not r.get('draft') and not NIGHTLY.search(r['tag_name']))
 PRERELEASE = re.compile(r'[-.](alpha|beta|rc|dev|snapshot|m\d)', re.IGNORECASE)
 MAVEN = {'google': 'https://dl.google.com/android/maven2', 'central': 'https://repo1.maven.org/maven2'}
 
@@ -259,7 +267,10 @@ def latest(dependency):
     if source == 'github-file':
         return file_version(dependency['repo'], dependency['path'])
     if source == 'github-release':
-        release = gh(f"repos/{dependency['repo']}/releases/latest")
+        if dependency.get('channel') == 'any':
+            release = newest_release(gh(f"repos/{dependency['repo']}/releases?per_page=30"))
+        else:
+            release = gh(f"repos/{dependency['repo']}/releases/latest")
         return release['tag_name'].lstrip('v'), iso(release['published_at'])
     if source == 'github-commit':
         commit = gh(f"repos/{dependency['repo']}/commits?path={dependency['path']}&per_page=1")[0]
