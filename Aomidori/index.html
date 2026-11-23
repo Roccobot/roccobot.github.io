@@ -15,18 +15,19 @@
   Author: Rocco Casadei, a.k.a. Roccobot
 
   ⚠️ Nothing on this page changes at a release: since the Mac App Store approved the app
-  (2026-10-27, Insegna), the button leads to its page there and nothing else. Up to then it asked
-  the GitHub API for the latest ZIP of Roccobot/Aomidori-releases, with steps to install it.
+  (2026-10-27, Insegna), the Mac button leads to its page there and nothing else. The Android
+  button leads to the latest release of Roccobot/Aomidori-releases, and lights up by itself once
+  that release holds an APK (the owner's choice Pubblico-01, 2026-11-23): the Mac's GitHub
+  releases ended with 2.27, which stays there as history.
   ⚠️ Never innerHTML: every text goes in with textContent.
   The English texts are written in the page itself, so it reads (and is indexed) without
   JavaScript; the script switches them to Italian for an Italian browser, title included.
-  The screenshot on the right (below, on narrow screens) is one file per theme, the same in both
+  The picture on the right (below, on narrow screens) is one file per theme, the same in both
   languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.webp and
-  screenshot-dark.webp, a 1600 x 1176 pt window made by the owner, served at 1320 x 970 px in
-  lossy WebP at quality 90 (his rule of 2026-10-27, Roccobot.md, web images light: at most three
-  times the 440 px the page gives it, and the window shows a photograph). Until a file exists
-  its slot stays hidden and the
-  page keeps one column: adding the four files is the whole change.
+  screenshot-dark.webp, 1521 x 1034 px since 2026-11-23 (the Mac and Android apps together, made
+  by the owner), in lossy WebP at quality 90 (his rule of 2026-10-27, Roccobot.md, web images
+  light: at most three times the width the page gives it). Until a file exists its slot stays
+  hidden and the page keeps one column.
   ⚠️ The icon is Graphe's artwork, copied unaltered from Resources/Icon/ (aomidori-v2.svg and
   aomidori-v2-dark.svg): the page picks one per theme, it never redraws it.
   The favicon is the glyph of the icon in the brand colour #43B59E (assets/favicon.svg), as AIV's.
@@ -149,17 +150,17 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.18);
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
-  /* The Android button (Android-01, 2026-11-08), under the Mac button's note: the Mac button's
-     shape and size with an outline instead of the fill, drawn as an inset shadow so it takes no
-     room. Without an address (the app is not on Google Play yet) it is an <a> with no href, so
-     neither a link nor focusable, and it is only a quiet line with its glyph: as a switched-off
-     button of full size it made the column a stack of three boxes (Rocco, 2026-11-08). */
-  /* One width for every button of the column, Mac, Android and giveaway, in both languages
-     (Rocco, 2026-11-08): in one column 16.5 em of the Mac button's text, 264 px at 16 px and
-     297 px at 18 px on a phone, which holds the longest label, 'Get it for Android', with its
-     glyph and padding (measured in WebKit on 2026-11-08); next to the screenshot, 340 px (see
-     .schermata). */
-  .parole{--tasto:264px}
+  /* The Android button (Android-01, 2026-11-08), under the Mac button's note, where the giveaway
+     was until 2026-11-23: the Mac button's shape and size with an outline instead of the fill,
+     drawn as an inset shadow so it takes no room. Until the latest release of
+     Aomidori-releases holds an APK (see the script) it is an <a> with no href, so neither a link
+     nor focusable, and it is only a quiet line with its glyph: as a switched-off button of full
+     size it made the column a stack of boxes (Rocco, 2026-11-08). */
+  /* One width for every button of the column, Mac and Android, in both languages (Rocco,
+     2026-11-08): it holds the longest label, 'Download Aomidori for Android', with its glyph and
+     padding, 315 px at 16 px (measured on 2026-11-23, with the labels that name the system): 320 px
+     in one column, 340 px next to the screenshot (see .schermata), the whole column on a phone. */
+  .parole{--tasto:320px}
   .scarica{min-width:var(--tasto); justify-content:center}
   .scarica.contorno{background:none; color:var(--text-link); box-shadow:inset 0 0 0 1.5px currentColor; margin-top:6px}
   .scarica.contorno[href]:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
@@ -172,32 +173,6 @@
   /* On an Android phone the Android button comes first in its block, above the Mac's. */
   .su-android #scarica-android{order:-1}
   .tecnica{font-size:13px; color:var(--text-muted); opacity:0.72; margin:0}
-  .solo-mac{font-size:14px; color:var(--text-body); margin:0}
-  .solo-mac[hidden]{display:none}
-
-  /* Regalo: the giveaway, under the download button and quieter than it (an outline, not a fill). */
-  .regalo{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
-  .regalo[hidden],.regalo-codice[hidden],.regalo-tasto[hidden]{display:none}
-  .regalo-tasto{
-    display:inline-flex; align-items:center; gap:10px; cursor:pointer;
-    font:inherit; font-size:15px; font-weight:600; color:var(--text-link);
-    background:none; border:1.5px solid currentColor; padding:11px 20px; border-radius:12px;
-    min-width:var(--tasto); justify-content:center;
-  }
-  .regalo-tasto:hover{background:color-mix(in srgb, var(--text-link) 8%, transparent)}
-  .regalo-tasto:disabled{opacity:0.6; cursor:default}
-  .regalo-codice{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
-  .regalo-codice code{
-    font:600 18px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:0.06em;
-    padding:12px 16px; border-radius:10px; border:1px solid var(--outline-variant);
-    user-select:all; overflow-wrap:anywhere;
-  }
-  .regalo-copia{
-    font:inherit; font-size:14px; color:var(--text-link); background:none; border:0;
-    border-bottom:1px dotted var(--outline); padding:4px 0 3px; cursor:pointer;
-  }
-  /* pre-line: the validity date goes on a line of its own (the \n in the texts). */
-  .regalo-nota{font-size:14px; line-height:1.5; color:var(--text-muted); margin:0; max-width:30rem; text-wrap:pretty; white-space:pre-line}
 
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
      as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.webp
@@ -271,14 +246,16 @@
   @media (max-width:880px){
     .testa{--icona:88px}
     h1{font-size:30px}
-    .parole{--tasto:297px}
-    .scarica{font-size:18px; padding:16px 30px; border-radius:14px; align-self:center}
+    /* As wide as the column: at 390 px the English Android label takes 333 of its 342 px, so the
+       side padding is 20 px (30 px until 2026-11-23, with the shorter labels). */
+    .parole{--tasto:100%}
+    .scarica{font-size:18px; padding:16px 20px; border-radius:14px; align-self:center}
     .blocco-scarica{align-items:stretch}
-    .tecnica, .solo-mac{text-align:center}
-    .regalo{align-items:center}
-    .regalo-nota{text-align:center}
+    .tecnica{text-align:center}
     .fatti{grid-template-columns:1fr; padding-top:40px}
   }
+  /* Narrower phones (360 px and below): at 18 px the labels would wrap on two lines. */
+  @media (max-width:380px){ .scarica{font-size:16px} }
 </style>
 </head>
 <body>
@@ -299,17 +276,16 @@
     <div class="parole">
       <p class="claim" id="claim">Books scroll like web pages, comics turn the way they should, and your CSS is always right. No fluff, no read-aloud, no paid AI stuff.</p>
       <div class="blocco-scarica">
-        <p class="solo-mac" id="solo-mac" hidden></p>
         <a class="scarica" id="scarica" href="https://apps.apple.com/app/id6824296623">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M12 3.5v11.2M12 15.6l4.4-4.4M12 15.6L7.6 11.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
             <path d="M4.4 18.8h15.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
           </svg>
-          <span id="scarica-testo">Download Aomidori</span>
+          <span id="scarica-testo">Download Aomidori for macOS</span>
         </a>
         <p class="tecnica" id="tecnica">macOS 27 or later, Apple Silicon only</p>
-        <!-- Android-01 (2026-11-08): for everyone, a quiet line until the app is on Google Play,
-             then a button (ANDROID_URL in the script). -->
+        <!-- Android-01 (2026-11-08): for everyone, a quiet line until the latest release of
+             Aomidori-releases holds an APK, then a button (see the script). -->
         <a class="scarica contorno" id="scarica-android">
           <!-- A phone. -->
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -319,23 +295,9 @@
           <span id="scarica-android-testo">Coming soon to Android</span>
         </a>
       </div>
-      <!-- Regalo (2026-11-01): the promo code giveaway. Hidden until aomidori-codes answers, so
-           without JavaScript, or once the block is removed from the Worker, nothing shows. -->
-      <div class="regalo" id="regalo" hidden>
-        <button type="button" class="regalo-tasto" id="regalo-tasto">
-          <!-- A gift: a box with a ribbon. -->
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="9.6" width="16" height="10.8" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3.2 9.6h17.6M12 9.6v10.8M12 9.6c-1.4-3.6-5.6-4.4-5.6-1.8 0 1.2 1.6 1.8 5.6 1.8 4 0 5.6-.6 5.6-1.8 0-2.6-4.2-1.8-5.6 1.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          <span id="regalo-testo"></span>
-        </button>
-        <div class="regalo-codice" id="regalo-codice" hidden>
-          <code id="regalo-valore"></code>
-          <button type="button" class="regalo-copia" id="regalo-copia"></button>
-        </div>
-        <p class="regalo-nota" id="regalo-nota" aria-live="polite"></p>
-      </div>
     </div>
   </div>
-  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1320" height="970" alt=""></figure>
+  <figure class="schermata" id="schermata" hidden><img id="schermata-img" width="1521" height="1034" alt=""></figure>
   </div>
 
   <div class="fatti">
@@ -425,10 +387,9 @@
       descrizione: 'Aomidori: un lettore di libri, fumetti e documenti per macOS, leggero e scattante. I libri scorrono come una pagina web, e il tuo CSS ha l\'ultima parola.',
       sottotitolo: 'Lettore di libri e fumetti per macOS',
       claim: 'I libri scorrono come pagine Web, i fumetti si sfogliano come si deve, e il tuo CSS ha sempre ragione. Niente fuffa e niente paccottiglia AI.',
-      scarica: 'Scarica Aomidori',
+      scarica: 'Scarica Aomidori per macOS',
       sistema: 'macOS 27 o successivo, solo Apple Silicon',
-      soloMac: 'Aomidori è un\'app per Mac: scaricala da un Mac con Apple Silicon.',
-      android: 'In arrivo su Android', scaricaAndroid: 'Scarica per Android',
+      android: 'In arrivo su Android', scaricaAndroid: 'Scarica Aomidori per Android',
       schermata: 'Aomidori con un libro aperto',
       fatti: [
         ['Un capitolo, una pagina', 'Ogni capitolo di un libro scorre in verticale come una pagina web, e le frecce cambiano capitolo. Niente impaginazione.'],
@@ -442,15 +403,6 @@
         ['I fumetti, a pagine', 'I CBZ e i CBR si leggono a pagine, anche da destra a sinistra come i manga, con le pagine affiancate, i filtri e i capitoli della cartella.'],
         ['Anche i documenti', 'I file Markdown si aprono come un libro, con formule, note, tabelle e uno stile tutto loro.']
       ],
-      regalo: {
-        tasto: 'Ricevi un codice gratis',
-        attesa: 'Un attimo',
-        restano: function (n, tot) { return 'Ne restano ' + n + ' su ' + tot + ', uno a persona.'; },
-        come: 'Nell\'App Store fai clic sul tuo nome nella barra laterale e riscatta il codice come una carta regalo.\nVale fino al 28 novembre.',
-        finiti: function () { return 'I codici gratis sono finiti. Grazie a tutti!'; },
-        errore: 'Il codice non è arrivato. Riprova fra poco.',
-        copia: 'Copia', copiato: 'Copiato'
-      },
       altra: 'English', titoloAltra: 'Read this page in English',
       temi: { light: 'Tema chiaro', dark: 'Tema scuro' },
       titoliTema: { light: 'Passa al tema chiaro', dark: 'Passa al tema scuro' }
@@ -461,10 +413,9 @@
       descrizione: 'Aomidori: a light, snappy reader of books, comics and documents for macOS. Books scroll like a web page, and your CSS has the last word.',
       sottotitolo: 'Book and comic reader for macOS',
       claim: 'Books scroll like web pages, comics turn the way they should, and your CSS is always right. No fluff, no read-aloud, no paid AI stuff.',
-      scarica: 'Download Aomidori',
+      scarica: 'Download Aomidori for macOS',
       sistema: 'macOS 27 or later, Apple Silicon only',
-      soloMac: 'Aomidori is an app for the Mac: download it on a Mac with Apple Silicon.',
-      android: 'Coming soon to Android', scaricaAndroid: 'Get it for Android',
+      android: 'Coming soon to Android', scaricaAndroid: 'Download Aomidori for Android',
       schermata: 'Aomidori with a book open',
       fatti: [
         ['One chapter, one page', 'Each chapter of a book scrolls vertically like a web page, and the arrow keys change chapter. No pagination.'],
@@ -478,15 +429,6 @@
         ['Comics, page by page', 'CBZ and CBR files read page by page, right to left too like manga, with spreads, filters and the folder\'s chapters.'],
         ['Documents too', 'Markdown files open like a book, with formulas, footnotes, tables and a style of their own.']
       ],
-      regalo: {
-        tasto: 'Get a free code',
-        attesa: 'One moment',
-        restano: function (n, tot) { return n + ' of ' + tot + ' left, one per person.'; },
-        come: 'In the App Store, click your name in the sidebar and redeem the code like a gift card.\nValid until 28 November.',
-        finiti: function (tot) { return 'All ' + tot + ' free codes are gone. Thank you!'; },
-        errore: 'The code didn\'t arrive. Try again in a moment.',
-        copia: 'Copy', copiato: 'Copied'
-      },
       altra: 'Italiano', titoloAltra: 'Leggi questa pagina in italiano',
       temi: { light: 'Light theme', dark: 'Dark theme' },
       titoliTema: { light: 'Switch to the light theme', dark: 'Switch to the dark theme' }
@@ -528,17 +470,33 @@
   if (mqScuro.addEventListener) mqScuro.addEventListener('change', alSistema);
   else if (mqScuro.addListener) mqScuro.addListener(alSistema);
 
-  // A visitor on a phone or on Windows learns at once that this is an app for the Mac; on an
-  // Android phone the Android button comes first instead, and the note is not needed.
-  var suMac = /Macintosh|Mac OS X/.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1);
-  var suAndroid = /Android/i.test(navigator.userAgent);
-  if (suAndroid) document.body.classList.add('su-android');
+  // On an Android phone the Android button comes first in its block.
+  if (/Android/i.test(navigator.userAgent)) document.body.classList.add('su-android');
 
-  // The Android app's address on Google Play: null until it is published, and the button stays
-  // switched off. Once it is set, the button becomes a link, and the titles should name Android
-  // too (the owner's choice Android-01, 2026-11-08).
-  var ANDROID_URL = null;
-  if (ANDROID_URL) el('scarica-android').href = ANDROID_URL;
+  // The Android button leads to the latest release of Aomidori-releases (the owner's choice
+  // Pubblico-01, 2026-11-23), whose newest release is the Mac's 2.27 ZIP until the first Android
+  // one: so it lights up only when the GitHub API says that release holds an APK. Without an
+  // answer (no JavaScript, no network, the API's hourly limit) it stays the quiet line. Once it
+  // is on, the titles should name Android too (the owner's choice Android-01, 2026-11-08).
+  var ANDROID_RELEASE = 'https://github.com/Roccobot/Aomidori-releases/releases/latest';
+  var ANDROID_API = 'https://api.github.com/repos/Roccobot/Aomidori-releases/releases/latest';
+  var androidPronto = false;
+  function cercaAndroid() {
+    fetch(ANDROID_API, { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { if (!r.ok) throw new Error('release ' + r.status); return r.json(); })
+      .then(function (release) {
+        var file = release.assets || [];
+        for (var i = 0; i < file.length; i++) {
+          if (/\.apk$/i.test(file[i].name)) {
+            androidPronto = true;
+            el('scarica-android').href = ANDROID_RELEASE;
+            disegna();
+            return;
+          }
+        }
+      })
+      .catch(function () { /* no answer: the quiet line stays */ });
+  }
 
   function disegna() {
     var T = TESTI[stato.lingua];
@@ -551,14 +509,12 @@
     // `macOS` alone (2.20, the subtitle of his note on 2.10-13).
     el('sottotitolo').textContent = lega(T.sottotitolo).replace(/ (\S+)$/, NB + '$1');
     el('claim').textContent = lega(T.claim);
-    var soloMac = el('solo-mac');
-    soloMac.textContent = lega(T.soloMac);
-    soloMac.hidden = suMac || suAndroid;
     mostraSchermata(T);
-    el('scarica-testo').textContent = T.scarica;
-    el('scarica-android-testo').textContent = ANDROID_URL ? T.scaricaAndroid : T.android;
+    // The system's name tied to the word before: on a 320 px phone a label wraps as
+    // `per macOS`, never `macOS` alone.
+    el('scarica-testo').textContent = T.scarica.replace(/ (\S+)$/, NB + '$1');
+    el('scarica-android-testo').textContent = (androidPronto ? T.scaricaAndroid : T.android).replace(/ (\S+)$/, NB + '$1');
     el('tecnica').textContent = T.sistema;
-    disegnaRegalo(T.regalo);
 
     for (var f = 0; f < T.fatti.length; f++) {
       var titolo = document.querySelector('[data-t="f' + f + '"]');
@@ -582,7 +538,7 @@
   // The screenshots keep their names when they are taken again, so a browser could show an old
   // one from its cache next to a new one: their version goes in the address, and goes up by one
   // whenever they are replaced.
-  var VERSIONE_SCHERMATE = 9;
+  var VERSIONE_SCHERMATE = 10;
   var schermataMancante = {};
   function mostraSchermata(T) {
     var figura = el('schermata');
@@ -602,79 +558,6 @@
     el('schermata').hidden = true;
     document.body.classList.remove('con-schermata');
   }
-
-  // Regalo (2026-11-01): the promo code giveaway. The codes live only in the Worker
-  // aomidori-codes (Roccobot/Aomidori, cloud/codes/), which gives one per connection; the code a
-  // browser got is kept in it, so a second visit shows the same code instead of asking again.
-  // The page sends nothing about the visitor. Its state: 'chiuso' (hidden: no answer yet, or no
-  // Worker), 'aperto', 'attesa', 'codice', 'finiti', 'errore'.
-  var REGALO_URL = 'https://aomidori-codes.roccobot-b90.workers.dev';
-  var REGALO_CHIAVE = 'aomidori-promo-code';
-  var regalo = { fase: 'chiuso', codice: null, restano: 0, totale: 0, copiato: false };
-  function leggiCodice() { try { return localStorage.getItem(REGALO_CHIAVE); } catch (e) { return null; } }
-  function salvaCodice(codice) { try { localStorage.setItem(REGALO_CHIAVE, codice); } catch (e) { /* the Worker remembers it too */ } }
-
-  function disegnaRegalo(R) {
-    var blocco = el('regalo');
-    blocco.hidden = regalo.fase === 'chiuso';
-    if (blocco.hidden) return;
-    var tasto = el('regalo-tasto');
-    var conCodice = regalo.fase === 'codice';
-    tasto.hidden = conCodice || regalo.fase === 'finiti';
-    tasto.disabled = regalo.fase === 'attesa';
-    el('regalo-testo').textContent = regalo.fase === 'attesa' ? R.attesa : R.tasto;
-    el('regalo-codice').hidden = !conCodice;
-    if (conCodice) {
-      el('regalo-valore').textContent = regalo.codice;
-      el('regalo-copia').textContent = regalo.copiato ? R.copiato : R.copia;
-    }
-    var nota = '';
-    if (conCodice) nota = R.come;
-    else if (regalo.fase === 'finiti') nota = R.finiti(regalo.totale);
-    else if (regalo.fase === 'errore') nota = R.errore;
-    else nota = R.restano(regalo.restano, regalo.totale);
-    el('regalo-nota').textContent = lega(nota);
-  }
-  function ridisegnaRegalo() { disegnaRegalo(TESTI[stato.lingua].regalo); }
-
-  function apriRegalo() {
-    var noto = leggiCodice();
-    if (noto) { regalo.codice = noto; regalo.fase = 'codice'; ridisegnaRegalo(); return; }
-    fetch(REGALO_URL + '/status', { cache: 'no-store' })
-      .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); return r.json(); })
-      .then(function (s) {
-        if (!s.total) return;
-        regalo.totale = s.total; regalo.restano = s.remaining;
-        regalo.fase = s.remaining > 0 ? 'aperto' : 'finiti';
-        ridisegnaRegalo();
-      })
-      .catch(function () { /* no Worker, no giveaway: the block stays hidden */ });
-  }
-
-  el('regalo-tasto').addEventListener('click', function () {
-    if (regalo.fase === 'attesa') return;
-    regalo.fase = 'attesa';
-    ridisegnaRegalo();
-    fetch(REGALO_URL + '/claim', { method: 'POST', cache: 'no-store' })
-      .then(function (r) {
-        if (r.status !== 200 && r.status !== 410) throw new Error('claim ' + r.status);
-        return r.json();
-      })
-      .then(function (a) {
-        regalo.totale = a.total; regalo.restano = a.remaining;
-        if (a.code) { regalo.codice = a.code; salvaCodice(a.code); regalo.fase = 'codice'; }
-        else regalo.fase = 'finiti';
-        ridisegnaRegalo();
-      })
-      .catch(function () { regalo.fase = 'errore'; ridisegnaRegalo(); });
-  });
-  el('regalo-copia').addEventListener('click', function () {
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(regalo.codice).then(function () {
-      regalo.copiato = true;
-      ridisegnaRegalo();
-    });
-  });
 
   el('lingua').addEventListener('click', function () {
     stato.lingua = (stato.lingua === 'it') ? 'en' : 'it';
@@ -702,7 +585,7 @@
 
   applicaTema();
   disegna();
-  apriRegalo();
+  cercaAndroid();
 })();
 </script>
 
