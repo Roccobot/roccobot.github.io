@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.33
+> **Versione**: 3.34
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -245,8 +245,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   bilingue con l'inglese di serie se è pubblico e obbligatorio, altrimenti si chiede; una skill
   nuova è in inglese
   (§ '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
-- **Le dipendenze si seguono**: ogni progetto ne tiene il registro, e ogni versione nuova si
-  legge prima di una release (§ '🔗 Le dipendenze si seguono').
+- **Le dipendenze si seguono**: ogni progetto ne tiene il registro, e la titolare porta dentro
+  ogni versione nuova al primo turno dopo l'avviso (§ '🔗 Le dipendenze si seguono').
 - Mobile è **Android**, desktop è **macOS**.
 
 ## 🖥️ Interfaccia
