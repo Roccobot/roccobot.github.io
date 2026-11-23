@@ -76,9 +76,12 @@ pagamento: la pagina di download e l'appcast di Sparkle vivono qui, allo stesso 
 cambiare. Il resto del progetto (codice, regole, documento di feedback) resta nel suo repo.
 - **Chi la scrive**: la pagina (`Aomidori/index.html`) e le sue immagini, e le due politiche sulla
   privacy (`Aomidori/privacy.html` per il Mac e il Mac App Store, `Aomidori/privacyAndroid.html`
-  per Google Play, dal 2026-11-23), si toccano con le regole di Aomidori, § '🌐 Il sito'. Il pulsante della pagina porta al Mac App Store.
-- **L'appcast non riceve più versioni dalla 2.27**, l'ultima pubblicata su GitHub (le release di
-  `Roccobot/Aomidori-releases`): resta qui per le copie installate da GitHub, che lo leggono ancora.
+  per Google Play, dal 2026-11-23), si toccano con le regole di Aomidori, § '🌐 Il sito'. Il tasto
+  del Mac porta al Mac App Store, quello di Android alla release più recente di
+  `Roccobot/Aomidori-releases` (dal 2026-11-23).
+- **L'appcast non riceve più versioni dalla 2.27**, l'ultima del Mac pubblicata su GitHub (le
+  release di `Roccobot/Aomidori-releases`, dove dal 2026-11-23 vanno quelle Android): resta qui
+  per le copie installate da GitHub, che lo leggono ancora.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
 
 ⚠️ **E LA CARTELLA `styles/` È LA SECONDA ECCEZIONE, LEGATA ALLA PRIMA**: è l'archivio degli stili
