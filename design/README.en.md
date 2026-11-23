@@ -442,8 +442,11 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - **Dropdown menus**: stay attached to their button, the chosen item with its arrow, and never
   come loose from the screen. The menu opens centered on the button, below it and flush with it, or
   above when there is no room below. It has no scrim or blur behind it and no shadow or glow,
-  whatever the panel depth: only the color of its surface, the menus' one, sets it apart from the
-  background.
+  whatever the panel depth: only the color of its surface sets it apart from the background. In the
+  light theme it is `superficie` (`#fffefc`), lighter than the other menus (`#f8f7f4`), because a
+  dropdown usually opens on `superficie-scheda` (`#f3f1ee`), where the other menus' surface barely
+  stands out; in the dark theme it keeps the other menus' surface (`#1e2523`). The other menus do
+  not change: on `fondo` (`#fcfbf8`) a `superficie` menu would stand out less.
 - **Two buttons that step a value**: `-` on the left and `+` on the right, like a scale growing to
   the right.
 - **Thumbnail badges**, in every app: black at 60%, 4 corners, 4 of padding at the sides and 2
@@ -468,8 +471,7 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
   gives the screen reader; the tooltip takes away neither the plain tap nor an action the button
   already has on long press. In touch apps the tooltip never repeats the visible label: a button
   with a visible label that has a long-press tooltip has an extended one, which explains what it does
-  (AIV's Feed button explains the feed view: all photos and videos together, without folders,
-  newest first); for an
+  (AIV's Feed: `Feed view: all photos and videos together, no folders, newest first`); for an
   icon-only button the name is enough (`Adjustments`) or an explanation is needed, decided case by
   case. The screen reader reads the same text as the tooltip. What counts is what the button shows at the current width: a button
   that hides its text on a phone has a tooltip there, and not where its text shows. On web pages it

@@ -439,7 +439,11 @@ grigie.
 - **Menu a tendina**: resta attaccato al suo tasto, la voce scelta con la sua freccia, e non si
   stacca dalla schermata. Si apre centrato sul tasto, sotto e a filo del tasto, o sopra se sotto non
   c'è posto. Non ha né velo né sfocatura dietro, né ombra né bagliore, con qualunque profondità dei
-  pannelli: lo stacca dal fondo il solo colore della sua superficie, quella dei menu.
+  pannelli: lo stacca dal fondo il solo colore della sua superficie. Nel tema chiaro è `superficie`
+  (`#fffefc`), più chiara degli altri menu (`#f8f7f4`), perché la tendina si apre di solito su
+  `superficie-scheda` (`#f3f1ee`) e là la superficie degli altri menu si distingue appena; nel tema
+  scuro resta quella degli altri menu (`#1e2523`). Gli altri menu non cambiano: su `fondo`
+  (`#fcfbf8`) un menu `superficie` si distinguerebbe meno.
 - **Due tasti che scalano un valore**: `-` a sinistra e `+` a destra, come su una scala che cresce
   verso destra.
 - **Targhette sulle miniature**, in tutte le app: nero al 60%, angoli di 4, respiro di 4 ai lati e
