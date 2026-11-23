@@ -31,6 +31,7 @@
 | **Roccobot.me**, il sito-portfolio di Rocco, rifatto da zero (repo nato il 2026-11-08, pubblico e ancora da costruire; il sito di oggi è su Squarespace) | repo `Roccobot/rocco.bot` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Haul**, l'app per macOS che dà un'interfaccia nativa a gallery-dl (repo nato il 2026-11-21, pubblico e ancora da costruire, con la mappa di `/wayfinder`) | repo `Roccobot/Haul` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **CraftLook** (fino alla 0.2.5 'ArtCraft Quick Look'), l'app per macOS che mostra nel Finder miniature e anteprime dei file della suite ArtCraft (repo pubblico, principale dal 2026-11-22, sessione titolare `CraftWorks`; le versioni escono come release del repo) | repo `Roccobot/CraftLook` (fino al 2026-11-22 `artcraft-quick-look`) | l'`AGENTS.md` e il `Rules.md` di quel repo |
+| **Il profilo GitHub di Rocco**, il cui `README.md` GitHub mostra su <https://github.com/Roccobot> (repo pubblico, creato e reso principale da Rocco il 2026-11-23, sessione titolare `Tools`) | repo `Roccobot/Roccobot` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 | **Aomidori**, il lettore EPUB e di fumetti per macOS (nato il 2026-10-09 in un repo suo, **privato dal 2026-10-15**; la pagina di download e l'appcast vivono qui, in `Aomidori/`, e le release nel repo pubblico `Roccobot/Aomidori-releases`) | repo `Roccobot/Aomidori` | l'`AGENTS.md` e il `Rules.md` di quel repo |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `Rules.md` per intero**: costa una lettura e

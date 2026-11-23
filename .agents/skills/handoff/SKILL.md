@@ -218,7 +218,9 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   che dà un'interfaccia nativa a gallery-dl, vive in `Roccobot/Haul`, pubblico (dal 2026-11-21,
   ancora da costruire). **CraftLook** (fino alla 0.2.5 'ArtCraft Quick Look'), l'app per macOS che mostra nel Finder le anteprime
   dei file della suite ArtCraft, vive in `Roccobot/CraftLook`, pubblico (principale dal
-  2026-11-22, sessione titolare `CraftWorks`).
+  2026-11-22, sessione titolare `CraftWorks`). Il **profilo GitHub** di Rocco vive in
+  `Roccobot/Roccobot`, pubblico (dal 2026-11-23): GitHub mostra il suo `README.md` sulla pagina
+  dell'account.
   ⚠️ Ogni progetto ha convenzioni proprie, e le dicono le sue regole: lo schema che dice il
   progetto (SlimVer `x.xx` per il Web e per chi lo aveva già, SemVer per le app nuove e per AIV
   dalla 1.0.0), con la fonte in `datiVersion` per i due siti, nella costante `VERSIONE` di
