@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomidori per Android - Privacy</title>
+<meta name="description" content="Informativa sulla privacy di Aomidori per Android, lettore di libri e fumetti: l'app non raccoglie e non condivide dati personali, e non si collega a internet.">
+<meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://roccobot.github.io/Aomidori/privacyAndroid.html">
+<!--
+  THE PRIVACY POLICY OF AOMIDORI FOR ANDROID (2026-11-23, the owner's request: a page of its own
+  next to privacy.html, which is the Mac's and the Mac App Store's): the address Google Play
+  receives. The same form as privacy.html: two languages in separate sections, Italian first.
+
+  Every sentence here is a claim about the code of Roccobot/Aomidori, android/: no INTERNET
+  permission in the manifest, so nothing reaches the network; no analytics, ads or crash reporting
+  library (android/gradle/libs.versions.toml); the documents are read through the system's picker,
+  with a persisted read permission given back when a book leaves the recents (Access.kt,
+  RecentList); settings, bookmarks, places and recents in the app's own storage (filesDir,
+  DataStore); allowBackup is not set, so Android's Auto Backup may copy them; a shared picture goes
+  through FileProvider to the app the reader picks (Pictures.kt). Whoever adds a permission, a
+  library or a request that sends something changes this page in the same release, and Google
+  Play's Data safety answers with it.
+  Paragraphs wrap with text-wrap: pretty, short words bound to the next with no-break spaces.
+  Author: Rocco Casadei, a.k.a. Roccobot
+-->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  /* The download page's tokens, light and dark, as privacy.html. */
+  :root{--bg:#FCFBF8;--fg:#1A1C1B;--muted:#5B6360;--accent:#0B6B5B;--rule:#DAD9D5}
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#151B1A;--fg:#E4E9E7;--muted:#A9B3B0;--accent:#5FD4BC;--rule:#3C4442}
+  }
+  html{background:var(--bg);color:var(--fg)}
+  body{margin:0 auto;max-width:42rem;padding:2.5rem 1.25rem 4rem;
+    font:1rem/1.6 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  h1{font-size:1.6rem;line-height:1.25;margin:0 0 .25rem;text-wrap:balance}
+  h2{font-size:1.15rem;margin:2rem 0 .5rem}
+  p,li{margin:.5rem 0;text-wrap:pretty}
+  a{color:var(--accent)}
+  .data{color:var(--muted);margin:0 0 1.5rem}
+  .lingue{display:flex;gap:1rem;margin:0 0 2rem}
+  hr{border:0;border-top:1px solid var(--rule);margin:3rem 0}
+</style>
+</head>
+<body>
+<nav class="lingue" aria-label="Lingua / Language"><a href="#it" hreflang="it">Italiano</a> <a href="#en" hreflang="en">English</a></nav>
+
+<section id="it" lang="it">
+  <h1>Aomidori per Android: informativa sulla privacy</h1>
+  <p class="data">Aggiornata&nbsp;il&nbsp;23&nbsp;novembre 2026</p>
+
+  <p>Aomidori&nbsp;per Android è&nbsp;un&nbsp;lettore di&nbsp;libri e&nbsp;fumetti di&nbsp;Rocco Casadei (Roccobot), distribuito su&nbsp;Google&nbsp;Play. La&nbsp;versione per Mac ha&nbsp;<a href="privacy.html">la&nbsp;sua&nbsp;informativa</a>.</p>
+
+  <h2>In breve</h2>
+  <p>Aomidori&nbsp;non raccoglie, non conserva e&nbsp;non condivide dati&nbsp;personali. Non&nbsp;ha&nbsp;account, pubblicità, statistiche d'uso né&nbsp;rapporti sugli errori, e&nbsp;non contiene librerie di&nbsp;terze parti che lo&nbsp;facciano.</p>
+
+  <h2>La rete</h2>
+  <p>Aomidori&nbsp;non si&nbsp;collega a&nbsp;internet: non&nbsp;chiede ad&nbsp;Android il&nbsp;permesso di&nbsp;usare la&nbsp;rete, quindi né&nbsp;l'app né&nbsp;le&nbsp;pagine dei libri possono mandare o&nbsp;ricevere&nbsp;niente.</p>
+
+  <h2>I tuoi documenti</h2>
+  <p>I&nbsp;libri e&nbsp;i&nbsp;fumetti che apri restano dove sono, sul telefono o&nbsp;nel servizio da&nbsp;cui li&nbsp;scegli: Aomidori&nbsp;li&nbsp;legge e&nbsp;non li&nbsp;carica da&nbsp;nessuna&nbsp;parte. Per&nbsp;riaprire un&nbsp;libro dall'elenco dei recenti conserva il&nbsp;permesso di&nbsp;leggerlo, e&nbsp;lo&nbsp;restituisce quando togli il&nbsp;libro&nbsp;dall'elenco.</p>
+
+  <h2>Le impostazioni</h2>
+  <p>Impostazioni,&nbsp;segnalibri, punti di&nbsp;lettura e&nbsp;l'elenco dei recenti, con titoli, autori e&nbsp;copertine, restano sul telefono, nella memoria&nbsp;dell'app. Se&nbsp;hai acceso il&nbsp;backup di&nbsp;Android, il&nbsp;sistema può copiarli nel tuo account Google insieme ai&nbsp;dati delle altre&nbsp;app: è&nbsp;un&nbsp;servizio di&nbsp;Google, e&nbsp;lo&nbsp;sviluppatore di&nbsp;Aomidori non li&nbsp;riceve.</p>
+
+  <h2>Le immagini condivise</h2>
+  <p>Quando&nbsp;condividi un'immagine di&nbsp;un&nbsp;libro, Aomidori la&nbsp;passa solo all'app che scegli&nbsp;tu.</p>
+
+  <h2>Modifiche</h2>
+  <p>Se&nbsp;il&nbsp;comportamento di&nbsp;Aomidori cambia, questa pagina cambia nella stessa versione, con la&nbsp;data aggiornata in&nbsp;testa.</p>
+
+  <h2>Contatti</h2>
+  <p>Per&nbsp;domande su&nbsp;questa informativa puoi aprire una segnalazione su&nbsp;<a href="https://github.com/Roccobot/Aomidori-releases/issues">GitHub</a>.</p>
+</section>
+
+<hr>
+
+<section id="en" lang="en">
+  <h1>Aomidori for Android: privacy policy</h1>
+  <p class="data">Updated&nbsp;November 23, 2026</p>
+
+  <p>Aomidori&nbsp;for Android is&nbsp;a&nbsp;book and comic reader by&nbsp;Rocco Casadei (Roccobot), distributed on&nbsp;Google&nbsp;Play. The&nbsp;Mac version has <a href="privacy.html#en">its own privacy&nbsp;policy</a>.</p>
+
+  <h2>In short</h2>
+  <p>Aomidori&nbsp;does not collect, store or&nbsp;share personal&nbsp;data. It&nbsp;has no&nbsp;accounts, ads, usage analytics or&nbsp;crash reports, and it&nbsp;contains no&nbsp;third-party library that&nbsp;does.</p>
+
+  <h2>Network</h2>
+  <p>Aomidori&nbsp;does not connect to&nbsp;the&nbsp;internet: it&nbsp;does not ask Android for permission to&nbsp;use the network, so&nbsp;neither the app nor the pages of&nbsp;a&nbsp;book can send or&nbsp;receive&nbsp;anything.</p>
+
+  <h2>Your documents</h2>
+  <p>The&nbsp;books and comics you open stay where they are, on&nbsp;the phone or&nbsp;in&nbsp;the service you pick them&nbsp;from: Aomidori&nbsp;reads them and does not upload them&nbsp;anywhere. To&nbsp;reopen a&nbsp;book from the recent list it&nbsp;keeps the permission to&nbsp;read it, and gives it&nbsp;back when you remove the book from the&nbsp;list.</p>
+
+  <h2>Settings</h2>
+  <p>Settings,&nbsp;bookmarks, reading places and the recent list, with titles, authors and covers, stay on&nbsp;the phone, in&nbsp;the app's&nbsp;storage. If&nbsp;you have turned on&nbsp;Android backup, the system may copy them to&nbsp;your Google account along with other apps'&nbsp;data: that&nbsp;is&nbsp;a&nbsp;Google service, and Aomidori's developer does not receive&nbsp;them.</p>
+
+  <h2>Shared pictures</h2>
+  <p>When&nbsp;you share a&nbsp;picture from a&nbsp;book, Aomidori hands it&nbsp;only to&nbsp;the app you&nbsp;choose.</p>
+
+  <h2>Changes</h2>
+  <p>If&nbsp;Aomidori's behavior changes, this page changes in&nbsp;the same version, with the date at&nbsp;the top&nbsp;updated.</p>
+
+  <h2>Contact</h2>
+  <p>For&nbsp;questions about this policy you can open an&nbsp;issue on&nbsp;<a href="https://github.com/Roccobot/Aomidori-releases/issues">GitHub</a>.</p>
+</section>
+</body>
+</html>
