@@ -37,6 +37,8 @@
 | `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` e cancella quelle che gli autori hanno ritirato (`RIMOSSA`, salvo un pacchetto fallito); una skill ferma ma ancora fornita si rivaluta ogni sei mesi (scelta dell'utente, 2026-10-26); i controlli sui caratteri non guardano quei file, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`) |
 | `check-dependencies.py` | confronta il registro `docs/Dependencies.json` di un repo con le ultime versioni pubblicate; lo lancia ogni lunedì il workflow `dependencies.yml` |
 | `test_check_dependencies.py` | le prove della soglia delle patch di `check-dependencies.py` (`Soglia-01`), che girano anche nell'Action `rules-check` |
+| `dependency-card.py` | crea o aggiorna sulla bacheca la card `Dipendenze: <repo>` quando la issue delle dipendenze nasce, cambia o si chiude, con la parola d'ordine delle card (`Campanello`); lo lancia il workflow `dependencies.yml` |
+| `test_dependency_card.py` | le prove delle scelte di `dependency-card.py`, senza chiamare Trello, che girano anche nell'Action `rules-check` |
 | `browser.py` | il Chromium degli strumenti che aprono una pagina, cercato da tutti nello stesso modo; lo caricano i controlli dei DF di AIV e di Aomidori e `og-image.py` di AIV, dall'hub clonato accanto o, su GitHub, da `.roccobot-hub` (dalla `Attrezzi`, 2026-11-07) |
 | `android_project.py` | il repo di un'app Android che i tre controlli qui sotto guardano: `--repo DIR`, e le parti proprie dell'app in `android-checks.json` alla sua radice (cartella delle risorse, disegni intoccabili, chiavi uguali di proposito) |
 | `icon-check.py` | le icone vettoriali di un'app Android: grammatica dei tracciati, vincoli di Android, e la resa con Chromium (linee guida Material, avvolgimento, cucitura) |

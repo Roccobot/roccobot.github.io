@@ -78,6 +78,10 @@ jobs:
         if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_check_dependencies.py
 
+      - name: Prove della card delle dipendenze (Campanello)
+        if: github.event.repository.name == 'roccobot.github.io'
+        run: python3 roccobot.github.io/.memo/scripts/test_dependency_card.py
+
       - name: Prove della parola delle regole, prima il file (Parola-01)
         if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_rules_password.py

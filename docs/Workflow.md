@@ -243,6 +243,19 @@
     una versione più nuova apre la issue `Dipendenze da leggere`, la aggiorna con un commento se
     l'elenco cambia (ed è il commento che avvisa il proprietario) e la chiude quando tutto torna
     alla versione letta.
+  - ⚠️⚠️ **Dal 2026-11-23 (`Campanello`) l'avviso arriva anche alle sessioni**, perché quel commento
+    lo legge solo Rocco (scelte `Avviso-03`, `Aggiorno-01` e `Chiave-01`):
+    - **il gancio del turno** (`hooks.py`, modo `prompt`) cerca con `gh` le issue aperte con quel
+      titolo in tutti i repo e mostra a ogni sessione quelle cambiate dal suo ultimo sguardo, col
+      segno per sessione in `~/.claude/roccobot-dipendenze.json`; la sessione titolare dell'area del
+      repo le porta dentro in quel turno;
+    - **la card** `Dipendenze: <repo>`: quando la issue nasce, cambia o si chiude, il flusso lancia
+      `.memo/scripts/dependency-card.py`, che la crea in cima alla lista del progetto con la sua
+      etichetta, o aggiorna quella aperta ovunque sia sulla bacheca, e a issue chiusa la commenta;
+      la chiude chi fa il lavoro. Il repo che richiama il flusso passa `card_list`, `card_label` e il
+      secret `cards_password`, cioè il suo `CARDS_PASSWORD`, che nel Worker `rules-proxy` apre solo
+      quelle chiamate (`rev` 23); senza la lista o il secret la card si salta e la corsa resta verde.
+      Le prove sono in `.memo/scripts/test_dependency_card.py`, lanciate da `rules-check`.
   - ⚠️ **Lo script è uno solo dal 2026-10-15** (scelta F1a dell'utente): fino a quel giorno
     Aomidori e AIV ne tenevano una copia ciascuno, con la nota *chi tocca l'uno aggiorna l'altro*,
     e Terramare e Arda non avevano un registro, quindi `esbuild`, fissato nel comando dei loro

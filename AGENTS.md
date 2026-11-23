@@ -330,7 +330,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   rules-check').
 - **Il controllo settimanale delle dipendenze** ha la logica qui: il workflow riusabile
   `.github/workflows/dependencies.yml`, richiamato dai repo con un registro, lancia lo script unico
-  `.memo/scripts/check-dependencies.py` e apre la issue `Dipendenze da leggere`; `dependabot.yml`
+  `.memo/scripts/check-dependencies.py`, apre la issue `Dipendenze da leggere` e ne tiene la card
+  sulla bacheca, e il gancio del turno la mostra alle sessioni; `dependabot.yml`
   segue le azioni di GitHub in ogni repo i cui workflow usano azioni con una versione (`docs/Workflow.md` § '🔗 Il controllo
   settimanale delle dipendenze').
 - **Qui vivono solo gli script che servono più progetti**, e quelli di un sito solo vivono nel suo
