@@ -74,9 +74,9 @@ richiesta del 2026-10-15: *rendi il repo privato, sposta il sito su Pages*, sul 
 pagamento: la pagina di download e l'appcast di Sparkle vivono qui, allo stesso indirizzo
 `roccobot.github.io/Aomidori/`, che le copie installate leggono (`SUFeedURL`) e che quindi non può
 cambiare. Il resto del progetto (codice, regole, documento di feedback) resta nel suo repo.
-- **Chi la scrive**: la pagina (`Aomidori/index.html`) e le sue immagini, e la politica sulla
-  privacy (`Aomidori/privacy.html`, per il Mac App Store), si toccano con le regole di Aomidori,
-  § '🌐 Il sito'. Il pulsante della pagina porta al Mac App Store.
+- **Chi la scrive**: la pagina (`Aomidori/index.html`) e le sue immagini, e le due politiche sulla
+  privacy (`Aomidori/privacy.html` per il Mac e il Mac App Store, `Aomidori/privacyAndroid.html`
+  per Google Play, dal 2026-11-23), si toccano con le regole di Aomidori, § '🌐 Il sito'. Il pulsante della pagina porta al Mac App Store.
 - **L'appcast non riceve più versioni dalla 2.27**, l'ultima pubblicata su GitHub (le release di
   `Roccobot/Aomidori-releases`): resta qui per le copie installate da GitHub, che lo leggono ancora.
 - ⚠️ Non va spostata né tolta per pulizia: le app installate smetterebbero di aggiornarsi.
