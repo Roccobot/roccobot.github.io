@@ -463,7 +463,12 @@ grigie.
 - **Suggerimenti dei tasti a icona**: ogni tasto che mostra solo un'icona, senza testo visibile,
   mostra il suo nome in un suggerimento al tocco prolungato, e nelle pagine Web anche al passaggio
   del mouse. Il testo è quello che il tasto dà al lettore di schermo; il suggerimento non toglie il
-  tocco semplice né un'azione che il tasto ha già sul tocco prolungato. Conta quello che il tasto
+  tocco semplice né un'azione che il tasto ha già sul tocco prolungato. Nelle app touch il
+  suggerimento non ripete mai l'etichetta visibile: un tasto con un'etichetta visibile che ha un
+  suggerimento al tocco prolungato lo ha esteso, e spiega che cosa fa (il Feed di AIV:
+  `Visualizzazione feed: foto e video tutti insieme, senza cartelle, dal più recente`); per un tasto
+  con la sola icona basta il nome (`Regolazioni`) o serve una spiegazione, e si sceglie caso per
+  caso. Il lettore di schermo legge lo stesso testo del suggerimento. Conta quello che il tasto
   mostra alla larghezza del momento: un tasto che su un telefono nasconde il suo testo lo ha lì, e
   non dove il testo si vede. Nelle pagine Web è il suggerimento semplice di Material 3: il colore del
   testo come fondo e quello del fondo come testo, angoli di 4, corpo 12 su una riga alta 16, respiro

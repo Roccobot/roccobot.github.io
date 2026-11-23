@@ -466,7 +466,12 @@ l'effetto movimento'). The values are also in the tokens, family `effetti`. App 
 - **Icon button tooltips**: every button that shows only an icon, with no visible text, shows its
   name in a tooltip on long press, and on web pages on hover too. The text is the one the button
   gives the screen reader; the tooltip takes away neither the plain tap nor an action the button
-  already has on long press. What counts is what the button shows at the current width: a button
+  already has on long press. In touch apps the tooltip never repeats the visible label: a button
+  with a visible label that has a long-press tooltip has an extended one, which explains what it does
+  (AIV's Feed button explains the feed view: all photos and videos together, without folders,
+  newest first); for an
+  icon-only button the name is enough (`Adjustments`) or an explanation is needed, decided case by
+  case. The screen reader reads the same text as the tooltip. What counts is what the button shows at the current width: a button
   that hides its text on a phone has a tooltip there, and not where its text shows. On web pages it
   is the plain tooltip of Material 3: the text color as background and the background color as text,
   corners of 4, size 12 on a 16 line, 8 of padding at the sides and 4 above and below, 8 from the
