@@ -22,6 +22,22 @@ name: dependencies
 
 on:
   workflow_call:
+    # The Trello card of the project (Campanello, 2026-11-23, Rocco's choices Avviso-03 and
+    # Chiave-01): GitHub tells only him about the issue, so the check also keeps a card named
+    # 'Dipendenze: <repo>' in the project's list, through the rules-proxy Worker and its
+    # CARDS_PASSWORD, which opens only those calls. Without the list or the secret the card is skipped.
+    inputs:
+      card_list:
+        description: The board list of the project's card (AIV, Aomidori, Tools, CraftWorks...)
+        type: string
+        default: ''
+      card_label:
+        description: The board label of the project, when it has one
+        type: string
+        default: ''
+    secrets:
+      cards_password:
+        required: false
 
 permissions:
   contents: read
@@ -48,6 +64,7 @@ jobs:
           echo "status=$?" >> "$GITHUB_OUTPUT"
           cat "$RUNNER_TEMP/report.txt"
       - name: Segnalazione
+        id: issue
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -63,20 +80,37 @@ jobs:
           if [ "$STATUS" = 0 ]; then
             if [ -n "$open" ]; then
               gh issue close "$open" --comment "Il controllo del $(date -u +%F) trova tutte le dipendenze alla versione letta."
+              echo "state=closed" >> "$GITHUB_OUTPUT"
+              echo "url=$(gh issue view "$open" --json url --jq .url)" >> "$GITHUB_OUTPUT"
             fi
             exit 0
           fi
           body="$RUNNER_TEMP/body.md"
           {
-            echo "Il controllo settimanale ha trovato le dipendenze qui sotto (versione letta, poi l'ultima pubblicata con la sua data). Una riga \`NEW\` è una versione più nuova: si legge per vedere che cosa portare dentro, poi il registro si porta alla versione letta. Una riga \`STALE\` è una dipendenza senza versioni nuove da più di un anno: si guarda se il progetto è ancora curato, e si sostituisce oppure si accetta con \`stale_accepted\` nel registro, con la data e la ragione. Lo fa la prossima sessione sul progetto, e la issue si chiude da sé al controllo successivo."
+            echo "Il controllo settimanale ha trovato le dipendenze qui sotto (versione letta, poi l'ultima pubblicata con la sua data). Una riga \`NEW\` è una versione più nuova: si legge per vedere che cosa portare dentro, poi il registro si porta alla versione letta. Una riga \`STALE\` è una dipendenza senza versioni nuove da più di un anno: si guarda se il progetto è ancora curato, e si sostituisce oppure si accetta con \`stale_accepted\` nel registro, con la data e la ragione. Lo fa la sessione titolare dell'area al primo turno dopo l'avviso, anche senza un rilascio in vista, e la issue si chiude da sé al controllo successivo."
             echo
             echo '```'
             grep -E '^(NEW|STALE) ' "$report"
             echo '```'
           } > "$body"
           if [ -z "$open" ]; then
-            gh issue create --title "$TITLE" --body-file "$body"
+            echo "url=$(gh issue create --title "$TITLE" --body-file "$body")" >> "$GITHUB_OUTPUT"
+            echo "state=open" >> "$GITHUB_OUTPUT"
           elif [ "$(gh issue view "$open" --json body --jq .body)" != "$(cat "$body")" ]; then
             gh issue edit "$open" --body-file "$body"
             gh issue comment "$open" --body-file "$body"
+            echo "url=$(gh issue view "$open" --json url --jq .url)" >> "$GITHUB_OUTPUT"
+            echo "state=open" >> "$GITHUB_OUTPUT"
           fi
+      # Only when the issue changed (opened, its list changed, or closed): a card that repeats
+      # itself every Monday would be noise.
+      - name: Card della bacheca
+        if: steps.issue.outputs.state != '' && inputs.card_list != ''
+        env:
+          CARDS_PASSWORD: ${{ secrets.cards_password }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          CARD_LIST: ${{ inputs.card_list }}
+          CARD_LABEL: ${{ inputs.card_label }}
+          STATE: ${{ steps.issue.outputs.state }}
+          ISSUE_URL: ${{ steps.issue.outputs.url }}
+        run: python3 .roccobot-hub/.memo/scripts/dependency-card.py "$REPO_NAME" "$CARD_LIST" "$CARD_LABEL" "$STATE" "$ISSUE_URL" "$RUNNER_TEMP/report.txt"

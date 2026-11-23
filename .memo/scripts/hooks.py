@@ -23,7 +23,8 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
             Prevenzione-01), recupera i commit arrivati da fuori (salvataggi admin, bot), al
             primo messaggio del giorno di ogni sessione esegue il passo 0 del protocollo di
             avvio (dal 2026-11-08), e mostra le azioni di Rocco sulla bacheca Trello dopo il
-            controllo precedente
+            controllo precedente e le issue 'Dipendenze da leggere' cambiate da allora (dal
+            2026-11-23, Campanello)
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
             controlli prima di un `git commit`, che possono bloccarlo
@@ -347,27 +348,29 @@ def trello_get(path, query):
     return risposta.get('data') if isinstance(risposta, dict) and 'data' in risposta else None
 
 
-def leggi_segni():
+def leggi_segni(percorso=None):
+    percorso = percorso or SEGNI_BACHECA
     try:
-        segni = json.loads(SEGNI_BACHECA.read_text(encoding='utf-8'))
+        segni = json.loads(percorso.read_text(encoding='utf-8'))
         return segni if isinstance(segni, dict) else {}
     except (OSError, ValueError):
         return {}
 
 
-def scrivi_segno(sessione, quando, adesso):
+def scrivi_segno(sessione, quando, adesso, percorso=None):
     """Write this session's mark. The file is read again just before writing and replaced in one
     step, so a session writing at the same moment loses at most its own mark, and then sees the
     same actions twice: never none."""
     from datetime import timedelta
+    percorso = percorso or SEGNI_BACHECA
     vecchio = (adesso - timedelta(days=GIORNI_SEGNO)).strftime('%Y-%m-%dT%H:%M:%SZ')
-    segni = {k: v for k, v in leggi_segni().items() if isinstance(v, str) and v >= vecchio}
+    segni = {k: v for k, v in leggi_segni(percorso).items() if isinstance(v, str) and v >= vecchio}
     segni[sessione] = quando
     try:
-        SEGNI_BACHECA.parent.mkdir(parents=True, exist_ok=True)
-        provvisorio = SEGNI_BACHECA.with_name(f'{SEGNI_BACHECA.name}.{os.getpid()}')
+        percorso.parent.mkdir(parents=True, exist_ok=True)
+        provvisorio = percorso.with_name(f'{percorso.name}.{os.getpid()}')
         provvisorio.write_text(json.dumps(segni), encoding='utf-8')
-        os.replace(provvisorio, SEGNI_BACHECA)
+        os.replace(provvisorio, percorso)
     except OSError:
         pass
 
@@ -391,6 +394,66 @@ def avvisi_bacheca(ev):
     except OSError:
         brief = ''                  # tools not cloned: the move is shown without the reminder
     return azioni_di_rocco(azioni, etichette, brief)
+
+
+# ── le dipendenze ─────────────────────────────────────────────────────────────
+# The issues 'Dipendenze da leggere' that the weekly dependency check opens or comments (Campanello,
+# Rocco's choices Avviso-03 and Aggiorno-01 of 2026-11-23): GitHub notifies him and no session, so
+# on 2026-11-23 the versions found in AIV and Aomidori reached nobody. Every session sees the open
+# ones that changed since its last look, with their repo, and the session that holds the repo's
+# area reads and brings them in during that turn. One search per message of his, through `gh`; a
+# failure shows nothing and leaves the mark where it was. A session without a mark sees them all.
+
+TITOLO_DIPENDENZE = 'Dipendenze da leggere'
+SEGNI_DIPENDENZE = Path.home() / '.claude' / 'roccobot-dipendenze.json'
+
+
+def cerca_dipendenze():
+    """The open issues titled TITOLO_DIPENDENZE in Rocco's repos, from GitHub's search, or None."""
+    domanda = f'user:Roccobot "{TITOLO_DIPENDENZE}" in:title is:issue is:open'
+    try:
+        r = subprocess.run(['gh', 'api', '-X', 'GET', 'search/issues', '-f', f'q={domanda}',
+                            '-f', 'per_page=50'], capture_output=True, text=True, timeout=8)
+        if r.returncode != 0:
+            return None
+        trovate = json.loads(r.stdout).get('items')
+    except (OSError, subprocess.SubprocessError, ValueError, AttributeError):
+        return None
+    if not isinstance(trovate, list):
+        return None
+    return [i for i in trovate if isinstance(i, dict) and i.get('title') == TITOLO_DIPENDENZE]
+
+
+def righe_dipendenze(issue, dal):
+    """One line per issue changed after `dal` (every one when `dal` is None), by repo, with the
+    time of the change in Rome's zone."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    righe = []
+    for i in sorted(issue, key=lambda i: i.get('repository_url', '')):
+        cambiata = i.get('updated_at') or ''
+        if dal and cambiata <= dal:
+            continue
+        repo = (i.get('repository_url') or '').rsplit('/', 1)[-1] or '?'
+        try:
+            ora = datetime.fromisoformat(cambiata.replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Rome'))
+            quando = ora.strftime('%d/%m %H:%M')
+        except ValueError:
+            quando = '?'
+        righe.append(f"{repo}: {i.get('html_url', '')} (aggiornata il {quando})")
+    return righe
+
+
+def avvisi_dipendenze(ev):
+    from datetime import datetime, timezone
+    adesso = datetime.now(timezone.utc)
+    sessione = ev.get('session_id') or 'senza-id'
+    dal = leggi_segni(SEGNI_DIPENDENZE).get(sessione)
+    issue = cerca_dipendenze()
+    if issue is None:
+        return []                   # the mark stays where it was: the next message asks again
+    scrivi_segno(sessione, adesso.strftime('%Y-%m-%dT%H:%M:%SZ'), adesso, SEGNI_DIPENDENZE)
+    return righe_dipendenze(issue, dal)
 
 
 # ── turno ─────────────────────────────────────────────────────────────────────
@@ -508,13 +571,16 @@ def mode_prompt(ev):
 
     inizio = time.monotonic()
     elenco = repos()
-    # One thread per repo, plus the board: the fetches take as long as the slowest one.
-    with ThreadPoolExecutor(len(elenco) + 1) as ex:
+    # One thread per repo, plus the board and the dependencies: the fetches take as long as the
+    # slowest one.
+    with ThreadPoolExecutor(len(elenco) + 2) as ex:
         bacheca = ex.submit(avvisi_bacheca, ev)
+        dipendenze = ex.submit(avvisi_dipendenze, ev)
         for r in ex.map(riallinea_turno, elenco):
             if r:
                 print(f'[prompt] {r}')
         righe = bacheca.result()
+        nuove = dipendenze.result()
     resta = TETTO_TURNO - MARGINE_TURNO - (time.monotonic() - inizio)
     for r in passo_zero_giornaliero(ev, tempo=min(PASSO0_MASSIMO, resta)):
         print(f'[prompt] {r}')
@@ -523,6 +589,12 @@ def mode_prompt(ev):
               'tua area la lavori tu; quelle di un\'altra area le lasci alla sua titolare.')
         for riga in righe:
             print(f'[bacheca] {riga}')
+    if nuove:
+        print("[dipendenze] Il controllo del lunedì ha versioni nuove da leggere. La sessione titolare "
+              "dell'area del repo le legge e le porta dentro in questo turno, con le prove del "
+              "progetto (Aggiorno-01); le altre sessioni le lasciano.")
+        for riga in nuove:
+            print(f'[dipendenze] {riga}')
 
 
 # ── modifica ──────────────────────────────────────────────────────────────────

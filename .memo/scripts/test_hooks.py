@@ -200,6 +200,7 @@ class PromptReminderTests(unittest.TestCase):
         h = load_hooks()
         h.repos = lambda: []
         h.avvisi_bacheca = lambda ev: []
+        h.avvisi_dipendenze = lambda ev: []
         h.passo_zero_giornaliero = lambda ev, tempo=None: []
         for prompt in ('ciao', '\\\\ dopo', ''):
             with self.subTest(prompt=prompt):
@@ -302,6 +303,74 @@ class BoardMarkTests(unittest.TestCase):
         self.h.SEGNI_BACHECA.write_text(json.dumps({'vecchia': '2020-01-01T00:00:00Z'}), encoding='utf-8')
         self.look('s1')
         self.assertEqual(set(json.loads(self.h.SEGNI_BACHECA.read_text(encoding='utf-8'))), {'s1'})
+
+
+class DependencyNoticeTests(unittest.TestCase):
+    """Campanello, 2026-11-23: the issues 'Dipendenze da leggere' reach the sessions. The weekly check
+    had commented the issues of AIV and Aomidori, and GitHub tells Rocco, never a session."""
+
+    def setUp(self):
+        import tempfile
+        self.h = load_hooks()
+        self.h.SEGNI_DIPENDENZE = Path(tempfile.mkdtemp()) / 'dipendenze.json'
+        self.issue = [{'title': 'Dipendenze da leggere', 'updated_at': '2026-11-23T18:13:13Z',
+                       'repository_url': 'https://api.github.com/repos/Roccobot/AIV',
+                       'html_url': 'https://github.com/Roccobot/AIV/issues/609'},
+                      {'title': 'Un altro titolo', 'updated_at': '2026-11-23T18:00:00Z',
+                       'repository_url': 'https://api.github.com/repos/Roccobot/arda',
+                       'html_url': 'https://github.com/Roccobot/arda/issues/1'}]
+        self.answer = True
+
+        def fake_search():
+            if not self.answer:
+                return None
+            return [i for i in self.issue if i['title'] == self.h.TITOLO_DIPENDENZE]
+        self.h.cerca_dipendenze = fake_search
+
+    def look(self, session):
+        return self.h.avvisi_dipendenze({'session_id': session})
+
+    def test_a_new_session_sees_every_open_issue_with_repo_link_and_rome_time(self):
+        self.assertEqual(self.look('s1'),
+                         ['AIV: https://github.com/Roccobot/AIV/issues/609 (aggiornata il 23/11 19:13)'])
+
+    def test_every_session_sees_a_change_once(self):
+        self.assertEqual(len(self.look('s1')), 1)
+        self.assertEqual(self.look('s1'), [])
+        self.assertEqual(len(self.look('s2')), 1)
+        self.issue[0]['updated_at'] = '2099-01-01T00:00:00Z'
+        self.assertEqual(len(self.look('s1')), 1)
+
+    def test_a_failed_search_leaves_the_mark_where_it_was(self):
+        self.answer = False
+        self.assertEqual(self.look('s1'), [])
+        self.answer = True
+        self.assertEqual(len(self.look('s1')), 1)
+
+    def test_the_board_marks_are_another_file(self):
+        self.look('s1')
+        self.assertNotEqual(self.h.SEGNI_DIPENDENZE, self.h.SEGNI_BACHECA)
+
+    def test_the_turn_prints_them(self):
+        import contextlib
+        import io
+        h = self.h
+        h.repos = lambda: []
+        h.avvisi_bacheca = lambda ev: []
+        h.passo_zero_giornaliero = lambda ev, tempo=None: []
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            h.mode_prompt({'prompt': 'ciao', 'session_id': 's9'})
+        self.assertIn('[dipendenze] AIV: https://github.com/Roccobot/AIV/issues/609', out.getvalue())
+
+    def test_a_failing_gh_is_none(self):
+        h = load_hooks()
+        real = subprocess.run
+        h.subprocess.run = lambda *a, **k: (_ for _ in ()).throw(FileNotFoundError('gh'))
+        try:
+            self.assertIsNone(h.cerca_dipendenze())
+        finally:
+            h.subprocess.run = real
 
 
 def git(repo, *args):
@@ -452,6 +521,7 @@ class TurnTimeTests(unittest.TestCase):
         h.aggiorna = slow_fetch
         h.repos = lambda: [Path(f'/absent/repo{i}') for i in range(13)]
         h.avvisi_bacheca = lambda ev: []
+        h.avvisi_dipendenze = lambda ev: []
         h.passo_zero_giornaliero = lambda ev, tempo=None: []
         start = time.monotonic()
         with contextlib.redirect_stdout(io.StringIO()):
@@ -467,6 +537,7 @@ class TurnTimeTests(unittest.TestCase):
         given = []
         h.repos = lambda: []
         h.avvisi_bacheca = lambda ev: []
+        h.avvisi_dipendenze = lambda ev: []
         h.passo_zero_giornaliero = lambda ev, tempo=None: given.append(tempo) or []
         with contextlib.redirect_stdout(io.StringIO()):
             h.mode_prompt({'prompt': 'ciao'})
