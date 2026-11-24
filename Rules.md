@@ -142,8 +142,8 @@ numero per scelta dell'utente.
   2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Applicazioni'** (fino al
   2026-11-24 'Documenti di feedback'; voce `Schedario`, sua richiesta del 2026-11-24: *i due
   riquadri devono essere coerenti e belli da vedere*), una scheda per app, tutte costruite allo
-  stesso modo. In alto il nome, che cos'è e il pulsante `Sito`, che è il collegamento principale al
-  mini-sito; sotto una linea, una voce per ogni versione dell'app, col segno della piattaforma come
+  stesso modo. In alto il nome, che cos'è e il pulsante `Homepage` (fino al 2026-11-24 `Sito`, in un
+  corpo più piccolo per sua richiesta), che è il collegamento principale al mini-sito; sotto una linea, una voce per ogni versione dell'app, col segno della piattaforma come
   nel titolo dei DF (la mela e il portatile per macOS, la testa di Android più grande) e il link
   `Feedback` al DF di quella versione. Le app sono due: **AIV**, solo Android, e **Aomidori**, una
   sola app e un solo sito per le due versioni (macOS dal Mac App Store, Android da GitHub), coi due DF
