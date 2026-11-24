@@ -53,9 +53,10 @@
   header svg { width: 3rem; height: auto; flex: none; }
   h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
   .meta { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); margin: .1rem 0 0; }
-  /* Section titles: a quiet label, so the cards and the tiles stay the protagonists */
+  /* Section titles: a quiet label, so the cards and the tiles stay the protagonists, centred over
+     them (Rocco's request of 2026-11-24, for the section titles and the groups alike) */
   section + section { margin-top: 2.4rem; }
-  h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-align: center; padding-left: .08em;
        color: var(--ink-muted); margin: 0 0 .8rem; }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
 
@@ -139,7 +140,7 @@
   .note[data-level="alarm"] { color: var(--alarm); }
   /* Groups inside a section: same grey as the section titles, smaller and with more room above,
      so size and position make the hierarchy, not colour */
-  h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-align: center; padding-left: .08em;
              color: var(--ink-muted); margin: 1.8rem 0 .6rem; }
   /* The keyboard focus ring follows the shape of what is focused: the whole tile or the pill, never a
      square box around a line of text */
@@ -206,9 +207,6 @@
       <li><div class="tile"><a class="name" href="../design/" target="_blank" rel="noopener">Design System</a><span class="note">Riferimento UI/UX · <a class="inl" href="../ruias/" target="_blank" rel="noopener">Animazioni</a></span></div></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I worker dei DF e delle regole condivise</span></a></li>
-    </ul>
-    <h3 class="group">Pubblicazione</h3>
-    <ul class="tiles">
       <li><a href="https://appstoreconnect.apple.com/" target="_blank" rel="noopener"><span class="name">App Store Connect</span><span class="note">Aomidori su Mac App Store</span></a></li>
       <li><a href="https://play.google.com/console/" target="_blank" rel="noopener"><span class="name">Google Play Console</span><span class="note">AIV su Google Play</span></a></li>
     </ul>
