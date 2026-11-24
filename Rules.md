@@ -151,8 +151,12 @@ numero per scelta dell'utente.
   (su un telefono va a capo sotto di esse). Il titolo della scheda di AIV è la sola sigla `AIV`,
   senza il nome per esteso (sua scelta del 2026-11-13: sui telefoni stretti il nome faceva uscire il
   riquadro dallo schermo). **'Link utili'**, tessere con un titolo e una
-  riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
-  strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP); la tessera `GitHub`
+  riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, con in coda `App Store
+  Connect` e `Google Play Console`, che fino al 2026-11-24 avevano un gruppo `Pubblicazione` a sé,
+  poi 'Siti e strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). **I
+  titoli delle sezioni e dei gruppi sono centrati** (sua richiesta del 2026-11-24), con un rientro a
+  sinistra uguale alla spaziatura delle lettere, che altrimenti sposta il testo di mezzo pixel a
+  sinistra: misurato sull'inchiostro, ora stanno entro 0,4 px dal centro. La tessera `GitHub`
   ha una seconda riga, `Repo principali`, verso `Repos.md` di `tools`. La tessera `GitHub
   Actions` (voce `Contatore`, dal 2026-11-08) mostra `<x> minuti gratuiti usati (<y>%)`
   e, a quota esaurita, al suo posto e sulla stessa riga, `Minuti extra: <x> (<y>% del budget)`
