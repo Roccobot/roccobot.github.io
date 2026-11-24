@@ -139,12 +139,18 @@ numero per scelta dell'utente.
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
 - **`hub/` è RoccoHub, la pagina di servizio coi link di uso comune** (nata il 2026-11-02 in
   `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
-  2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Documenti di feedback'**, un riquadro per app col pulsante
-  che apre il DF e, accanto al pulsante, i segni della piattaforma come nel titolo dei DF (la mela e
-  il portatile per macOS, la testa di Android più grande), e dove c'è il link al mini-sito (in quello
-  di Aomidori anche il registro di Aomidori Flex); su un telefono i segni vanno sopra il pulsante.
-  Il titolo del riquadro di AIV è la sola sigla `AIV`, senza il nome per esteso (sua scelta del
-  2026-11-13: sui telefoni stretti il nome faceva uscire il riquadro dallo schermo). **'Link utili'**, tessere con un titolo e una
+  2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Applicazioni'** (fino al
+  2026-11-24 'Documenti di feedback'; voce `Schedario`, sua richiesta del 2026-11-24: *i due
+  riquadri devono essere coerenti e belli da vedere*), una scheda per app, tutte costruite allo
+  stesso modo. In alto il nome, che cos'è e il pulsante `Sito`, che è il collegamento principale al
+  mini-sito; sotto una linea, una voce per ogni versione dell'app, col segno della piattaforma come
+  nel titolo dei DF (la mela e il portatile per macOS, la testa di Android più grande) e il link
+  `Feedback` al DF di quella versione. Le app sono due: **AIV**, solo Android, e **Aomidori**, una
+  sola app e un solo sito per le due versioni (macOS dal Mac App Store, Android da GitHub), coi due DF
+  separati; nella riga di Aomidori c'è anche il `Registro di Flex`, a destra e fuori dalle versioni
+  (su un telefono va a capo sotto di esse). Il titolo della scheda di AIV è la sola sigla `AIV`,
+  senza il nome per esteso (sua scelta del 2026-11-13: sui telefoni stretti il nome faceva uscire il
+  riquadro dallo schermo). **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, poi 'Pubblicazione', 'Siti e
   strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP); la tessera `GitHub`
   ha una seconda riga, `Repo principali`, verso `Repos.md` di `tools`. La tessera `GitHub
@@ -177,17 +183,21 @@ numero per scelta dell'utente.
   scuro è il fondo a metà fra chiaro e scuro della prima versione; fuori dalla mappa e
   dall'indicizzazione (`noindex`). Il vecchio indirizzo `feedback/` resta come rimando automatico a
   `hub/`, per i segnalibri.
-  ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, e uno tolto ne esce;
-  quando un'app ha il suo mini-sito (oggi manca quello di Aomidroid), il link entra nel suo
-  riquadro.
-  ⚠️⚠️ **La testa di Android accanto al pulsante si centra sulla MAIUSCOLA del pulsante, e conta
-  la sola cupola** (sua regola del 2026-11-03, col suo modello: *è solo la parte '~semicerchio' che
-  deve stare centrata in verticale con la maiuscola del pulsante*). Il centro della cupola, antenne
-  escluse (da 8,23 a 18,99 sulle 24 unità del disegno), coincide col centro dell'altezza della
-  maiuscola di `Apri`, cioè la metà fra la riga di base e la cima della `A` misurata con Archivo; le
-  antenne sporgono sopra. Il centro della scatola del disegno, o di tutta la testa, abbassa il segno
-  di circa 3 px. Si misura con la riga di base del testo e l'inchiostro della `A`, mai a occhio, e
-  si rimisura se cambiano il corpo del pulsante o quello del segno.
+  ⚠️ **Un DF nuovo entra in questa pagina** nello stesso giro in cui nasce, come voce della versione
+  a cui appartiene nella scheda della sua app, e uno tolto ne esce; il collegamento principale della
+  scheda è sempre il sito, e un'app senza mini-sito (oggi nessuna) avrebbe il pulsante spento o
+  assente, da decidere con lui.
+  ⚠️⚠️ **Ogni segno di piattaforma si centra sulla MAIUSCOLA del link che ha accanto, e per la testa
+  di Android conta la sola cupola** (sua regola del 2026-11-03, col suo modello: *è solo la parte
+  '~semicerchio' che deve stare centrata in verticale con la maiuscola*, allora riferita al pulsante
+  `Apri`, oggi alla `F` di `Feedback`). Il centro della cupola, antenne escluse (da 8,23 a 18,99
+  sulle 24 unità del disegno), coincide col centro dell'altezza della maiuscola, cioè la metà fra la
+  riga di base e la cima della `F` misurata con Archivo; le antenne sporgono sopra. Per la mela conta
+  il corpo (da 5,791 a 24 unità), per il portatile il suo inchiostro. Misurato il 2026-11-24 sull'inchiostro,
+  con una scansione a densità 4: la cupola è sul centro, la mela e il portatile entro 0,2 px. Il centro della
+  scatola del disegno, o di tutta la testa, abbassa il segno di circa 3 px. Si misura con la riga di
+  base del testo e l'inchiostro della maiuscola, mai a occhio, e si rimisura se cambiano il corpo del
+  link o quello dei segni.
   ⚠️ **Il marchio della pagina e della sua favicon resta centrato sul riquadro del disegno**, con
   la posizione che l'utente ha regolato nella favicon, e non segue la centratura ponderata di
   `Roccobot.md` § '📦 Terminologia e convenzioni di scambio file': è una pagina di servizio, e
