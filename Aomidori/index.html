@@ -24,10 +24,13 @@
   JavaScript; the script switches them to Italian for an Italian browser, title included.
   The picture on the right (below, on narrow screens) is one file per theme, the same in both
   languages (the owner's choice Orizzonte, 2026-10-27): assets/screenshot-light.webp and
-  screenshot-dark.webp, 1521 x 1034 px since 2026-11-23 (the Mac and Android apps together, made
-  by the owner), in lossy WebP at quality 90 (his rule of 2026-10-27, Roccobot.md, web images
-  light: at most three times the width the page gives it). Until a file exists its slot stays
-  hidden and the page keeps one column.
+  screenshot-dark.webp, 1521 x 1034 px since 2026-11-23, the Mac and Android apps together
+  (Vetrina, 2026-11-24): the Mac window at 1320 x 970 at (0, 0), and the phone's screenshot
+  without the system bars, its corners rounded to 80 px of the original, 329 x 679 px with its
+  bottom and right edge on the picture's, under the page's own shadow drawn on the Mac. The two
+  themes share every number, so switching theme moves nothing. Lossy WebP at quality 90 (his
+  rule of 2026-10-27, Roccobot.md, web images light: at most three times the width the page gives
+  it). Until a file exists its slot stays hidden and the page keeps one column.
   ⚠️ The icon is Graphe's artwork, copied unaltered from Resources/Icon/ (aomidori-v2.svg and
   aomidori-v2-dark.svg): the page picks one per theme, it never redraws it.
   The favicon is the glyph of the icon in the brand colour #43B59E (assets/favicon.svg), as AIV's.
@@ -176,8 +179,9 @@
 
   /* The screenshot slot: hidden until its picture has loaded, so a missing file never shows
      as a broken image. Expected files, one per theme (see the script): assets/screenshot-light.webp
-     and -dark.webp, a landscape window of 1600 x 1176 since the owner's choice
-     Orizzonte (2026-10-27); a portrait one, one per language, up to then. In two columns it
+     and -dark.webp, the Mac and the phone together since 2026-11-23 (see the head of the page);
+     a landscape window from the owner's choice Orizzonte (2026-10-27), a portrait one per
+     language up to then. In two columns it
      takes all the room the words leave (Rocco's note of 2026-11-08: bigger, anchored at the top
      right, closer to the words): its top is on the icon's tile and its right edge on the cards'.
      Up to then it was 440 px wide, lined up with the right cards' glyphs, and ended 92 px above
@@ -538,7 +542,7 @@
   // The screenshots keep their names when they are taken again, so a browser could show an old
   // one from its cache next to a new one: their version goes in the address, and goes up by one
   // whenever they are replaced.
-  var VERSIONE_SCHERMATE = 10;
+  var VERSIONE_SCHERMATE = 11;
   var schermataMancante = {};
   function mostraSchermata(T) {
     var figura = el('schermata');
