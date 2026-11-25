@@ -131,7 +131,41 @@ class CaporaliTests(unittest.TestCase):
 
 class ThirdPartySkillTests(unittest.TestCase):
     """The files of third-party skills are the authors' own: the monthly routine replaces them
-    whole, so the diff checks leave them alone. Only the two house skills stay checked."""
+    whole, so the diff checks leave them alone. The house skills stay checked, and they are the
+    folders of `tools/.agents/skills/`, read when the check runs (the hub keeps only third-party
+    skills since 2026-11-25). The tests build a workspace with that folder, as the tests of the
+    quotation marks do, so they also run in CI, where `tools` is private and cannot be cloned."""
+
+    HOUSE = ('audit', 'blend', 'epub', 'handoff')
+
+    @classmethod
+    def setUpClass(cls):
+        cls.fixture = tempfile.TemporaryDirectory()
+        base = Path(cls.fixture.name)
+        scripts = base / 'roccobot.github.io/.memo/scripts'
+        scripts.mkdir(parents=True)
+        for name in ('refcheck.py', 'githook.py', 'shared.py', 'char-exceptions.json'):
+            shutil.copyfile(SCRIPT.with_name(name), scripts / name)
+        for skill in cls.HOUSE:
+            (base / 'tools/.agents/skills' / skill).mkdir(parents=True)
+        cls.script = scripts / 'refcheck.py'
+        cls.refcheck = cls.load('refcheck', cls.script)
+        cls.githook = cls.load('githook', scripts / 'githook.py')
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.fixture.cleanup()
+
+    @staticmethod
+    def load(name, path):
+        sys.path.insert(0, str(path.parent))
+        try:
+            module_spec = importlib.util.spec_from_file_location(name + '_fixture', path)
+            module = importlib.util.module_from_spec(module_spec)
+            module_spec.loader.exec_module(module)
+        finally:
+            sys.path.remove(str(path.parent))
+        return module
 
     @staticmethod
     def block(path, line):
@@ -139,8 +173,11 @@ class ThirdPartySkillTests(unittest.TestCase):
                 % (path, path, path, path, line))
 
     def run_diff(self, diff):
-        return subprocess.run([sys.executable, str(SCRIPT), '--diff'], input=diff, text=True,
+        return subprocess.run([sys.executable, str(self.script), '--diff'], input=diff, text=True,
                               capture_output=True, cwd=tempfile.gettempdir())
+
+    def test_the_house_skills_are_the_folders_of_tools(self):
+        self.assertEqual(self.refcheck.skill_di_casa(), self.HOUSE)
 
     def test_which_paths_count_as_third_party(self):
         cases = {'.agents/skills/hallmark/SKILL.md': True,
@@ -148,18 +185,38 @@ class ThirdPartySkillTests(unittest.TestCase):
                  '.agents/skills/handoff/SKILL.md': False,
                  '.agents/skills/epub/SKILL.md': False,
                  '.agents/skills/blend/blend_css.py': False,
+                 '.agents/skills/audit/SKILL.md': False,
                  '.agents/skills-extra/x/SKILL.md': False,
                  'docs/.agents/skills/x/SKILL.md': False,
                  'Rules.md': False}
         for path, expected in cases.items():
             with self.subTest(path=path):
-                self.assertEqual(refcheck.skill_di_terzi(path), expected)
+                self.assertEqual(self.refcheck.skill_di_terzi(path), expected)
+
+    def test_a_new_house_skill_is_checked_with_no_name_to_add(self):
+        path = '.agents/skills/nuova/SKILL.md'
+        self.assertTrue(self.refcheck.skill_di_terzi(path))
+        folder = self.refcheck.TOOLS / '.agents/skills/nuova'
+        folder.mkdir()
+        try:
+            self.assertFalse(self.refcheck.skill_di_terzi(path))
+        finally:
+            folder.rmdir()
+
+    def test_without_tools_every_skill_counts_as_third_party(self):
+        original = self.refcheck.TOOLS
+        self.refcheck.TOOLS = original.with_name('assente')
+        try:
+            self.assertEqual(self.refcheck.skill_di_casa(), ())
+            self.assertTrue(self.refcheck.skill_di_terzi('.agents/skills/handoff/SKILL.md'))
+        finally:
+            self.refcheck.TOOLS = original
 
     def test_the_filter_drops_only_third_party_blocks(self):
         mixed = (self.block('.agents/skills/hallmark/SKILL.md', 'a \u2014 b')
                  + self.block('.agents/skills/handoff/SKILL.md', 'c')
                  + self.block('Rules.md', 'd'))
-        kept = refcheck.senza_terzi(mixed)
+        kept = self.refcheck.senza_terzi(mixed)
         self.assertNotIn('hallmark', kept)
         self.assertIn('handoff', kept)
         self.assertIn('Rules.md', kept)
@@ -172,13 +229,9 @@ class ThirdPartySkillTests(unittest.TestCase):
         self.assertEqual(house.returncode, 1, house.stdout)
 
     def test_git_hook_ignores_long_dashes_in_a_third_party_skill_only(self):
-        githook_spec = importlib.util.spec_from_file_location(
-            'githook', SCRIPT.with_name('githook.py'))
-        githook = importlib.util.module_from_spec(githook_spec)
-        githook_spec.loader.exec_module(githook)
         line = 'a \u2014 b'
-        third = githook.check_diff(self.block('.agents/skills/hallmark/scripts/x.mjs', line))
-        house = githook.check_diff(self.block('.agents/skills/handoff/scripts/x.py', line))
+        third = self.githook.check_diff(self.block('.agents/skills/hallmark/scripts/x.mjs', line))
+        house = self.githook.check_diff(self.block('.agents/skills/handoff/scripts/x.py', line))
         self.assertFalse([p for p in third if 'trattino lungo' in p], third)
         self.assertTrue([p for p in house if 'trattino lungo' in p], house)
 

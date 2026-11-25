@@ -91,12 +91,12 @@ PROGETTI = {nome: _clone(nome) for nome in (
 
 RULEFILES = [
     SITO / "CLAUDE.md",
-    SITO / ".agents/skills/handoff/SKILL.md",
     TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
     TOOLS / "Platforms.md",
 # Le skill di `tools` a glob dal 2026-10-16: fino ad allora c'era la sola `desc`, e `council` e
-# la nuova `audit` restavano fuori controllo.
+# la nuova `audit` restavano fuori controllo. Dal 2026-11-25 ci sono anche `handoff`, `epub` e
+# `blend`, spostate dall'hub: l'hub tiene le sole skill di terzi.
 ] + sorted(TOOLS.glob(".agents/skills/*/SKILL.md")) + [
 # ⚠️ I `CLAUDE.md` di progetto e i file di `rules/` si prendono a GLOB e non a elenco, dal
 # 2026-08-21, per la stessa ragione degli snippet qui sotto: erano un elenco scritto a mano, e
@@ -146,6 +146,11 @@ SKIP_PATHS = {
     # dall'elenco i due file di regole cancellati il 2026-07-29, perché l'utente ha voluto
     # via anche le note che li citavano.)
     "RoccobotOS/Da fare.txt",     # 2026-07-30, residuo vecchio: non si ricrea
+    # Percorsi DENTRO il pacchetto EPUB che la skill `epub` costruisce, non file di un repo: la
+    # skill li nomina per dire dove finisce il foglio di stile. Dal 2026-11-25 la skill è in
+    # `tools` e il suo testo entra fra i file controllati (prima nessuno lo guardava).
+    "Styles/style.css",
+    "Styles/cover.css",
 }
 SKIP_PREFIXES = (
     "scratchpad/",  # strumenti effimeri: lo scratchpad non sopravvive alla sessione
@@ -401,7 +406,7 @@ SIMBOLI_OK = [
 # ricordo. ⚠️ Chi modifica il riquadro tocca la SORGENTE e ricopia; l'ordine inverso funziona
 # ma perde la ragione per cui la sorgente è una.
 MARCATORI = ("<!-- brief-intro:inizio -->", "<!-- brief-intro:fine -->")
-INTRO_SORGENTE = SITO / ".agents/skills/handoff/SKILL.md"
+INTRO_SORGENTE = TOOLS / ".agents/skills/handoff/SKILL.md"
 INTRO_COPIA = TOOLS / ".memo/LATEST.md"
 
 # ── Il lessico: le formule bandite e il registro ──
@@ -1681,18 +1686,30 @@ def main_fix():
 
 
 
-# Le skill di terzi vivono in `.agents/skills/` e la Routine mensile le sostituisce per intero:
-# trattini lunghi, caporali e accenti di quei file sono degli autori e non si correggono a mano
-# (Skill-01, scelta dell'utente del 2026-10-26, dopo che la corsa di ottobre si era fermata su
-# 1.463 righe in 134 file). Restano nostre, e quindi controllate, le sole skill di casa.
-SKILL_DI_CASA = ("handoff", "epub", "blend")
+# Le skill di terzi vivono in `.agents/skills/` dell'hub e la Routine mensile le sostituisce per
+# intero: trattini lunghi, caporali e accenti di quei file sono degli autori e non si correggono a
+# mano (Skill-01, scelta dell'utente del 2026-10-26, dopo che la corsa di ottobre si era fermata
+# su 1.463 righe in 134 file). Restano nostre, e quindi controllate, le skill di casa.
+# Dal 2026-11-25 le skill di casa vivono TUTTE in `tools` (scelta `Trasloco` dell'utente) e
+# l'elenco è la cartella `.agents/skills/` di `tools`, letta al momento: una skill di casa nuova
+# è controllata appena nasce, senza un nome da aggiungere a mano. ⚠️ Dove `tools` non è
+# clonato accanto al repo (l'Action `rules-check` dell'hub, perché `tools` è privato) l'elenco è
+# vuoto e ogni skill di quella cartella conta come di terzi: nell'hub è vero, perché ci stanno
+# soltanto quelle.
+def skill_di_casa():
+    """I nomi delle skill di casa: le cartelle di `.agents/skills/` di `tools`."""
+    cartella = TOOLS / ".agents" / "skills"
+    if not cartella.is_dir():
+        return ()
+    return tuple(sorted(d.name for d in cartella.iterdir() if d.is_dir()))
 
 
-def skill_di_terzi(percorso):
+def skill_di_terzi(percorso, casa=None):
     """Vero se il percorso (relativo alla radice del repo) è un file di una skill di terzi."""
     parti = percorso.split("/")
+    casa = skill_di_casa() if casa is None else casa
     return (len(parti) >= 3 and parti[0] == ".agents" and parti[1] == "skills"
-            and parti[2] not in SKILL_DI_CASA)
+            and parti[2] not in casa)
 
 
 def senza_terzi(diff):
@@ -1702,10 +1719,11 @@ def senza_terzi(diff):
     trattini lunghi: un valore in un posto solo, o le tre copie divergono alla prima modifica.
     """
     righe, saltando = [], False
+    casa = skill_di_casa()
     for riga in diff.splitlines():
         trovato = re.match(r"diff --git a/.+ b/(.+)$", riga) or re.match(r"\+\+\+ b/(.+)$", riga)
         if trovato:
-            saltando = skill_di_terzi(trovato.group(1))
+            saltando = skill_di_terzi(trovato.group(1), casa)
         if not saltando:
             righe.append(riga)
     return "\n".join(righe)

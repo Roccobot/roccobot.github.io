@@ -14,19 +14,20 @@
 # argomenti insieme il comando tiene solo l'ultimo (misurato il 2026-09-23).
 #
 # Ogni skill si sostituisce per intero, così un file tolto a monte esce anche da qui. Le skill di
-# casa non si toccano, e quelle che nessun pacchetto fornisce più, perché gli autori le hanno
+# casa non sono in questa cartella, che dal 2026-11-25 tiene le sole skill di terzi (le nostre
+# vivono in `tools`), e quelle che nessun pacchetto fornisce più, perché gli autori le hanno
 # ritirate, si cancellano e si segnalano con `RIMOSSA` (scelta dell'utente, 2026-10-26: una skill
 # ritirata dagli autori non si tiene nell'archivio, mentre una ancora fornita ma ferma si
 # rivaluta ogni sei mesi). Per recuperarne una si guarda `docs/Removed.md`.
 #
 # I file di queste skill sono degli autori: i controlli sui caratteri (trattini lunghi, caporali,
-# accenti) non li guardano, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`; scelta
-# Skill-01 dell'utente, 2026-10-26, dopo che la corsa di ottobre si era fermata su 1.463 righe).
+# accenti) non li guardano (`refcheck.py`, `skill_di_casa`: sono di terzi tutte le skill che non
+# sono in `tools`; scelta Skill-01 dell'utente, 2026-10-26, dopo che la corsa di ottobre si era
+# fermata su 1.463 righe).
 set -euo pipefail
 
 RADICE="$(cd "$(dirname "$0")/../.." && pwd)"
 DEST="$RADICE/.agents/skills"
-CASA=(handoff epub blend)
 # Copiate a mano da un repo che non è in PACCHETTI: lo script non le aggiorna e non le segnala come
 # 'ritirate' e non le cancella (la corsa del 2026-10-26 segnalò così `security-audit`, di Cloudflare).
 MANUALI=(security-audit)
@@ -48,7 +49,8 @@ PACCHETTI=(
   ayghri/i-have-adhd
   zarazhangrui/frontend-slides
   # 'repo:nome1,nome2' installa solo quelle skill: il pacchetto intero di Matt Pocock contiene anche
-  # una 'handoff' che sovrascriverebbe la nostra (scelta dell'utente, 2026-10-30, Wayfinder-01).
+  # una 'handoff' con lo stesso nome della nostra, che vive in `tools` (scelta dell'utente,
+  # 2026-10-30, Wayfinder-01).
   mattpocock/skills:wayfinder,grilling,domain-modeling,research,prototype,setup-matt-pocock-skills
 )
 
@@ -78,7 +80,7 @@ done
 
 for d in "$DEST"/*/; do
   n="$(basename "$d")"
-  [[ " ${CASA[*]} ${MANUALI[*]} " == *" $n "* ]] && continue
+  [[ " ${MANUALI[*]} " == *" $n "* ]] && continue
   [ -d "$FRESCHE/$n" ] && continue
   # Con un pacchetto fallito la skill potrebbe mancare solo perché non è stata scaricata: si
   # segnala e non si cancella.

@@ -86,6 +86,9 @@ jobs:
         if: github.event.repository.name == 'roccobot.github.io'
         run: python3 roccobot.github.io/.memo/scripts/test_rules_password.py
 
+      # The skill `blend` and its test live in `tools` since 2026-11-25 (the house skills are all
+      # there): the test runs on the pushes of `tools`, with the hub checked out next to it by the
+      # step above, because one of its checks reads the hub's `styles/` folder.
       - name: Prove della skill blend (nomi degli stili di casa)
-        if: github.event.repository.name == 'roccobot.github.io'
-        run: python3 roccobot.github.io/.memo/scripts/test_blend.py
+        if: github.event.repository.name == 'tools'
+        run: python3 tools/.github/scripts/test_blend.py
