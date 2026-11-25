@@ -13,5 +13,5 @@
 - ⚠️ **Fino al 2026-10-03 quelle tre sezioni erano scritte qui**: una nota che nomina il passo 0
   o il protocollo di avvio 'del `CLAUDE.md` di root' parla di quelle sezioni.
 - Le skill di questo repo, che dal 2026-11-25 sono **tutte di terzi**, vivono in `.agents/skills/`, e
-  `.claude/skills` è un collegamento che punta lì. Quelle di casa (`handoff`, `epub`, `blend`, `audit`...)
-  vivono in `tools` (`rules/Roccobot.md` § '🧩 Dove vivono le skill').
+  `.claude/skills` è un collegamento che punta lì. Quelle di casa vivono in `tools`, e una nuova
+  nasce là (`rules/Roccobot.md` § '🧩 Dove vivono le skill').
