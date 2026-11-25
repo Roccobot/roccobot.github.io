@@ -3,8 +3,9 @@
 > **Cos'è questo file.** Il testo completo delle regole dell'**hub**: il repository
 > `Roccobot/roccobot.github.io` non ospita più progetti (dal 2026-09-26 ognuno ha un repo
 > suo, servito da Pages all'indirizzo `/<repo>/`), e qui restano le regole **trasversali** a
-> tutti i progetti e gli strumenti che le fanno rispettare (`.memo/scripts/`, la skill
-> `handoff`). Ogni progetto ha le sue regole nel proprio repo; tutto ciò che non è trasversale
+> tutti i progetti e gli strumenti che le fanno rispettare (`.memo/scripts/`; la skill
+> `handoff`, che fino al 2026-11-25 era qui, vive ora in `tools` con le altre skill di casa).
+> Ogni progetto ha le sue regole nel proprio repo; tutto ciò che non è trasversale
 > vive nelle regole universali.
 > Vale per **tutti gli agenti**: il nucleo, cioè ogni regola in una riga, vive in `AGENTS.md`,
 > e questo file ne dà il perché. Il protocollo di avvio di Claude, il modello e gli artefatti
@@ -681,10 +682,17 @@ perché **questo file ha priorità più alta**.
   in 134 file). `.agents/skills/` contiene file degli autori, che la Routine 'Aggiornamento skill di
   terzi' sostituisce per intero ogni mese: trattini lunghi, caporali e accenti di quei file non si
   controllano né si correggono, e correggerli a mano non regge, perché il giro dopo li rimette.
-  - **Restano controllate le skill di casa** (`handoff`, `epub` e, dal 2026-10-26, `blend`), e tutto il resto del repo.
-  - **L'elenco ha una fonte sola**, `SKILL_DI_CASA` in `refcheck.py`, che leggono anche `hooks.py` e
-    `githook.py` (l'hook di Claude e quello di git): il modo `--diff` di `refcheck.py` e i due
-    controlli dei trattini lunghi saltano i blocchi di quei file.
+  - **Restano controllate le skill di casa, che dal 2026-11-25 vivono tutte in `tools`** (scelta
+    `Trasloco` dell'utente: `handoff`, `epub` e `blend` sono passate lì dall'hub, e il Worker
+    `rules-proxy`, che legge le skill di `tools`, le serve così anche a Grok Bot e a ChatGPT), e
+    tutto il resto del repo. In questa cartella restano le sole skill di terzi.
+  - **L'elenco ha una fonte sola**, `skill_di_casa()` in `refcheck.py`, che leggono anche `hooks.py` e
+    `githook.py` (l'hook di Claude e quello di git): sono le cartelle di `.agents/skills/` di `tools`,
+    lette al momento, quindi una skill di casa nuova è controllata appena nasce, senza un nome da
+    aggiungere a mano. Il modo `--diff` di `refcheck.py` e i due controlli dei trattini lunghi saltano
+    i blocchi di tutte le altre. ⚠️ Dove `tools` non è clonato accanto al repo (l'Action `rules-check`
+    dell'hub, perché `tools` è privato) l'elenco è vuoto e ogni skill di quella cartella conta come di
+    terzi: nell'hub è vero, perché ci sono soltanto quelle.
   - ⚠️ **È un'eccezione a un divieto non derogabile, scelta da lui e limitata a una cartella**: non si
     estende ad altri file di terzi, e una skill nuova di terzi entra senza correggere i suoi
     caratteri (la `security-audit` di Cloudflare era entrata ripulita a mano, 35 trattini).

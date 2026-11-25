@@ -19,7 +19,6 @@
 | `test_hooks.py` | le prove di `hooks.py`, che girano anche nell'Action `rules-check`: il blocco dei comandi che stampano l'ambiente o un segreto, la lettura della bacheca col segno per sessione, il promemoria sulla lingua, il passo 0 giornaliero, il riallineamento del turno e i suoi tempi, i controlli al commit lasciati agli hook di git |
 | `githook.py` | i controlli degli hook di git e dell'Action `rules-check`, per tutti gli agenti; prima di un commit di solo testo avvisa dei flussi di prove che farebbe partire (`Freno`) |
 | `test_githook.py` | le prove dell'avviso `Freno` (un filtro per esclusione si sveglia su `.scratch/`, uno per inclusione no) e dell'avviso sul brief cambiato senza il timbro `Last turn` rifatto |
-| `test_blend.py` | le prove dei nomi di stile che la skill `blend` riconosce, senza scaricare niente (`RoccobotOS Flex` compreso) |
 | `shared.py` | i valori e i due aiuti di git che servono a più script, scritti una volta sola: quali file sono di regole, la bacheca, Rocco e il Worker, il ramo principale di un clone e il suo `fetch` (`Vaglio`, Macchine-17) |
 | `catchup.py` | che cosa è arrivato dopo il timbro `Last turn` del brief, e il timbro stesso (`--stamp`) |
 | `closecard.py` | chiude una card della bacheca in un comando solo: in cima a `Fatte`, spuntata, senza l'assegnazione all'utente e col commento dell'esito (`Contromisura-03`) |
@@ -34,7 +33,7 @@
 | `fcp-probe.js` | la sonda del primo disegno, con gli script ritardati |
 | `test-zoom-gesture.js` | il banco del gesto 'doppio tocco e trascina' del visualizzatore, sui due siti |
 | `test-site-search.js` | il banco della ricerca del sito dal tocco lungo sul FAB, sui due siti |
-| `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` e cancella quelle che gli autori hanno ritirato (`RIMOSSA`, salvo un pacchetto fallito); una skill ferma ma ancora fornita si rivaluta ogni sei mesi (scelta dell'utente, 2026-10-26); i controlli sui caratteri non guardano quei file, salvo le skill di casa (`refcheck.py`, `SKILL_DI_CASA`) |
+| `skills-update.sh` | riscarica le skill di terzi di `.agents/skills/` e cancella quelle che gli autori hanno ritirato (`RIMOSSA`, salvo un pacchetto fallito); una skill ferma ma ancora fornita si rivaluta ogni sei mesi (scelta dell'utente, 2026-10-26); i controlli sui caratteri non guardano quei file, e le skill di casa non sono qui: vivono in `tools` dal 2026-11-25, e `refcheck.py` le ricava da quella cartella (`skill_di_casa`) |
 | `check-dependencies.py` | confronta il registro `docs/Dependencies.json` di un repo con le ultime versioni pubblicate; lo lancia ogni lunedì il workflow `dependencies.yml` |
 | `test_check_dependencies.py` | le prove della soglia delle patch di `check-dependencies.py` (`Soglia-01`), che girano anche nell'Action `rules-check` |
 | `dependency-card.py` | crea o aggiorna sulla bacheca la card `Dipendenze: <repo>` quando la issue delle dipendenze nasce, cambia o si chiude, con la parola d'ordine delle card (`Campanello`); lo lancia il workflow `dependencies.yml` |

@@ -342,7 +342,7 @@
     2026-07-29. Criterio completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli
     omografi.
   - **Il verificatore controlla anche** i **caratteri** dei file di regole e la **fedeltà del
-    riquadro** del brief alla sua sorgente nella skill `handoff`, che prima era una
+    riquadro** del brief alla sua sorgente nella skill `handoff` (in `tools` dal 2026-11-25), che prima era una
     raccomandazione non verificabile.
   - ⚠️ **Quali file copre si ricava a GLOB, non da un elenco** (dal 2026-08-21): i `CLAUDE.md`
     di progetto e i file di `rules/` entrano da sé. Prima erano scritti a mano, e due file di
