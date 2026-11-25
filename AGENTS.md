@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.34
+> **Versione**: 3.35
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -34,8 +34,8 @@
   per Terramare.
 - **Caricato non vuol dire attivo**: una sezione modale vale solo quando l'utente la invoca
   (§ '🗃️ File di regole collegati').
-- Le **skill** vivono in `.agents/skills/` di ogni repo, con `.claude/skills` come collegamento
-  (§ '🧩 Dove vivono le skill').
+- Le **skill** vivono in `.agents/skills/` di ogni repo, con `.claude/skills` come collegamento;
+  **una skill di casa nasce in `tools`**, quelle di terzi vivono nell'hub (§ '🧩 Dove vivono le skill').
 
 ## ⚖️ Priorità
 
