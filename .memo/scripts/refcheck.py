@@ -87,7 +87,7 @@ def _clone(nome):
 AIV = _clone("AIV")
 PROGETTI = {nome: _clone(nome) for nome in (
     "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
-    "cheparolae", "Aomidori", "rocco.bot", "Haul", "CraftLook", "Roccobot")}
+    "cheparolae", "Aomidori", "rocco.bot", "Haul", "CraftLook", "Roccobot", "monochromenewtab")}
 
 RULEFILES = [
     SITO / "CLAUDE.md",
@@ -829,7 +829,8 @@ NOMI_PROGETTI = {"earthsea": ("Terramare",), "arda": ("Arda",), "ratiolab": ("Ra
                  "Aomidori": ("Aomidori", "Aomidroid"), "userscripts": ("userscript", "userscripts"),
                  "cheparolae": ("Ma che parola è", "cheparolae"), "rocco.bot": ("Roccobot.me", "rocco.bot"),
                  "Haul": ("Haul",), "CraftLook": ("ArtCraft Quick Look", "CraftLook"),
-                 "Roccobot": ("profilo GitHub",)}
+                 "Roccobot": ("profilo GitHub",),
+                 "monochromenewtab": ("Monochrome New Tab", "monochromenewtab")}
 
 
 def cita_progetto_assente(righe, i, intorno=1):
