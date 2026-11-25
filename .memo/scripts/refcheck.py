@@ -154,6 +154,9 @@ SKIP_PATHS = {
 }
 SKIP_PREFIXES = (
     "scratchpad/",  # strumenti effimeri: lo scratchpad non sopravvive alla sessione
+    # La cartella condivisa del box di Grok Bot, fuori da ogni repo: la skill `crafthub` dice dove
+    # il manuale e l'helper si trovano anche là (2026-11-25).
+    "/workspace/",
 )
 SKIP_LINKS = {"URL"}  # l'esempio letterale [titolo](URL) nella regola sui link
 # Gli esempi letterali dentro le regole che DEFINISCONO la sintassi dei rimandi:
