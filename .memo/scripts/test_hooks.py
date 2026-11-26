@@ -239,6 +239,26 @@ class DailyStepZeroTests(unittest.TestCase):
         self.assertTrue(comando.startswith("python3 -c '"), comando)
         self.assertIn('hooks.py', comando)
 
+    def test_the_real_command_switches_off_third_party_telemetry(self):
+        # 2026-11-26: modern-web-guidance (Google) sends usage statistics unless DISABLE_TELEMETRY=1
+        # is in the environment of the commands an agent runs; the user settings' `env` block is
+        # where that holds in every session. The command must write it, and keep the other keys.
+        import json, os, subprocess
+        testo = (SCRIPT.parents[2] / 'Rules.md').read_text(encoding='utf-8')
+        comando = self.h.comando_passo_zero(testo)
+        casa = self.tmp / 'casa'
+        (casa / '.claude').mkdir(parents=True)
+        (casa / '.claude' / 'settings.json').write_text(
+            json.dumps({'env': {'ALTRA': 'x'}, 'model': 'sonnet'}), encoding='utf-8')
+        # `python3 -I`-style isolation is not needed: the command only reads HOME
+        r = subprocess.run(['bash', '-c', comando], capture_output=True, text=True,
+                           env={**os.environ, 'HOME': str(casa)})
+        self.assertEqual(r.returncode, 0, r.stderr)
+        d = json.loads((casa / '.claude' / 'settings.json').read_text(encoding='utf-8'))
+        self.assertEqual(d['env'].get('DISABLE_TELEMETRY'), '1')
+        self.assertEqual(d['env'].get('ALTRA'), 'x')
+        self.assertEqual(d['model'], 'sonnet')
+
     def test_once_a_day_for_each_session(self):
         ran, out = self.runs('s1', '2026-11-08')
         self.assertTrue(ran)
