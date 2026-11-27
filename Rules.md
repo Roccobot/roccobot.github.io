@@ -141,8 +141,7 @@ numero per scelta dell'utente.
   altrimenti. Un progetto nuovo con una pagina entra in `sitemap.xml` e in `llms.txt`.
 - **`hub/` è RoccoHub, la pagina di servizio coi link di uso comune** (nata il 2026-11-02 in
   `feedback/` per i documenti di feedback; titolo `RoccoHub`, seconda sezione e indirizzo `hub/` dal
-  2026-11-03, sue richieste e scelta `Titolo-01`). Due sezioni: **'Applicazioni e componenti
-  aggiuntivi'** (fino al 2026-11-27 'Applicazioni', fino al 2026-11-24 'Documenti di feedback'; voce `Schedario`, sua richiesta del 2026-11-24: *i due
+  2026-11-03, sue richieste e scelta `Titolo-01`). Tre sezioni (dal 2026-11-27): **'Applicazioni'** (fino al 2026-11-24 'Documenti di feedback'; voce `Schedario`, sua richiesta del 2026-11-24: *i due
   riquadri devono essere coerenti e belli da vedere*), una scheda per app, tutte costruite allo
   stesso modo. In alto il nome, che cos'è e il pulsante `Homepage` (fino al 2026-11-24 `Sito`, in un
   corpo più piccolo per sua richiesta), che è il collegamento principale al mini-sito; sotto una linea, una voce per ogni versione dell'app, col segno della piattaforma come
@@ -152,16 +151,20 @@ numero per scelta dell'utente.
   separati; nella riga di Aomidori c'è anche il `Registro di Flex`, a destra e fuori dalle versioni
   (su un telefono va a capo sotto di esse). Il titolo della scheda di AIV è la sola sigla `AIV`,
   senza il nome per esteso (sua scelta del 2026-11-13: sui telefoni stretti il nome faceva uscire il
-  riquadro dallo schermo). Sotto le due schede, un po' più staccati di quanto le schede lo siano fra
-  loro, ci sono i **componenti aggiuntivi**, quasi app ma non del tutto (sue richieste del
-  2026-11-27): due tessere fatte come quelle di 'Link utili', una per metà dove c'è posto e una
-  sotto l'altra su un telefono. A sinistra **Monochrome New Tab** (`Estensione Chromium`), che porta
-  alla sua pagina sul Chrome Web Store, col link secondario `Web Store Dev Console`; a destra
-  **Userscript**, che fino a quel giorno era fra i 'Link utili'. Non hanno un mini-sito né un DF, e
-  per questo non sono schede come le altre. **'Link utili'**, tessere con un titolo e una
-  riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, con in coda `App Store
-  Connect` e `Google Play Console`, che fino al 2026-11-24 avevano un gruppo `Pubblicazione` a sé,
-  poi 'Siti e strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). **I
+  riquadro dallo schermo). Sotto il titolo della sezione, prima delle schede, una riga discreta
+  e centrata coi due link alle console degli store, `Google Dev Console` e `App Store Connect`:
+  servono alle app ma a nessuna in particolare, e fino al 2026-11-27 erano due tessere dei link (sua
+  richiesta). **'Componenti aggiuntivi'**, quasi app ma non del tutto (sue richieste del
+  2026-11-27): due tessere fatte come quelle dei link, **Monochrome New Tab** (`Estensione per
+  Chromium`), che porta alla sua pagina sul Chrome Web Store, col link secondario `Web Store Dev
+  Console`, e **Userscript**. Non hanno un mini-sito né un DF, e per questo non sono schede come le
+  altre. **'Riferimenti e utility'** (fino al 2026-11-27 'Link utili'), tessere con un titolo e una
+  riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, con `Design System` in fondo,
+  poi 'Siti e strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP).
+  ⚠️ **Nessuna tessera resta isolata** (sua regola del 2026-11-27, per tutte le sezioni): le tessere
+  stanno due per riga dove c'è posto e una sotto l'altra su un telefono, e l'ultima di un gruppo, se
+  resta sola a sinistra, prende tutta la riga. Lo fa una regola CSS sola
+  (`.tiles > li:last-child:nth-child(odd)`), quindi vale anche per un gruppo nuovo. **I
   titoli delle sezioni e dei gruppi sono centrati** (sua richiesta del 2026-11-24), con un rientro a
   sinistra uguale alla spaziatura delle lettere, che altrimenti sposta il testo di mezzo pixel a
   sinistra: misurato sull'inchiostro, ora stanno entro 0,4 px dal centro. La tessera `GitHub`
