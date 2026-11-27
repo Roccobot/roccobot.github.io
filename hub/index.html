@@ -97,6 +97,9 @@
      on a phone it wraps under them, at the left like them */
   a.reg { margin-left: auto; }
   @media (max-width: 30rem) { a.reg { margin-left: 0; } }
+  /* A small tile under the app cards, for a project with no site nor DF (Monochrome New Tab, Rocco's
+     request of 2026-11-27): the same tile as the useful links, full width, at the cards' distance */
+  .apps > .tile { margin-top: .85rem; }
 
   /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
   .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
@@ -196,6 +199,7 @@
         </div>
       </li>
     </ul>
+    <div class="tile"><a class="name" href="https://chromewebstore.google.com/detail/monochrome-new-tab/fgpdbjjnjeolmenkhkoppmmaegjnegjd" target="_blank" rel="noopener">Monochrome New Tab</a><span class="note">Scheda nuova vuota, intonata al tema</span><a class="sub" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Web Store Dev Console</a></div>
   </section>
 
   <section aria-labelledby="t-link">
