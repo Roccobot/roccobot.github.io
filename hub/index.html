@@ -63,7 +63,7 @@
   /* Apps: one card per app, all built the same. Above, the name, what the app is and the button to its
      site; below a line, one entry per version (platform), with its mark and the link to that
      version's feedback document (DF). */
-  .apps > ul:not(.tiles) > li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; }
+  .apps > ul > li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; }
   .top { display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
   h3 { font-size: 1.2rem; font-weight: 600; margin: 0; }
@@ -97,13 +97,22 @@
      on a phone it wraps under them, at the left like them */
   a.reg { margin-left: auto; }
   @media (max-width: 30rem) { a.reg { margin-left: 0; } }
-  /* The add-ons under the app cards (Rocco's requests of 2026-11-27): the same tiles as the useful
-     links, two per row where there is room, set a little further from the cards than the cards are
-     from each other, since they are almost apps but not quite */
-  .apps > .tiles { margin-top: 1.5rem; }
+  /* The two consoles of the stores, under the section title: they serve the apps but no app in
+     particular, so they are a quiet line of their own, centred, before the cards (Rocco's request
+     of 2026-11-27). Underlined like the second links of the tiles, with a 44 px touch area that
+     does not move the layout. */
+  .consoles { display: flex; flex-wrap: wrap; justify-content: center; gap: .2rem 1.6rem; margin: -.3rem 0 .9rem; }
+  .consoles a { position: relative; color: var(--ink-muted); font-size: .9rem; text-decoration: underline;
+                text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  .consoles a::after { content: ""; position: absolute; inset: -.7rem -.35rem; }
+  .consoles a:hover, .consoles a:focus-visible { color: var(--link); text-decoration-thickness: 2px; }
 
   /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
   .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
+  /* A last tile alone on the left of its row takes the whole row, so no tile is left isolated, in
+     every section (Rocco's rule of 2026-11-27). There are two columns at most: the page is 40 rem
+     wide, and three tiles of 15.5 rem do not fit. */
+  .tiles > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .tiles > li > a, .tile { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--card);
              border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; }
   .tiles > li > a:hover, .tile:hover { border-color: var(--link); }
@@ -172,7 +181,8 @@
   </header>
 
   <section class="apps" aria-labelledby="t-app">
-    <h2 id="t-app">Applicazioni e componenti aggiuntivi</h2>
+    <h2 id="t-app">Applicazioni</h2>
+    <p class="consoles"><a href="https://play.google.com/console/" target="_blank" rel="noopener">Google Dev Console</a><a href="https://appstoreconnect.apple.com/" target="_blank" rel="noopener">App Store Connect</a></p>
     <ul>
       <li>
         <div class="top">
@@ -201,22 +211,24 @@
         </div>
       </li>
     </ul>
+  </section>
+
+  <section aria-labelledby="t-add">
+    <h2 id="t-add">Componenti aggiuntivi</h2>
     <ul class="tiles">
-      <li><div class="tile"><a class="name" href="https://chromewebstore.google.com/detail/monochrome-new-tab/fgpdbjjnjeolmenkhkoppmmaegjnegjd" target="_blank" rel="noopener">Monochrome New Tab</a><span class="note">Estensione Chromium</span><a class="sub" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Web Store Dev Console</a></div></li>
+      <li><div class="tile"><a class="name" href="https://chromewebstore.google.com/detail/monochrome-new-tab/fgpdbjjnjeolmenkhkoppmmaegjnegjd" target="_blank" rel="noopener">Monochrome New Tab</a><span class="note">Estensione per Chromium</span><a class="sub" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Web Store Dev Console</a></div></li>
       <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
     </ul>
   </section>
 
   <section aria-labelledby="t-link">
-    <h2 id="t-link">Link utili</h2>
+    <h2 id="t-link">Riferimenti e utility</h2>
     <ul class="tiles">
       <li><div class="tile"><a class="name" href="https://github.com/Roccobot?tab=repositories" target="_blank" rel="noopener">GitHub</a><span class="note">Progetti e repo di Roccobot</span><a class="sub" href="https://github.com/Roccobot/tools/blob/main/Repos.md" target="_blank" rel="noopener">Repo principali</a></div></li>
       <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last"></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
-      <li><div class="tile"><a class="name" href="../design/" target="_blank" rel="noopener">Design System</a><span class="note">Riferimento UI/UX · <a class="inl" href="../ruias/" target="_blank" rel="noopener">Animazioni</a></span></div></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I worker dei DF e delle regole condivise</span></a></li>
-      <li><a href="https://appstoreconnect.apple.com/" target="_blank" rel="noopener"><span class="name">App Store Connect</span><span class="note">Aomidori su Mac App Store</span></a></li>
-      <li><a href="https://play.google.com/console/" target="_blank" rel="noopener"><span class="name">Google Play Console</span><span class="note">AIV su Google Play</span></a></li>
+      <li><div class="tile"><a class="name" href="../design/" target="_blank" rel="noopener">Design System</a><span class="note">Riferimento UI/UX · <a class="inl" href="../ruias/" target="_blank" rel="noopener">Animazioni</a></span></div></li>
     </ul>
     <h3 class="group">Siti e strumenti</h3>
     <ul class="tiles">
@@ -225,7 +237,8 @@
       <li><a href="https://roccobot.github.io/RoccobotOS/" target="_blank" rel="noopener"><span class="name">RoccobotOS</span><span class="note">Scorciatoie, formati, caratteri e DNS</span></a></li>
       <li><a href="https://roccobot.github.io/cheparolae/" target="_blank" rel="noopener"><span class="name">Ma che parola è</span><span class="note">Pomello o frangiflutti?</span></a></li>
       <li><a href="https://roccobot.github.io/CleanSVG/" target="_blank" rel="noopener"><span class="name">CleanSVG</span><span class="note">Ripulisce gli SVG</span></a></li>
-      <li><a href="https://roccobot.github.io/ratiolab/" target="_blank" rel="noopener"><span class="name">RatioLab</span><span class="note">Calcolatore di proporzioni</span></a></li>    </ul>
+      <li><a href="https://roccobot.github.io/ratiolab/" target="_blank" rel="noopener"><span class="name">RatioLab</span><span class="note">Calcolatore di proporzioni</span></a></li>
+    </ul>
     <h3 class="group">Liste per uBlock / AdGuard</h3>
     <ul class="tiles">
       <li><a href="https://roccobot.github.io/ABP/RoccobotFilters.txt" target="_blank" rel="noopener"><span class="name">Lista di blocco</span><span class="note">RoccobotFilters.txt</span></a></li>
