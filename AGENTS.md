@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 3.35
+> **Versione**: 3.36
 >
 > **Cos'è questo file.** Le regole che ogni agente ha **sempre**, su ogni piattaforma e in ogni
 > repo di Roccobot: una per riga, col rimando al perché. Un rimando col solo segno `§` è una
@@ -109,6 +109,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   con `caffeinate` decide l'agente; in locale `caffeinate` si dichiara quando parte, e a fine
   lavoro si ferma (§ '✅ Dall'inizio della sessione al rilascio, ogni autorizzazione è approvata'
   e § '☕ Le sessioni locali e `caffeinate`').
+- **Una sessione locale registra nell'inventario del Mac quello che installa fuori da un repo**, e
+  dopo due giorni chiede se tenerlo; si cancella solo con la skill `mac-cleanup`, e la cronologia
+  delle sessioni mai a mano (§ '📦 Le sessioni locali tengono leggero il Mac').
 - **Un passo che può fare solo l'utente**: si prepara il resto e gli si scrivono i clic in ordine,
   col modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
