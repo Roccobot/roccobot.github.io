@@ -24,7 +24,8 @@ MODI (primo argomento; l'evento arriva in JSON su stdin):
             primo messaggio del giorno di ogni sessione esegue il passo 0 del protocollo di
             avvio (dal 2026-11-08), e mostra le azioni di Rocco sulla bacheca Trello dopo il
             controllo precedente e le issue 'Dipendenze da leggere' cambiate da allora (dal
-            2026-11-23, Campanello)
+            2026-11-23, Campanello); sul Mac, le cose installate dalle sessioni da almeno due
+            giorni e non ancora confermate (dal 2026-11-27, Scorta)
   edit      PreToolUse Edit|Write: riallinea il repo del file prima di toccarlo
   bash      PreToolUse Bash: blocca i comandi che stampano l'ambiente o un segreto, e fa i
             controlli prima di un `git commit`, che possono bloccarlo
@@ -456,6 +457,33 @@ def avvisi_dipendenze(ev):
     return righe_dipendenze(issue, dal)
 
 
+# Scorta, Rocco's choices of 2026-11-27 (Pulizia-01-A, Attesa-01-A): a local session records in an
+# inventory on the Mac what it installs outside a repo, and two days later asks him whether to keep
+# it. The session cannot remember across days, so the turn hook reminds it. The logic is the house
+# skill's script (`mac-cleanup` in tools), run here; without the inventory (cloud sessions, a Mac
+# where nothing was recorded) nothing runs.
+SCORTA_INVENTARIO = Path(os.environ.get('ROCCOBOT_INVENTORY')
+                         or Path.home() / '.roccobot' / 'inventory.json')
+SCORTA_SCRIPT = BASE / 'tools' / '.agents' / 'skills' / 'mac-cleanup' / 'inventory.py'
+SCORTA_TEMPO = 10
+
+
+def avvisi_scorta(script=None):
+    script = script or SCORTA_SCRIPT
+    if not SCORTA_INVENTARIO.exists() or not script.exists():
+        return []
+    try:
+        r = subprocess.run([sys.executable, str(script), 'due'], capture_output=True, text=True,
+                           timeout=SCORTA_TEMPO)
+        voci = json.loads(r.stdout) if r.returncode == 0 else None
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        voci = None
+    if voci is None:
+        return ["inventario del Mac non letto: lancia a mano `inventory.py due` della skill mac-cleanup"]
+    return [f"{v['path']} ({v['purpose']}, {v.get('mb', '?')} MB, installato dalla sessione "
+            f"{v['session']} il {v['installed']})" for v in voci]
+
+
 # ── turno ─────────────────────────────────────────────────────────────────────
 
 # Rocco's rule of 2026-11-08: every day, at the first request he makes to each session, the session
@@ -573,14 +601,16 @@ def mode_prompt(ev):
     elenco = repos()
     # One thread per repo, plus the board and the dependencies: the fetches take as long as the
     # slowest one.
-    with ThreadPoolExecutor(len(elenco) + 2) as ex:
+    with ThreadPoolExecutor(len(elenco) + 3) as ex:
         bacheca = ex.submit(avvisi_bacheca, ev)
         dipendenze = ex.submit(avvisi_dipendenze, ev)
+        scorta = ex.submit(avvisi_scorta)
         for r in ex.map(riallinea_turno, elenco):
             if r:
                 print(f'[prompt] {r}')
         righe = bacheca.result()
         nuove = dipendenze.result()
+        scadute = scorta.result()
     resta = TETTO_TURNO - MARGINE_TURNO - (time.monotonic() - inizio)
     for r in passo_zero_giornaliero(ev, tempo=min(PASSO0_MASSIMO, resta)):
         print(f'[prompt] {r}')
@@ -595,6 +625,11 @@ def mode_prompt(ev):
               "progetto (Aggiorno-01); le altre sessioni le lasciano.")
         for riga in nuove:
             print(f'[dipendenze] {riga}')
+    if scadute:
+        print("[scorta] Installate sul Mac da almeno due giorni e non ancora confermate: dopo il lavoro "
+              "chiesto, chiedi a Rocco se tenerle o cancellarle (skill mac-cleanup, punto 2).")
+        for riga in scadute:
+            print(f'[scorta] {riga}')
 
 
 # ── modifica ──────────────────────────────────────────────────────────────────

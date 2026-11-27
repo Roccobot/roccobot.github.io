@@ -92,3 +92,8 @@ jobs:
       - name: Prove della skill blend (nomi degli stili di casa)
         if: github.event.repository.name == 'tools'
         run: python3 tools/.github/scripts/test_blend.py
+
+      # Scorta, 2026-11-27: the inventory of the Mac and the hub's turn hook that runs it.
+      - name: Prove della skill mac-cleanup (Scorta)
+        if: github.event.repository.name == 'tools'
+        run: python3 tools/.github/scripts/test_mac_cleanup.py
