@@ -851,7 +851,8 @@ sessione:
    - ⚠️ **Dal 2026-11-26 il comando scrive anche `env.DISABLE_TELEMETRY` = `1`** (richiesta
      dell'utente, dopo l'ingresso della skill di terzi `modern-web-guidance`, di Google: il suo
      pacchetto, lanciato con `npx -y modern-web-guidance@latest`, manda statistiche d'uso anonime se
-     la variabile manca). Il blocco `env` delle impostazioni utente entra nell'ambiente di ogni
+     la variabile manca; la skill è stata tolta il 2026-11-27, sua scelta, e la variabile resta).
+     Il blocco `env` delle impostazioni utente entra nell'ambiente di ogni
      comando che un agente lancia, quindi vale in ogni sessione dove il passo 0 è girato, dalla
      sessione dopo. Il nome coincide con quello di una variabile di Claude Code per la sua
      telemetria, quindi l'effetto può essere più largo del pacchetto: è voluto. ⚠️ **Non copre** i

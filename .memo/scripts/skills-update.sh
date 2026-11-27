@@ -48,11 +48,10 @@ PACCHETTI=(
   Egonex-AI/Understand-Anything
   ayghri/i-have-adhd
   zarazhangrui/frontend-slides
-  # Di Google (GoogleChrome), voluto dall'utente il 2026-11-26: due skill, `chrome-extensions` e
-  # `modern-web-guidance`. La seconda ordina di lanciare `npx -y modern-web-guidance@latest`, cioè
-  # codice di npm non fissato a una versione, e quel pacchetto manda a Google statistiche d'uso
-  # anonime (si spengono con DISABLE_TELEMETRY=1).
-  GoogleChrome/modern-web-guidance
+  # Di Google (GoogleChrome), voluto dall'utente il 2026-11-26: la sola `chrome-extensions`. La
+  # `modern-web-guidance` dello stesso pacchetto è stata tolta il 2026-11-27 (sua scelta): ordinava
+  # di lanciare `npx -y modern-web-guidance@latest`, cioè codice di npm non fissato a una versione.
+  GoogleChrome/modern-web-guidance:chrome-extensions
   # 'repo:nome1,nome2' installa solo quelle skill: il pacchetto intero di Matt Pocock contiene anche
   # una 'handoff' con lo stesso nome della nostra, che vive in `tools` (scelta dell'utente,
   # 2026-10-30, Wayfinder-01).
