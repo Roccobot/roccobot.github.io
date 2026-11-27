@@ -63,7 +63,7 @@
   /* Apps: one card per app, all built the same. Above, the name, what the app is and the button to its
      site; below a line, one entry per version (platform), with its mark and the link to that
      version's feedback document (DF). */
-  .apps li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; }
+  .apps > ul:not(.tiles) > li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; }
   .top { display: flex; align-items: center; gap: 1rem; }
   .txt { flex: 1 1 auto; min-width: 0; }
   h3 { font-size: 1.2rem; font-weight: 600; margin: 0; }
@@ -97,9 +97,10 @@
      on a phone it wraps under them, at the left like them */
   a.reg { margin-left: auto; }
   @media (max-width: 30rem) { a.reg { margin-left: 0; } }
-  /* A small tile under the app cards, for a project with no site nor DF (Monochrome New Tab, Rocco's
-     request of 2026-11-27): the same tile as the useful links, full width, at the cards' distance */
-  .apps > .tile { margin-top: .85rem; }
+  /* The add-ons under the app cards (Rocco's requests of 2026-11-27): the same tiles as the useful
+     links, two per row where there is room, set a little further from the cards than the cards are
+     from each other, since they are almost apps but not quite */
+  .apps > .tiles { margin-top: 1.5rem; }
 
   /* Useful links: tiles, two per row where there is room. The whole tile is the link. */
   .tiles { grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .7rem; }
@@ -145,12 +146,13 @@
      so size and position make the hierarchy, not colour */
   h3.group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-align: center; padding-left: .08em;
              color: var(--ink-muted); margin: 1.8rem 0 .6rem; }
-  /* The keyboard focus ring follows the shape of what is focused: the whole tile or the pill, never a
-     square box around a line of text */
-  a:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
-  .tiles > li > a:focus-visible, .tile:has(.name:focus-visible) { outline: 2px solid var(--link); outline-offset: 2px; }
-  .tile .name:focus-visible { outline: none; }
-  a.open:focus-visible { border-radius: 999px; }
+  /* Keyboard navigation shows no ring (Rocco's rule, Roccobot.md, the keyboard navigation does not
+     show): what Tab reaches changes as it does under the pointer */
+  a:focus-visible { outline: none; }
+  a.open:focus-visible { background: var(--accent-hover); }
+  a.fb:focus-visible, a.sub:focus-visible, a.inl:focus-visible { text-decoration-thickness: 2px; }
+  a.sub:focus-visible, a.inl:focus-visible { color: var(--link); }
+  .tiles > li > a:focus-visible, .tile:has(.name:focus-visible) { border-color: var(--link); }
   /* Colours and borders under the pointer change in 160 ms (web-hover), and at once with the
      system's reduced motion */
   @media (prefers-reduced-motion: no-preference) {
@@ -170,7 +172,7 @@
   </header>
 
   <section class="apps" aria-labelledby="t-app">
-    <h2 id="t-app">Applicazioni</h2>
+    <h2 id="t-app">Applicazioni e componenti aggiuntivi</h2>
     <ul>
       <li>
         <div class="top">
@@ -199,7 +201,10 @@
         </div>
       </li>
     </ul>
-    <div class="tile"><a class="name" href="https://chromewebstore.google.com/detail/monochrome-new-tab/fgpdbjjnjeolmenkhkoppmmaegjnegjd" target="_blank" rel="noopener">Monochrome New Tab</a><span class="note">Scheda nuova vuota, intonata al tema</span><a class="sub" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Web Store Dev Console</a></div>
+    <ul class="tiles">
+      <li><div class="tile"><a class="name" href="https://chromewebstore.google.com/detail/monochrome-new-tab/fgpdbjjnjeolmenkhkoppmmaegjnegjd" target="_blank" rel="noopener">Monochrome New Tab</a><span class="note">Estensione Chromium</span><a class="sub" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Web Store Dev Console</a></div></li>
+      <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
+    </ul>
   </section>
 
   <section aria-labelledby="t-link">
@@ -209,7 +214,6 @@
       <li><a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener"><span class="name">GitHub Actions</span><span class="note" id="actions-note">Minuti del mese: lettura in corso...</span><span class="note" id="actions-last"></span></a></li>
       <li><a href="https://trello.com/b/QqbH70M5" target="_blank" rel="noopener"><span class="name">Trello</span><span class="note">Bacheca di lavoro degli agenti</span></a></li>
       <li><div class="tile"><a class="name" href="../design/" target="_blank" rel="noopener">Design System</a><span class="note">Riferimento UI/UX · <a class="inl" href="../ruias/" target="_blank" rel="noopener">Animazioni</a></span></div></li>
-      <li><a href="https://roccobot.github.io/userscripts/" target="_blank" rel="noopener"><span class="name">Userscript</span><span class="note">Script utente per Violentmonkey</span></a></li>
       <li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener"><span class="name">Cloudflare</span><span class="note">I worker dei DF e delle regole condivise</span></a></li>
       <li><a href="https://appstoreconnect.apple.com/" target="_blank" rel="noopener"><span class="name">App Store Connect</span><span class="note">Aomidori su Mac App Store</span></a></li>
       <li><a href="https://play.google.com/console/" target="_blank" rel="noopener"><span class="name">Google Play Console</span><span class="note">AIV su Google Play</span></a></li>
@@ -311,8 +315,9 @@
       note.textContent = 'Minuti non disponibili ora';
     }
   })();
-  // A link clicked with the mouse or a finger drops the focus, so coming back from the new tab
-  // shows no ring (Safari with keyboard navigation on focuses links on click). Tab still shows it.
+  // A link clicked with the mouse or a finger drops the focus, so coming back from the new tab it
+  // does not keep the look of a link under the pointer (Safari with keyboard navigation on focuses
+  // links on click). Tab still gives it that look.
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
     if (a && e.detail > 0) a.blur();
