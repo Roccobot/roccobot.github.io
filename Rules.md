@@ -152,7 +152,10 @@ numero per scelta dell'utente.
   separati; nella riga di Aomidori c'è anche il `Registro di Flex`, a destra e fuori dalle versioni
   (su un telefono va a capo sotto di esse). Il titolo della scheda di AIV è la sola sigla `AIV`,
   senza il nome per esteso (sua scelta del 2026-11-13: sui telefoni stretti il nome faceva uscire il
-  riquadro dallo schermo). **'Link utili'**, tessere con un titolo e una
+  riquadro dallo schermo). Sotto le due schede c'è un riquadro più piccolo, a tutta larghezza, fatto
+  come le tessere di 'Link utili': **Monochrome New Tab**, che porta alla sua pagina sul Chrome Web
+  Store, col link secondario `Web Store Dev Console` (sua richiesta del 2026-11-27); non ha un
+  mini-sito né un DF, e per questo non è una scheda come le altre. **'Link utili'**, tessere con un titolo e una
   riga di spiegazione, raggruppate per tema (gli strumenti di lavoro, con in coda `App Store
   Connect` e `Google Play Console`, che fino al 2026-11-24 avevano un gruppo `Pubblicazione` a sé,
   poi 'Siti e strumenti' e in fondo 'Liste per uBlock / AdGuard', le liste di Roccobot ABP). **I
