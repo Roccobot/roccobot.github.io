@@ -118,6 +118,13 @@ class GitHubChannelTests(unittest.TestCase):
         ]
         self.assertEqual(check.newest_release(releases)['tag_name'], 'v0.46.2')
 
+    def test_only_nightlies_leave_no_newest_release(self):
+        # The caller then reads releases/latest: before, next() raised StopIteration and the
+        # weekly check stopped for every project.
+        releases = [{'tag_name': f'v0.47.0-nightly.202611{day}', 'prerelease': True, 'draft': False}
+                    for day in range(10, 30)]
+        self.assertIsNone(check.newest_release(releases))
+
 
 if __name__ == '__main__':
     unittest.main()
